@@ -1,0 +1,14 @@
+/.classpath
+
+/.project
+
+/.settings
+
+
+/tmp
+/
+eclipse
+/conf/application.conf
+/vms.iml
+/vms.ipr
+/vms.iws

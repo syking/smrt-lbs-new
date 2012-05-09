@@ -1,0 +1,4 @@
+03 五月 2012 15:40:22,681 INFO  ~ Starting D:\Java\JEE\EclipseWorkSpace\24A\vms
+03 五月 2012 15:40:22,697 INFO  ~ Module secure is available (D:\Java\JEE\Tools\play-1.2.4\modules\secure)
+03 五月 2012 15:40:23,572 WARN  ~ You're running Play! in DEV mode
+03 五月 2012 15:40:23,837 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
