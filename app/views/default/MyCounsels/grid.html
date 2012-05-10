@@ -124,22 +124,23 @@
             editable: "${grid.editable}"
         });
         
-        /*var categoryDataSource = new kendo.data.DataSource({
+        var categoryDataSource = new kendo.data.DataSource({
             //type: "odata",
             transport: {
             	url: "MyCounsellings/driverList"
                 dataType: "json"
             }
         });
+        
         alert(categoryDataSource);
         function categoryDropDownEditor(container, options) {
-            $('<input data-text-field="CategoryName" data-value-field="CategoryName" data-bind="value:' + options.field + '"/>')
+            $('<input data-text-field="driverName" data-value-field="driverName" data-bind="value:' + options.field + '"/>')
                 .appendTo(container)
                 .kendoDropDownList({
                     autoBind: false,
                     dataSource: categoryDataSource
                 });
-        }*/
+        }
         
     }
    
