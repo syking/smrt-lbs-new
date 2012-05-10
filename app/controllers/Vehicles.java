@@ -312,11 +312,38 @@ public class Vehicles extends Controller
     }
 
     public static void tree() {
+        Map map = new HashMap();
+
+        List<Fleet> fleetList = Fleet.findAll();
+        List<ComboVO> fleets = new ArrayList<ComboVO>();
+        if (fleetList != null)
+            for (Fleet fleet: fleetList){
+                fleets.add(new ComboVO(fleet.name, fleet.id));
+            }
+        map.put("fleets", CommonUtil.getGson().toJson(fleets));
 
         String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTree());
-        Map map = new HashMap();
         map.put("treeData", vehicleJson);
         renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/tree.html")).render(map));
-
     }
+
+    public static void searchTree(long fleetid, String number) {
+        Map map = new HashMap();
+
+        List<Fleet> fleetList = Fleet.findAll();
+        List<ComboVO> fleets = new ArrayList<ComboVO>();
+        if (fleetList != null)
+            for (Fleet fleet: fleetList){
+                fleets.add(new ComboVO(fleet.name, fleet.id));
+            }
+        map.put("fleets", CommonUtil.getGson().toJson(fleets));
+
+        String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTreeByFleetidnNumber(fleetid, number));
+        System.out.print(vehicleJson + "========================");
+        renderJSON(vehicleJson);
+    }
+
+
+
+
 }

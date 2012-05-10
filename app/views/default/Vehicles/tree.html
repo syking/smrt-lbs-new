@@ -1,11 +1,55 @@
+<label class="info" style="width:80px;">Number:</label>
+<input name="number" id="number"/>
+
+<label class="info">Fleet Name</label>
+<input name="fleetid" id="fleet_id"/>
+
+<div style="float:right; padding-right:20px;">
+    <input type="submit" id="search-button" class="k-button" value="Search"/>
+</div>
+
+<div style="height:8px"></div>
 <div id="treeView"></div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-
+    function loadTree(data) {
         $("#treeView").kendoTreeView({
-            dataSource: #{verbatim} ${treeData} #{/verbatim}
+            dataSource:data,
+            dragAndDrop:false
+        });
+    }
+
+    $(document).ready(function () {
+
+        loadTree(#{verbatim} ${treeData} #{/verbatim});
+
+        $("#fleet_id").kendoComboBox({
+            dataTextField:"text",
+            dataValueField:"value",
+            dataSource: #{verbatim} ${fleets} #{/verbatim}
+        });
+
+        $("#search-button").click(function (e) {
+            fleetid = $("#fleet_id").val();
+            number = $("#number").val();
+
+            $.getJSON(
+                    "/vehicles/searchTree",
+                    {
+                        fleetid:fleetid,
+                        number:number
+                    },
+                    function (data) {
+                        var treeView = $("#treeView").data("kendoTreeView");
+                        treeView.remove(".k-item");
+                        treeView.append(data);
+                        treeView.expand(".k-item");
+                    }
+            );
+
         })
+
     });
+
 
 </script>
