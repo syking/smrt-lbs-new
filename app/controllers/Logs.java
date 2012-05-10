@@ -5,12 +5,12 @@ import play.mvc.Controller;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.Grid;
+import vo.LogVO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static models.User.Constant.THEME;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,10 +31,13 @@ public class Logs extends Controller
         grid.destroyUrl = preUrl + "destroy";
         grid.readUrl = preUrl + "read";
         grid.editable = "popup";
-        grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(Log.class, "id"));
+        grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(LogVO.class, "id"));
 
         map.put("grid", grid);
-        renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Logs/grid.html")).render(map));
+//        String thm = (String) renderArgs.get(THEME);
+//        renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Logs/grid.html")).render(map));
+        renderHtml(TemplateLoader.load(template("default/Logs/grid.html")).render(map));
+
     }
 
     public static void destroy(String models){
@@ -55,10 +58,18 @@ public class Logs extends Controller
         renderJSON(models);
     }
 
-    public static void read() {
-        List<Log> logList = Log.findAll();
-        renderJSON(logList);
+    public static void read()
+    {
+        List<LogVO> result = new ArrayList<LogVO>();
 
+        List<Log> logList = Log.findAll();
+        for (Log log : logList)
+        {
+            LogVO lv = new LogVO().init(log);
+            result.add(lv);
+        }
+
+        renderJSON(result);
     }
 
 
