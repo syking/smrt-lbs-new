@@ -14,3 +14,8 @@ eclipse
 /vms.iws
 /esri.ux.layers.ClusterLayer-debug.js
 /conf/application.conf
+/.idea
+/conf/application.conf
+/smrt-lbs-new.ipr
+/hs_err_pid3560.log
+/smrt-lbs-new.iml
