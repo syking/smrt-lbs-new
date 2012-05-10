@@ -3,6 +3,8 @@ package models;
 import play.db.jpa.Model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -21,10 +23,11 @@ public class Log extends Model
     public String name;
     public String content;
     public String action;
-    public String user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    public User user;
     public Date dateTime;
 
-    public Log(String type, String name, String content, String action, String user, Date dateTime)
+    public Log(String type, String name, String content, String action, User user, Date dateTime)
     {
         this.type = type;
         this.name = name;
@@ -42,7 +45,7 @@ public class Log extends Model
                 ", name='" + name + '\'' +
                 ", content='" + content + '\'' +
                 ", action='" + action + '\'' +
-                ", user='" + user + '\'' +
+                ", user=" + user +
                 ", dateTime=" + dateTime +
                 "} " + super.toString();
     }

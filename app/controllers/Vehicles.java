@@ -257,8 +257,6 @@ public class Vehicles extends Controller
         renderJSON(models);
     }
 
-
-
     public static void add(String models)
     {
         System.out.println("-----models------>" + models);

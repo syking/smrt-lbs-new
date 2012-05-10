@@ -27,7 +27,7 @@
                 }
             },
             batch: true,
-            pageSize: 20,
+            pageSize: 15,
             schema: {
                 model: {
                     id: "id",
@@ -46,7 +46,7 @@
         });
         
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Action", width: "210px" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
