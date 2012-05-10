@@ -5,16 +5,17 @@
 #{extends theme+'/main_head.html' /}
 <div id="view-on-map-splitter" style="width:99%; height:99%;">
 	<div id="event-list"></div>
-	<div id="map-view" region="center" style="position:relative;">
-	</div>
+	
+	<div id="map-view" region="center" style=" position:relative;"></div>
+	#{include './map_legend.html' /}
 	
 </div>
-<div id="event-type-list" class="configuration k-widget k-header">
-    <span class="configHead">EventType filter</span>
-    <ul class="options" id="event-type-list-ul">
-    </ul>
+<div id="event-type-open-btn" style="cursor:pointer;position:absolute; top:238px; background:#fff; padding:2px; right:5px; z-index:99999999;">
+	<img src="/public/images/ruler_triangle.png" />	
 </div>
-#{include './map_legend.html' /}
+<div id="event-type-list" class="configuration k-widget k-header" style="display:none;position:absolute; top:258px; background:#fff; padding:5px; right:20px; z-index:99999999">
+	<ul class="options" id="event-type-list-ul"></ul>
+</div>
 
 <script>
 
@@ -40,7 +41,7 @@ function eventTypeListInit(){
 	var datas = #{verbatim} ${eventTypes} #{/verbatim};
 	//alert(JSON.stringify(datas));
 	 $.each(datas, function(index, data){
-	 	var li = '<li style="float:left;"><input id="'+ data.techName +'" type="checkbox" checked="checked" /> <label>' + data.name + '</label></li>';
+	 	var li = '<li><input id="'+ data.techName +'" type="checkbox" checked="checked" /> <label>' + data.name + '</label></li>';
              $("#event-type-list-ul").append(li);
         });
 	$("#event-type-list-ul li input").click(function(){
@@ -68,10 +69,10 @@ $(document).ready(function(){
         sortable: true,
         pageable: true,
         selectable: true,
-        height: 233,
+        height: 230,
         columns:#{verbatim} ${eventColumns} #{/verbatim},
         dataSource: {
-        	 pageSize: 10,
+        	 pageSize: 3,
             data: #{verbatim} ${eventData} #{/verbatim}
         }
     });
@@ -86,8 +87,9 @@ $(document).ready(function(){
 	view_on_map_splitter = $("#view-on-map-splitter").kendoSplitter({
 		orientation: "vertical",
 		panes: [
-            { collapsible: false, size: "233px", min: "233px", width: "100%" },//up
-            { collapsible: false, resizable: true, min: "300px", width: "100%"}//bottom down
+            { collapsible: false, resizable:false, size: "233px", min: "233px"},//up
+            { collapsible: false, resizable:false,},//middle 
+            { collapsible: false, resizable:false, min: "35px", size: "35px"}//bottom
         ],
         resize:function(e){
             //第一次加载时不需要resize
@@ -97,6 +99,11 @@ $(document).ready(function(){
       	    }
         }
 	}).data("kendoSplitter");
+	
+	$("#event-type-list").css({"opacity":"0.8"});
+	$("#event-type-open-btn").click(function(e){
+		$("#event-type-list").toggle("200");
+	});
 	
 	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo: $.getUrlParam('vehicleNo')}) + "')");
 

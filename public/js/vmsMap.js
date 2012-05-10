@@ -113,21 +113,24 @@ dojo.require("dijit.layout.BorderContainer");
 		}
 	}
 	
-	function autoShowInfoWindow(id){
+	function autoShowInfoWindow(id,level){
 		//frist time will be showCurrentInfoWindow falid
 		if(map.loaded){
 			// if(map.infoWindow.isShowing){
 				// clearTimeout(autoShowInfoWindowTimeout);
 			// }
+			if (level)
+				map.setLevel(level);
+			
 			autoShowInfoWindowCount++;
 			if(autoShowInfoWindowCount>1){
 				showCurrentInfoWindow(id);
 				clearTimeout(autoShowInfoWindowTimeout);
 			}else{
-				autoShowInfoWindowTimeout = setTimeout('autoShowInfoWindow("'+id+'")',500);
+				autoShowInfoWindowTimeout = setTimeout('autoShowInfoWindow("'+id+'","'+level + '")',500);
 			}
 		}else{
-			autoShowInfoWindowTimeout = setTimeout('autoShowInfoWindow("'+id+'")',500);
+			autoShowInfoWindowTimeout = setTimeout('autoShowInfoWindow("'+id+'","'+level + '")',500);
 		}
 	}
 
