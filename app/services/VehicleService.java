@@ -92,8 +92,8 @@ public class VehicleService
         return result;
     }
 
-    public static List<VehicleTree> assemVehicleTree()
-    {
+    
+    public static List<VehicleTree> assemVehicleTree() {
 
         List<VehicleTree> result = new ArrayList<VehicleTree>();
         List<Fleet> fleets = Fleet.findAll();

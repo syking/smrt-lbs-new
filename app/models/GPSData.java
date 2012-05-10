@@ -3,6 +3,7 @@ package models;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -50,7 +51,7 @@ public class GPSData extends Model {
     /**
      * Can be left empty.
      */
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, cascade= CascadeType.REFRESH)
     @JoinColumn(name = "device_key", referencedColumnName = "device_key")
     public Device device;
 

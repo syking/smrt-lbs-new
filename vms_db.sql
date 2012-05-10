@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50511
 File Encoding         : 65001
 
-Date: 2012-05-09 10:43:11
+Date: 2012-05-10 12:18:45
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -58,12 +58,12 @@ CREATE TABLE `t_device` (
 -- Records of t_device
 -- ----------------------------
 INSERT INTO `t_device` VALUES ('4', '', '', '203.117.40.138', '2', '{\"port\":80,\"login\":\"root\",\"password\":\"kaisquare7\",\"record_server\":\"http://203.116.12.44:50000\",\"internal_host\":\"\",\"address\":\"408868\",\"record_flag\":true,\"cloud_recording_server\":\"\"}', 'SHSembawang', 'http://www.baidu.com', 'online');
-INSERT INTO `t_device` VALUES ('8', '', '', '203.117.251.162', '1', '{\"port\":2000,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'Planet-TPY', 'http://www.baidu.com', 'offline');
+INSERT INTO `t_device` VALUES ('8', '', '', '203.117.251.162', '1', '{\"port\":2000,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'Planet-TPY', 'http://www.baidu.com', 'online');
 INSERT INTO `t_device` VALUES ('11', '', '\0', '203.117.250.66', '3', '{\"port\":2000,\"record_server\":\"http://203.116.12.44:50000\",\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'Star5-Jp1', 'http://www.baidu.com', 'online');
-INSERT INTO `t_device` VALUES ('12', '', '', '203.117.251.156', '4', '{\"port\":2000,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'Star5-Jp2', 'http://www.baidu.com', 'offline');
+INSERT INTO `t_device` VALUES ('12', '', '', '203.117.251.156', '4', '{\"port\":2000,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'Star5-Jp2', 'http://www.baidu.com', 'online');
 INSERT INTO `t_device` VALUES ('18', '', '\0', '203.117.250.134', '5', '{\"port\":2000,\"login\":\"\",\"password\":\"\",\"internal_host\":\"\",\"address\":\"\",\"cloud_recording_server\":\"\"}', 'Star5-Compass', 'http://www.baidu.com', 'online');
-INSERT INTO `t_device` VALUES ('19', '', '', '203.117.40.133', '6', '{\"port\":80,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'SHPlazaSingapura', 'http://www.baidu.com', 'offline');
-INSERT INTO `t_device` VALUES ('31', null, '\0', '203.117.250.66', '001190251', '{\"password\":\"7473\",\"supportedtasktypes\":[\"live-image\",\"ptz-panleft\",\"ptz-panright\",\"ptz-tiltup\",\"ptz-tiltdown\",\"ptz-movehome\"],\"port\":0,\"record_server\":\"\",\"internal_host\":\"\",\"address\":\"33 Ubi Avenue 3\",\"login\":\"\",\"record_flag\":false,\"cloud_recording_server\":\"\"}', 'Office Juzz4Lite camera', 'http://www.baidu.com', 'offline');
+INSERT INTO `t_device` VALUES ('19', '', '', '203.117.40.133', '6', '{\"port\":80,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'SHPlazaSingapura', 'http://www.baidu.com', 'online');
+INSERT INTO `t_device` VALUES ('31', null, '\0', '203.117.250.66', '001190251', '{\"password\":\"7473\",\"supportedtasktypes\":[\"live-image\",\"ptz-panleft\",\"ptz-panright\",\"ptz-tiltup\",\"ptz-tiltdown\",\"ptz-movehome\"],\"port\":0,\"record_server\":\"\",\"internal_host\":\"\",\"address\":\"33 Ubi Avenue 3\",\"login\":\"\",\"record_flag\":false,\"cloud_recording_server\":\"\"}', 'Office Juzz4Lite camera', 'http://www.baidu.com', 'online');
 INSERT INTO `t_device` VALUES ('32', null, '', '203.117.250.134', '001014182', '{\"password\":\"ipcam\",\"supportedtasktypes\":[\"live-image\",\"ptz-panleft\",\"ptz-panright\",\"ptz-tiltup\",\"ptz-tiltdown\",\"ptz-movehome\"],\"port\":0,\"record_server\":\"\",\"internal_host\":\"\",\"address\":\"\",\"login\":\"\",\"record_flag\":false,\"cloud_recording_server\":\"\"}', 'Fish tank Juzz4Lite demo camera', 'http://www.baidu.com', 'online');
 INSERT INTO `t_device` VALUES ('58', null, '\0', '203.117.250.134', 'B5143913', '{\"record_server\":\"\",\"record_flag\":false,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"port\":0,\"cloud_recording_server\":\"\"}', 'B5143913 (Wifi)', 'http://www.baidu.com', 'online');
 INSERT INTO `t_device` VALUES ('59', null, '\0', '203.117.250.134', 'B5155298', '{\"record_server\":\"\",\"record_flag\":false,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"port\":0,\"cloud_recording_server\":\"\"}', 'B5155298 (Wifi)', 'http://www.baidu.com', 'online');
@@ -78,15 +78,15 @@ INSERT INTO `t_device` VALUES ('95', null, '\0', '203.117.250.134', 'hou', '{\"p
 INSERT INTO `t_device` VALUES ('96', null, '', '203.117.250.134', 'jur', '{\"port\":0,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'NHG Jurong Polyclinic', null, 'online');
 INSERT INTO `t_device` VALUES ('97', null, '\0', '203.117.250.134', 'tpy', '{\"port\":0,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'NHG Toa Payoh Polyclinic', null, 'online');
 INSERT INTO `t_device` VALUES ('98', null, '', '203.117.250.134', 'wds', '{\"port\":0,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'NHG Woodlands Polyclinic', null, 'online');
-INSERT INTO `t_device` VALUES ('99', null, '\0', '203.117.250.134', 'yis', '{\"port\":0,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'NHG Yishun Polyclinic', null, 'offline');
-INSERT INTO `t_device` VALUES ('116', null, '\0', '203.117.250.134', '001080121', '{\"record_flag\":false,\"password\":\"1234\",\"address\":\"\",\"port\":111,\"record_server\":\"\",\"internal_host\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', '001080121', null, 'offline');
-INSERT INTO `t_device` VALUES ('117', null, '', '203.117.250.134', '001015205', '{\"record_flag\":true,\"password\":\"1234\",\"address\":\"\",\"port\":0,\"record_server\":\"\",\"internal_host\":\"3123\",\"login\":\"13\",\"cloud_recording_server\":\"\"}', '001015205', null, 'offline');
-INSERT INTO `t_device` VALUES ('126', null, '\0', '203.117.250.134', '001067116', '{\"record_server\":\"\",\"record_flag\":false,\"internal_host\":\"\",\"password\":\"ipcam\",\"address\":\"\",\"login\":\"001067116\",\"port\":0,\"cloud_recording_server\":\"\"}', 'Thailand Juzz4Lite demo camera', null, 'offline');
-INSERT INTO `t_device` VALUES ('136', null, '', '203.117.250.134', '4799', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'Sentosa: View from Sentosa Gateway (Towards Sentosa)', null, 'offline');
-INSERT INTO `t_device` VALUES ('137', null, '\0', '203.117.250.134', '1003', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'KPE: View from KPE/PIE', null, 'offline');
-INSERT INTO `t_device` VALUES ('138', null, '', '203.117.250.134', '4706', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'AYE: Near NUS (Towards Tuas)', null, 'offline');
-INSERT INTO `t_device` VALUES ('139', null, '', '203.117.250.134', '1702', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'CTE: Braddell Flyover (Towards SLE) ', null, 'offline');
-INSERT INTO `t_device` VALUES ('140', null, '\0', '203.117.250.134', '5799', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'PIE: Woodsville Flyover (Towards Changi)', null, 'offline');
+INSERT INTO `t_device` VALUES ('99', null, '\0', '203.117.250.134', 'yis', '{\"port\":0,\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', 'NHG Yishun Polyclinic', null, 'online');
+INSERT INTO `t_device` VALUES ('116', null, '\0', '203.117.250.134', '001080121', '{\"record_flag\":false,\"password\":\"1234\",\"address\":\"\",\"port\":111,\"record_server\":\"\",\"internal_host\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\"}', '001080121', null, 'online');
+INSERT INTO `t_device` VALUES ('117', null, '', '203.117.250.134', '001015205', '{\"record_flag\":true,\"password\":\"1234\",\"address\":\"\",\"port\":0,\"record_server\":\"\",\"internal_host\":\"3123\",\"login\":\"13\",\"cloud_recording_server\":\"\"}', '001015205', null, 'online');
+INSERT INTO `t_device` VALUES ('126', null, '\0', '203.117.250.134', '001067116', '{\"record_server\":\"\",\"record_flag\":false,\"internal_host\":\"\",\"password\":\"ipcam\",\"address\":\"\",\"login\":\"001067116\",\"port\":0,\"cloud_recording_server\":\"\"}', 'Thailand Juzz4Lite demo camera', null, 'online');
+INSERT INTO `t_device` VALUES ('136', null, '', '203.117.250.134', '4799', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'Sentosa: View from Sentosa Gateway (Towards Sentosa)', null, 'online');
+INSERT INTO `t_device` VALUES ('137', null, '\0', '203.117.250.134', '1003', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'KPE: View from KPE/PIE', null, 'online');
+INSERT INTO `t_device` VALUES ('138', null, '', '203.117.250.134', '4706', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'AYE: Near NUS (Towards Tuas)', null, 'online');
+INSERT INTO `t_device` VALUES ('139', null, '', '203.117.250.134', '1702', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'CTE: Braddell Flyover (Towards SLE) ', null, 'online');
+INSERT INTO `t_device` VALUES ('140', null, '\0', '203.117.250.134', '5799', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'PIE: Woodsville Flyover (Towards Changi)', null, 'online');
 INSERT INTO `t_device` VALUES ('141', null, '', '203.117.250.134', '2705', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'BKE: Diary Farm Flyover (Towards PIE) ', null, 'online');
 INSERT INTO `t_device` VALUES ('142', null, '\0', '203.117.250.134', '3798', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'ECP: Benjamin Sheares Bridge', null, 'online');
 INSERT INTO `t_device` VALUES ('143', null, '', '203.117.250.134', '9701', '{\"internal_host\":\"\",\"password\":\"\",\"address\":\"\",\"login\":\"\",\"cloud_recording_server\":\"\",\"port\":0}', 'SLE: Lentor Flyover (Towards TPE) ', null, 'online');
@@ -110,27 +110,27 @@ CREATE TABLE `t_driver` (
 -- ----------------------------
 -- Records of t_driver
 -- ----------------------------
-INSERT INTO `t_driver` VALUES ('1', 'TEST', '杰克', '74689');
-INSERT INTO `t_driver` VALUES ('2', '222asdfasfdsf', '唐僧', '74652');
-INSERT INTO `t_driver` VALUES ('3', '', '猪老二', '74631');
-INSERT INTO `t_driver` VALUES ('4', 'jlk;jhkluy', '晓白', '74571');
-INSERT INTO `t_driver` VALUES ('8', 'asdf', '小黑', '74538');
-INSERT INTO `t_driver` VALUES ('9', 'sadf', '小鸡', '74498');
-INSERT INTO `t_driver` VALUES ('10', 'sf', '小猪', '74484');
-INSERT INTO `t_driver` VALUES ('11', 'sdf', '大黑', '74483');
-INSERT INTO `t_driver` VALUES ('12', 'sdfs', '大哥', '74482');
-INSERT INTO `t_driver` VALUES ('13', 'dfsdfs', '李小龙', '74423');
-INSERT INTO `t_driver` VALUES ('14', 'dfs', '龙五', '74353');
-INSERT INTO `t_driver` VALUES ('15', 'df', '张含韵', '74291');
-INSERT INTO `t_driver` VALUES ('16', 'xv', '成龙', '74279');
-INSERT INTO `t_driver` VALUES ('17', 'xvx', '世军', '74270');
-INSERT INTO `t_driver` VALUES ('18', 'xvxv', '小迪', '74228');
-INSERT INTO `t_driver` VALUES ('19', 'xvxv', '张天寒', '74215');
-INSERT INTO `t_driver` VALUES ('20', 'xvxvx', '龙海天', '74106');
-INSERT INTO `t_driver` VALUES ('21', 'xcvsdf', '猢狲放', '74078');
-INSERT INTO `t_driver` VALUES ('22', 'xvxv', '孟浩然', '73870');
-INSERT INTO `t_driver` VALUES ('23', 'sdf', '李靖', '73859');
-INSERT INTO `t_driver` VALUES ('24', 'hdfh', '李宁', '73662');
+INSERT INTO `t_driver` VALUES ('1', 'TEST', 'jack', '74689');
+INSERT INTO `t_driver` VALUES ('2', '222asdfasfdsf', 'tangseng', '74652');
+INSERT INTO `t_driver` VALUES ('3', '', 'zhulaoer', '74631');
+INSERT INTO `t_driver` VALUES ('4', 'jlk;jhkluy', 'xiaobai', '74571');
+INSERT INTO `t_driver` VALUES ('8', 'asdf', 'xiaohei', '74538');
+INSERT INTO `t_driver` VALUES ('9', 'sadf', 'xiaoji', '74498');
+INSERT INTO `t_driver` VALUES ('10', 'sf', 'xiaozhu', '74484');
+INSERT INTO `t_driver` VALUES ('11', 'sdf', 'dahei', '74483');
+INSERT INTO `t_driver` VALUES ('12', 'sdfs', 'dage', '74482');
+INSERT INTO `t_driver` VALUES ('13', 'dfsdfs', 'lixiaolong', '74423');
+INSERT INTO `t_driver` VALUES ('14', 'dfs', 'longwu', '74353');
+INSERT INTO `t_driver` VALUES ('15', 'df', 'zhanghanyun', '74291');
+INSERT INTO `t_driver` VALUES ('16', 'xv', 'chenglong', '74279');
+INSERT INTO `t_driver` VALUES ('17', 'xvx', 'shijun', '74270');
+INSERT INTO `t_driver` VALUES ('18', 'xvxv', 'xiaodi', '74228');
+INSERT INTO `t_driver` VALUES ('19', 'xvxv', 'zhangtianhan', '74215');
+INSERT INTO `t_driver` VALUES ('20', 'xvxvx', 'longhaitian', '74106');
+INSERT INTO `t_driver` VALUES ('21', 'xcvsdf', 'husun', '74078');
+INSERT INTO `t_driver` VALUES ('22', 'xvxv', 'menghaoran', '73870');
+INSERT INTO `t_driver` VALUES ('23', 'sdf', 'lijing', '73859');
+INSERT INTO `t_driver` VALUES ('24', 'hdfh', 'lining', '73662');
 
 -- ----------------------------
 -- Table structure for `t_event`
@@ -192,14 +192,14 @@ CREATE TABLE `t_event_record` (
 -- ----------------------------
 -- Records of t_event_record
 -- ----------------------------
-INSERT INTO `t_event_record` VALUES ('2', 'asdf', '1', '2012-01-29 17:13:57', '3123', '123123', '123123', 'asdf', '12', 'event-sudden-acceleration', '2', null);
-INSERT INTO `t_event_record` VALUES ('3', 'xxxxx', '3', '2012-03-05 18:29:00', '341', '2312312', '54353', 'sssdd', '150', 'event-speeding', '1', null);
-INSERT INTO `t_event_record` VALUES ('4', 'xxfdds', '5', '2012-03-20 18:59:59', '1122', '543234123', '34532342', 'xcbcsdaa', '200', 'event-speeding', '1', null);
-INSERT INTO `t_event_record` VALUES ('5', 'sfasfsf', '12', '2012-05-22 19:00:35', '3123', '23534', '634534', 'xxsdfsadf', '120', 'event-sudden-braking', '2', null);
-INSERT INTO `t_event_record` VALUES ('6', 'xvxv', '23', '2012-05-08 20:01:12', '123', '345345', '535345', 'hfghfghfdh', '125', 'event-speeding', '2', null);
-INSERT INTO `t_event_record` VALUES ('7', 'fffeee', '3', '2012-06-08 17:54:33', '42342', '121434', '435623', 'aaaaaa', '34', 'event-sudden-right', '3', null);
-INSERT INTO `t_event_record` VALUES ('8', 'sdafsf', '2', '2012-05-30 17:57:33', '3423', '23423', '234234', 'gsdfg', '55', 'event-idle', '4', null);
-INSERT INTO `t_event_record` VALUES ('9', 'zzzzxxxx', '55', '2012-05-28 18:03:05', '654', '345345', '34534534', 'dddddd', '45', 'event-sudden-left', '001001003', null);
+INSERT INTO `t_event_record` VALUES ('2', 'asdf', '1', '2012-01-29 17:13:57', '3123', '34335.05990134846', '11791.630077000329', 'asdf', '12', 'event-sudden-acceleration', '2', null);
+INSERT INTO `t_event_record` VALUES ('3', 'xxxxx', '3', '2012-03-05 18:29:00', '341', '30157.030248655934', '30491.43855029164', 'sssdd', '150', 'event-speeding', '1', null);
+INSERT INTO `t_event_record` VALUES ('4', 'xxfdds', '5', '2012-03-20 18:59:59', '1122', '34326.98701124093', '33399.50823299224', 'xcbcsdaa', '200', 'event-speeding', '1', null);
+INSERT INTO `t_event_record` VALUES ('5', 'sfasfsf', '12', '2012-05-22 19:00:35', '3123', '36102.84347778058', '15826.84926458007', 'xxsdfsadf', '120', 'event-sudden-braking', '2', null);
+INSERT INTO `t_event_record` VALUES ('6', 'xvxv', '23', '2012-05-08 20:01:12', '123', '30157.030248655934', '30491.43855029164', 'hfghfghfdh', '125', 'event-speeding', '2', null);
+INSERT INTO `t_event_record` VALUES ('7', 'fffeee', '3', '2012-06-08 17:54:33', '42342', '30157.030248655934', '29191.01194041832', 'aaaaaa', '34', 'event-sudden-right', '3', null);
+INSERT INTO `t_event_record` VALUES ('8', 'sdafsf', '2', '2012-05-30 17:57:33', '3423', '30491.43855029164', '30062.028758860608', 'gsdfg', '55', 'event-idle', '4', null);
+INSERT INTO `t_event_record` VALUES ('9', 'zzzzxxxx', '55', '2012-05-28 18:03:05', '654', '36162.84347778058', '32765.206346922685', 'dddddd', '45', 'event-sudden-left', '001001003', null);
 
 -- ----------------------------
 -- Table structure for `t_event_type`
@@ -212,29 +212,17 @@ CREATE TABLE `t_event_type` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `tech_name` (`tech_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8193 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2052 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_event_type
 -- ----------------------------
-INSERT INTO `t_event_type` VALUES ('1', 'Alarm', 'event-alarm');
-INSERT INTO `t_event_type` VALUES ('2', 'Motion', 'event-motion');
-INSERT INTO `t_event_type` VALUES ('3', 'Video loss', 'event-video-loss');
-INSERT INTO `t_event_type` VALUES ('4', 'Connection lost', 'event-connection-lost');
-INSERT INTO `t_event_type` VALUES ('5', 'Connected', 'event-connected');
-INSERT INTO `t_event_type` VALUES ('512', 'Digital input', 'event-input');
-INSERT INTO `t_event_type` VALUES ('513', 'Digital output', 'event-output');
 INSERT INTO `t_event_type` VALUES ('1024', 'Idle', 'event-idle');
 INSERT INTO `t_event_type` VALUES ('1025', 'Speeding', 'event-speeding');
 INSERT INTO `t_event_type` VALUES ('2048', 'Sudden acceleration', 'event-sudden-acceleration');
 INSERT INTO `t_event_type` VALUES ('2049', 'Sudden braking', 'event-sudden-braking');
 INSERT INTO `t_event_type` VALUES ('2050', 'Sudden left', 'event-sudden-left');
 INSERT INTO `t_event_type` VALUES ('2051', 'Sudden right', 'event-sudden-right');
-INSERT INTO `t_event_type` VALUES ('2052', 'Sudden up', 'event-sudden-up');
-INSERT INTO `t_event_type` VALUES ('2053', 'Sudden down', 'event-sudden-down');
-INSERT INTO `t_event_type` VALUES ('4096', 'Entering geofence', 'event-geofence-enter');
-INSERT INTO `t_event_type` VALUES ('4097', 'Exiting geofence', 'event-geofence-exit');
-INSERT INTO `t_event_type` VALUES ('8192', 'Count', 'event-count');
 
 -- ----------------------------
 -- Table structure for `t_fleet`
@@ -250,22 +238,23 @@ CREATE TABLE `t_fleet` (
   UNIQUE KEY `name` (`name`),
   KEY `FKA03F39C325DB1D7A` (`parent_id`),
   CONSTRAINT `FKA03F39C325DB1D7A` FOREIGN KEY (`parent_id`) REFERENCES `t_fleet` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_fleet
 -- ----------------------------
-INSERT INTO `t_fleet` VALUES ('1', '这是深圳市宝安区的车队', '宝安区车队', '21045', null);
-INSERT INTO `t_fleet` VALUES ('2', '这是深圳市福田区的车队', '福田区车队', '54681', null);
-INSERT INTO `t_fleet` VALUES ('3', '这是深圳市宝安区天悦龙庭分队', '天悦龙庭分队', '21014', '1');
-INSERT INTO `t_fleet` VALUES ('4', '这是深圳市福田区岗厦小分队', '岗厦分队', '54601', '2');
-INSERT INTO `t_fleet` VALUES ('5', '这是广州市车队', '广州车队', '12014', null);
-INSERT INTO `t_fleet` VALUES ('6', '这是广州市花都车队', '花都车队', '12458', '5');
-INSERT INTO `t_fleet` VALUES ('7', '这是福建车队', '福建车队', '32145', null);
-INSERT INTO `t_fleet` VALUES ('8', '这是西安车队', '西安车队', '87452', null);
-INSERT INTO `t_fleet` VALUES ('9', '这是北京车队', '北京车队', '65487', null);
-INSERT INTO `t_fleet` VALUES ('10', '这是杭州车队', '杭州车队', '45712', null);
-INSERT INTO `t_fleet` VALUES ('11', '这是杭州西湖车队', '西湖车队', '45732', '10');
+INSERT INTO `t_fleet` VALUES ('1', 'fleet_1', 'fleet_1', '21045', null);
+INSERT INTO `t_fleet` VALUES ('2', 'fleet_2', 'fleet_2', '54681', null);
+INSERT INTO `t_fleet` VALUES ('3', 'fleet_1_1', 'fleet_1_1', '21014', '1');
+INSERT INTO `t_fleet` VALUES ('4', 'fleet_2_1', 'fleet_2_1', '54601', '2');
+INSERT INTO `t_fleet` VALUES ('5', 'fleet_1_2', 'fleet_1_2', '12014', '1');
+INSERT INTO `t_fleet` VALUES ('6', 'fleet_1_2_1队', 'fleet_1_2_1', '12458', '5');
+INSERT INTO `t_fleet` VALUES ('7', 'fleet_3', 'fleet_3', '32145', null);
+INSERT INTO `t_fleet` VALUES ('8', 'fleet_4', 'fleet_4', '87452', null);
+INSERT INTO `t_fleet` VALUES ('9', 'fleet_5', 'fleet_5', '65487', null);
+INSERT INTO `t_fleet` VALUES ('10', 'fleet_6', 'fleet_6', '45712', null);
+INSERT INTO `t_fleet` VALUES ('11', 'fleet_6_1', 'fleet_6_1', '45732', '10');
+INSERT INTO `t_fleet` VALUES ('13', 'asdfasdfasd', 'asdfasdf', 'fasdfasdfas', null);
 
 -- ----------------------------
 -- Table structure for `t_gps_data`
@@ -282,27 +271,32 @@ CREATE TABLE `t_gps_data` (
   `time` datetime DEFAULT NULL,
   `device_key` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `device_key` (`device_key`),
-  CONSTRAINT `t_gps_data_ibfk_1` FOREIGN KEY (`device_key`) REFERENCES `t_device` (`device_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+  KEY `device_key` (`device_key`) USING BTREE,
+  CONSTRAINT `t_gps_data_ibfk_1` FOREIGN KEY (`device_key`) REFERENCES `t_device` (`device_key`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6887 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_gps_data
 -- ----------------------------
-INSERT INTO `t_gps_data` VALUES ('2', '2012-05-21 18:13:16', '0', '', '32255.02633334452', '19621.54623058727', '0', '2012-05-05 18:13:43', '2');
-INSERT INTO `t_gps_data` VALUES ('3', '2012-05-29 18:13:49', '0', '', '34335.05990134846', '11791.630077000329', '0', '2012-05-05 18:14:14', '1');
-INSERT INTO `t_gps_data` VALUES ('4', '2012-05-31 18:14:41', '1', '', '29103.997955436043', '30491.43855029164', '0', '2012-05-05 18:14:46', '3');
-INSERT INTO `t_gps_data` VALUES ('5', '2012-05-31 18:14:56', '2', '', '29023.92910103239', '29795.223290425536', '0', '2012-05-05 18:15:36', '4');
-INSERT INTO `t_gps_data` VALUES ('6', '2012-05-09 18:15:42', '3', '', '34326.98701124093', '33399.50823299224', '0', '2012-05-05 18:16:06', '5');
-INSERT INTO `t_gps_data` VALUES ('7', '2012-05-22 18:16:16', '1', '', '32275.86079115839', '15826.84926458007', '0', '2012-05-05 18:16:45', '6');
-INSERT INTO `t_gps_data` VALUES ('14', '2012-05-22 21:01:51', '1', '', '38182.94029196476', '10362.993039289997', '4', '2012-05-22 21:02:03', '001190251');
-INSERT INTO `t_gps_data` VALUES ('15', '2012-05-23 21:03:11', '2', '', '30157.030248655934', '30062.028758860608', '1', '2012-05-23 21:03:02', '001014182');
-INSERT INTO `t_gps_data` VALUES ('16', '2012-05-24 21:03:16', '1', '', '30064.52288440419', '31066.75143105303', '2', '2012-05-24 21:03:41', 'B5143913');
-INSERT INTO `t_gps_data` VALUES ('17', '2012-05-25 21:03:20', '1', '', '32838.974413581454', '29191.01194041832', '3', '2012-05-25 21:03:45', 'B5155298');
-INSERT INTO `t_gps_data` VALUES ('18', '2012-05-26 21:03:23', '0', '', '31656.375504605094', '12921.52432633214', '1', '2012-05-26 21:03:50', '001001003');
-INSERT INTO `t_gps_data` VALUES ('19', '2012-05-27 21:03:26', '0', '', '30016.37496343437', '20208.790753623536', '2', '2012-05-27 21:03:54', '001067110');
-INSERT INTO `t_gps_data` VALUES ('20', '2012-05-28 21:03:31', '3', '', '36102.84347778058', '34765.206346922685', '3', '2012-06-08 21:03:58', 'B5143706');
-INSERT INTO `t_gps_data` VALUES ('21', '2012-05-05 22:58:23', '0', '', '36162.84347778058', '32765.206346922685', '69', '2012-05-05 22:58:59', 'amk');
+INSERT INTO `t_gps_data` VALUES ('6868', '2012-05-10 12:18:44', '2', '', '40619.21292882459', '24837.219182566965', '25', '2012-05-10 12:18:44', '2');
+INSERT INTO `t_gps_data` VALUES ('6869', '2012-05-10 12:18:44', '2', '', '34478.469983651434', '15715.084055329364', '92', '2012-05-10 12:18:44', '1');
+INSERT INTO `t_gps_data` VALUES ('6870', '2012-05-10 12:18:44', '3', '', '31583.791504020886', '25390.04170514252', '4', '2012-05-10 12:18:44', '4');
+INSERT INTO `t_gps_data` VALUES ('6871', '2012-05-10 12:18:44', '2', '', '39253.48377966087', '28851.900570052145', '37', '2012-05-10 12:18:44', '3');
+INSERT INTO `t_gps_data` VALUES ('6872', '2012-05-10 12:18:44', '0', '', '41762.09815628034', '30385.343656966405', '36', '2012-05-10 12:18:44', '5');
+INSERT INTO `t_gps_data` VALUES ('6873', '2012-05-10 12:18:44', '3', '', '29939.230924671552', '30510.171468501016', '43', '2012-05-10 12:18:44', '6');
+INSERT INTO `t_gps_data` VALUES ('6874', '2012-05-10 12:18:44', '0', '', '36837.2299970613', '15552.066911512553', '57', '2012-05-10 12:18:44', '001190251');
+INSERT INTO `t_gps_data` VALUES ('6875', '2012-05-10 12:18:44', '3', '', '32711.604106009436', '15063.397385429631', '23', '2012-05-10 12:18:44', '001014182');
+INSERT INTO `t_gps_data` VALUES ('6876', '2012-05-10 12:18:44', '3', '', '33726.01908914276', '16947.77449339053', '3', '2012-05-10 12:18:44', 'B5143913');
+INSERT INTO `t_gps_data` VALUES ('6877', '2012-05-10 12:18:44', '2', '', '34961.525740851815', '37781.28449714766', '7', '2012-05-10 12:18:44', 'B5155298');
+INSERT INTO `t_gps_data` VALUES ('6878', '2012-05-10 12:18:44', '3', '', '34095.30140241568', '11552.523045525102', '92', '2012-05-10 12:18:44', '001001003');
+INSERT INTO `t_gps_data` VALUES ('6879', '2012-05-10 12:18:44', '2', '', '39076.47626835314', '16668.670915207127', '40', '2012-05-10 12:18:44', '001067110');
+INSERT INTO `t_gps_data` VALUES ('6880', '2012-05-10 12:18:44', '2', '', '34748.465382602204', '33593.00913811517', '53', '2012-05-10 12:18:44', 'B5143706');
+INSERT INTO `t_gps_data` VALUES ('6881', '2012-05-10 12:18:44', '3', '', '44045.72077493404', '17821.148058249484', '12', '2012-05-10 12:18:44', 'amk');
+INSERT INTO `t_gps_data` VALUES ('6882', '2012-05-10 12:18:44', '3', '', '29342.391009693907', '37877.660095590836', '75', '2012-05-10 12:18:44', 'bbk');
+INSERT INTO `t_gps_data` VALUES ('6883', '2012-05-10 12:18:44', '2', '', '35601.78564180356', '29355.987188912535', '48', '2012-05-10 12:18:44', 'cck');
+INSERT INTO `t_gps_data` VALUES ('6884', '2012-05-10 12:18:44', '3', '', '37930.08918914029', '37253.48422898581', '32', '2012-05-10 12:18:44', 'clm');
+INSERT INTO `t_gps_data` VALUES ('6885', '2012-05-10 12:18:44', '1', '', '29672.731287523544', '22316.811808904276', '62', '2012-05-10 12:18:44', 'hou');
+INSERT INTO `t_gps_data` VALUES ('6886', '2012-05-10 12:18:44', '2', '', '42802.26952081686', '16241.63520078868', '85', '2012-05-10 12:18:44', 'jur');
 
 -- ----------------------------
 -- Table structure for `t_schedule`
@@ -319,8 +313,8 @@ CREATE TABLE `t_schedule` (
   PRIMARY KEY (`id`),
   KEY `FK8D130602EE73B744` (`vehicle_number`),
   KEY `FK8D130602A06578C` (`driver_number`),
-  CONSTRAINT `t_schedule_ibfk_1` FOREIGN KEY (`vehicle_number`) REFERENCES `t_vehicle` (`number`) ON UPDATE CASCADE,
-  CONSTRAINT `FK8D130602A06578C` FOREIGN KEY (`driver_number`) REFERENCES `t_driver` (`number`)
+  CONSTRAINT `FK8D130602A06578C` FOREIGN KEY (`driver_number`) REFERENCES `t_driver` (`number`),
+  CONSTRAINT `t_schedule_ibfk_1` FOREIGN KEY (`vehicle_number`) REFERENCES `t_vehicle` (`number`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -392,11 +386,11 @@ CREATE TABLE `t_vehicle` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `cctv_ip` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `license` varchar(255) DEFAULT NULL,
+  `license` varchar(255) NOT NULL,
   `type` varchar(255) DEFAULT NULL,
   `device_id` bigint(20) DEFAULT NULL,
   `fleet_id` bigint(20) DEFAULT NULL,
-  `number` varchar(255) DEFAULT NULL,
+  `number` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `license` (`license`),
   UNIQUE KEY `number` (`number`),
@@ -404,7 +398,7 @@ CREATE TABLE `t_vehicle` (
   KEY `FKCFF58261A1D5461E` (`device_id`),
   CONSTRAINT `FKCFF58261116C3656` FOREIGN KEY (`fleet_id`) REFERENCES `t_fleet` (`id`),
   CONSTRAINT `FKCFF58261A1D5461E` FOREIGN KEY (`device_id`) REFERENCES `t_device` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_vehicle
@@ -423,3 +417,9 @@ INSERT INTO `t_vehicle` VALUES ('12', '102.210.45.41', 'vehicle11', 'BZ00006', '
 INSERT INTO `t_vehicle` VALUES ('13', '102.210.45.41', 'vehicle12', 'BZ00007', 'car', '86', '3', 'vehicle12');
 INSERT INTO `t_vehicle` VALUES ('14', '102.210.45.41', 'vehicle13', 'HZ00013', 'bus', '89', '5', 'vehicle13');
 INSERT INTO `t_vehicle` VALUES ('15', '102.210.45.41', 'vehicle14', 'HZ00014', 'bus', '91', '6', 'vehicle14');
+INSERT INTO `t_vehicle` VALUES ('16', '102.210.45.41', 'vehicle15', 'HZ00015', 'bus', '92', '6', 'vehicle15');
+INSERT INTO `t_vehicle` VALUES ('17', '102.210.45.41', 'vehicle16', 'HS00014', 'car', '93', '6', 'vehicle16');
+INSERT INTO `t_vehicle` VALUES ('18', '102.210.45.41', 'vehicle17', 'HS00002', 'car', '94', '5', 'vehicle17');
+INSERT INTO `t_vehicle` VALUES ('20', '102.210.45.41', 'vehicle18', 'HW0012', 'bus', '95', '3', 'vehicle18');
+INSERT INTO `t_vehicle` VALUES ('21', '102.210.45.41', 'vehicle19', 'SS00245', 'car', '96', '3', 'vehicle19');
+INSERT INTO `t_vehicle` VALUES ('22', '102.210.45.41', 'vehicle20', 'SS01245', 'car', '97', '3', 'vehicle20');
