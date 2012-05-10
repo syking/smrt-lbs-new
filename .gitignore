@@ -12,3 +12,9 @@ eclipse
 /vms.iml
 /vms.ipr
 /vms.iws
+/.idea
+/conf/application.conf
+/smrt-lbs-new.ipr
+/hs_err_pid3560.log
+/smrt-lbs-new.iml
+/.idea
