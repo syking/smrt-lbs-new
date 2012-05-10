@@ -102,8 +102,8 @@
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        driverName: { type: "string", validation: { required: true } },
-                        date: { validation: {required: true} },
+                        driverName: { validation: { required: true } },
+                        date: { type: "date", validation: {required: true} },
                         startTime: { validation: { required: true } },
                         endTime: { validation: { required: true } },
                         remark: { validation: { required: false } },
@@ -115,6 +115,7 @@
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Actions", width: "210px" };
 		//columnsJson[0] = { field: "driverName", title: "Driver", editor: categoryDropDownEditor };
+		//columnsJson[1] = { field: "date", title: "Date", format: "{0:yyyy-MM-dd}" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
@@ -124,7 +125,7 @@
             editable: "${grid.editable}"
         });
         
-        var categoryDataSource = new kendo.data.DataSource({
+        /*var categoryDataSource = new kendo.data.DataSource({
             //type: "odata",
             transport: {
             	url: "MyCounsellings/driverList"
@@ -140,7 +141,7 @@
                     autoBind: false,
                     dataSource: categoryDataSource
                 });
-        }
+        }*/
         
     }
    

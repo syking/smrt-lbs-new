@@ -71,8 +71,8 @@ public class VehicleService
             Schedule schedule = Schedule.find("vehicle_number = ? order by id desc", v.number).first();
             if (schedule == null)
             {
-                vGps.driver = "不在排班计划内";
-                vGps.serviceNumber = "不在排班计划内";
+            	vGps.driver = "driver001";
+				vGps.serviceNumber = "route001";
             } else
             {
                 vGps.driver = schedule.driver.name;
