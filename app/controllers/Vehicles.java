@@ -310,4 +310,13 @@ public class Vehicles extends Controller
         Gson gson = new Gson();
         return gson.fromJson(json, Vehicle.class);
     }
+
+    public static void tree() {
+
+        String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTree());
+        Map map = new HashMap();
+        map.put("treeData", vehicleJson);
+        renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/tree.html")).render(map));
+
+    }
 }

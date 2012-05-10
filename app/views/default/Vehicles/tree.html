@@ -1,0 +1,11 @@
+<div id="treeView"></div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("#treeView").kendoTreeView({
+            dataSource: #{verbatim} ${treeData} #{/verbatim}
+        })
+    });
+
+</script>
