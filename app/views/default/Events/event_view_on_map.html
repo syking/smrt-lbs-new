@@ -29,8 +29,8 @@ $(document).ready(function(){
 	view_on_map_splitter = $("#view-on-map-splitter").kendoSplitter({
 		orientation: "vertical",
 		panes: [
-            { collapsible: false, resizable: true, min: "233px", width: "100%" },//up
-            { collapsible: false, size: "80px", min: "80px", width: "100%"}//bottom down
+            { collapsible: false, resizable:false},//up
+            { collapsible: false,resizable:false, size: "35px", min: "35px"}//bottom down
         ],
         resize:function(e){
             //第一次加载时不需要resize
@@ -41,7 +41,7 @@ $(document).ready(function(){
         }
 	}).data("kendoSplitter");
 	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo:'',eventId: $.getUrlParam('eventId')}) + "')");
-	autoShowInfoWindow($.getUrlParam('eventId'));
+	autoShowInfoWindow($.getUrlParam('eventId'), 1);
 	
 });
 

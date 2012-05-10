@@ -4,19 +4,12 @@ import static models.User.Constant.THEME;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONObject;
-import org.postgresql.core.Parser;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import models.Counselling;
 import models.Driver;
-import models.Event;
-import models.EventRecord;
 import models.User;
 import play.data.validation.Required;
 import play.mvc.Controller;
@@ -25,19 +18,14 @@ import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
 import vo.CounselVO;
-import vo.EventVO;
 import vo.Grid;
 
 @With(Interceptor.class)
-public class Counsellings extends Controller {
+public class MyCounsellings extends Controller{
+	public static void mycounsels() throws ParseException{
 
-	/*public static void index() {
-		render(renderArgs.get(THEME) + "/Counsels/index.html");
-	}*/
-
-	public static void counsel() throws ParseException {	
 		List<CounselVO> result = new ArrayList<CounselVO>();
-		List<Counselling> counsellings = Counselling.findAll();
+		List<Counselling> counsellings = Counselling.find("byUser", renderArgs.get("user")).fetch();
 		if (counsellings == null)
 			renderJSON("");
 		
@@ -45,55 +33,55 @@ public class Counsellings extends Controller {
 			result.add(new CounselVO().init(c));
 		}
 		renderJSON(result);
-	}	
-
-	public static void search(long username, long driverName,
-			String date, String startTime, String endTime) throws ParseException {
 		
-		User user = User.find("id = ?", username).first();
-		Driver driver = Driver.find("id = ?", driverName).first();
+	}
+	
+	public static void mysearch(long driverId, String date, String startTime, String endTime) throws ParseException{
+		System.out.println(driverId+"|"+date+"|"+startTime+"|"+endTime);
+		Driver driver = Driver.find("id = ?", driverId).first();
+		
+		User user = (User)renderArgs.get("user");
 		Counselling coun = new Counselling();
-		List<Counselling> counsellings = coun.getCounsellings(user, driver, date,
-				startTime, endTime, user!=null?user.name:"", driver!=null?driver.name:"");
+		List<Counselling> counsellings = coun.getCounsellings(user, driver, 
+				date, startTime, endTime, user.name, driver!=null?driver.name:"");
 		
 		List<CounselVO> result = new ArrayList<CounselVO>();
 		for (Counselling counselling : counsellings){
 			result.add(new CounselVO().init(counselling));
 		}
-        
 		renderJSON(result);
 	}
-
-	public static void saveCounselling(String models) throws ParseException {
+	
+	public static void saveMyCounsel(String models) throws ParseException{
+		System.out.println(models);
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 
-		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
 		String date = jo.getString("date");
 		String startTime = jo.getString("startTime");
 		String endTime = jo.getString("endTime");
 		String remark = jo.getString("remark");
 	
-		boolean flag = compareTime(startTime, endTime);
+		boolean flag = Counsellings.compareTime(startTime, endTime);
 		if (flag) {
-			User user = User.find("byName", userName).first();
+			User user = (User)renderArgs.get("user");
 			Driver driver = Driver.find("byName", driverName).first();
 			new Counselling(user, date, startTime, endTime, remark, driver).save();
 		} else {
 			renderJSON("{\"error\":\"#_error_#\"}");
 		}
 	}
-
-	public static void deleteCounsel(String models) {
+	public static void deleteCounsel(String models){
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");
 		Counselling c = Counselling.find("id = ?", id).first();
 		c.delete();
-	}
-
-	public static void updateCounsel(String models) throws ParseException {
+    }
+	
+	public static void updateCounsel(String models) throws ParseException{
+		System.out.println(models);
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");
@@ -107,7 +95,7 @@ public class Counsellings extends Controller {
 		User user = User.find("byName", userName).first();
 		Driver driver = Driver.find("byName", driverName).first();
 		
-		boolean flag = compareTime(startTime, endTime);
+		boolean flag = Counsellings.compareTime(startTime, endTime);
 		if (flag) {
 			Counselling oldCoun = Counselling.findById(id);
 			if (oldCoun != null) {
@@ -125,29 +113,17 @@ public class Counsellings extends Controller {
 			renderJSON("{\"error\":\"#_error_#\"}");
 		}
 	}
-
-	public static boolean compareTime(String start, String end) {
-		boolean flag = false;
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-		try {
-			if (df.parse(start).before(df.parse(end))) {
-				flag = true;
-			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return flag;
+	
+	public static void driverList(){
+		List<Driver> drivers = Driver.findAll();
+		System.out.println("Drivers: " + drivers.size());
+		renderJSON(drivers);
 	}
-
+	
 	public static void grid(String id) {
-		final String preUrl = "/Counsellings/";
-		List<User> userList = User.findAll();
-		List<ComboVO> users = new ArrayList<ComboVO>();
-		if (userList != null)
-    		for (User user : userList){
-    			users.add(new ComboVO(user.name, user.id));
-    		}
+		System.out.println("====================  "+id);
+		final String preUrl = "/MyCounsellings/";
+
 		List<Driver> drList = Driver.findAll();
     	List<ComboVO> drivers = new ArrayList<ComboVO>();
     	if (drList != null)
@@ -159,20 +135,19 @@ public class Counsellings extends Controller {
 		Map map = new HashMap();
 		Grid grid = new Grid();
 		grid.tabId = id;
-		grid.createUrl = preUrl + "saveCounselling";
+		grid.createUrl = preUrl + "saveMyCounsel";
 		grid.updateUrl = preUrl + "updateCounsel";
 		grid.destroyUrl = preUrl + "deleteCounsel";
-		grid.readUrl = preUrl + "counsel";
+		grid.readUrl = preUrl + "mycounsels";
 		grid.searchUrl = preUrl + "search";
 		grid.editable = "inline";
 		grid.columnsJson = CommonUtil.getGson().toJson(
-				CommonUtil.assemColumns(CounselVO.class, "id"));
+				CommonUtil.assemColumns(CounselVO.class, "id", "userName"));
 		map.put("grid", grid);
     	map.put("drivers", CommonUtil.getGson().toJson(drivers));
-    	map.put("users", CommonUtil.getGson().toJson(users));
     	
 		renderHtml(TemplateLoader.load(
-				template(renderArgs.get(THEME) + "/Counsels/grid.html"))
+				template(renderArgs.get(THEME) + "/MyCounsels/grid.html"))
 				.render(map));
 	}
 }
