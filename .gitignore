@@ -12,3 +12,5 @@ eclipse
 /vms.iml
 /vms.ipr
 /vms.iws
+/esri.ux.layers.ClusterLayer-debug.js
+/conf/application.conf
