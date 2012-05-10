@@ -1,0 +1,144 @@
+<style>
+
+	.k-content{
+		background:#f3f3f3;
+	}
+	
+    .k-autocomplete{
+    }
+    
+    .info{
+    	border:none;
+        padding: 3px 5px 7px 5px;
+        display:inline-block;
+        width:120px;
+        text-align:right;
+    }
+</style>
+<form action="/counsellings/search" method="post" class="k-content search-wrap" onsubmit="return counselSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	
+	<label for="user" class="info" style="width:80px;">User Name:</label>
+	<input name="username" id="username"/>
+	
+	<label for="driverName" class="info" >Driver Name:</label>
+	<input name="driverName" id="driverName"/>
+	
+	<div style="height:8px"></div>
+	
+	<label for="date" class="info" style="width:80px;">Date:</label>
+	<input name="date" id="date"/>
+	
+	<label for="startTime" class="info" style="width:80px;margin-left:44px;">Start Time:</label>
+	<input name="startTime" id="start_time"/>
+	
+	<label for="endTime" class="info">End Time:</label>
+	<input name="endTime" id="end_time"/>
+	
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="search-button" class="k-button" value="Search" />
+	</div>
+	
+</form>
+
+<div id="grid_${grid.tabId}"></div>
+
+<script>
+    $(document).ready(function () {
+    	
+    	loadCounsels("${grid.readUrl}");
+        
+        $("#username").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: #{verbatim} ${users} #{/verbatim}
+        });
+    	
+        $("#driverName").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: #{verbatim} ${drivers} #{/verbatim}
+        });
+        
+        $("#date").kendoDatePicker({
+        	format: "yyyy-MM-dd"		
+        });
+        
+        $("#start_time").kendoTimePicker({
+        	format: "HH:mm:ss"		
+        });
+        
+        $("#end_time").kendoTimePicker({
+        	format: "HH:mm:ss"		
+        });
+    });
+    
+    function loadCounsels(url, params){
+    	$("#grid_${grid.tabId}").empty();
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  {
+                    url: url,
+                    dataType: "json"
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    dataType: "json"
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    dataType: "json"
+                },
+                search: {
+                    url: "${grid.searchUrl}",
+                    dataType: "json"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    
+                    return params;
+                }
+            },
+            batch: true,
+            pageSize: 20,
+            schema: {
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        userName: { validation: { required: true } },
+                        driverName: { validation: { required: true } },
+                        date: { validation: {required: true} },
+                        startTime: { validation: { required: true } },
+                        endTime: { validation: { required: true } },
+                        remark: { validation: { required: false } },
+                    }
+                }
+            }
+        });
+        
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            height: "auto",
+            toolbar: ["create"],
+            columns: columnsJson,
+            editable: "${grid.editable}"
+        });
+    }
+    
+    function counselSearchValidate(form) {
+    	var $form = $(form);
+    	
+    	loadCounsels($form.attr("action"), $form.serializeArray());
+    	
+    	return false;
+    }
+</script>

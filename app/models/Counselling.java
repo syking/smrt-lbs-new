@@ -1,9 +1,7 @@
 package models;
 
 import play.db.jpa.Model;
-
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -21,6 +19,7 @@ public class Counselling extends Model{
 	@Column(name = "start_time")
 	public String startTime;
 	
+	public String date;
 	@Column(name = "end_time")
 	public String endTime;
 
@@ -34,10 +33,11 @@ public class Counselling extends Model{
 		super();
 	}
 
-	public Counselling(User user, String startTime,
+	public Counselling(User user, String date, String startTime,
 			String endTime, String remark, Driver driver) {
 		super();
 		this.user = user;
+		this.date = date;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.remark = remark;
@@ -49,11 +49,9 @@ public class Counselling extends Model{
 	}
 	
 	public List<Counselling> getCounsellings(User user, 
-			Driver driver, String start, String end, String username, String driverName){
-		System.out.println("user: "+user+ " driver: "+driver + 
-				" StartTime: "+ start+" EndTime: "+end);
+			Driver driver, String date, String start, String end, String username, String driverName){
 		
-		String index = "by" + formQuery(user, driver, start, end);
+		String index = "by" + formQuery(user, driver, date, start, end);
 		String sql = "";
 		
 		List<Counselling> counsellings = null;
@@ -83,15 +81,18 @@ public class Counselling extends Model{
 			if(sql.contains("EndTime")){
 				params.add(end);
 			}
+			if(sql.contains("Date")){
+				params.add(date);
+			}
 			Object[] p = params.toArray();
 			counsellings = Counselling.find(sql, p).fetch();
 		}
 		return counsellings;	
 	}
 	
-	public String formQuery(User user, Driver driver, String start, String end){
-		return String.format("%s%s%s%s", user!=null?"AndUser":"",
-				driver!=null?"AndDriver":"", !start.equals("")?"AndStartTime":"", !end.equals("")?"AndEndTime":"");
+	public String formQuery(User user, Driver driver, String date, String start, String end){
+		return String.format("%s%s%s%s%s", user!=null?"AndUser":"",
+				driver!=null?"AndDriver":"", !date.equals("")?"AndDate":"", !start.equals("")?"AndStartTime":"", !end.equals("")?"AndEndTime":"");
 	}
 
 	public static long counselSize() {

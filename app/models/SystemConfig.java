@@ -9,13 +9,14 @@ import play.db.jpa.Model;
 @Table(name="t_systemconfig")
 public class SystemConfig extends Model{
 	public String name;
-	public int value;
+	public String value;
 	public String displayName;
 	
-	public SystemConfig(String name, int value, String displayName) {
+	public SystemConfig(String name, String value, String displayName) {
 		super();
 		this.name = name;
 		this.value = value;
 		this.displayName = displayName;
 	}
+	
 }
