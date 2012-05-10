@@ -37,6 +37,15 @@ public class Device extends Model {
 	public String misc;
 	
 	public String status;
+
+	@Override
+	public String toString() {
+		return "Device [name=" + name + ", host=" + host + ", key=" + key
+				+ ", alive=" + alive + ", serverUrls=" + serverUrls
+				+ ", action=" + action + ", misc=" + misc + ", status="
+				+ status + "]";
+	}
+	
 	
 	
 }
