@@ -7,16 +7,21 @@
 <div style="float:right; padding-right:20px;">
     <input type="submit" id="search-button" class="k-button" value="Search"/>
 </div>
+
 <div style="height:8px"></div>
 <div id="treeView"></div>
 
 <script type="text/javascript">
+    function loadTree(data) {
+        $("#treeView").kendoTreeView({
+            dataSource:data,
+            dragAndDrop:false
+        });
+    }
+
     $(document).ready(function () {
 
-        $("#treeView").kendoTreeView({
-            dataSource: #{verbatim} ${treeData} #{/verbatim},
-            dragAndDrop:false
-        })
+        loadTree(#{verbatim} ${treeData} #{/verbatim});
 
         $("#fleet_id").kendoComboBox({
             dataTextField:"text",
@@ -26,14 +31,23 @@
 
         $("#search-button").click(function (e) {
             fleetid = $("#fleet_id").val();
-            alert(fleetid);
 
-            var treeView = $("#treeView").data("kendoTreeView");
-            treeView.expand(".k-item");
+            $.getJSON(
+                    "/vehicles/searchTreeByFleet",
+                    {
+                        fleetid:fleetid
+                    },
+                    function (data) {
+                        var treeView = $("#treeView").data("kendoTreeView");
+                        treeView.remove(".k-item");
+                        treeView.append(data);
+                        treeView.expand(".k-item");
+                    }
+            );
 
-            e.preventDefault();
         })
 
     });
+
 
 </script>

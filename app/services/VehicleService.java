@@ -109,6 +109,23 @@ public class VehicleService {
         return result;
     }
 
+    public static List<VehicleTree> assemVehicleTreeByFleet(long fleetid){
+
+        List<VehicleTree> result = new ArrayList<VehicleTree>();
+
+        Fleet fleet = Fleet.findById(fleetid);
+
+            VehicleTree vt = new VehicleTree(String.valueOf(fleet.id), fleet.name);
+            Set<Vehicle> vehicles = fleet.vehicles;
+            for (Vehicle vehicle : vehicles)  {
+                VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(vehicle.id.toString(), vehicle.number);
+                vt.items.add(vtreeLeaf);
+            }
+            result.add(vt);
+
+        return result;
+    }
+
 
     public static void main(String[] args) throws ParseException{
 		Date date = new SimpleDateFormat("m").parse("5");
