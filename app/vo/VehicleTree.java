@@ -8,7 +8,7 @@ public class VehicleTree {
     public String id;
     public String text;
     public boolean expanded = false;
-    public String imageUrl = "../../public/images/bus-32.png";
+    public String imageUrl = "../../public/images/fleet.png";
     public Set<VehicleTreeLeaf> items = new HashSet<VehicleTreeLeaf>();
 
     public VehicleTree(String id, String text) {

@@ -1,32 +1,25 @@
 package controllers;
 
-import static models.User.Constant.THEME;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import net.sf.json.JSONObject;
-import org.postgresql.core.Parser;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import models.Counselling;
 import models.Driver;
-import models.Event;
-import models.EventRecord;
 import models.User;
-import play.data.validation.Required;
+import net.sf.json.JSONObject;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
 import vo.CounselVO;
-import vo.EventVO;
 import vo.Grid;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static models.User.Constant.THEME;
 
 @With(Interceptor.class)
 public class Counsellings extends Controller {

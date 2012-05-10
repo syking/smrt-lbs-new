@@ -22,6 +22,9 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Drivers extends Controller
 {
+//    PropertyConfigurator.configure("../../conf/log4j.properties");
+//    private static Log log = LogFactory.getLog(Driver.class);
+
     public static void search(String number, String name)
     {
         List<String> criteria = new ArrayList<String>(9);
@@ -42,17 +45,12 @@ public class Drivers extends Controller
         List<Driver> driverList = filter(criteria, params);
 
         List<DriverVO> driverVOList = new ArrayList<DriverVO>();
-        for (Driver driver : driverList){
+        for (Driver driver : driverList)
+        {
             driverVOList.add(new DriverVO().init(driver));
         }
 
         renderJSON(driverVOList);
-//
-//        System.out.println(driverList.size() + "===========================");
-//
-//        Map data = CommonUtil.assemGridData(driverVOList, "id");
-//        System.out.println(data);
-//        renderJSON(data);
     }
 
     private static List<Driver> filter(List<String> criteria, List<Object> params)
@@ -62,14 +60,15 @@ public class Drivers extends Controller
         return Driver.find(query, p).fetch();
     }
 
-    public static void listJson(){
+    public static void listJson()
+    {
         List<Driver> drivers = Driver.findAll();
-        if (drivers == null)
-            renderJSON("");
+        if (drivers == null) renderJSON("");
 
         List<DriverVO> driverVOList = new ArrayList<DriverVO>();
 
-        for (Driver d : drivers){
+        for (Driver d : drivers)
+        {
             driverVOList.add(new DriverVO().init(d));
         }
 
@@ -77,8 +76,10 @@ public class Drivers extends Controller
 
         renderJSON(data);
     }
+
     public static void add(String models)
     {
+//        log.info("drivers/add");
         System.out.println("-----models------>" + models);
         Driver driver = jsonStr2JavaObj(models);
         Driver d = new Driver(driver.number, driver.name, driver.description).save();
@@ -133,19 +134,19 @@ public class Drivers extends Controller
 
         List<User> userList = User.findAll();
         List<ComboVO> users = new ArrayList<ComboVO>();
-        if (userList != null)
-            for (User user: userList){
-                users.add(new ComboVO(user.name, user.id));
-            }
+        if (userList != null) for (User user : userList)
+        {
+            users.add(new ComboVO(user.name, user.id));
+        }
         map.put("users", CommonUtil.getGson().toJson(users));
         map.put("grid", grid);
         renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Drivers/grid.html")).render(map));
     }
 
     private static Driver jsonStr2JavaObj(String jsonStr)
-{
-    String json = jsonStr.substring(1, jsonStr.length() - 1);
-    Gson gson = new Gson();
-    return gson.fromJson(json, Driver.class);
-}
+    {
+        String json = jsonStr.substring(1, jsonStr.length() - 1);
+        Gson gson = new Gson();
+        return gson.fromJson(json, Driver.class);
+    }
 }

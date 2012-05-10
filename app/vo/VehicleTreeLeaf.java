@@ -10,7 +10,7 @@ public class VehicleTreeLeaf
 {
     public String id;
     public String text;
-    public String imageUrl = "../../public/images/red-dot.png";
+    public String imageUrl = "../../public/images/vehicle.png";
 
     public VehicleTreeLeaf(String id, String text)
     {
