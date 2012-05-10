@@ -1,5 +1,6 @@
 package controllers;
 
+import com.google.gson.Gson;
 import models.Log;
 import play.mvc.Controller;
 import play.templates.TemplateLoader;
@@ -42,6 +43,12 @@ public class Logs extends Controller
 
     public static void destroy(String models){
         System.out.println("-----modles------>" + models);
+        Log log = jsonStr2JavaObj(models);
+        System.out.println(log.id + "===============");
+        Log lg = Log.findById(log.id);
+        System.out.print("=============" + lg);
+
+        lg.delete();
 
         renderJSON(models);
     }
@@ -70,6 +77,15 @@ public class Logs extends Controller
         }
 
         renderJSON(result);
+    }
+
+    private static Log jsonStr2JavaObj(String jsonStr)
+    {
+        String json = jsonStr.substring(1, jsonStr.length() - 1);
+//        json = "{\"id\":1,\"type\":\"info\",\"name\":\"delete\",\"content\":\"number:13586\",\"action\":\"drivers/delete\",\"userName\":\"weiwei\",\"dateTime\":\"2010-04-30T16:00:00.000Z\"}]";
+        json = "{\"id\":1,\"type\":\"info\",\"name\":\"delete\",\"content\":\"number:13586\",\"action\":\"drivers/delete\",\"user\":1,\"dateTime\":\"2010-04-30T16:00:00.000Z\"}]";
+        Gson gson = new Gson();
+        return gson.fromJson(json, Log.class);
     }
 
 

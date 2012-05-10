@@ -37,7 +37,7 @@
                         name: { validation: { required: true } },
                         content: { validation: { required: true } },
                         action: { validation: { required: true } },
-                        user: { validation: { required: true } },
+                        userName: { validation: { required: true } },
                         dateTime: { type: "Date" ,validation: { required: true } }
                     }
 
@@ -46,12 +46,11 @@
         });
         
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Action", width: "210px" };
+		columnsJson[columnsJson.length] = { command: ["destroy"], title: "Action", width: "150px" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
             height: "auto",
-            toolbar: ["create"],
             columns: columnsJson,
             editable: "${grid.editable}"
         });

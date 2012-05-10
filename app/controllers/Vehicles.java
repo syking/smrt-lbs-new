@@ -199,7 +199,8 @@ public class Vehicles extends Controller
         List<Vehicle> vehicleList = filter(criteria, params);
 
         List<VehiclesVO> vehiclesVOList = new ArrayList<VehiclesVO>();
-        for (Vehicle vehicle : vehicleList){
+        for (Vehicle vehicle : vehicleList)
+        {
             vehiclesVOList.add(new VehiclesVO().init(vehicle));
         }
         renderJSON(vehiclesVOList);
@@ -247,13 +248,7 @@ public class Vehicles extends Controller
         System.out.println("-----modles------>" + models);
         Vehicle vehicle = jsonStr2JavaObj(models);
         Vehicle v = Vehicle.findById(vehicle.id);
-        try
-        {
-            v.delete();
-        } catch (Exception e)
-        {
-            renderJSON("[]");
-        }
+        v.delete();
         renderJSON(models);
     }
 
@@ -282,20 +277,20 @@ public class Vehicles extends Controller
 
         List<Fleet> fleetList = Fleet.findAll();
         List<ComboVO> fleets = new ArrayList<ComboVO>();
-        if (fleetList != null)
-            for (Fleet fleet: fleetList){
-                fleets.add(new ComboVO(fleet.name, fleet.id));
-            }
+        if (fleetList != null) for (Fleet fleet : fleetList)
+        {
+            fleets.add(new ComboVO(fleet.name, fleet.id));
+        }
         map.put("fleets", CommonUtil.getGson().toJson(fleets));
 
 
         //device combobox
         List<Device> deviceList = Device.findAll();
         List<ComboVO> devices = new ArrayList<ComboVO>();
-        if (deviceList != null)
-            for (Device device: deviceList){
-                devices.add(new ComboVO(device.name, device.id));
-            }
+        if (deviceList != null) for (Device device : deviceList)
+        {
+            devices.add(new ComboVO(device.name, device.id));
+        }
         map.put("devices", CommonUtil.getGson().toJson(devices));
 
         map.put("grid", grid);
@@ -309,15 +304,16 @@ public class Vehicles extends Controller
         return gson.fromJson(json, Vehicle.class);
     }
 
-    public static void tree() {
+    public static void tree()
+    {
         Map map = new HashMap();
 
         List<Fleet> fleetList = Fleet.findAll();
         List<ComboVO> fleets = new ArrayList<ComboVO>();
-        if (fleetList != null)
-            for (Fleet fleet: fleetList){
-                fleets.add(new ComboVO(fleet.name, fleet.id));
-            }
+        if (fleetList != null) for (Fleet fleet : fleetList)
+        {
+            fleets.add(new ComboVO(fleet.name, fleet.id));
+        }
         map.put("fleets", CommonUtil.getGson().toJson(fleets));
 
         String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTree());
@@ -325,24 +321,22 @@ public class Vehicles extends Controller
         renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/tree.html")).render(map));
     }
 
-    public static void searchTree(long fleetid, String number) {
+    public static void searchTree(long fleetid, String number)
+    {
         Map map = new HashMap();
 
         List<Fleet> fleetList = Fleet.findAll();
         List<ComboVO> fleets = new ArrayList<ComboVO>();
-        if (fleetList != null)
-            for (Fleet fleet: fleetList){
-                fleets.add(new ComboVO(fleet.name, fleet.id));
-            }
+        if (fleetList != null) for (Fleet fleet : fleetList)
+        {
+            fleets.add(new ComboVO(fleet.name, fleet.id));
+        }
         map.put("fleets", CommonUtil.getGson().toJson(fleets));
 
         String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTreeByFleetidnNumber(fleetid, number));
         System.out.print(vehicleJson + "========================");
         renderJSON(vehicleJson);
     }
-
-
-
 
 
 }

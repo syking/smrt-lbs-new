@@ -12,3 +12,4 @@ eclipse
 /vms.iml
 /vms.ipr
 /vms.iws
+/conf/application.conf
