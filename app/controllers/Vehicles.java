@@ -327,7 +327,7 @@ public class Vehicles extends Controller
         renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/tree.html")).render(map));
     }
 
-    public static void searchTreeByFleet(long fleetid) {
+    public static void searchTree(long fleetid, String number) {
         Map map = new HashMap();
 
         List<Fleet> fleetList = Fleet.findAll();
@@ -338,7 +338,7 @@ public class Vehicles extends Controller
             }
         map.put("fleets", CommonUtil.getGson().toJson(fleets));
 
-        String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTreeByFleet(fleetid));
+        String vehicleJson = new Gson().toJson(VehicleService.assemVehicleTreeByFleetidnNumber(fleetid, number));
         System.out.print(vehicleJson + "========================");
         renderJSON(vehicleJson);
     }

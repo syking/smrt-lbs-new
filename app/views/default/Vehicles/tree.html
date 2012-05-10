@@ -31,11 +31,13 @@
 
         $("#search-button").click(function (e) {
             fleetid = $("#fleet_id").val();
+            number = $("#number").val();
 
             $.getJSON(
-                    "/vehicles/searchTreeByFleet",
+                    "/vehicles/searchTree",
                     {
-                        fleetid:fleetid
+                        fleetid:fleetid,
+                        number:number
                     },
                     function (data) {
                         var treeView = $("#treeView").data("kendoTreeView");
