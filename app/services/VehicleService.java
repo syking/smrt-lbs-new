@@ -6,6 +6,7 @@ import models.Schedule;
 import models.Vehicle;
 import vo.VehicleGPS;
 import vo.VehicleTree;
+import vo.VehicleTreeLeaf;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +46,7 @@ public class VehicleService {
     
 	/**
 	 * 
-	 * @param fleets
+	 * @param vehicles
 	 * @return
 	 */
 	public static List<VehicleGPS> findGPS(List<Vehicle> vehicles){
@@ -99,8 +100,8 @@ public class VehicleService {
             VehicleTree vt = new VehicleTree(String.valueOf(fl.id), fl.name);
             Set<Vehicle> vehicles = fl.vehicles;
             for (Vehicle vehicle : vehicles)  {
-                VehicleTree vtree = new VehicleTree(vehicle.id.toString(), vehicle.number);
-                vt.items.add(vtree);
+                VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(vehicle.id.toString(), vehicle.number);
+                vt.items.add(vtreeLeaf);
             }
             result.add(vt);
         }
