@@ -78,8 +78,8 @@ public class EventService {
 			 * */
 			Schedule schedule = Schedule.find("vehicle_number = ? order by id desc", v.number).first();
 			if (schedule == null){
-				vGps.driver = "0";
-				vGps.serviceNumber = "0";
+				vGps.driver = "driver001";
+				vGps.serviceNumber = "route001";
 			}else{
 				vGps.driver = schedule.driver.name;
 				vGps.serviceNumber = schedule.serviceNumber;
