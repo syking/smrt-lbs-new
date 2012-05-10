@@ -1,0 +1,117 @@
+#{extends theme+'/main.html' /} 
+#{set title:'Counselling' /}
+
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/css/kendo.common.min.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/css/kendo.default.min.css" />
+#{/set}
+
+#{set 'moreScripts'}
+<script src="${static_dir}/js/counsel.js" type="text/javascript" charset="utf-8"></script>
+<script src="${static_dir}/js/kendo.datepicker.min.js" type="text/javascript"></script>
+<script src="${static_dir}/js/kendo.timepicker.min.js" type="text/javascript"></script>
+<script src="${static_dir}/js/kendo.grid.min.js" type="text/javascript"></script>
+<script src="${static_dir}/js/kendo.window.min.js" type="text/javascript"></script>
+<script src="${static_dir}/js/kendo.dropdownlist.min.js" type="text/javascript"></script>
+<script src="${static_dir}/js/kendo.web.min.js" type="text/javascript"></script>
+<script src="${static_dir}/js/systemconfig.js" type="text/javascript"></script>
+#{/set}
+
+<div>
+	#{if flash.error}
+	<p style="color: red">${flash.error}</p>
+	#{/if}
+</div>
+<hr style="margin:5px"/>
+<div id="add-sc">
+	<button id="add-sc">Add a new System Configuration</button>
+</div>
+<hr style="margin:5px"/>
+
+<div id="sc-show" align="center">
+	<table id="sc-table">
+		<tr id="sc-title">
+			<th>Name</th>
+			<th>Value</th>
+			<th>Display Name</th>
+			<th>Action</th>
+		</tr>
+		#{list items : sysConfigs, as : 'sc'}
+			<tr class="sc-row">
+				<td class="sc-name" style="text-align: center;">${sc.name}</td>
+				<td class="account" style="text-align: center;">${sc.value}</td>
+				<td class="diver_name" style="text-align: center;">${sc.displayName}</td>
+				<td class="action" style="text-align: center;">
+					<button class="btn-edit" class="edit" sc_id="${sc.id}">Edit</button>
+					<button class="btn-del" class="delete" sc_id="${sc.id}">Delete</button>
+				</td>
+			</tr>
+		#{/list}
+	</table>
+</div>
+
+<div id="sc-win">
+	#{form @SystemConfigs.create()}
+	<table>
+		<tr>
+			<td><label>Name: </label></td>
+			<td><label><input id="edit-sc-name" name="name" value=""/></label></td>
+		</tr>
+		<tr>
+			<td><label>Value: </label></td>
+			<td><label><input id="edit-sc-value" name="value" value="" /></label></td>
+		</tr>
+		<tr>
+			<td><label>Display Name:</label></td>
+			<td><label><input id="ed-sc-disname" name="displayName" value="" /></label></td>
+		</tr>
+		<button id="create" data-bind="click: create">Create</button>
+	</table>
+	<div data-bind="visible: confirmed">
+		<h4>Confirmation</h4>
+		<div>
+			<button>Close</button>
+		</div>
+	</div>
+	#{/form}
+</div>
+<div id="edit-sc">
+	#{form @SystemConfigs.update()}
+	<table>
+		<tr style="display: none">
+			<td><input id="sc-id" value="" name="id" /></td>
+		</tr>
+		<tr>
+			<td><label>Name:</label></td>
+			<td><label> <input id="edit-sc-name" name="scName" value="" /></label></td>
+		</tr>
+		<tr>
+			<td><label>Value:</label></td>
+			<td><label><input id="edit-sc-value" name="value" value="" /></label></td>
+		</tr>
+		<tr>
+			<td><label>Display Name: </label></td>
+			<td><label><input id="edit-sc-disname" name="disname" value="" /></label></td>
+		</tr>
+		<tr>
+			<button id="edit-sc-btn" data-bind="click: edit">Edit</button>
+		</tr>
+	</table>
+	<div data-bind="visible: confirmed">
+		<h4>Confirmation</h4>
+		<div>
+			<button>Close</button>
+		</div>
+	</div>
+	#{/form}
+</div>
+
+
+
+
+
+
+
+
+
+
