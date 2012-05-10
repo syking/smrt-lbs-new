@@ -30,6 +30,14 @@ public class Events extends Controller {
     }
     
     /**
+     * 给定事件ID
+     * @param eventId
+     */
+    public static void viewEventOnMap(String eventId){
+    	render(renderArgs.get(THEME)+"/Events/event_view_on_map.html");
+    }
+    
+    /**
      * 给定车辆编号，获取该车辆的所有事件信息
      * @param vehicleNo
      */

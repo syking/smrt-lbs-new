@@ -4,9 +4,11 @@ dojo.require("dijit.layout.BorderContainer");
     dojo.require("esri.map");
     var currentBuses;
     var refreshInterval;
-    var refreshIntervalCount =  20 * 1000;
+    var refreshIntervalCount =  10 * 1000;
     var showTextTooltip = true;
     var bindMapinitDataTimeout;
+    var autoShowInfoWindowTimeout;
+    var autoShowInfoWindowCount = 0;
 	
     esriConfig.defaults.map.slider = { left: "15px", top: "10px", width: null, height: "200px" };
 
@@ -110,6 +112,24 @@ dojo.require("dijit.layout.BorderContainer");
 			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+objstr+'")',500);
 		}
 	}
+	
+	function autoShowInfoWindow(id){
+		//frist time will be showCurrentInfoWindow falid
+		if(map.loaded){
+			// if(map.infoWindow.isShowing){
+				// clearTimeout(autoShowInfoWindowTimeout);
+			// }
+			autoShowInfoWindowCount++;
+			if(autoShowInfoWindowCount>1){
+				showCurrentInfoWindow(id);
+				clearTimeout(autoShowInfoWindowTimeout);
+			}else{
+				autoShowInfoWindowTimeout = setTimeout('autoShowInfoWindow("'+id+'")',500);
+			}
+		}else{
+			autoShowInfoWindowTimeout = setTimeout('autoShowInfoWindow("'+id+'")',500);
+		}
+	}
 
     function refreshGraphics(getCurrentDataUrlStr){
         if(currentBuses.length > 0 && map.loaded){
@@ -154,6 +174,9 @@ dojo.require("dijit.layout.BorderContainer");
                 dataType: 'json',
                 success: function(data){
                     currentBuses = data;
+                    if(data == null || data == "" || data.length <1){
+                    	return;
+                    }
                     var newGraphics = generateGraphics(currentBuses);
 					//alert(JSON.stringify(newGraphics.vehicles));
 					//alert(JSON.stringify(newGraphics.vehicles[0].infoTemplate));
@@ -275,6 +298,49 @@ dojo.require("dijit.layout.BorderContainer");
             b.activeStatus = 'off';
         });
     }
+    
+    function hideEventTypeIcon(type){
+    	if (map.infoWindow.isShowing) {
+            map.infoWindow.hide();
+        }
+        
+        $.each(map.clusterLayer.graphics, function(index, g){
+        	if(g.attributes.techName == type){
+            	g.hide();
+           }
+        });
+        $.each(map.tooltipLayer.graphics, function(index, g){
+           if(g.attributes.techName == type){
+            	g.hide();
+           }
+        });
+        $.each(currentBuses, function(index, b){
+        	if(b.techName == type){
+        		b.activeStatus = 'off';
+        	}
+            
+        });
+    }
+    
+    function showEventTypeIcon(type){
+        $.each(map.clusterLayer.graphics, function(index, g){
+        	if(g.attributes.techName == type){
+            	g.show();
+           }
+        });
+        $.each(map.tooltipLayer.graphics, function(index, g){
+           if(g.attributes.techName == type){
+            	g.show();
+           }
+        });
+        $.each(currentBuses, function(index, b){
+        	if(b.techName == type){
+        		b.activeStatus = 'on';
+        	}
+            
+        });
+    }
+    
     function showBusOnly(){
         $.each(currentBuses, function(index, g){
             if(currentBuses[index].vehicleType == "bus"){

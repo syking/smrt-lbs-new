@@ -55,13 +55,12 @@ $(document).ready(function(){
     
     $("#event_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
-        vehicleNo = $(this).parent().parent().find("td:first").html();
+        eventId = $(this).parent().parent().find("td:last").html();
         var w_title = "View Vehicle("+vehicleNo+") Events On Map "
-        
         var wnd = $("#view-on-map-window")
     	.kendoWindow({
     		actions: ["Custom", "Minimize", "Maximize", "Close"],
-    		content: "http://localhost:9000/events/list?vehicleNo=" + vehicleNo +"&random="+Math.random(),
+    		content: "http://"+ window.location.host + "/events/viewEventOnMap?eventId="+eventId,
     		iframe: true,
             modal: true,
             visible: false,
@@ -109,6 +108,7 @@ function loadEvents(url, params){
 	$.getJSON(url, params, function(json){
 		$("#event_grid").empty();
 		json.columns[json.columns.length] = { title: "Actions", width: "110px", command: { text: "View On Map", className: "view-on-map-button" } };
+		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
 		var grid = $("#event_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
