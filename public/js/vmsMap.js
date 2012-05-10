@@ -228,6 +228,12 @@ dojo.require("dijit.layout.BorderContainer");
              var attr;
              var it;
             if(bus.busPlateNumber){
+            	if($("#ShowBus").attr("checked") != "checked" && bus.vehicleType == "bus"){
+					bus.activeStatus = "off";
+				}
+				if($("#ShowCar").attr("checked") != "checked" && bus.vehicleType == "car"){
+					bus.activeStatus = "off";
+				}
             	attr = {
             	id:bus.id,
                 xCoord:bus.xCoord,
@@ -343,6 +349,50 @@ dojo.require("dijit.layout.BorderContainer");
             
         });
     }
+    
+    function showVehicleIcon(vehicleType){
+        $.each(currentBuses, function(index, g){
+            if(currentBuses[index].vehicleType == vehicleType){
+                currentBuses[index].activeStatus = 'on';
+            }
+        });
+
+        $.each(map.clusterLayer.graphics, function(index, g){
+            if(typeof g.attributes != 'undefined' && typeof g.attributes.vehicleType != 'undefined' && g.attributes.vehicleType == vehicleType){
+                g.show();
+            }
+        });
+
+        $.each(map.tooltipLayer.graphics, function(index, g){
+            if(g.attributes.vehicleType == vehicleType){
+                g.show();
+            }
+        });
+    }
+    
+    function hideVehicleIcon(vehicleType){
+    	if (map.infoWindow.isShowing) {
+            map.infoWindow.hide();
+        }
+        $.each(currentBuses, function(index, g){
+            if(currentBuses[index].vehicleType == vehicleType){
+                currentBuses[index].activeStatus = 'off';
+            }
+        });
+
+        $.each(map.clusterLayer.graphics, function(index, g){
+            if(typeof g.attributes != 'undefined' && typeof g.attributes.vehicleType != 'undefined' && g.attributes.vehicleType == vehicleType){
+                g.hide();
+            }
+        });
+
+        $.each(map.tooltipLayer.graphics, function(index, g){
+            if(g.attributes.vehicleType == vehicleType){
+                g.hide();
+            }
+        });
+    }
+    
     
     function showBusOnly(){
         $.each(currentBuses, function(index, g){

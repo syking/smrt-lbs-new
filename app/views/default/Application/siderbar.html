@@ -1,17 +1,17 @@
 <div class="configuration k-widget k-header" style="padding:10px; margin-bottom:5px;">
     <span class="configHead">Display</span>
     <ul class="options">
-        <li>
+        <!--li>
             <input id="BusStop" type="checkbox" style="width:15px"/> <label for="BusStop">Bus stop</label>
         </li>
         <li>
             <input id="Depot" type="checkbox" style="width:15px" /> <label for="Depot">Depot</label>
+        </li-->
+        <li>
+            <input id="ShowCar" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowCar">Show Car</label>
         </li>
         <li>
-            <input id="BusNumber" type="checkbox" style="width:15px" checked="checked" /> <label for="BusNumber">Bus number</label>
-        </li>
-        <li>
-            <input id="ShowBus" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowBus">Show bus</label>
+            <input id="ShowBus" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowBus">Show Bus</label>
         </li>
     </ul>
 </div>
@@ -71,6 +71,21 @@ $(document).ready(function() {
 	        decimals: 1
 	    });
 	    
+	    $("#ShowBus").click(function(e){
+	    	if($(this).attr("checked") == "checked"){
+				showVehicleIcon("bus");
+			}else{
+				hideVehicleIcon("bus");
+			}
+	    });
+	    
+	    $("#ShowCar").click(function(e){
+	    	if($(this).attr("checked") == "checked"){
+				showVehicleIcon("car");
+			}else{
+				hideVehicleIcon("car");
+			}
+	    });
 });
 
 </script>
