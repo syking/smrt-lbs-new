@@ -60,7 +60,7 @@ public class Interceptor extends Controller {
         if (!success)
         	 map.put("message", play.i18n.Messages.get("login-unsuccessful"));
         
-        Cache.set(LOGIN_USER_ATTR, loginUser, LOGIN_ACTIVE_TIME);
+        Cache.set(LOGIN_USER_ATTR, loginUser);
        
         map.put("authenticate", success);
         map.put("redirectUrl", "/");
