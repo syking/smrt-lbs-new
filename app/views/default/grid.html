@@ -1,0 +1,59 @@
+<div id="grid_${grid.tabId}"></div>
+
+<script>
+    $(document).ready(function () {
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  {
+                    url: "${grid.readUrl}",
+                    dataType: "json"
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    dataType: "json"
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    dataType: "json"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                }
+            },
+            batch: true,
+            pageSize: 20,
+            schema: {
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        driver: { validation: { required: true } },
+                        serviceNo: { validation: { required: true } },
+                        time: { validation: { required: true } },
+                        type: { validation: { required: true } },
+                        lat: { validation: { required: true } },
+                        lng: { validation: { required: true } }
+                    }
+
+                }
+            }
+        });
+        
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            height: "auto",
+            toolbar: ["create"],
+            columns: columnsJson,
+            editable: "${grid.editable}"
+        });
+    });
+</script>

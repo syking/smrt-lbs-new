@@ -1,0 +1,193 @@
+<form action="/drivers/search" method="post" class="k-content search-wrap" onsubmit="return driverSearchValidate(this)"
+      style="padding:20px 0 10px 10px;">
+
+    <label class="info" style="width:80px;">Name:</label>
+    <input name="name" id="name"/>
+
+    <label class="info">Number:</label>
+    <input name="number" id="number"/>
+
+    <label class="info">Description:</label>
+    <input name="description" id="description"/>
+
+    <div style="float:right; padding-right:20px;">
+        <input type="submit" id="search-button" class="k-button" value="Search"/>
+    </div>
+
+</form>
+
+<div id="${grid.tabId}_grid"></div>
+
+<div id="win">
+    <form id="counselling-form">
+        <table>
+            <tr>
+                <td>
+                    <label>Hosted by: </label>
+                </td>
+                <td>
+                    <input id="user_ComboBox"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Session for: </label>
+                </td>
+                <td>
+                    <input id="driver_name" readonly/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Date:</label>
+                </td>
+                <td>
+                    <input id="date"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Start Time: </label>
+                </td>
+                <td>
+                    <input id="starttime"/>
+                </td>
+                <td>
+                    <label>End Time:</label>
+                    <input id="endtime"/>
+
+                </td>
+            </tr>
+            <tr>
+                <td><label>Remark:</label></td>
+                <td><textarea id="remark"></textarea></td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="create-btn" class="k-button">Create</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script>
+
+        loadDrivers("drivers/read");
+    var sessionfor = "";
+    $(document).ready(function () {
+
+
+        $("#${grid.tabId}_grid").delegate(".create-counsel", "click", function (e) {
+//            alert("create counsel");
+            $("#win").show().kendoWindow({
+                        actions:["Refresh", "Maximize", "Minimize", "Close"],
+                        draggable:true,
+                        height:"300px",
+                        modal:true,
+                        resizable:false,
+                        title:"Create Counselling",
+                        width:"600px"
+                    }
+            ).data("kendoWindow").center().open();
+            sessionfor = $(this).parent().parent().find("td:first").next().html();
+            $("#driver_name").val(sessionfor);
+        });
+
+        $("#create-btn").click(function (e) {
+            $.get(
+                    "Counsellings/saveCounselling",
+                    {
+                        username:$("#user_dropDownList").val(),
+                        driverName:$("#driver_name").val(),
+                        date:$("#date").val(),
+                        start:$("#starttime").val(),
+                        end:$("#endtime").val(),
+                        remark:$("#remark").val()
+
+                    },
+                    function (data) {
+
+                    }
+            );
+            alert("Successful to create a counselling for " + sessionfor);
+            $("#win").data("kendoWindow").close();
+            e.preventDefault();
+        });
+
+        $("#win").hide();
+        $("#user_ComboBox").kendoComboBox({
+            dataTextField:"text",
+            dataValueField:"value",
+            dataSource: #{verbatim} ${users} #{/verbatim}
+        });
+
+        // DatePicker, TimePicker
+        $("#date").kendoDatePicker();
+        $("#starttime,#endtime").kendoTimePicker({
+            interval:15
+        });
+    });
+
+    function loadDrivers(url, params) {
+            var dataSource = new kendo.data.DataSource({
+                transport:{
+                    read:{
+                        url:url,
+                        dataType:"json"
+                    },
+                    update:{
+                        url:"${grid.updateUrl}",
+                        dataType:"json"
+                    },
+                    destroy:{
+                        url:"${grid.destroyUrl}",
+                        dataType:"json"
+                    },
+                    create:{
+                        url:"${grid.createUrl}",
+                        dataType:"json"
+                    },
+                    parameterMap:function (options, operation) {
+                        if (operation !== "read" && options.models) {
+                            return {models:kendo.stringify(options.models)};
+                        }
+                        return params;
+                    }
+                },
+                batch:true,
+                pageSize:18,
+                schema:{
+                    model:{
+                        id:"id",
+                        fields:{
+                            id:{ editable:false, nullable:true },
+                            //number 涓嶅彲浠ョ紪杈戯紝浣嗘槸add鐨勬椂鍊欏彲浠ョ紪杈�
+                            number:{ type:"string", validation:{ required:true } },
+                            name:{ type:"string", validation:{ required:true } },
+                            description:{ type:"string", validation:{ required:true }}
+                        }
+                    }
+                }
+            });
+        $("#drivers_grid").empty();
+            var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+            columnsJson[columnsJson.length] = { command:["edit", "destroy", {text:"Create Counsel", className:"create-counsel"}], title:"Actions", width:"300px" };
+            $("#${grid.tabId}_grid").kendoGrid({
+                dataSource:dataSource,
+                pageable:true,
+                scrollable:true,
+                sortable:true,
+                height:"auto",
+                toolbar:["create"],
+                columns:columnsJson,
+                editable:"${grid.editable}"
+            });
+    }
+
+    function driverSearchValidate(form) {
+        var $form = $(form);
+        loadDrivers($form.attr("action"), $form.serializeArray());
+        return false;
+    }
+</script>

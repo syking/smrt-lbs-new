@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/css/website.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/${theme}/css/${theme}.css" />
+        #{get 'moreStyles' /}
+        <link rel="shortcut icon" type="image/png" href="${static_dir}/${theme}/images/favicon.png">
+        <script src="${static_dir}/js/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/menu.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/json2.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            var base='${base}';
+            var theme='${theme}';
+            var apibase='${apibase}';
+            var language='${language}';
+        </script>
+        <script src="${static_dir}/js/definition.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/common.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/jquery.jqote2.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/jquery.pagination.js" type="text/javascript" charset="utf-8"></script>
+        #{get 'moreScripts' /}
+    </head>
+    <body>
+        <div class="body-wrap">
+
+            <div id="header" class="header background-image">
+                <div class="header-wrap">
+                    <div class="logo background-image"></div>
+                </div>
+            </div>
+
+            <div id="login" class="content">
+                <div class="content-wrap">
+                    #{doLayout /}
+                </div>
+            </div>
+            <div id="message_box" class="pop-success">
+                <div id="close_message" class="close_message_btn background-image"></div>
+                <div id="message_img" class="pop-info-icon pop-info-icon-success background-image"></div>
+                <span></span>
+            </div>
+
+            <div id="footer" class="footer background-image copy-text">
+                <div id="message_box" class="pop-success">
+                    <div id="close_message" class="close_message_btn background-menu"></div>
+                    <div id="message_img" class="pop-info-icon pop-info-icon-success background-menu"></div>
+                    <span></span>
+                </div>
+
+                <div class="footer-wrap">
+                    <p class="copy-text">&{'best-viewed-text'}</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

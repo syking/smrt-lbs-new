@@ -4,7 +4,11 @@
 
 # Home page
 GET     /                                       Application.index
+<<<<<<< HEAD
 
+=======
+GET     /{action}                               Application.{action}
+>>>>>>> 04e37db1d8bf8d475bf9f49fb37a80459160e91f
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

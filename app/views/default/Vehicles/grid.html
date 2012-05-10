@@ -1,0 +1,118 @@
+<form action="/vehicles/search" method="post" class="k-content search-wrap"
+      onsubmit="return vehicleSearchValidate(this)" style="padding:20px 0 10px 10px;">
+
+    <label class="info" style="width:80px;">Number:</label>
+    <input name="number" id="number"/>
+
+    <label class="info">License:</label>
+    <input name="license" id="license"/>
+
+    <label class="info">Fleet Name</label>
+    <input name="fleetid" id="fleet_id"/>
+
+    <label class="info">Device Name</label>
+    <input name="deviceid" id="device_id"/>
+
+    <label class="info">cctvIp:</label>
+    <input name="cctvIp" id="cctvIp"/>
+
+    <label class="info">Description:</label>
+    <input name="description" id="description"/>
+
+    <label class="info">Type:</label>
+    <input name="type" id="type"/>
+
+    <div style="float:right; padding-right:20px;">
+        <input type="submit" id="search-button" class="k-button" value="Search"/>
+    </div>
+
+</form>
+
+<div id="${grid.tabId}_grid"></div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        loadVehicles("${grid.readUrl}");
+
+        $("#fleet_id").kendoComboBox({
+            dataTextField:"text",
+            dataValueField:"value",
+            dataSource: #{verbatim} ${fleets} #{/verbatim}
+        });
+
+        $("#device_id").kendoComboBox({
+            dataTextField:"text",
+            dataValueField:"value",
+            dataSource: #{verbatim} ${devices} #{/verbatim}
+        });
+
+    });
+
+    function loadVehicles(url, params) {
+        var dataSource = new kendo.data.DataSource({
+            transport:{
+                read:{
+                    url:url,
+                    dataType:"json"
+                },
+                update:{
+                    url:"${grid.updateUrl}",
+                    dataType:"json"
+                },
+                destroy:{
+                    url:"${grid.destroyUrl}",
+                    dataType:"json"
+                },
+                create:{
+                    url:"${grid.createUrl}",
+                    dataType:"json"
+                },
+                parameterMap:function (options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models:kendo.stringify(options.models)};
+                    }
+                    return params;
+                }
+            },
+            batch:true,
+            pageSize:20,
+            schema:{
+                model:{
+                    id:"id",
+                    fields:{
+                        id:{ editable:false, nullable:true },
+                        number:{ type:"string", validation:{ required:true } },
+                        license:{ type:"string", validation:{ required:true } },
+                        fleetName:{  editable:false, validation:{ required:true }},
+                        deviceName:{  editable:false, validation:{ required:true }},
+                        description:{ type:"string", validation:{ required:true }},
+                        cctvIp:{ type:"string", validation:{ required:true }},
+                        type:{ type:"string", validation:{ required:true }}
+                    }
+                }
+            }
+        });
+            $("#vehicles_grid").empty();
+            columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+            columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+            var grid = $("#vehicles_grid").kendoGrid({
+                dataSource:dataSource,
+                columns:columnsJson,
+                scrollable:true,
+                sortable:true,
+                pageable:true,
+                height:"auto",
+                selectable:true,
+                editable:"${grid.editable}"
+            }).data("kendoGrid");
+    }
+
+    function vehicleSearchValidate(form) {
+        var $form = $(form);
+        loadVehicles($form.attr("action"), $form.serializeArray());
+        return false;
+    }
+
+</script>

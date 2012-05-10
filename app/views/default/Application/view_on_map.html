@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/css/website.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/css/alertStyle.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/${theme}/css/${theme}.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/css/modal_window.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${static_dir}/${theme}/css/modal_window.css" />
+        #{get 'moreStyles' /}
+        <link rel="shortcut icon" type="image/png" href="${static_dir}/${theme}/images/favicon.png">
+        <script type="text/javascript">
+            var base='${static_dir}';
+            var theme='${theme}';
+            var apibase='${apibase}';
+            var language='${language}';
+            
+        </script>
+        
+        
+        <script src="${static_dir}/js/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/templating.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/jquery.scrollTo-min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/date.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/menu.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/json2.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/definition.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/common.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/jquery.jqote2.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/jquery.pagination.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/modal_window.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${static_dir}/js/form.js" type="text/javascript"></script>
+        <script src="${static_dir}/js/user.js" type="text/javascript"></script>
+        <script src="${static_dir}/js/jquery.validate.min.js" type="text/javascript"></script>
+        <script src="${static_dir}/js/kendo.web.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            sessionid='${sessionid}';
+        </script>
+        <script type="text/javascript">
+            setupModal();
+
+            $(function() {
+                $(".edit-change-password-btn").click(function(){
+                    $(".edit-change-password").slideToggle("slow");
+                });
+                $(".edit-reset-password-btn").click(function(){
+                    $(".edit-reset-password").slideToggle("slow");
+                });
+                $("#user-role").change(function() {
+                    setAccountRow();
+                });
+            });
+        </script>
+		<script src="/public/js/kendo.web.min.js"></script>
+		<script src="/public/js/console.js"></script>
+		<link href="/public/css/kendo.common.min.css" rel="stylesheet" />
+		<link href="/public/css/kendo.default.min.css" rel="stylesheet" />
+		
+		<script src="/public/js/onemap.sg-local.js" language="javascript"></script>
+		<script src="/public/js/Ext.util.DelayedTask-nsRemoved.js" type="text/javascript"></script>
+		
+		
+		<script src="/public/js/_Contained.xd.js" type="text/javascript"></script>
+		<script src="/public/js/curry.xd.js" type="text/javascript"></script>
+		<script src="/public/js/fold.xd.js" type="text/javascript"></script>
+		<script src="/public/js/lambda.xd.js" type="text/javascript"></script>
+		<script src="/public/js/object.xd.js" type="text/javascript"></script>
+		<script src="/public/js/excaliburUtils.js" type="text/javascript"></script>
+		<script src="/public/js/bonfire-injected.js" type="text/javascript"></script>
+		<script src="/public/js/ContentPane.xd.js" type="text/javascript"></script>
+		<script src="/public/js/_ContentPaneResizeMixin.xd.js" type="text/javascript"></script>
+		<script src="/public/js/_LayoutWidget.xd.js" type="text/javascript"></script>
+		<script src="/public/js/cookie.xd.js" type="text/javascript"></script>
+		<script src="/public/js/html.xd.js" type="text/javascript"></script>
+		<script src="/public/js/svg.xd.js" type="text/javascript"></script>
+		
+		<script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
+		<script src="/public/js/array.xd.js" type="text/javascript"></script>
+		
+		
+        #{get 'moreScripts' /}
+        <style>
+	html,body{
+	    width: 100%;
+	    height: 100%;
+	    background-color: #efefef;
+	}
+	
+	.header{
+	    width: 100%;
+	    height: 80px;
+	    text-align: center;
+	}
+	
+	.header-wrap{
+	    width: 99%;
+	    margin-left: auto;
+	    margin-right: auto;
+	    text-align: left;
+	    height: 90px;
+	}
+	
+	#map_content{
+		width:100%;/*满屏显示*/  
+		height:87%;
+	    position:relative; /*相对定位*/  
+	    padding-top:15px;
+	    padding-bottom:15px;
+	}
+	#vertical {
+		position:absolute;
+		height: 97%;
+		width: 99%;
+		margin-left:8px;
+	}
+	#horizontal{
+		height:100%;
+		width:100%;
+	}
+	#middle-pane {
+		background-color: rgba(60, 70, 80, 0.10);
+	}
+	#bottom-pane {
+		background-color: rgba(60, 70, 80, 0.15);
+	}
+	#left-pane {
+		background-color: rgba(60, 70, 80, 0.05);
+	}
+	#map {
+		background-color: rgba(60, 70, 80, 0.05);
+		overflow:hidden;
+		position:absolute;
+	}
+	#right-pane {
+		background-color: rgba(60, 70, 80, 0.05);
+	}
+	.pane-content {
+		padding: 0;
+		overflow:hidden;
+	}
+	</style>
+        
+    </head>
+    <body  class="claro">
+<div id="view-on-map-splitter" style="width:99%; height:99%;">
+	<div id="event-list"></div>
+	<div id="map-view" region="center" style="position:relative;">
+	</div>
+	
+</div>
+<div id="event-type-list" class="configuration k-widget k-header">
+    <span class="configHead">EventType filter</span>
+    <ul class="options" id="event-type-list-ul">
+    </ul>
+	</div>
+	<div id="map_legend" class="configuration k-widget k-header">
+    	<span class="configHead">Legend</span>
+	    <ul class="options">
+	    	<li style="float:left;">
+	            <img src="/public/images/blue-dot.png" width="32" height="32" border="0" alt="" /> <span>idle</span>
+	            <img src="/public/images/green-dot.png" width="32" height="32" border="0" alt="" /> <span>speeding</span>
+	        	<img src="/public/images/ltblue-dot.png" width="32" height="32" border="0" alt="" /> <span>sudden acceleration</span>
+	        	<img src="/public/images/pink-dot.png" width="32" height="32" border="0" alt="" /> <span>sudden braking</span>
+	        	<img src="/public/images/purple-dot.png" width="32" height="32" border="0" alt="" /> <span>sudden left</span>
+	        	<img src="/public/images/red-dot.png" width="32" height="32" border="0" alt="" /> <span>sudden right</span>
+	        	<img src="/public/images/yellow-dot.png" width="32" height="32" border="0" alt="" /> <span>other</span>
+	        </li>
+	    </ul>
+	</div>
+
+<script>
+
+var map = "";
+var map_id = "map-view";
+var getCurrentDataUrl = #{jsAction @Events.gps(':vehicleNo')/};
+
+</script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+(function($){
+	$.getUrlParam = function(name){
+	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	var r = window.location.search.substr(1).match(reg);
+	if (r!=null) return unescape(r[2]);
+	 return null;
+	}
+})(jQuery);
+
+function eventTypeListInit(){
+	//[{"techName":"event-alarm","name":"Alarm","id":1}]
+	var datas = #{verbatim} ${eventTypes} #{/verbatim};
+	//alert(JSON.stringify(datas));
+	 $.each(datas, function(index, data){
+	 	var li = '<li style="float:left;"><input id="'+ data.id +'" type="checkbox" checked="checked" /> <label>' + data.name + '</label></li>';
+             $("#event-type-list-ul").append(li);
+        });
+	$("#event-type-list-ul li").click(function(){
+		//$(this).css("color","#000000");
+		alert($(this).html());
+	});
+}
+
+var view_on_map_splitter;
+var _vehicleNo = $.getUrlParam('vehicleNo');
+$(document).ready(function(){
+	
+	eventTypeListInit();
+
+	$("#event-list").kendoGrid({
+
+		groupable: true,
+        scrollable: true,
+        sortable: true,
+        pageable: true,
+        selectable: true,
+        height: 233,
+        columns:#{verbatim} ${eventColumns} #{/verbatim},
+        dataSource: {
+        	 pageSize: 10,
+            data: #{verbatim} ${eventData} #{/verbatim}
+        }
+    });
+    
+    $("#event-list").delegate("td", "click", function(e) {
+        e.preventDefault();
+        var id = _vehicleNo+ "_" +$(this).parent().find("td:last").text();
+        showCurrentInfoWindow(id);
+       }
+     );
+    
+	view_on_map_splitter = $("#view-on-map-splitter").kendoSplitter({
+		orientation: "vertical",
+		panes: [
+            { collapsible: false, size: "233px", min: "233px", width: "100%" },//up
+            { collapsible: false, resizable: true, min: "300px", width: "100%"}//bottom down
+        ],
+        resize:function(e){
+            //第一次加载时不需要resize
+            if (map && map != ""){
+                map.resize();
+      		    map.reposition();
+      	    }
+        }
+	}).data("kendoSplitter");
+	
+	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo: $.getUrlParam('vehicleNo')}) + "')");
+
+});
+</script>
+</body>
+</html>

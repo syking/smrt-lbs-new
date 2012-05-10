@@ -1,0 +1,34 @@
+<script type="text/javascript">
+function getFleetData() {
+    var serializedData = $("#treeview input").serialize()
+            .replace(/%5B/g, "[")
+            .replace(/%5D/g, "]")
+            .replace(/&/g, ",")
+            .replace(/=true/g,"");
+    return serializedData;
+}
+
+	var map_id = "map";
+	var getCurrentDataUrl = #{jsAction @Vehicles.gps(':fleets')/};
+
+</script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    	/*
+        $("#showIcon").click(showAllIcon);
+        $("#hideIcon").click(hideAllIcon);
+        $("#showBusOnly").click(showBusOnly);
+        $("#showCarOnly").click(showCarOnly);
+        $("#showTextTooltip").click(showTooltip);
+        $("#hideTextTooltip").click(hideTooltip);
+        */
+    	$("#refresh-button").click(function(){
+        		addMarker(getCurrentDataUrl({fleets: getFleetData()}));
+        	});
+    	//default all fleets,not need fletts arg
+    	bindMapinitData("addMarker('" + getCurrentDataUrl({fleets: getFleetData()}) + "')");
+    });
+
+</script>
