@@ -79,7 +79,7 @@
                 }
             },
             batch:true,
-            pageSize:20,
+            pageSize:15,
             schema:{
                 model:{
                     id:"id",
@@ -102,6 +102,7 @@
             var grid = $("#vehicles_grid").kendoGrid({
                 dataSource:dataSource,
                 columns:columnsJson,
+                toolbar:["create"],
                 scrollable:true,
                 sortable:true,
                 pageable:true,
