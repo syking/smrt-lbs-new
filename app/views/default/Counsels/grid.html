@@ -28,11 +28,11 @@
 	<label for="date" class="info" style="width:80px;">Date:</label>
 	<input name="date" id="date"/>
 	
-	<label for="startTime" class="info" style="width:80px;margin-left:44px;">Start Time:</label>
-	<input name="startTime" id="start_time"/>
+	<label for="start" class="info" style="width:80px;margin-left:44px;">Start Time:</label>
+	<input name="start" id="start_time"/>
 	
-	<label for="endTime" class="info">End Time:</label>
-	<input name="endTime" id="end_time"/>
+	<label for="end" class="info">End Time:</label>
+	<input name="end" id="end_time"/>
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="search-button" class="k-button" value="Search" />
@@ -70,6 +70,7 @@
         $("#end_time").kendoTimePicker({
         	format: "HH:mm:ss"		
         });
+
     });
     
     function loadCounsels(url, params){
@@ -78,7 +79,8 @@
             transport: {
                 read:  {
                     url: url,
-                    dataType: "json"
+                    dataType: "json",
+                   	
                 },
                 update: {
                     url: "${grid.updateUrl}",
@@ -113,9 +115,8 @@
                         id: { editable: false, nullable: true },
                         userName: { validation: { required: true } },
                         driverName: { validation: { required: true } },
-                        date: { validation: {required: true} },
-                        startTime: { validation: { required: true } },
                         endTime: { validation: { required: true } },
+                        startTime: { validation: { required: true } },
                         remark: { validation: { required: false } },
                     }
                 }
@@ -123,7 +124,8 @@
         });
         
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+		//alert(JSON.stringify(columnsJson));
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Actions", width: "200px" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,

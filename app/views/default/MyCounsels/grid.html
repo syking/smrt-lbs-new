@@ -25,11 +25,11 @@
 	
 	<div style="height:8px"></div>
 	
-	<label for="startTime" class="info" style="width:80px;">Start Time:</label>
-	<input name="startTime" id="mystart_time"/>
+	<label for="start" class="info" style="width:80px;">Start Time:</label>
+	<input name="start" id="mystart_time"/>
 	
-	<label for="endTime" class="info">End Time:</label>
-	<input name="endTime" id="myend_time"/>
+	<label for="end" class="info">End Time:</label>
+	<input name="end" id="myend_time"/>
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="mysearch-button" class="k-button" value="Search" />
@@ -91,7 +91,6 @@
                     if (operation !== "read" && options.models) {
                         return {models: kendo.stringify(options.models)};
                     }
-                    
                     return params;
                 }
             },
@@ -102,8 +101,7 @@
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        driverName: { validation: { required: true } },
-                        date: { type: "date", validation: {required: true} },
+                        driverName: { validation: { required: true }, editable: true },
                         startTime: { validation: { required: true } },
                         endTime: { validation: { required: true } },
                         remark: { validation: { required: false } },
@@ -114,8 +112,15 @@
         
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Actions", width: "210px" };
-		//columnsJson[0] = { field: "driverName", title: "Driver", editor: categoryDropDownEditor };
-		//columnsJson[1] = { field: "date", title: "Date", format: "{0:yyyy-MM-dd}" };
+		columnsJson[0] = { field: "driverName", title: "Driver", editor: function (container, options) {                                                                        
+            $('&lt; input name="' + options.field + '"/&gt;').appendTo(container).kendoComboBox({
+	                dataSource: dataSource,
+	                dataValueField: "driverName",
+	                dataTextField: "driverName",                            
+	            });
+	        }
+ 		};
+		//columnsJson[1] = { field: "date", title: "Date",  format: "{0:MM/dd/yyyy}"};
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
@@ -124,16 +129,18 @@
             columns: columnsJson,
             editable: "${grid.editable}"
         });
-        
-        /*var categoryDataSource = new kendo.data.DataSource({
-            //type: "odata",
+        /*
+        var categoryDataSource = new kendo.data.DataSource({
+            type: "odata",
             transport: {
-            	url: "MyCounsellings/driverList"
-                dataType: "json"
+            	read{
+	            	url: "MyCounsellings/driverList",
+	                dataType: "json"
+            	}
             }
         });
-        
-        alert(categoryDataSource);
+       
+        alert(JSON.stringify(categoryDataSource));
         function categoryDropDownEditor(container, options) {
             $('<input data-text-field="driverName" data-value-field="driverName" data-bind="value:' + options.field + '"/>')
                 .appendTo(container)
@@ -141,8 +148,8 @@
                     autoBind: false,
                     dataSource: categoryDataSource
                 });
-        }*/
-        
+        }
+        */
     }
    
     function counselSearchValidate(form) {

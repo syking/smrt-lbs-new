@@ -1,9 +1,17 @@
 package models;
 
-import play.db.jpa.Model;
-import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import play.db.jpa.Model;
 /**
  * 辅导安排信息
  * @author weiwei
@@ -17,11 +25,10 @@ public class Counselling extends Model{
 	public User user;
 	
 	@Column(name = "start_time")
-	public String startTime;
+	public Date startTime;
 	
-	public String date;
 	@Column(name = "end_time")
-	public String endTime;
+	public Date endTime;
 
 	public String remark;
 	
@@ -33,25 +40,24 @@ public class Counselling extends Model{
 		super();
 	}
 
-	public Counselling(User user, String date, String startTime,
-			String endTime, String remark, Driver driver) {
+	public Counselling(User user, Date startTime ,
+			Date endTime, String remark, Driver driver) {
 		super();
 		this.user = user;
-		this.date = date;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.remark = remark;
 		this.driver = driver;
 	}
 	
-	public List<Counselling> getAllCoun(){
+	public List<Counselling> list(){
 		return Counselling.findAll();
 	}
 	
-	public List<Counselling> getCounsellings(User user, 
-			Driver driver, String date, String start, String end, String username, String driverName){
-		
-		String index = "by" + formQuery(user, driver, date, start, end);
+	public List<Counselling> search(User user, 
+			Driver driver, Date start, Date end, String username, String driverName){
+
+		String index = "by" + formQuery(user, driver, start, end);
 		String sql = "";
 		
 		List<Counselling> counsellings = null;
@@ -81,18 +87,15 @@ public class Counselling extends Model{
 			if(sql.contains("EndTime")){
 				params.add(end);
 			}
-			if(sql.contains("Date")){
-				params.add(date);
-			}
 			Object[] p = params.toArray();
 			counsellings = Counselling.find(sql, p).fetch();
 		}
 		return counsellings;	
 	}
 	
-	public String formQuery(User user, Driver driver, String date, String start, String end){
-		return String.format("%s%s%s%s%s", user!=null?"AndUser":"",
-				driver!=null?"AndDriver":"", !date.equals("")?"AndDate":"", !start.equals("")?"AndStartTime":"", !end.equals("")?"AndEndTime":"");
+	public String formQuery(User user, Driver driver, Date start, Date end){
+		return String.format("%s%s%s%s", user!=null?"AndUser":"",
+				driver!=null?"AndDriver":"", start!=null?"AndStartTime":"", end!=null?"AndEndTime":"");
 	}
 
 	public static long counselSize() {

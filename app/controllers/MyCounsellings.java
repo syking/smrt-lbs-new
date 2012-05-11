@@ -4,6 +4,7 @@ import static models.User.Constant.THEME;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +37,20 @@ public class MyCounsellings extends Controller{
 		
 	}
 	
-	public static void mysearch(long driverId, String date, String startTime, String endTime) throws ParseException{
-		System.out.println(driverId+"|"+date+"|"+startTime+"|"+endTime);
-		Driver driver = Driver.find("id = ?", driverId).first();
+	public static void mysearch(long driverId, String date, String start, String end) throws ParseException{
+		Date startTime = null;
+		Date endTime = null;
+		if(!date.equals("")&&!start.equals("")){
+			startTime = Counsellings.dateConvertor(date + " " + start);
+		}
+		if(!date.equals("")&&!end.equals("")){
+			endTime = Counsellings.dateConvertor(date + " " + end);
+		}
 		
+		Driver driver = Driver.find("id = ?", driverId).first();
 		User user = (User)renderArgs.get("user");
 		Counselling coun = new Counselling();
-		List<Counselling> counsellings = coun.getCounsellings(user, driver, 
-				date, startTime, endTime, user.name, driver!=null?driver.name:"");
+		List<Counselling> counsellings = coun.search(user, driver, startTime, endTime, user.name, driver!=null?driver.name:"");
 		
 		List<CounselVO> result = new ArrayList<CounselVO>();
 		for (Counselling counselling : counsellings){
@@ -53,24 +60,16 @@ public class MyCounsellings extends Controller{
 	}
 	
 	public static void saveMyCounsel(String models) throws ParseException{
-		System.out.println(models);
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 
 		String driverName = jo.getString("driverName");
-		String date = jo.getString("date");
 		String startTime = jo.getString("startTime");
 		String endTime = jo.getString("endTime");
 		String remark = jo.getString("remark");
-	
-		boolean flag = Counsellings.compareTime(startTime, endTime);
-		if (flag) {
-			User user = (User)renderArgs.get("user");
-			Driver driver = Driver.find("byName", driverName).first();
-			new Counselling(user, date, startTime, endTime, remark, driver).save();
-		} else {
-			renderJSON("{\"error\":\"#_error_#\"}");
-		}
+		User user = (User)renderArgs.get("user");
+		Driver driver = Driver.find("byName", driverName).first();
+		new Counselling(user, Counsellings.dateConvertor(startTime), Counsellings.dateConvertor(endTime), remark, driver).save();
 	}
 	public static void deleteCounsel(String models){
 		String json = models.substring(1, models.toString().length()-1);
@@ -87,7 +86,6 @@ public class MyCounsellings extends Controller{
 		long id = jo.getInt("id");
 		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
-		String date = jo.getString("date");
 		String startTime = jo.getString("startTime");
 		String endTime = jo.getString("endTime");
 		String remark = jo.getString("remark");
@@ -95,23 +93,13 @@ public class MyCounsellings extends Controller{
 		User user = User.find("byName", userName).first();
 		Driver driver = Driver.find("byName", driverName).first();
 		
-		boolean flag = Counsellings.compareTime(startTime, endTime);
-		if (flag) {
-			Counselling oldCoun = Counselling.findById(id);
-			if (oldCoun != null) {
-				oldCoun.user = user;
-				oldCoun.driver = driver;
-				oldCoun.date = date;
-				oldCoun.startTime = startTime;
-				oldCoun.endTime = endTime;
-				oldCoun.remark = remark;
-				oldCoun.save();
-			} else {
-				flash.error("Sorry, there is no result!");
-			}
-		} else {
-			renderJSON("{\"error\":\"#_error_#\"}");
-		}
+		Counselling oldCoun = Counselling.findById(id);
+		oldCoun.user = user;
+		oldCoun.driver = driver;
+		oldCoun.startTime = Counsellings.dateConvertor(startTime);
+		oldCoun.endTime = Counsellings.dateConvertor(endTime);
+		oldCoun.remark = remark;
+		oldCoun.save();
 	}
 	
 	public static void driverList(){
@@ -121,7 +109,7 @@ public class MyCounsellings extends Controller{
 	}
 	
 	public static void grid(String id) {
-		System.out.println("====================  "+id);
+		
 		final String preUrl = "/MyCounsellings/";
 
 		List<Driver> drList = Driver.findAll();

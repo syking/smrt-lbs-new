@@ -12,9 +12,12 @@ import vo.ComboVO;
 import vo.CounselVO;
 import vo.Grid;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +43,20 @@ public class Counsellings extends Controller {
 		renderJSON(result);
 	}	
 
-	public static void search(long username, long driverName,
-			String date, String startTime, String endTime) throws ParseException {
-		
+	public static void search(long username, long driverName, String date, String start, String end) throws ParseException {
+		System.out.println(username+" | "+driverName+" | "+date+" | "+start+" | "+end+" | "+username+" | "+driverName);
+		Date startTime = null;
+		Date endTime = null;
+		if(!date.equals("")&&!start.equals("")){
+			startTime = dateConvertor(date + " " + start);
+		}
+		if(!date.equals("")&&!end.equals("")){
+			endTime = dateConvertor(date + " " + end);
+		}
 		User user = User.find("id = ?", username).first();
 		Driver driver = Driver.find("id = ?", driverName).first();
 		Counselling coun = new Counselling();
-		List<Counselling> counsellings = coun.getCounsellings(user, driver, date,
+		List<Counselling> counsellings = coun.search(user, driver,
 				startTime, endTime, user!=null?user.name:"", driver!=null?driver.name:"");
 		
 		List<CounselVO> result = new ArrayList<CounselVO>();
@@ -57,25 +67,18 @@ public class Counsellings extends Controller {
 		renderJSON(result);
 	}
 
-	public static void saveCounselling(String models) throws ParseException {
+	public static void saveCounselling(String models) throws ParseException {	
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
-
 		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
-		String date = jo.getString("date");
-		String startTime = jo.getString("startTime");
+		String startTime =  jo.getString("startTime");
 		String endTime = jo.getString("endTime");
 		String remark = jo.getString("remark");
-	
-		boolean flag = compareTime(startTime, endTime);
-		if (flag) {
-			User user = User.find("byName", userName).first();
-			Driver driver = Driver.find("byName", driverName).first();
-			new Counselling(user, date, startTime, endTime, remark, driver).save();
-		} else {
-			renderJSON("{\"error\":\"#_error_#\"}");
-		}
+		
+		User user = User.find("byName", userName).first();
+		Driver driver = Driver.find("byName", driverName).first();
+		new Counselling(user, dateConvertor(startTime), dateConvertor(endTime), remark, driver).save();
 	}
 
 	public static void deleteCounsel(String models) {
@@ -87,12 +90,12 @@ public class Counsellings extends Controller {
 	}
 
 	public static void updateCounsel(String models) throws ParseException {
+		System.out.println("===========  "+models);
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");
 		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
-		String date = jo.getString("date");
 		String startTime = jo.getString("startTime");
 		String endTime = jo.getString("endTime");
 		String remark = jo.getString("remark");
@@ -100,22 +103,14 @@ public class Counsellings extends Controller {
 		User user = User.find("byName", userName).first();
 		Driver driver = Driver.find("byName", driverName).first();
 		
-		boolean flag = compareTime(startTime, endTime);
-		if (flag) {
-			Counselling oldCoun = Counselling.findById(id);
-			if (oldCoun != null) {
-				oldCoun.user = user;
-				oldCoun.driver = driver;
-				oldCoun.date = date;
-				oldCoun.startTime = startTime;
-				oldCoun.endTime = endTime;
-				oldCoun.remark = remark;
-				oldCoun.save();
-			} else {
-				flash.error("Sorry, there is no result!");
-			}
-		} else {
-			renderJSON("{\"error\":\"#_error_#\"}");
+		Counselling oldCoun = Counselling.findById(id);
+		if (oldCoun != null) {
+			oldCoun.user = user;
+			oldCoun.driver = driver;
+			oldCoun.startTime = dateConvertor(startTime);
+			oldCoun.endTime = dateConvertor(endTime);
+			oldCoun.remark = remark;
+			oldCoun.save();
 		}
 	}
 
@@ -167,5 +162,11 @@ public class Counsellings extends Controller {
 		renderHtml(TemplateLoader.load(
 				template(renderArgs.get(THEME) + "/Counsels/grid.html"))
 				.render(map));
+	}
+	
+	public static Date dateConvertor(String sql_date) {
+		System.out.println(sql_date);
+		Timestamp newDate = Timestamp.valueOf(sql_date);
+		return newDate;
 	}
 }
