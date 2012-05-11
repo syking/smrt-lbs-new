@@ -67,12 +67,6 @@ dojo.require("dijit.layout.BorderContainer");
 
     function bindGraphicWithInfoWindow(evt){
         map.selectedGraphic = evt.graphic;
-        try{
-        	var id = map.selectedGraphic.attributes.id;
-        	selectGridWithMapClick(id);
-        }catch(e){
-        	
-        }
     }
 
 	
@@ -209,13 +203,14 @@ dojo.require("dijit.layout.BorderContainer");
                         map.clusterLayer.clear();
                         map.clusterLayer.refreshFeatures(newGraphics.vehicles);
                     }
-					dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
+
                     refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
                 }
             });
             
             //dojo.connect(map, "onMouseDrag", showCoordinates);
             dojo.connect(map, "onClick", closeInfoWindow);
+            dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
         }
 
     }
@@ -506,7 +501,84 @@ dojo.require("dijit.layout.BorderContainer");
         map.infoWindow.resize(map.infoWindowWidth, map.infoWindowHeight);
         var graphicCenterSP = esri.geometry.toScreenGeometry(map.extent, map.width, map.height, graphic.geometry);
         map.infoWindow.show(graphicCenterSP, map.getInfoWindowAnchor(graphicCenterSP));
-        map.selectedGraphic = graphic;
+    }
+    
+      function showCurrentInfoWindow2(keyword){
+    	//alert(map.getLevel());
+    	//map.setLevel(1);
+    	//map.clusterLayer.graphics
+    	//alert(map.clusterLayer.graphics);//所有图层9
+    	//alert(currentBuses.length);//所有元素14
+    	//alert(map.tooltipLayer.graphics);//顶层元素5
+    	//map.graphics.clear();
+    	 if (map.infoWindow.isShowing) {
+            map.infoWindow.hide();
+        }
+        
+    	var flag = true;
+    	$.each(map.tooltipLayer.graphics, function(index, g){
+        	//alert(g.attributes.id);
+            if(typeof g.attributes != 'undefined' && typeof g.attributes.id != 'undefined' && g.attributes.id == keyword){
+              showInfoWindow(g);
+              flag = false;
+              return;
+            }
+        });
+        //必须在可视范围内才能显示出来
+        if(flag){
+        	var gg;
+        	$.each(map.clusterLayer.graphics, function(index, g){
+	   			//alert(JSON.stringify(g.attributes));
+	            if(typeof g.attributes != 'undefined' && typeof g.attributes.id != 'undefined' && g.attributes.id == keyword){
+	              showInfoWindow(g,map.getLevel()+2,g.attributes[i].xCoord,g.attributes[i].yCoord,keyword);
+	              return;
+	            }
+				//一个图层多个元素
+	            else if(typeof g.attributes != 'undefined' && typeof g.attributes.id == 'undefined' && typeof g.attributes[0].id != 'undefined'){
+	            	//alert(JSON.stringify(g.attributes));
+	            	for(var i=0; i<g.attributes.length; i++){
+	            		if(g.attributes[i].id  == keyword){
+	            			showInfoWindow(g,map.getLevel()+2,g.attributes[i].xCoord,g.attributes[i].yCoord,keyword);
+	             			return;
+	            		}
+	            	}
+	            }
+	        });
+	        
+        	if(map.getLevel()<2){
+        		//map.setLevel(map.getLevel()+2);
+        		//showInfoWindow(gg);
+        		//setTimeout('showCurrentInfoWindowLevel("'+keyword+'")',1000);
+        	}
+	   		
+        }
         
     }
+    
+    //shows info window for specified graphic
+    function showInfoWindow2(graphic,level,x,y,keyword) {
+    	if(level > 1){
+    		map.setLevel(level);
+    	}
+    	//alert("x=" + x + "y="+y);
+    	//alert(JSON.stringify(graphic));
+    	var cPoint;
+    	if(x){
+    		cPoint=new esri.geometry.Point(x, y, new esri.SpatialReference({ wkid:3414 }));
+    		map.centerAt(cPoint);
+    		setTimeout('showCurrentInfoWindow("'+keyword+'")',1000);
+        	//showCurrentInfoWindow(keyword);
+        	return;
+    	}else{
+    		cPoint=new esri.geometry.Point(graphic.geometry.x, graphic.geometry.y, new esri.SpatialReference({ wkid:3414 }));
+	    }
+	    map.centerAt(cPoint);
+	      
+    	
+        map.infoWindow.setContent(graphic.getContent());
+        map.infoWindow.setTitle(graphic.getTitle());
+        map.infoWindow.resize(map.infoWindowWidth, map.infoWindowHeight);
+        var graphicCenterSP = esri.geometry.toScreenGeometry(map.extent, map.width, map.height, graphic.geometry);
 
+        map.infoWindow.show(graphicCenterSP, map.getInfoWindowAnchor(graphicCenterSP));
+    }

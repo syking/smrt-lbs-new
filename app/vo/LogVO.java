@@ -18,8 +18,9 @@ public class LogVO
         this.name = log.name;
         this.content = log.content;
         this.action = log.action;
-        this.userName = log.user.name;
+        this.userName = log.userName;
         this.dateTime = log.dateTime;
+        this.ip = log.ip;
 
         return this;
 
@@ -32,4 +33,5 @@ public class LogVO
     public String action;
     public String userName;
     public Date dateTime;
+    public String ip;
 }

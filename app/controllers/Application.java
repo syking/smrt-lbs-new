@@ -3,17 +3,15 @@ package controllers;
 import static models.User.Constant.LOGIN_USER_ATTR;
 import static models.User.Constant.THEME;
 
-import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.With;
-import play.templates.Template;
-import play.templates.TemplateLoader;
 import services.FleetService;
-import vo.FleetTree;
 
 import com.google.gson.Gson;
 
@@ -30,4 +28,8 @@ public class Application extends Controller {
     	render(renderArgs.get(THEME)+"/Application/admin.html");
     }
     
+    public static void date(String date){
+    	
+    	render(date);
+    }
 }

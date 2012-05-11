@@ -11,10 +11,10 @@ import vo.ComboVO;
 import vo.Grid;
 import vo.LogVO;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -103,11 +103,9 @@ public class Logs extends Controller
         return gson.fromJson(json, LogVO.class);
     }
 
-    //    public static void search(String type, String name, String content, String date, String time, String action, long userid) {
-    public static void search(String type, String name, String content, String action, long userid)
+    public static void search(String type, String name, String content, String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip)
     {
 
-        System.out.println("=============" + type + name + content + action + userid + "=============");
         List<String> criteria = new ArrayList<String>(9);
         List<Object> params = new ArrayList<Object>(9);
 
@@ -129,22 +127,63 @@ public class Logs extends Controller
             params.add("%" + content + "%");
         }
 
-        if (null != action && !action.isEmpty())
+        if (null != actions && !actions.isEmpty())
         {
             criteria.add("action LIKE ?");
-            params.add("%" + action + "%");
+            params.add("%" + actions + "%");
+        }
+
+        if (null != ip && !ip.isEmpty())
+        {
+            criteria.add("ip LIKE ?");
+            params.add("%" + ip + "%");
         }
 
         if (userid != 0)
         {
             User user = User.findById(userid);
-            long user_id = user.id;
-            criteria.add("user_id = ?");
-            params.add(user_id);
+            String userName = user.name;
+            criteria.add("userName = ?");
+            params.add(userName);
         }
 
         //date and time
+        if ((null != startDate && !startDate.isEmpty()))
+        {
+//            if (!(null != startTime && !startTime.isEmpty())) {
+//                 startTime = "00:00";
+//            }
 
+            String startDateTimeString = startDate + " " + startTime;
+            DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            System.out.println(startDateTimeString);
+            Date startDateTime = null;
+            try {
+                startDateTime = formatDate.parse(startDateTimeString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            criteria.add("dateTime >= ?");
+            params.add(startDateTime);
+        }
+
+        if ((null != endDate && !endDate.isEmpty()))
+        {
+//            if (!(null != endTime && !endTime.isEmpty())) {
+//                endTime = "00:00";
+//            }
+            String endDateTimeString = endDate + " " + endTime;
+            DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            System.out.println(endDateTimeString);
+            Date endDateTime = null;
+            try {
+                endDateTime = formatDate.parse(endDateTimeString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            criteria.add("dateTime <= ?");
+            params.add(endDateTime);
+        }
 
         List<Log> logList = filter(criteria, params);
         System.out.println("============" + logList.size() + "============");
