@@ -68,7 +68,7 @@ function selectGridWithMapClick(id){
 
 		for(var i =0; i < data.length; i++){
 			if(data[i].id == id){
-				pageNum = Math.ceil(i/pageSize);
+				pageNum = Math.ceil((i+1)/pageSize);
 			}
 		}
 		//alert(JSON.stringify(pages));
@@ -89,8 +89,8 @@ function selectGridWithMapClick(id){
 		// selects first grid item
 		$.each(grid.tbody.find("tr"),function(tr){
 			if($(this).find("td:last").text() == id){
-				$(this).find("a").focus();
 				grid.select($(this));
+				$(this).find("a").focus();
 				
 			}
 		});
