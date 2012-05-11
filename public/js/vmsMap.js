@@ -57,7 +57,7 @@ dojo.require("dijit.layout.BorderContainer");
 
     function showCoordinates(evt) {
         var mp = evt.mapPoint;
-        dojo.byId("info").innerHTML = "Location: " + mp.x + ", " + mp.y;
+        //dojo.byId("info").innerHTML = "Location: " + mp.x + ", " + mp.y;
     }
 
     function closeInfoWindow(evt){
