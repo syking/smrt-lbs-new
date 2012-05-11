@@ -57,55 +57,55 @@
         });
 
         $("#startDate,#endDate").kendoDatePicker({
-            format: "yyyy-MM-dd"
+            format:"yyyy-MM-dd"
         });
 
         $("#startTime, #endTime").kendoTimePicker({
-            format: "HH:mm",
-            interval: 1
+            format:"HH:mm",
+            interval:1
         });
     });
 
     function loadLogs(url, params) {
         var dataSource = new kendo.data.DataSource({
-            transport: {
-                read:  {
-                    url: url,
-                    dataType: "json"
+            transport:{
+                read:{
+                    url:url,
+                    dataType:"json"
                 },
-                update: {
-                    url: "${grid.updateUrl}",
-                    dataType: "json"
+                update:{
+                    url:"${grid.updateUrl}",
+                    dataType:"json"
                 },
-                destroy: {
-                    url: "${grid.destroyUrl}",
-                    dataType: "json"
+                destroy:{
+                    url:"${grid.destroyUrl}",
+                    dataType:"json"
                 },
-                create: {
-                    url: "${grid.createUrl}",
-                    dataType: "json"
+                create:{
+                    url:"${grid.createUrl}",
+                    dataType:"json"
                 },
-                parameterMap: function(options, operation) {
+                parameterMap:function (options, operation) {
                     if (operation !== "read" && options.models) {
-                        return {models: kendo.stringify(options.models)};
+                        return {models:kendo.stringify(options.models)};
                     }
                     return params;
                 }
             },
-            batch: true,
-            pageSize: 15,
-            schema: {
-                model: {
-                    id: "id",
-                    fields: {
-                        id: { editable: false, nullable: true },
-                        type: { validation: { required: true } },
-                        name: { validation: { required: true } },
-                        content: { validation: { required: true } },
-                        action: { validation: { required: true } },
-                        userName: { validation: { required: true } },
-                        ip: { validation: { required: true } },
-                        dateTime: { validation: { required: true } }
+            batch:true,
+            pageSize:15,
+            schema:{
+                model:{
+                    id:"id",
+                    fields:{
+                        id:{ editable:false, nullable:true },
+                        type:{ validation:{ required:true } },
+                        name:{ validation:{ required:true } },
+                        content:{ validation:{ required:true } },
+                        action:{ validation:{ required:true } },
+                        userName:{ validation:{ required:true } },
+                        ip:{ validation:{ required:true } },
+                        dateTime:{ validation:{ required:true } }
                     }
 
                 }
@@ -114,18 +114,28 @@
 
         var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
         $("#grid_logs").empty();
-        columnsJson[columnsJson.length] = { command: ["destroy"], title: "Action", width: "100px" };
+        columnsJson[columnsJson.length] = { command:["destroy"], title:"Action", width:"100px" };
         $("#grid_${grid.tabId}").kendoGrid({
-            dataSource: dataSource,
-            pageable: true,
-            height: "auto",
-            columns: columnsJson,
-            editable: "${grid.editable}"
+            dataSource:dataSource,
+            pageable:true,
+            height:"auto",
+            columns:columnsJson,
+            editable:"${grid.editable}"
         }).data("kendoGrid");
     }
 
     function logSearchValidate(form) {
         var $form = $(form);
+
+        var startTimePicker = $("#startTime").data("kendoTimePicker");
+        if (startTimePicker.value() == null) {
+            startTimePicker.value("00:00");
+        }
+        var endTimePicker = $("#endTime").data("kendoTimePicker");
+        if (endTimePicker.value() == null) {
+            endTimePicker.value("00:00");
+        }
+
         var params = $form.serializeArray();
         loadLogs($form.attr("action"), params);
         return false;
