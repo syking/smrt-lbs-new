@@ -275,6 +275,7 @@ public class Vehicles extends Controller
         grid.editable = "popup";
         grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(VehiclesVO.class, "id"));
 
+        //fleet combobox
         List<Fleet> fleetList = Fleet.findAll();
         List<ComboVO> fleets = new ArrayList<ComboVO>();
         if (fleetList != null) for (Fleet fleet : fleetList)
