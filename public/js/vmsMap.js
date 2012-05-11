@@ -67,6 +67,12 @@ dojo.require("dijit.layout.BorderContainer");
 
     function bindGraphicWithInfoWindow(evt){
         map.selectedGraphic = evt.graphic;
+        try{
+        	var id = map.selectedGraphic.attributes.id;
+        	selectGridWithMapClick(id);
+        }catch(e){
+        	
+        }
     }
 
 	
@@ -203,14 +209,13 @@ dojo.require("dijit.layout.BorderContainer");
                         map.clusterLayer.clear();
                         map.clusterLayer.refreshFeatures(newGraphics.vehicles);
                     }
-
+					dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
                     refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
                 }
             });
             
             //dojo.connect(map, "onMouseDrag", showCoordinates);
             dojo.connect(map, "onClick", closeInfoWindow);
-            dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
         }
 
     }
