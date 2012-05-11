@@ -82,8 +82,6 @@ public class Logs extends Controller
     private static LogVO jsonStr2JavaObj(String jsonStr)
     {
         String json = jsonStr.substring(1, jsonStr.length() - 1);
-//        json = "{\"id\":1,\"type\":\"info\",\"name\":\"delete\",\"content\":\"number:13586\",\"action\":\"drivers/delete\",\"userName\":\"weiwei\",\"dateTime\":\"2010-04-30T16:00:00.000Z\"}]";
-//        json = "{\"id\":1,\"type\":\"info\",\"name\":\"delete\",\"content\":\"number:13586\",\"action\":\"drivers/delete\",\"user\":1,\"dateTime\":\"2010-04-30T16:00:00.000Z\"}]";
         System.out.println("json:" + json + "==============");
         Gson gson = new Gson();
         return gson.fromJson(json, LogVO.class);

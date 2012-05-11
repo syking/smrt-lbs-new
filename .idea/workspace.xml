@@ -3,9 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="31138ea7-c88c-4043-bb91-885c2ed97994" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/Fleets.java" afterPath="$PROJECT_DIR$/app/controllers/Fleets.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/Logs.java" afterPath="$PROJECT_DIR$/app/controllers/Logs.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/Vehicles.java" afterPath="$PROJECT_DIR$/app/controllers/Vehicles.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/default/Logs/grid.html" afterPath="$PROJECT_DIR$/app/views/default/Logs/grid.html" />
+      <change type="MOVED" beforePath="D:\PlayJava\smrt-lbs-new\app\vo\VehiclesVO.java" afterPath="$PROJECT_DIR$/app/vo/VehicleVO.java" />
     </list>
     <ignored path="smrt-lbs-new.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -63,10 +64,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Logs.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Logs.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/Logs.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="88" column="35" selection-start="2768" selection-end="2768" vertical-scroll-proportion="2.0601337">
+            <state line="78" column="47" selection-start="2124" selection-end="2124" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -90,19 +91,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Vehicles.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Vehicles.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/Vehicles.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="234" column="34" selection-start="7460" selection-end="7460" vertical-scroll-proportion="0.0">
+            <state line="330" column="35" selection-start="10903" selection-end="10903" vertical-scroll-proportion="1.416481">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VehiclesVO.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/vo/VehiclesVO.java">
+      <file leaf-file-name="VehicleVO.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/vo/VehicleVO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="13" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0">
+            <state line="20" column="34" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -132,7 +133,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/services/VehicleService.java" />
         <option value="$PROJECT_DIR$/app/controllers/Drivers.java" />
         <option value="$PROJECT_DIR$/app/vo/VehicleTreeLeaf.java" />
         <option value="$PROJECT_DIR$/app/vo/VehicleTree.java" />
@@ -144,10 +144,11 @@
         <option value="$PROJECT_DIR$/conf/log4j.properties" />
         <option value="$PROJECT_DIR$/app/views/default/Vehicles/tree.html" />
         <option value="$PROJECT_DIR$/app/views/default/sider-menu.html" />
-        <option value="$PROJECT_DIR$/app/controllers/Vehicles.java" />
-        <option value="$PROJECT_DIR$/app/controllers/Logs.java" />
         <option value="$PROJECT_DIR$/app/vo/LogVO.java" />
         <option value="$PROJECT_DIR$/app/views/default/Logs/grid.html" />
+        <option value="$PROJECT_DIR$/app/controllers/Logs.java" />
+        <option value="$PROJECT_DIR$/app/vo/VehicleVO.java" />
+        <option value="$PROJECT_DIR$/app/controllers/Vehicles.java" />
       </list>
     </option>
   </component>
@@ -560,7 +561,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.33" sideWeight="0.5" order="16" side_tool="false" content_ui="combo" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -578,7 +579,7 @@
       <window_info id="Maven Projects" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.15181866" sideWeight="0.6702356" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32683185" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32683185" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -723,20 +724,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/vo/VehiclesVO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="13" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/Vehicles.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="234" column="34" selection-start="7460" selection-end="7460" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/default/Logs/grid.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="40" column="36" selection-start="1525" selection-end="1525" vertical-scroll-proportion="-9.325582">
@@ -746,7 +733,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/Logs.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="88" column="35" selection-start="2768" selection-end="2768" vertical-scroll-proportion="2.0601337">
+        <state line="78" column="47" selection-start="2124" selection-end="2124" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/vo/VehicleVO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="34" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/Vehicles.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="330" column="35" selection-start="10903" selection-end="10903" vertical-scroll-proportion="1.416481">
           <folding />
         </state>
       </provider>
