@@ -44,6 +44,13 @@
                         treeView.remove(".k-item");
                         treeView.append(data);
                         treeView.expand(".k-item");
+                        if (number.length != 0) {
+                            treeView.select(".k-item li:contains(" + number + ")");
+                        }
+                        else {
+                            treeView.select(".k-first");
+                        }
+
                     }
             );
 

@@ -9,10 +9,10 @@ import models.Vehicle;
  * Date: 5/8/12
  * Time: 3:19 PM
  */
-public class VehiclesVO
+public class VehicleVO
 {
 
-    public VehiclesVO init(Vehicle vehicle){
+    public VehicleVO init(Vehicle vehicle){
         this.id = vehicle.id;
         this.number = vehicle.number;
         this.license = vehicle.license;

@@ -1,8 +1,8 @@
-application-title-long = 开亿统一平台
-application-title-short = 开亿统一平台
+application-title-long = NCS
+application-title-short = NCS
 voucher-license-system = 凭据管理系统
 
-copyright-text = &copy; Copyright 2011 <a href="http://www.kaisquare.com/">KAI Square Pte Ltd</a>. All Rights Reserved.
+copyright-text = &copy; Copyright 2012
 best-viewed-text = 最好使用微软IE浏览器（8.0或更新）或火狐浏览器（3.5或更新）并支持Java（6.0或更新）。
 
 login-unsuccessful = 登录不成功。用户名或密码错误，或用户账户尚未激活或已被禁用。

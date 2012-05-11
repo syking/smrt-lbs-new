@@ -108,4 +108,38 @@ $(document).ready(function(){
 	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo: $.getUrlParam('vehicleNo')}) + "')");
 
 });
+
+function selectGridWithMapClick(vid){
+	var id = vid.split("_")[1];
+	var dataSource = $("#event-list").data("kendoGrid").dataSource;
+	var data = dataSource.data();
+	var pageSize = dataSource.pageSize();
+	var pageNum;
+
+	for(var i =0; i < data.length; i++){
+		if(data[i].id == id){
+			pageNum = Math.ceil(i/pageSize);
+		}
+	}
+	//alert(JSON.stringify(pages));
+	//alert(pageNum);
+
+	$.each($("#event-list").find(".k-grid-pager a"),function(){
+		if($(this).text() == pageNum){
+			$(this).trigger("click");
+		}
+	});
+	
+	setTimeout("selectGrid(" + id + ")",50);
+}
+function selectGrid(id){
+	// get a reference to the grid widget
+	var grid = $("#event-list").data("kendoGrid");
+	// selects first grid item
+	$.each(grid.tbody.find("tr"),function(tr){
+		if($(this).find("td:last").text() == id){
+			grid.select($(this));
+		}
+	});
+}
 </script>

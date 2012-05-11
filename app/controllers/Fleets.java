@@ -3,29 +3,19 @@ package controllers;
 import static models.User.Constant.THEME;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Device;
-import models.Driver;
-import models.Event;
 import models.Fleet;
-import models.Schedule;
-import models.Vehicle;
-
-import com.google.gson.Gson;
 
 import play.mvc.*;
 import play.templates.TemplateLoader;
 import services.FleetService;
 import utils.CommonUtil;
 import vo.ComboVO;
-import vo.EventVO;
 import vo.FleetVO;
 import vo.Grid;
-import vo.VehiclesVO;
 
 @With(Interceptor.class)
 public class Fleets extends Controller {
