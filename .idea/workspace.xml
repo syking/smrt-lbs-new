@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31138ea7-c88c-4043-bb91-885c2ed97994" name="Default" comment="">
-      <change type="DELETED" beforePath="D:\PlayJava\smrt-lbs-new\conf\log4j.properties" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/Logs.java" afterPath="$PROJECT_DIR$/app/controllers/Logs.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/default/Vehicles/tree.html" afterPath="$PROJECT_DIR$/app/views/default/Vehicles/tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/default/sider-menu.html" afterPath="$PROJECT_DIR$/app/views/default/sider-menu.html" />
     </list>
     <ignored path="smrt-lbs-new.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -63,10 +60,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="tree.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="tree.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/default/Vehicles/tree.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="48" selection-start="972" selection-end="972" vertical-scroll-proportion="0.39170507">
+            <state line="48" column="29" selection-start="1431" selection-end="1566" vertical-scroll-proportion="-8.697675">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sider-menu.html" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/default/sider-menu.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="39" column="8" selection-start="1043" selection-end="1043" vertical-scroll-proportion="0.5691244">
               <folding />
             </state>
           </provider>
@@ -111,7 +117,6 @@
         <option value="$PROJECT_DIR$/app/views/default/Vehicles/grid.html" />
         <option value="$PROJECT_DIR$/app/controllers/Counsellings.java" />
         <option value="$PROJECT_DIR$/app/models/Log.java" />
-        <option value="$PROJECT_DIR$/app/views/default/sider-menu.html" />
         <option value="$PROJECT_DIR$/app/vo/LogVO.java" />
         <option value="$PROJECT_DIR$/app/views/default/Logs/grid.html" />
         <option value="$PROJECT_DIR$/app/controllers/Vehicles.java" />
@@ -119,6 +124,7 @@
         <option value="$PROJECT_DIR$/conf/log4j.properties" />
         <option value="$PROJECT_DIR$/app/controllers/Logs.java" />
         <option value="$PROJECT_DIR$/app/views/default/Vehicles/tree.html" />
+        <option value="$PROJECT_DIR$/app/views/default/sider-menu.html" />
       </list>
     </option>
   </component>
@@ -653,11 +659,6 @@
         <state line="10" column="13" selection-start="136" selection-end="136" vertical-scroll-proportion="0.14160264" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/default/sider-menu.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="54" selection-start="1108" selection-end="1108" vertical-scroll-proportion="0.29493088" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conf/application.conf">
       <provider selected="true" editor-type-id="text-editor">
         <state line="65" column="92" selection-start="2129" selection-end="2129" vertical-scroll-proportion="-7.72" />
@@ -733,7 +734,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/default/Vehicles/tree.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="48" selection-start="972" selection-end="972" vertical-scroll-proportion="0.39170507">
+        <state line="48" column="29" selection-start="1431" selection-end="1566" vertical-scroll-proportion="-8.697675">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/default/sider-menu.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="8" selection-start="1043" selection-end="1043" vertical-scroll-proportion="0.5691244">
           <folding />
         </state>
       </provider>
