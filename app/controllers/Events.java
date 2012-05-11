@@ -57,6 +57,7 @@ public class Events extends Controller {
     	Map id = new HashMap(3);
 		id.put("field", "id");
 		id.put("title", "id");
+		id.put("width", "1px");
     	
 		columnMap.add(id);
     	
