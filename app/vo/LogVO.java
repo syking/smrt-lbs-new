@@ -18,7 +18,7 @@ public class LogVO
         this.name = log.name;
         this.content = log.content;
         this.action = log.action;
-        this.user = log.user.name;
+        this.userName = log.user.name;
         this.dateTime = log.dateTime;
 
         return this;
@@ -30,6 +30,6 @@ public class LogVO
     public String name;
     public String content;
     public String action;
-    public String user;
+    public String userName;
     public Date dateTime;
 }
