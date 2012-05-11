@@ -89,7 +89,9 @@ function selectGridWithMapClick(id){
 		// selects first grid item
 		$.each(grid.tbody.find("tr"),function(tr){
 			if($(this).find("td:last").text() == id){
+				$(this).find("a").focus();
 				grid.select($(this));
+				
 			}
 		});
 	}
