@@ -1,59 +1,145 @@
+<form action="/logs/search" method="post" class="k-content search-wrap"
+      onsubmit="return logSearchValidate(this)" style="padding:20px 0 10px 10px;">
+
+    <label class="info" style="width:80px;">Type:</label>
+    <input name="type" id="type"/>
+
+    <label class="info">Name:</label>
+    <input name="name" id="name"/>
+
+    <label class="info">Content</label>
+    <input name="content" id="content"/>
+
+    <div style="height:8px"></div>
+    <br>
+
+    <label class="info">Start Date:</label>
+    <input name="startDate" id="startDate"/>
+
+    <label class="info">Start Time:</label>
+    <input name="startTime" id="startTime"/>
+
+    <span></span>
+
+    <label class="info">End Date:</label>
+    <input name="endDate" id="endDate"/>
+
+    <label class="info">End Time:</label>
+    <input name="endTime" id="endTime"/>
+
+    <div style="height:8px"></div>
+    <br>
+
+    <label class="info">Action</label>
+    <input name="actions" id="actions"/>
+
+    <label class="info">User Name:</label>
+    <input name="userid" id="user_name"/>
+
+    <label class="info">IP:</label>
+    <input name="ip" id="ip"/>
+
+    <div style="float:right; padding-right:20px;">
+        <input type="submit" id="search-button" class="k-button" value="Search"/>
+    </div>
+
+</form>
+
 <div id="grid_${grid.tabId}"></div>
 
 <script>
+
     $(document).ready(function () {
+        loadLogs("${grid.readUrl}");
+
+        $("#user_name").kendoComboBox({
+            dataTextField:"text",
+            dataValueField:"value",
+            dataSource: #{verbatim} ${users} #{/verbatim}
+        });
+
+        $("#startDate,#endDate").kendoDatePicker({
+            format:"yyyy-MM-dd"
+        });
+
+        $("#startTime, #endTime").kendoTimePicker({
+            format:"HH:mm",
+            interval:1
+        });
+    });
+
+    function loadLogs(url, params) {
         var dataSource = new kendo.data.DataSource({
-            transport: {
-                read:  {
-                    url: "${grid.readUrl}",
-                    dataType: "json"
+            transport:{
+                read:{
+                    url:url,
+                    dataType:"json"
                 },
-                update: {
-                    url: "${grid.updateUrl}",
-                    dataType: "json"
+                update:{
+                    url:"${grid.updateUrl}",
+                    dataType:"json"
                 },
-                destroy: {
-                    url: "${grid.destroyUrl}",
-                    dataType: "json"
+                destroy:{
+                    url:"${grid.destroyUrl}",
+                    dataType:"json"
                 },
-                create: {
-                    url: "${grid.createUrl}",
-                    dataType: "json"
+                create:{
+                    url:"${grid.createUrl}",
+                    dataType:"json"
                 },
-                parameterMap: function(options, operation) {
+                parameterMap:function (options, operation) {
                     if (operation !== "read" && options.models) {
-                        return {models: kendo.stringify(options.models)};
+                        return {models:kendo.stringify(options.models)};
                     }
+                    return params;
                 }
             },
-            batch: true,
-            pageSize: 15,
-            schema: {
-                model: {
-                    id: "id",
-                    fields: {
-                        id: { editable: false, nullable: true },
-                        type: { validation: { required: true } },
-                        name: { validation: { required: true } },
-                        content: { validation: { required: true } },
-                        action: { validation: { required: true } },
-                        user: { validation: { required: true } },
-                        dateTime: { type: "Date" ,validation: { required: true } }
+            batch:true,
+            pageSize:15,
+            schema:{
+                model:{
+                    id:"id",
+                    fields:{
+                        id:{ editable:false, nullable:true },
+                        type:{ validation:{ required:true } },
+                        name:{ validation:{ required:true } },
+                        content:{ validation:{ required:true } },
+                        action:{ validation:{ required:true } },
+                        userName:{ validation:{ required:true } },
+                        ip:{ validation:{ required:true } },
+                        dateTime:{ validation:{ required:true } }
                     }
 
                 }
             }
         });
-        
-		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Action", width: "210px" };
+
+        var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+        $("#grid_logs").empty();
+        columnsJson[columnsJson.length] = { command:["destroy"], title:"Action", width:"100px" };
         $("#grid_${grid.tabId}").kendoGrid({
-            dataSource: dataSource,
-            pageable: true,
-            height: "auto",
-            toolbar: ["create"],
-            columns: columnsJson,
-            editable: "${grid.editable}"
-        });
-    });
+            dataSource:dataSource,
+            pageable:true,
+            height:"auto",
+            columns:columnsJson,
+            editable:"${grid.editable}"
+        }).data("kendoGrid");
+    }
+
+    function logSearchValidate(form) {
+        var $form = $(form);
+
+        var startTimePicker = $("#startTime").data("kendoTimePicker");
+        if (startTimePicker.value() == null) {
+            startTimePicker.value("00:00");
+        }
+        var endTimePicker = $("#endTime").data("kendoTimePicker");
+        if (endTimePicker.value() == null) {
+            endTimePicker.value("00:00");
+        }
+
+        var params = $form.serializeArray();
+        loadLogs($form.attr("action"), params);
+        return false;
+    }
 </script>
