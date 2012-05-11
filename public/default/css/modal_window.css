@@ -1,0 +1,36 @@
+/* 
+    Document   : modal_window
+    Created on : May 19, 2011, 6:11:08 PM
+    Author     : yianzhang
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.modal-window-header{
+    height: 35px;
+    width: 540px;
+    background-position: 0px -1125px;
+    position: absolute;
+    margin-top: -35px;
+    margin-left: -20px;
+    /*--CSS3 Rounded Corners--*/
+    -webkit-border-radius: 10px 10px 0px 0px;
+    -moz-border-radius: 10px 10px 0px 0px;
+    border-radius: 10px 10px 0px 0px;
+    z-index: -1;
+    text-align: center;
+}
+
+.modal-window-header h1{
+    margin-top: 5px;
+    color: #fff;
+}
+
+.btn_close{
+    background-position: -133px -1054px;
+}

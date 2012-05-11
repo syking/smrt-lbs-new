@@ -1,0 +1,396 @@
+application-title-long = NCS
+application-title-short = NCS
+voucher-license-system = Voucher License System
+
+copyright-text = &copy; Copyright 2012 .
+best-viewed-text = Best viewed using Microsoft Internet Explorer (8.0 or newer) or Mozilla Firefox (3.5 or newer) with Oracle Java (6.0 or newer).
+
+login-unsuccessful = Login unsuccessful. Please check your username and password, and ensure your login has been activated.
+forgot-password-question = Forgot your password?
+reset-password-instruction = To reset your password, enter your user name and email address below.
+reset-password-successful = The new password has been emailed to you.
+reset-password-unsuccessful = Reset password unsuccessful.
+authentication-sent-email = The authentication code has been sent to your email.
+authentication-sent-sms = The authentication code has been sent by SMS to your mobile phone.
+authentication-unsuccessful = Authentication unsuccessful.
+error-navigation = Please navigate using the menu on the left.
+error-go-to-login = Go to login page
+
+counsel-username = User Name
+counsel-driver = Driver
+counsel-start-date = Start Date
+counsel-end-date = End Date
+counsel-start-time = Start Time
+counsel-end-time = End Time
+
+welcome = Welcome
+my-profile = My Profile
+log-out = Log Out
+search = Search
+edit = Edit
+delete = Delete
+error = Error
+
+enabled = Enabled
+disabled = Disabled
+
+second = second
+seconds = seconds
+minute = minute
+minutes = minutes
+hour = hour
+hours = hours
+
+live-monitoring = Live Monitoring
+live-view = Live View
+live-location = Live Location
+view = View
+one-view = 1 View
+four-views = 4 Views
+nine-views = 9 Views
+sixteen-views = 16 Views
+viewing-options = Viewing options
+viewing-option-activex-mjpeg-snapshot = ActiveX, motion JPEG, or snapshot
+viewing-option-activex-snapshot = ActiveX or snapshot
+viewing-option-mjpeg-snapshot = Motion JPEG or snapshot
+viewing-option-snapshot = Snapshot only
+
+profile-management = Profile Management
+device-management = Device
+user-management = User
+recording = Recording
+cloud-recording = Cloud Recording
+device-recording = Device Recording
+account-management = Account
+role-management = Role
+selected-camera = Selected Camera
+camera = Camera
+channel = Channel
+control-panel = Control Panel
+account-list = Account List
+account-detail = Account Detail
+user-list = User List
+device-list = Device List
+role-list = Role List
+permissions = Permissions
+
+camera-zoom-in = Zoom In
+camera-zoom-out = Zoom Out
+
+mjpeg-stream = Motion JPEG
+mjpeg-stream-from-camera = Stream from camera (if available)
+mjpeg-stream-from-server = Stream from server
+
+audio = Audio
+map = Map
+account = Account
+user = User
+device = Device
+devices = Devices
+report = Report
+
+add-new = Add New
+search-by = Search By
+key-word = Key Word
+description = Description
+preview = Preview
+full-screen = Full Screen
+go-to = Go to
+combobox-none = None
+ctrl-click = CTRL+click to select multiple items.
+form-required = Required
+form-advanced = Advanced
+
+hide-this-message = Hide this message
+exit-full-screen-instruction = Press the <b>Esc</b> key to exit full screen mode.
+
+map-icons-license = Map icons from <a href="http://mapicons.nicolasmollet.com">Map Icons Collection</a> under <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0</a> license.
+
+password = Password
+old-password = Old Password
+new-password = New Password
+confirm-new-password = Confirm New Password
+change-password = Change Password
+reset-password = Reset Password
+
+user-information = User Information
+user-edit = Edit User
+user-new = New User
+add-user = Add User
+user-list = User List
+user-name = User Name
+user-description = Description
+user-fullname = Full Name
+user-login-activated = Login Activated
+user-login-id = Login ID
+user-password= Password
+user-confirm-password = Confirm Password
+user-email-address = Email Address
+user-postal-address = Postal Address
+user-mobile-no = Mobile No.
+user-session-timeout = Session Timeout
+user-language = Language
+user-role = Role
+user-alert-notification-type = Alert Notification Type
+user-alert-notification-sms = SMS
+user-alert-notification-email = Email
+user-alert-notification-web = Web
+user-alert-events = Alert Events
+user-account = Account
+user-change-password-info = If you would like to change the password fill in the fields below. Otherwise leave them blank.
+
+assign-user = Assign User
+assign-device = Assign Device
+available-devices = Available Devices
+assigned-devices = Assigned Devices
+available-users = Available Users
+assigned-users = Assigned Users
+
+role-information = Role Information
+role-name = Role Name
+role-display-name = Role Display Name
+role-account = Account
+role-edit = Edit Role
+
+account-information = Account Information
+add-account = Add Account
+account-edit = Edit Account
+account-list = Account List
+account-detail = Account Detail
+account-name = Account Name
+account-number = Account Number
+account-description = Account Description
+account-user-quota = User Quota
+account-device-quota = Device Quota
+account-add-devices = Add Devices to Account
+account-add-users = Add Users to Account
+
+assign = Assign
+unassign = Unassign
+
+grant = Grant
+ungrant = Ungrant
+
+select-all = Select All
+clear-all = Clear All
+
+user-device-access-rights = Device Access Rights
+user-devices-without-access-rights = Devices without access rights
+user-devices-with-access-rights = Devices with access rights
+
+action = Action
+actions = Actions
+
+add-role = Add Role
+
+device-information = Device Information
+add-device = Add Device
+device-name = Device Name
+device-edit = Edit Device
+device-new = New Device
+device-list = Device List
+device-ip = Device IP
+device-port = Device Port
+device-service-no = Service No.
+device-bus-no = Bus No.
+device-bus-depot = Depot
+device-local-ip = Device Local IP
+device-brand = Device Brand
+device-channel = Device Channel
+device-login = Device Login
+device-password = Device Password
+device-address = Device Address
+device-latitude = Latitude
+device-longitude = Longitude
+device-key = Device Key
+device-license-key = License Key
+device-tags = Devices Tags
+device-video-recording = Video Recording
+device-image-recording = Image Recording
+device-recording-show-if-available = Display (if available)
+
+cloud-recording-list = Cloud Recording List
+device-recording-list = Device Recording List
+
+report-alerts = Alerts
+report-events = Events
+report-events-list = Event List
+report-date-time = Date/Time
+report-events-type = Event Type
+report-events-date-time = Event Time
+report-alerts-list = Alert List
+report-alerts-date-time = Alert Time
+report-alerts-type = Alert Type
+
+button-update = Update
+button-select-all = Select All
+button-assign = Assign
+button-unassign = Unassign
+button-clear-all = Clear All
+button-add-account = Add Account
+button-add-device = Add Device
+button-add-user = Add User
+
+send-led-message = Send LED Message
+led-message = Message
+led-font-size = Font Size
+led-font-color = Font Color
+
+role-not-found = Role not found.
+account-not-found = Account not found.
+user-not-found = User not found.
+device-not-found = Device not found.
+location-not-found = Unable to retrieve location.
+
+invalid-params = Invalid parameter received.
+user-not-belongs-to-account = Some user not belongs to the account specified, please check input.
+authentication-failure = Username or password is not correct. Please retry.
+user-not-assigned = User does not belong to an account and is not allowed to login.
+user-not-activated = Login is not yet activated or has been disabled.
+user-already-exist = This user name is already taken by others, please choose another one.
+cannot-deactivate-self = Cannot deactivate self.
+old-password-wrong = Old password is wrong.
+not-authorized = Not authorized.
+role-already-exist = This role name already exist. Please choose another one.
+role-has-users = There are users with this role.
+device-not-in-user-account = Device not in user account.
+
+device-quota = Device Quota
+user-quota = User Quota
+device-quota-exceeded = Too many devices in target account
+user-quota-exceeded = Too many users in target account
+
+submit = Submit
+back = Back
+login = Login
+login-id = Login ID
+fullname = Full name
+role = Role
+email = Email
+snapshot = Snapshot
+status = Status
+model = Model
+device-host = Device Host
+device-internal-host = Device Internal Host
+number-of-channels = Number of Channels
+video-stream = Video Stream
+address = Address
+latitude = Latitude
+longitude = Longitude
+cloud-recording-server = Cloud Recording Server
+license-key = License Key
+snapshot-recording = Snapshot Recording
+snapshot-recording-interval = Snapshot Recording Interval
+
+date = Date
+time = Time
+start-time = Start Time
+end-time = End Time
+created-at = Created At
+format = Format
+export = Export
+
+event-alerts = Event Alerts
+show-alerts-popup = Show Alert Popup
+clear-alerts = Clear Alerts
+close-window = Close Window
+
+event-alarm = Alarm
+event-motion = Motion
+event-video-loss = Video loss (channel #{channel})
+event-connection-lost = Connection lost
+event-connected = Connected
+event-input = Digital input (input #{input} #{status})
+event-output = Digital output (output #{output} #{status})
+event-idle = Idling
+event-speeding = Speeding (exceed #{threshold} km/h)
+event-sudden-acceleration = Sudden acceleration (exceed #{threshold} g)
+event-sudden-braking = Sudden braking (exceed #{threshold} g)
+event-sudden-left = Sudden left movement (exceed #{threshold} g)
+event-sudden-right = Sudden right movement (exceed #{threshold} g)
+event-sudden-up = Sudden up movement (exceed #{threshold} g)
+event-sudden-down = Sudden down movement (exceed #{threshold} g)
+event-geofence-enter = Entering geofence (geofence #{geofence})
+event-geofence-exit = Exiting geofence (geofence #{geofence})
+event-count = Count (zone #{zone}, value #{value})
+event-unknown = Unknown
+
+add-voucher = Add Voucher
+voucher-list = Voucher List
+voucher-no = Voucher Number
+voucher-user-quota = User Quota
+voucher-device-quota = Device Quota
+voucher-customer-name = Name
+voucher-contact-nbr = Contact Number
+voucher-customer-addr = Address
+voucher-expiry-date = Expiry Date
+voucher-status = Status
+voucher-edit = Edit Voucher
+voucher-account = New Account Name
+voucher-user = Admin Login Name
+create-account-with-voucher = Create new account with voucher
+
+session-timeout-message = Your login session has timed out.
+cannot-create-session = Cannot create login session.
+
+language-en = English
+language-zh = Chinese (Simplified)
+
+################################################################################
+
+# JavaScript messages
+# Note: Single quotes must be escaped.
+
+js-role-added = Role has been successfully added.
+js-role-updated = Role "#{name}" has been successfully updated.
+js-role-deleted = Role "#{name}" has been successfully deleted.
+js-role-delete-confirm = Are you sure you want to delete role "#{name}"?
+
+js-account-added = Account "#{name}" (#{number}) has been successfully added.
+js-account-updated = Account "#{name}" has been successfully updated.
+js-account-deleted = Account "#{name}" has been successfully deleted.
+js-account-delete-confirm = Are you sure you want to delete account "#{name}"?
+
+js-user-added = User has been successfully added.
+js-user-updated = User "#{name}" has been successfully updated.
+js-user-deleted = User "#{name}" has been successfully deleted.
+js-user-delete-confirm = Are you sure you want to delete user "#{name}"?
+
+js-device-added = Device has been successfully added.
+js-device-updated = Device "#{name}" has been successfully updated.
+js-device-deleted = Device "#{name}" has been successfully deleted.
+js-device-delete-confirm = Are you sure you want to delete device "#{name}"?
+
+js-device-assigned = Device(s) has been successfully assigned to "#{name}".
+js-device-unassigned = Device(s) has been successfully unassigned from "#{name}".
+js-user-assigned = User(s) has been successfully assigned to "#{name}".
+js-user-unassigned = User(s) has been successfully unassigned from "#{name}".
+
+js-route-deleted = Route "#{name}" has been successfully deleted.
+js-route-delete-confirm = Are you sure you want to delete route "#{name}"?
+js-route-rollback-confirm = Are you sure you want to roll back to version "#{version}" for route "#{name}"?
+js-route-settest-confirm = Are you sure you want to set "#{name}" to #{mode} mode?
+
+js-voucher-added = Voucher "#{number}" has been successfully added.
+js-voucher-updated = Voucher "#{name}" has been successfully updated.
+js-voucher-deleted = Voucher "#{name}" has been successfully deleted.
+js-voucher-delete-confirm = Are you sure you want to delete voucher "#{name}"?
+
+js-user-device-access-rights-granted = Access rights to device(s) has been successfully granted to "#{name}".
+js-user-device-access-rights-ungranted = Access rights to device(s) has been successfully ungranted from "#{name}".
+
+js-user-reset-password-ok-info = The new password will be emailed to #{email}.
+js-user-reset-password-error-info = To reset the password, an email address is required.
+
+js-password-change-success = Password has been successfully changed.
+js-password-confirm-mismatch = Same password required.
+
+js-session-about-timeout = Your session is about to expire. Do you want to continue?
+js-session-timeout = Your session has expired. Please sign in again.
+
+js-message-sent = Message has been successfully sent.
+js-select-camera-control = Please select a camera to control.
+js-fail-to-connect = Fail to connect to server. Please try again later.
+js-error = Error.
+
+js-combobox-default = -- Select --

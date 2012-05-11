@@ -1,0 +1,359 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+ul li{
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+}
+
+body{
+    width: 100%;
+    height: 100%;
+    background-color: #efefef;
+    font-family:"arial";
+    font-size:12px;
+}
+
+.clear {
+    clear:both;
+}
+
+.input-form input.error {
+    border:1px solid red;
+}
+
+.input-required-info{
+    background-color: #FFFFFF;
+    color: #444444;
+    cursor: text;
+    margin-left: 10px;
+    margin-top: 5px;
+    position: absolute;
+    z-index: 10;
+}
+
+.input-form input.input-focused{
+ border: 2px solid #25a7d1;
+}
+
+.input-form input.input-focusout{
+ border: 1px solid #ababab;
+}
+
+span.error {
+    color: red;
+    position: relative;
+    display: block;
+}
+
+.error-container label.error{
+    color:red;
+    font-size:10px;
+    font-weight:normal;
+    padding: 0px;
+    margin: 0px;
+}
+
+/*font*/
+.page-title{
+    color: #585858;
+    font-family: verdana,arial;
+    font-size: 20px;
+    font-weight: bold;
+    float: left;
+    margin-top: 30px;
+}
+
+h1{
+    font-family: verdana;
+    color: #585858;
+    font-size: 18px;
+}
+
+h2{
+    font-family:verdana;
+    color: #585858;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.menu-text{
+    font-family:verdana, arial;
+    font-size:14px;
+    font-weight:bold;
+    color: #585858;
+}
+
+.sub-menu-text{
+    font-family:verdana, arial;
+    font-size:12px;
+    color: #363636;
+}
+
+label {
+    font-family: verdana;
+    font-size: 14px;
+    color: #000000;
+}
+
+.label1 {
+    font-family: verdana;
+    font-size: 12px;
+    color: #000000;
+    vertical-align: top;
+}
+
+.label2 {
+    font-family: verdana;
+    font-size: 12px;
+    color: #000000;
+    vertical-align: top;
+}
+
+.copy-text{
+    font-family:arial;
+    font-size:12px;
+}
+
+.copy-text-white{
+    font-family: arial;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.font-red{
+    font-family: verdana, arial;
+    font-size: 12px;
+    color: #C56511;
+}
+/*End font*/
+
+/* header */
+.header{
+    width: 100%;
+    height: 80px;
+    text-align: center;
+}
+
+.header-wrap{
+    width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    height: 90px;
+}
+
+.logo{
+    position: absolute;
+    margin-top: 15px;
+}
+
+.identifier{
+    position: absolute;
+    float: right;
+    margin-top: 40px;
+}
+/*End header*/
+
+/*content*/
+.content{
+    text-align:left;
+  	/*background-color: #f4f4f4;*/
+}
+
+.content-wrap{
+    width: 980px;
+    padding: 15px;
+    min-height: 380px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align:left;
+}
+
+.left-bar{
+    width:20%;
+    float:left;
+    height:auto;
+}
+
+.right-bar{
+    width:80%;
+    float:left;
+}
+
+
+
+/*End content*/
+
+/* footer */
+.footer{
+    clear:both;
+    width: 100%;
+    height: 80px;
+    background-position: 0px 0px;
+    padding-top: 10px;
+    text-align:center;
+}
+
+.footer-wrap{
+    margin-left:auto;
+    margin-right:auto;
+    text-align: left;
+    width:980px;
+}
+
+#powerby{
+    background-position: 0 -340px;
+    float: right;
+    height: 38px;
+    width: 150px;
+    margin-top: 10px;
+}
+/* End footer */
+
+/* Configuration */
+/*configurator*/
+
+.centerWrap .configuration
+{
+    float: right;
+    margin: 0 0 0 15px;
+    padding: 10px;
+    border: 1px solid inherit;
+    background-image: none;
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    min-width: 170px;
+    max-width: 300px;
+}
+
+.absConf .configuration
+{
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    height: auto;
+    margin: 0;
+    z-index: 2;
+}
+
+.configuration-horizontal
+{
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    position: static;
+    height: auto;
+    min-height: 0;
+    width: auto;
+    margin-bottom: 20px;
+    float:none;
+}
+
+.configuration-horizontal-bottom
+{
+    -webkit-border-radius: 0 0 5px 5px;
+    -moz-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+    margin: 20px -21px -21px;
+    position: static;
+    height: auto;
+    min-height: 0;
+    width: auto;
+    float:none;
+}
+
+.configHead, .configuration .configHead,
+.configuration .infoHead
+{
+    display: block;
+    font-size: 14px;
+    margin-top: 0;
+    text-indent: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #999;
+    background-position: 0 -178px;
+}
+
+.configuration .infoHead
+{
+    background-position: -107px -722px;
+}
+
+.configuration .configTitle
+{
+    font-size: 12px;
+    display: block;
+    line-height: 22px;
+    background-position: 0 21px;
+    margin-bottom: 10px;
+}
+
+.configuration .options
+{
+    list-style:none;
+    margin: 0;
+    padding: 0;
+}
+
+.configuration button
+{
+    margin: 0;
+    vertical-align: middle;
+}
+
+.configuration .k-textbox
+{
+    margin-left: 7px;
+    width: 30px;
+}
+
+.configuration .options li { display: block; margin: 0; padding: 0.2em 0;}
+
+.configuration .options li:after
+{
+    content: "";
+    display: block;
+    clear: both;
+    height: 0;
+}
+
+.configuration label,
+.configuration input
+{
+    vertical-align: middle;
+    line-height: 20px;
+    margin-top: 0;
+}
+
+.configuration label
+{
+    float: left;
+}
+
+.configuration input
+{
+    width: 40px;
+}
+
+.configuration input,
+.configuration select
+{
+    float: right;
+}
+
+.configuration .k-button,
+.configuration .k-widget
+{
+    margin-bottom: 3px;
+}

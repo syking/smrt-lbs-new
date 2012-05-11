@@ -1,0 +1,91 @@
+<div class="configuration k-widget k-header" style="padding:10px; margin-bottom:5px;">
+    <span class="configHead">Display</span>
+    <ul class="options">
+        <!--li>
+            <input id="BusStop" type="checkbox" style="width:15px"/> <label for="BusStop">Bus stop</label>
+        </li>
+        <li>
+            <input id="Depot" type="checkbox" style="width:15px" /> <label for="Depot">Depot</label>
+        </li-->
+        <li>
+            <input id="ShowCar" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowCar">Show Car</label>
+        </li>
+        <li>
+            <input id="ShowBus" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowBus">Show Bus</label>
+        </li>
+    </ul>
+</div>
+<div class="configuration k-widget k-header" style="padding:10px; margin-bottom:5px; overflow:auto;">
+    <span class="configHead">Fleets</span>
+
+    <div id="treeview" class="demo-section"></div>
+</div>
+<div class="k-widget k-header" style="padding:10px;">
+	<span class="configHead">Refresh (seconds)</span>
+    <input style="width:130px;" id="textBox" />
+    <button class="k-button" value="Refresh" id="refresh-button">Refresh</button>
+</div>
+
+<script id="treeview-template" type="text/kendo-ui-template">
+	#= item.text #
+    # if (!item.items) { #
+        <a class='delete-link' href='\#'></a>
+    # } #
+</script>
+<script id="treeview-checkbox-template" type="text/kendo-ui-template">
+	<!-- # var name = "checkedFiles[" + item.id + "]"; # -->
+	# var name = item.id; #
+    <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
+    <!-- <input type="hidden" name="#= name #" value="false" /> -->
+    <input type="checkbox" style="width:15px" name="#= name #" checked="checked" value="true" />
+</script>
+        
+<script>
+$(document).ready(function() {
+	 	$("#treeview").kendoTreeView({
+		    checkChildren:true,
+	        template: kendo.template($("#treeview-template").html()),
+
+	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
+
+	        dataSource: #{verbatim} ${fleetJson} #{/verbatim}
+	    });
+	 
+
+		$("#treeview input").click(function(){
+			if($(this).attr("checked")=="checked"){
+            	var li = $(this).parents('li:first'); 
+            	li.find("input").attr("checked", true);
+	        }else{
+	            //alert($(this).attr("checked") + " unchecked="+ $(this).attr("name"));//do some thing
+	            var li = $(this).parents('li:first'); 
+            	li.find("input").attr("checked", false);
+	        }
+		  });
+	
+	    $("#textBox").kendoNumericTextBox({
+	    	value: 10,
+	        min: 3,
+	        max: 100,
+	        step: 1,
+	        decimals: 1
+	    });
+	    
+	    $("#ShowBus").click(function(e){
+	    	if($(this).attr("checked") == "checked"){
+				showVehicleIcon("bus");
+			}else{
+				hideVehicleIcon("bus");
+			}
+	    });
+	    
+	    $("#ShowCar").click(function(e){
+	    	if($(this).attr("checked") == "checked"){
+				showVehicleIcon("car");
+			}else{
+				hideVehicleIcon("car");
+			}
+	    });
+});
+
+</script>
