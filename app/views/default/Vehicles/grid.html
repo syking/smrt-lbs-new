@@ -34,6 +34,9 @@
 
 
 <script type="text/javascript">
+    var fleetsJson = #{verbatim} ${fleets} #{/verbatim};
+    var deviceJson = #{verbatim} ${devices} #{/verbatim};
+
     $(document).ready(function () {
 
         loadVehicles("${grid.readUrl}");
@@ -41,13 +44,13 @@
         $("#fleet_id").kendoComboBox({
             dataTextField:"text",
             dataValueField:"value",
-            dataSource: #{verbatim} ${fleets} #{/verbatim}
+            dataSource: fleetsJson
         });
 
         $("#device_id").kendoComboBox({
             dataTextField:"text",
             dataValueField:"value",
-            dataSource: #{verbatim} ${devices} #{/verbatim}
+            dataSource: deviceJson
         });
 
     });
@@ -87,8 +90,10 @@
                         id:{ editable:false, nullable:true },
                         number:{ type:"string", validation:{ required:true } },
                         license:{ type:"string", validation:{ required:true } },
-                        fleetName:{  editable:false, validation:{ required:true }},
-                        deviceName:{  editable:false, validation:{ required:true }},
+                        fleetName:"FleetName",
+                        deviceName:"DeviceName",
+//                        fleetName:{ validation:{ required:true }},
+//                        deviceName:{ validation:{ required:true }},
                         description:{ type:"string", validation:{ required:true }},
                         cctvIp:{ type:"string", validation:{ required:true }},
                         type:{ type:"string", validation:{ required:true }}
@@ -96,20 +101,54 @@
                 }
             }
         });
-            $("#vehicles_grid").empty();
-            columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-            columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
-            var grid = $("#vehicles_grid").kendoGrid({
-                dataSource:dataSource,
-                columns:columnsJson,
-                toolbar:["create"],
-                scrollable:true,
-                sortable:true,
-                pageable:true,
-                height:"auto",
-                selectable:true,
-                editable:"${grid.editable}"
-            }).data("kendoGrid");
+        $("#vehicles_grid").empty();
+        //columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+        columnsJson = [
+            {
+                field:"number",
+                title:"Number"
+            },
+            {
+                field:"license",
+                title:"License"
+            },
+            {
+                field:"fleetName",
+                title:"Fleet Name",
+                editor:fleetDropDownEditor
+            },
+            {
+                field:"deviceName",
+                title:"Device Name",
+                editor:deviceDropDownEditor
+            },
+            {
+                field:"description",
+                title:"Description"
+            },
+            {
+                field:"cctvIp",
+                title:"Cctv Ip"
+            },
+            {
+                field:"type",
+                title:"Type"
+            }
+        ];
+        columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+        var grid = $("#vehicles_grid").kendoGrid({
+            dataSource:dataSource,
+            columns:columnsJson,
+            toolbar:["create"],
+            scrollable:true,
+            sortable:true,
+            pageable:true,
+            height:"auto",
+            selectable:true,
+            editable:"${grid.editable}"
+        }).data("kendoGrid");
+
+
     }
 
     function vehicleSearchValidate(form) {
@@ -117,5 +156,24 @@
         loadVehicles($form.attr("action"), $form.serializeArray());
         return false;
     }
+
+    function fleetDropDownEditor(container, options) {
+        $('<input data-text-field="text" data-value-field="text" data-bind="value:' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    autoBind:false,
+                    dataSource: fleetsJson
+                });
+    }
+
+    function deviceDropDownEditor(container, options) {
+        $('<input data-text-field="text" data-value-field="text" data-bind="value:' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    autoBind:false,
+                    dataSource: deviceJson
+                });
+    }
+
 
 </script>

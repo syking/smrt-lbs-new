@@ -19,8 +19,6 @@
     <label class="info">Start Time:</label>
     <input name="startTime" id="startTime"/>
 
-    <span></span>
-
     <label class="info">End Date:</label>
     <input name="endDate" id="endDate"/>
 
@@ -47,7 +45,7 @@
 
 <div id="grid_${grid.tabId}"></div>
 
-<script>
+<script type="text/javascript">
 
     $(document).ready(function () {
         loadLogs("${grid.readUrl}");

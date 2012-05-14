@@ -150,10 +150,6 @@ public class Logs extends Controller
         //date and time
         if ((null != startDate && !startDate.isEmpty()))
         {
-//            if (!(null != startTime && !startTime.isEmpty())) {
-//                 startTime = "00:00";
-//            }
-
             String startDateTimeString = startDate + " " + startTime;
             DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             System.out.println(startDateTimeString);
@@ -169,9 +165,6 @@ public class Logs extends Controller
 
         if ((null != endDate && !endDate.isEmpty()))
         {
-//            if (!(null != endTime && !endTime.isEmpty())) {
-//                endTime = "00:00";
-//            }
             String endDateTimeString = endDate + " " + endTime;
             DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             System.out.println(endDateTimeString);
