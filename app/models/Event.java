@@ -1,5 +1,6 @@
 package models;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,18 +46,16 @@ public class Event extends Model{
 	@Column(name="is_near_bus_stop")
 	public boolean isNearBusStop;
 	
-	/* 是否已处理，是一个状态量 */
-	@Column(name="is_processed")
-	public boolean isProcessed;
+	/* 道路 */
+	public String road;//需要根据经纬度计算得出地址位置
 
 	@Override
 	public String toString() {
 		return "Event [eventRecord=" + eventRecord + ", driver=" + driver
 				+ ", serviceNumber=" + serviceNumber + ", isHighWay="
-				+ isHighWay + ", isNearBusStop=" + isNearBusStop
-				+ ", isProcessed=" + isProcessed + "]";
+				+ isHighWay + ", isNearBusStop=" + isNearBusStop + ", road="
+				+ road + ", id=" + id + "]";
 	}
-	
 	
 	
 }

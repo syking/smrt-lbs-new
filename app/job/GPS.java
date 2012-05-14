@@ -25,7 +25,7 @@ public class GPS extends Job {
     }
 
     public void doJob(){
-    	GPS.generate(20, "");
+    	GPS.generate(21, "");
     }
     
     /**
