@@ -51,7 +51,6 @@ public class EventStatusJob extends Job {
 		if (ers == null)
 			return;
 		
-		System.out.println(CommonUtil.getNowTime() + " EventStatusJob doJob invoke ...");
 		
 		for (EventRecord er : ers) {
 			if (er.status != 0)
@@ -60,6 +59,8 @@ public class EventStatusJob extends Job {
 			System.out.println("\n process event record --> " + er);
 			
 			EntityTransaction trans = GenericModel.em().getTransaction();
+			if (!trans.isActive())
+				continue;
 			
 			try {
 
@@ -87,10 +88,12 @@ public class EventStatusJob extends Job {
 				}
 
 				Event e = new Event();
+				e.vehicle = v;
+				e.fleet = v.fleet;
 				e.eventRecord = er;
 				e.driver = schedule.driver;
 				e.serviceNumber = schedule.serviceNumber;
-
+				e.department = schedule.driver.department;
 				/*
 				 * TODO 计算得到 road
 				 */

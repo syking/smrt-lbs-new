@@ -1,4 +1,4 @@
-dojo.require("dijit.layout.BorderContainer");
+	dojo.require("dijit.layout.BorderContainer");
     dojo.require("esri.dijit.InfoWindow");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("esri.map");
@@ -240,18 +240,18 @@ dojo.require("dijit.layout.BorderContainer");
 					bus.activeStatus = "off";
 				}
             	attr = {
-            	id:bus.id,
-                xCoord:bus.xCoord,
-                yCoord:bus.yCoord,
-                busPlateNumber:bus.busPlateNumber,
-                driver:bus.driver,
-                serviceNumber:bus.serviceNumber,
-                currentSpeed:bus.currentSpeed,
-                activeStatus:bus.activeStatus,
-                vehicleType:bus.vehicleType
+            			id:bus.id,
+            			xCoord:bus.xCoord,
+            			yCoord:bus.yCoord,
+            			busPlateNumber:bus.busPlateNumber,
+            			driver:bus.driver,
+            			serviceNumber:bus.serviceNumber,
+            			currentSpeed:bus.currentSpeed,
+            			activeStatus:bus.activeStatus,
+            			vehicleType:bus.vehicleType
 	            };
 	
-	            it = new esri.InfoTemplate("Vehicle Information","Driver: ${driver}<br/>Service No.: ${serviceNumber}<br/>Plate Number: ${busPlateNumber}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>")
+	            it = new esri.InfoTemplate("Vehicle Information","Driver: ${driver}<br/>Service No.: ${serviceNumber}<br/>Plate Number: ${busPlateNumber}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>")
 
             }else{
             	attr = {
@@ -264,7 +264,7 @@ dojo.require("dijit.layout.BorderContainer");
                 activeStatus:bus.activeStatus,
 	            };
 	
-	            it = new esri.InfoTemplate("Event Information","Name: ${name}<br/>TechName.: ${techName}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>")
+	            it = new esri.InfoTemplate("Event Information","Name: ${name}<br/>TechName.: ${techName}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>")
 
             }
             //alert(JSON.stringify(attr));

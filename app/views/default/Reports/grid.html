@@ -1,0 +1,195 @@
+<script src="/public/js/kendo.chart.min.js" language="javascript"></script>
+
+<div id="view-on-map-wrap">
+	<div id="view-on-map-window"></div>
+</div>
+<style>
+
+	.k-content{
+		background:#f3f3f3;
+	}
+	
+    .k-autocomplete{
+    }
+    
+    .info{
+    	border:none;
+        padding: 3px 5px 7px 5px;
+        display:inline-block;
+        width:120px;
+        text-align:right;
+    }
+</style>
+<form action="/reports/departmentListJson" method="post" class="k-content search-wrap" onsubmit="return reportDepartmentSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	
+	<label for="departments" class="info" style="width:80px;">Superior:</label>
+	<input name="parentId" id="departments"/>
+	
+	<label for="types" class="info" >Type:</label>
+	<input name="dateType" id="types"/>
+	
+	<label id="time-label" for="time" class="info">Year:</label>
+	<div style="display:inline;" id="time-wrap">
+		<input name="date" id="time"/>
+	</div>
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="search-button" class="k-button" value="Search" />
+	</div>
+	
+</form>
+
+<div id="report_dept_grid"></div>
+
+<div id="report_dept_bar_chart"></div>
+
+<script>
+
+var departId;
+
+$(document).ready(function(){
+	
+	loadReportDepartments("/reports/departmentListJson");
+    
+    $("#report_dept_grid").delegate(".view-on-map-button", "click", function(e) {
+        e.preventDefault();
+        departId = $(this).parent().parent().find("td:last").html();
+        var w_title = "View Department("+departId+") Events On Map "
+        var wnd = $("#view-on-map-window")
+    	.kendoWindow({
+    		actions: ["Custom", "Minimize", "Maximize", "Close"],
+    		content: "http://"+ window.location.host + "/reports/viewEventOnMapByDept?departId="+departId,
+    		iframe: true,
+            modal: true,
+            visible: false,
+            resizable: true,
+            width: 800,
+            height: 500,
+            resize:function(e){
+            	$("#view-on-map-splitter").data("kendoSplitter").size("#map-view", "100%");
+            }
+         }).data("kendoWindow");
+        
+        wnd.title(w_title).center().open();
+        
+    });
+    
+    $("#report_dept_grid").delegate(".view-driver-button", "click", function(e) {
+        e.preventDefault();
+        alert("view driver");
+    });
+//     
+	var deptCombo = #{verbatim} ${departments} #{/verbatim};
+	deptCombo[deptCombo.length] = {text: "top department", value: "0"};
+    $("#departments").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value",
+        dataSource: deptCombo
+    });
+//     
+    $("#types").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value",
+        dataSource: [
+        	{text: "Dayly", value: "day"},
+        	{text: "Weekly", value: "week"},
+        	{text: "Monthly", value: "month"},
+        	{text: "Yearly", value: "year"}
+        ],
+        change: function() {
+            var value = this.value();
+            var text = this.text();
+        	$("#time-wrap").empty();
+        	$("#time-wrap").html("<input name='time' id='time'/>");
+     		$("#time-label").html(text);
+        	var _format = "yyyy/MM/dd";
+        	if ("month" == value){
+		    	_format = "yyyy/MM";
+		    	value = "year";
+		    }else if ("year" == value){
+		    	_format = "yyyy";
+		    	value = "decade";
+		    }
+		    
+        	$("#time").kendoDatePicker({
+		    	start: value,
+		    	depth: value,
+		    	format: _format
+		    });
+		    
+		    $("#time-wrap").show();
+		    $("#time-label").show();
+        }
+    });	
+    
+    $("#time-wrap").hide();
+    $("#time-label").hide();
+
+});
+
+function loadReportDepartments(url, params){
+	$.getJSON(url, params, function(json){
+		$("#report_dept_grid").empty();
+		json.columns[json.columns.length] = { 
+			title: "Actions",
+			width: "200px", 
+			command: [
+				{ text: "Map", className: "view-on-map-button" },
+				{ text: "Drivers", className: "view-driver-button" } 
+			]
+		};
+		
+		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
+		var grid = $("#report_dept_grid").kendoGrid({
+	    	dataSource: {
+	    		data: json.data,
+	    		pageSize:5
+	    	},
+	    	columns: json.columns, 
+	   	 	scrollable: true,
+	   	 	sortable: true,
+	   	 	pageable: true,
+	   	 	height: "auto",
+	   	 	selectable: true
+	   	 	
+        }).data("kendoGrid");
+	    
+	    $("#report_dept_bar_chart").empty();
+	    $("#report_dept_bar_chart").kendoChart({
+	        theme: "default",
+	        title: {
+	            text: "Department Performance Comparison"
+	        },
+	        legend: {
+	            position: "bottom"
+	        },
+	        seriesDefaults: {
+	            type: "column",
+	            stack: true
+	        },
+	        series: json.series,
+	        categoryAxis: {
+	            categories: json.categories
+	        },
+	        valueAxis: {
+	            labels: {
+	                format: "{0}"
+	            }
+	        },
+	        
+	        tooltip: {
+	            visible: true,
+	            template: "#= value #",
+	            format: "{0}"
+	        }
+	    });
+	});
+}
+
+function reportDepartmentSearchValidate(form) {
+	var $form = $(form);
+	
+	loadReportDepartments($form.attr("action"), $form.serializeArray());
+	
+	return false;
+}
+</script>

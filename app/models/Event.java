@@ -26,7 +26,7 @@ import play.db.jpa.Model;
 public class Event extends Model{
 	
 	/* 设备发送的事件信息 */
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "event_record_id")
 	public EventRecord eventRecord;
 	
@@ -34,16 +34,28 @@ public class Event extends Model{
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Driver driver;
 	
+	/* 事件发生时是哪部车辆 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	public Vehicle vehicle;
+
+	/* 事件发生时是哪个部门 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	public Department department;
+	
+	/* 事件发生时是哪个车队的 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	public Fleet fleet;
+	
 	/* 时间发生时是哪条路线，需要根据设备找到相应的车辆，再找到当时相应的调度安排才能得到路线信息 */
 	@Column(name = "service_number")
 	public String serviceNumber = "";
 	
 	/* 是否在高速公路，需要分析事件记录数据中的经纬度 */
-	@Column(name="is_high_way")
+	@Column(name = "is_high_way")
 	public boolean isHighWay;
 	
 	/* 是否在公交车站附近 ，需要分析事件记录数据中的经纬度*/
-	@Column(name="is_near_bus_stop")
+	@Column(name = "is_near_bus_stop")
 	public boolean isNearBusStop;
 	
 	/* 道路 */
@@ -56,6 +68,5 @@ public class Event extends Model{
 				+ isHighWay + ", isNearBusStop=" + isNearBusStop + ", road="
 				+ road + ", id=" + id + "]";
 	}
-	
 	
 }
