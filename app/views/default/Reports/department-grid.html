@@ -30,7 +30,7 @@
 	
 	<label id="time-label" for="time" class="info">Year:</label>
 	<div style="display:inline;" id="time-wrap">
-		<input name="date" id="time"/>
+		<input name="time" id="time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="search-button" class="k-button" value="Search" />
@@ -75,7 +75,17 @@ $(document).ready(function(){
     
     $("#report_dept_grid").delegate(".view-driver-button", "click", function(e) {
         e.preventDefault();
-        alert("view driver");
+        departId = $(this).parent().parent().find("td:last").html();
+        var url = $("#report-driver").attr("url");
+        var newUrl ;
+       	if ((index = url.indexOf("&departmentId=")) > 0){
+       		newUrl = url.substring(0, "&departmentId=".length + index) + departId;
+       	}else{
+        	newUrl = url + "&departmentId="+departId;
+        }
+        
+        $("#report-driver").attr("url", newUrl);
+        $("#report-driver").find("span").click();
     });
 //     
 	var deptCombo = #{verbatim} ${departments} #{/verbatim};

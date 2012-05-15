@@ -24,10 +24,19 @@ public class Driver extends Model{
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Department department;
 
-    public Driver(String number, String name, String description)
-    {
+	public Driver(){}
+	
+    public Driver(String number, String name, String description){
         this.number = number;
         this.name = name;
         this.description = description;
     }
+
+	@Override
+	public String toString() {
+		return "Driver [number=" + number + ", name=" + name + ", description="
+				+ description + ", department=" + department + "]";
+	}
+    
+    
 }
