@@ -24,15 +24,16 @@ public class CounselVO {
 		this.id = c.id;
 		this.userName = c.user.name;
 		this.driverName = c.driver.name;
-		this.startTime = c.startTime.toString();
-		this.endTime = c.endTime.toString();
+		this.startTime = timeConvertor(c.startTime.toString());
+		this.endTime = timeConvertor(c.endTime.toString());
 		this.remark = c.remark;
 		return this;
 	}
 	
-	public static String timeConvertor(Date date) throws ParseException{
-		DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-		String dateString = df.format(date);
-		return dateString;
+	public static String timeConvertor(String time) throws ParseException{
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date dateString = df.parse(time);
+		String dateTime = df.format(dateString);
+		return dateTime;
 	}
 }

@@ -46,4 +46,10 @@ public class EventType extends Model {
 		String EXITING_GEOFENCE = "event-geofence-exit";
 		String COUNT = "event-count";
 	}
+
+	public EventType(String techName, String name) {
+		super();
+		this.techName = techName;
+		this.name = name;
+	}
 }

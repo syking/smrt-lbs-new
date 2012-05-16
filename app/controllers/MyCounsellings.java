@@ -60,6 +60,9 @@ public class MyCounsellings extends Controller{
 	}
 	
 	public static void saveMyCounsel(String models) throws ParseException{
+		if(models==null){
+			return;
+		}
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 
@@ -69,6 +72,9 @@ public class MyCounsellings extends Controller{
 		String remark = jo.getString("remark");
 		User user = (User)renderArgs.get("user");
 		Driver driver = Driver.find("byName", driverName).first();
+		if(user==null||driver==null){
+			return;
+		}
 		new Counselling(user, Counsellings.dateConvertor(startTime), Counsellings.dateConvertor(endTime), remark, driver).save();
 	}
 	public static void deleteCounsel(String models){
@@ -81,6 +87,9 @@ public class MyCounsellings extends Controller{
 	
 	public static void updateCounsel(String models) throws ParseException{
 		System.out.println(models);
+		if(models==null){
+			return;
+		}
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");

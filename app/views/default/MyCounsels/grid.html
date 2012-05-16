@@ -37,6 +37,7 @@
 	
 </form>
 
+<div id="fm_error" style="display:none; text-align:center;"><p style="color:red; font-size:20px;">The date format must be "yyyy-MM-dd hh:mm:ss"</p></div>
 <div id="grid_${grid.tabId}"></div>
 
 <script>
@@ -62,6 +63,21 @@
         	format: "HH:mm:ss"		
         });
     });
+    
+    
+    function strDateTime(str){
+	    var reg = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/;
+	    var r = str.match(reg);
+	    if(r==null)return false;
+	    var d= new Date(r[1], r[3]-1,r[4],r[5],r[6],r[7]);
+	    var flag = d.getFullYear()==r[1]&&(d.getMonth()+1)==r[3]&&d.getDate()==r[4]&&d.getHours()==r[5]&&d.getMinutes()==r[6]&&d.getSeconds()==r[7];
+	    if(!flag){
+	    	return false;
+	    }else{
+	    	return true;
+	    } 
+    }
+    
     
     function loadCounsels(url, params){
     	$("#grid_${grid.tabId}").empty();
@@ -89,6 +105,42 @@
                 },
                 parameterMap: function(options, operation) {
                     if (operation !== "read" && options.models) {
+                    	if(operation=="create"){
+                    		var preJsonStr = JSON.stringify(options.models);
+    						var jLen = preJsonStr.length;
+    						var jsonStr = preJsonStr.substring(1, jLen-1);
+    						var jsonData = jQuery.parseJSON(jsonStr);
+                    		var startTime = jsonData.startTime;
+                    		var endTime = jsonData.endTime;
+                    		var checkStartTime = strDateTime(startTime);
+                    		var checkEndTime = strDateTime(endTime);
+                    		if(!checkStartTime||!checkEndTime){
+                    			//loadCounsels("${grid.readUrl}");
+                    			$("div#fm_error").css("display","block");
+                    			return;
+                    		}else{
+                    			if($("div#fm_error").css("display")=="block")
+                    				$("div#fm_error").css("display","none");
+                    		}
+                    	}
+                    	if(operation=="update"){
+                    		var preJsonStr = JSON.stringify(options.models);
+    						var jLen = preJsonStr.length;
+    						var jsonStr = preJsonStr.substring(1, jLen-1);
+    						var jsonData = jQuery.parseJSON(jsonStr);
+                    		var startTime = jsonData.startTime;
+                    		var endTime = jsonData.endTime;
+                    		var checkStartTime = strDateTime(startTime);
+                    		var checkEndTime = strDateTime(endTime);
+                    		if(!checkStartTime||!checkEndTime){
+                    			//loadCounsels("${grid.readUrl}");
+                    			$("div#fm_error").css("display","block");
+                    			return "";
+                    		}else{
+                    			if($("div#fm_error").css("display")=="block")
+                    				$("div#fm_error").css("display","none");
+                    		}
+                    	}
                         return {models: kendo.stringify(options.models)};
                     }
                     return params;
@@ -112,15 +164,14 @@
         
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Actions", width: "210px" };
-		columnsJson[0] = { field: "driverName", title: "Driver", editor: function (container, options) {                                                                        
-            $('&lt; input name="' + options.field + '"/&gt;').appendTo(container).kendoComboBox({
-	                dataSource: dataSource,
-	                dataValueField: "driverName",
-	                dataTextField: "driverName",                            
-	            });
-	        }
- 		};
-		//columnsJson[1] = { field: "date", title: "Date",  format: "{0:MM/dd/yyyy}"};
+		columnsJson[0] = {title:"Driver", field:"driverName", editor: function (container, options) {
+			$('<input name="' + options.field + '"/>').appendTo(container).kendoComboBox({
+	            dataSource: #{verbatim} ${drivers} #{/verbatim},
+	            dataValueField: "driverName",
+	            dataTextField: "text",
+	            autobind: false
+	        });
+	    }};
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
@@ -129,27 +180,6 @@
             columns: columnsJson,
             editable: "${grid.editable}"
         });
-        /*
-        var categoryDataSource = new kendo.data.DataSource({
-            type: "odata",
-            transport: {
-            	read{
-	            	url: "MyCounsellings/driverList",
-	                dataType: "json"
-            	}
-            }
-        });
-       
-        alert(JSON.stringify(categoryDataSource));
-        function categoryDropDownEditor(container, options) {
-            $('<input data-text-field="driverName" data-value-field="driverName" data-bind="value:' + options.field + '"/>')
-                .appendTo(container)
-                .kendoDropDownList({
-                    autoBind: false,
-                    dataSource: categoryDataSource
-                });
-        }
-        */
     }
    
     function counselSearchValidate(form) {

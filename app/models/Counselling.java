@@ -56,15 +56,18 @@ public class Counselling extends Model{
 	
 	public List<Counselling> search(User user, 
 			Driver driver, Date start, Date end, String username, String driverName){
-
-		String index = "by" + formQuery(user, driver, start, end);
+		String index = "";
 		String sql = "";
-		
 		List<Counselling> counsellings = null;
-		if(index.contains("byAnd")){
-			sql = "by" + index.substring(5);
+		if(start==null||end==null){
+			index = "by" + formQuery(user, driver, start, end);
+			if(index.contains("byAnd")){
+				sql = "by" + index.substring(5);
+			}else{
+				sql = index;
+			}
 		}else{
-			sql = index;
+			sql = formQuery(user, driver, start, end);
 		}
 		System.out.println(sql);
 		List<Object> params = new ArrayList<Object>();
@@ -75,16 +78,16 @@ public class Counselling extends Model{
 				counsellings = Counselling.findAll();
 			}
 		}else{
-			if(sql.contains("User")){
+			if(user!=null){
 				params.add(user);
 			}
-			if(sql.contains("Driver")){
+			if(driver!=null){
 				params.add(driver);
 			}
-			if(sql.contains("StartTime")){
+			if(start!=null){
 				params.add(start);
 			}
-			if(sql.contains("EndTime")){
+			if(end!=null){
 				params.add(end);
 			}
 			Object[] p = params.toArray();
@@ -94,8 +97,21 @@ public class Counselling extends Model{
 	}
 	
 	public String formQuery(User user, Driver driver, Date start, Date end){
-		return String.format("%s%s%s%s", user!=null?"AndUser":"",
-				driver!=null?"AndDriver":"", start!=null?"AndStartTime":"", end!=null?"AndEndTime":"");
+		if(start!=null&&end!=null){
+			StringBuilder builder = new StringBuilder();
+			if(user!=null){
+				builder.append("user = ?").append(" And ");
+			}
+			if(driver!=null){
+				builder.append("driver = ?").append(" And ");
+			}
+			builder.append("startTime >= ?").append(" And ").append("endTime <= ?");
+			System.out.println(builder.toString());
+			return builder.toString();
+		}else{
+			return String.format("%s%s%s%s", user!=null?"AndUser":"",
+					driver!=null?"AndDriver":"", start!=null?"AndStartTime":"", end!=null?"AndEndTime":"");
+		}
 	}
 
 	public static long counselSize() {

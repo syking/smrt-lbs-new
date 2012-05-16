@@ -27,11 +27,7 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Counsellings extends Controller {
 
-	/*public static void index() {
-		render(renderArgs.get(THEME) + "/Counsels/index.html");
-	}*/
-
-	public static void counsel() throws ParseException {	
+	public static void counsel() throws ParseException {
 		List<CounselVO> result = new ArrayList<CounselVO>();
 		List<Counselling> counsellings = Counselling.findAll();
 		if (counsellings == null)
@@ -42,9 +38,9 @@ public class Counsellings extends Controller {
 		}
 		renderJSON(result);
 	}	
-
+	
 	public static void search(long username, long driverName, String date, String start, String end) throws ParseException {
-		System.out.println(username+" | "+driverName+" | "+date+" | "+start+" | "+end+" | "+username+" | "+driverName);
+	
 		Date startTime = null;
 		Date endTime = null;
 		if(!date.equals("")&&!start.equals("")){
@@ -56,6 +52,7 @@ public class Counsellings extends Controller {
 		User user = User.find("id = ?", username).first();
 		Driver driver = Driver.find("id = ?", driverName).first();
 		Counselling coun = new Counselling();
+		
 		List<Counselling> counsellings = coun.search(user, driver,
 				startTime, endTime, user!=null?user.name:"", driver!=null?driver.name:"");
 		
@@ -63,11 +60,13 @@ public class Counsellings extends Controller {
 		for (Counselling counselling : counsellings){
 			result.add(new CounselVO().init(counselling));
 		}
-        
 		renderJSON(result);
 	}
 
-	public static void saveCounselling(String models) throws ParseException {	
+	public static void saveCounselling(String models) throws ParseException {
+		if(models==null){
+			return;
+		}
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		String userName = jo.getString("userName");
@@ -78,7 +77,12 @@ public class Counsellings extends Controller {
 		
 		User user = User.find("byName", userName).first();
 		Driver driver = Driver.find("byName", driverName).first();
-		new Counselling(user, dateConvertor(startTime), dateConvertor(endTime), remark, driver).save();
+		if(user!=null&&driver!=null){
+			new Counselling(user, dateConvertor(startTime), dateConvertor(endTime), remark, driver).save();
+		}else{
+			System.out.println("There is an error occurred");
+			renderJSON(Counselling.findAll());
+		}
 	}
 
 	public static void deleteCounsel(String models) {
@@ -91,6 +95,9 @@ public class Counsellings extends Controller {
 
 	public static void updateCounsel(String models) throws ParseException {
 		System.out.println("===========  "+models);
+		if(models==null){
+			return;
+		}
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");
@@ -142,7 +149,6 @@ public class Counsellings extends Controller {
     		for (Driver dr : drList){
     			drivers.add(new ComboVO(dr.name, dr.id));
     		}
-		
 		
 		Map map = new HashMap();
 		Grid grid = new Grid();
