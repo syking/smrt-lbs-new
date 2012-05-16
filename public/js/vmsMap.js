@@ -109,13 +109,13 @@
     
     dojo.addOnLoad(init);
 
-	function bindMapinitData(objstr){
-		//alert("bindMapinitData===" + objstr);
+	function bindMapinitData(url){
+		//alert("bindMapinitData===" + url);
 		if(map.loaded){
 			clearTimeout(bindMapinitDataTimeout);
-			eval(objstr);
+			eval(url);
 		}else{
-			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+objstr+'")',500);
+			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+url+'")',500);
 		}
 	}
 	
@@ -165,7 +165,7 @@
         refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
     }
 
-    function addMarker(getCurrentDataUrlStr){
+    function addMarker(url){
         clearTimeout(refreshInterval);
         if($("#textBox").val()){
         	refreshIntervalCount = $("#textBox").val() * 1000;
@@ -179,7 +179,7 @@
 	        }
 	        
             $.ajax({
-                url: getCurrentDataUrlStr,
+                url: url,
                 dataType: 'json',
                 success: function(data){
                     currentBuses = data;
@@ -210,7 +210,7 @@
                         map.clusterLayer.refreshFeatures(newGraphics.vehicles);
                     }
 					dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
-                    refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
+                    refreshInterval = setTimeout("initRefreshInterval('"+url+"')", refreshIntervalCount);
                 }
             });
             

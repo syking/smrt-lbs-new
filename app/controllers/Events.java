@@ -52,7 +52,7 @@ public class Events extends Controller {
     	
     	String eventData = CommonUtil.getGson().toJson(eventVOList);
     	
-    	List<Map> columnMap = CommonUtil.assemColumns(EventVO.class, "id");
+    	List<Map> columnMap = CommonUtil.assemColumns(EventVO.class, "id", "vehicle", "driver", "department", "fleet");
     	
     	Map id = new HashMap(3);
 		id.put("field", "id");

@@ -1,7 +1,7 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
 
-<div id="view-on-map-wrap">
-	<div id="view-on-map-window"></div>
+<div id="driver_view-on-map-wrap">
+	<div id="driver_view-on-map-window"></div>
 </div>
 <style>
 
@@ -160,10 +160,10 @@ function loadReportDrivers(url, params){
 	        e.preventDefault();
 	        driverId = $(this).parent().parent().find("td:last").html();
 	        var w_title = "View Driver("+driverId+") Events On Map "
-	        var wnd = $("#view-on-map-window")
+	        var wnd = $("#driver_view-on-map-window")
 	    	.kendoWindow({
 	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
-	    		content: "http://"+ window.location.host + "/reports/viewEventOnMapByDriver?driverId="+driverId,
+	    		content: "http://"+ window.location.host + "/Maps/driverEvents?driverId="+driverId,
 	    		iframe: true,
 	            modal: true,
 	            visible: false,

@@ -1,7 +1,7 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
 
-<div id="view-on-map-wrap">
-	<div id="view-on-map-window"></div>
+<div id="dept_view-on-map-wrap">
+	<div id="dept_view-on-map-window"></div>
 </div>
 <style>
 
@@ -54,10 +54,10 @@ $(document).ready(function(){
         e.preventDefault();
         departId = $(this).parent().parent().find("td:last").html();
         var w_title = "View Department("+departId+") Events On Map "
-        var wnd = $("#view-on-map-window")
+        var wnd = $("#dept_view-on-map-window")
     	.kendoWindow({
     		actions: ["Custom", "Minimize", "Maximize", "Close"],
-    		content: "http://"+ window.location.host + "/reports/viewEventOnMapByDept?departId="+departId,
+    		content: "http://"+ window.location.host + "/Maps/departmentEvents?departmentId="+departId,
     		iframe: true,
             modal: true,
             visible: false,
