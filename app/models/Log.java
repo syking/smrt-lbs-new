@@ -23,21 +23,21 @@ public class Log extends Model
     public String name;
     public String content;
     public String action;
-    @ManyToOne(fetch = FetchType.EAGER)
-    public User user;
+    public String userName;
+    public String ip;
     public Date dateTime;
 
-    public Log(String type, String name, String content, String action, User user, Date dateTime)
+    public Log(String type, String name, String content, String action, String userName, String ip, Date dateTime)
     {
         this.type = type;
         this.name = name;
         this.content = content;
         this.action = action;
-        this.user = user;
+        this.userName = userName;
+        this.ip = ip;
         this.dateTime = dateTime;
     }
 
-    @Override
     public String toString()
     {
         return "Log{" +
@@ -45,8 +45,9 @@ public class Log extends Model
                 ", name='" + name + '\'' +
                 ", content='" + content + '\'' +
                 ", action='" + action + '\'' +
-                ", user=" + user +
+                ", userName='" + userName + '\'' +
+                ", ip='" + ip + '\'' +
                 ", dateTime=" + dateTime +
-                "} " + super.toString();
+                '}';
     }
 }

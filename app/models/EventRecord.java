@@ -35,9 +35,6 @@ public class EventRecord extends Model {
 	@Column(name="longitude")
 	public String lng;
 	
-	/* 道路 */
-	public String road;
-	
 	/* 事件发生时间 */
 	@Column(name="event_time")
 	public Date time;
@@ -53,5 +50,19 @@ public class EventRecord extends Model {
 	/* 当前发生事件时的重力加速度 */
 	@Column(name="g_value")
 	public String gValue;
+	
+	/* 处理进度，是一个状态量 */
+	@Column(name="event_status", length = 1)
+	public short status;// 0(待处理), 1(处理中), 2(处理成功), 3(处理失败)
+
+	@Override
+	public String toString() {
+		return "EventRecord [device=" + device.key + ", type=" + type + ", lat="
+				+ lat + ", lng=" + lng + ", time=" + time + ", speed=" + speed
+				+ ", duration=" + duration + ", detail=" + detail + ", gValue="
+				+ gValue + ", status=" + status + ", id=" + id + "]";
+	}
+	
+	
 	
 }

@@ -222,6 +222,13 @@ public class Vehicles extends Controller
         Vehicle v = Vehicle.findById(vehicleVO.id);
         v.number = vehicleVO.number;
         v.license = vehicleVO.license;
+
+        Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
+        v.fleet = fleet;
+
+        Device device = Device.find("byName", vehicleVO.deviceName).first();
+        v.device = device;
+
         v.cctvIp = vehicleVO.cctvIp;
         v.description = vehicleVO.description;
         v.type = vehicleVO.type;
@@ -273,7 +280,8 @@ public class Vehicles extends Controller
         grid.readUrl = preUrl + "read";
         grid.searchUrl = preUrl + "search";
         grid.editable = "popup";
-        grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(VehicleVO.class, "id"));
+//        grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(VehicleVO.class, "id"));
+
 
         //fleet combobox
         List<Fleet> fleetList = Fleet.findAll();

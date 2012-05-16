@@ -1,0 +1,144 @@
+#{set 'moreScripts'}
+<script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
+#{/set}
+#{extends theme+'/main_head.html' /}
+<div id="${result.idPrefix}_view-on-map-splitter" style="width:99%; height:99%;">
+	<div id="${result.idPrefix}_event-list"></div>
+	
+	<div id="${result.idPrefix}_map-view" region="center" style=" position:relative;"></div>
+	#{include './legend.html' /}
+	
+</div>
+<div id="${result.idPrefix}_event-type-open-btn" style="cursor:pointer;position:absolute; top:238px; background:#fff; padding:2px; right:5px; z-index:99999999;">
+	<img src="/public/images/ruler_triangle.png" />	
+</div>
+<div id="${result.idPrefix}_event-type-list" class="configuration k-widget k-header" style="position:absolute; top:258px; background:#fff; padding:5px; right:20px; z-index:99999999">
+	<ul class="options" id="${result.idPrefix}_event-type-list-ul"></ul>
+</div>
+
+<script>
+
+var map = "";
+var map_id = "${result.idPrefix}_map-view";
+var eventTypes = #{verbatim} ${result.eventTypes} #{/verbatim};
+var eventColumns = #{verbatim} ${result.eventColumns} #{/verbatim};
+var eventData = #{verbatim} ${result.eventData} #{/verbatim};
+var eventGPSUrl = "${result.eventGPSUrl}";
+
+</script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+(function($){
+	$.getUrlParam = function(name){
+	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	var r = window.location.search.substr(1).match(reg);
+	if (r!=null) return unescape(r[2]);
+	 return null;
+	}
+})(jQuery);
+
+function eventTypeListInit(){
+	$.each(eventTypes, function(index, data){
+		var li = '<li><input id="'+ data.techName +'" type="checkbox" checked="checked" /> <label>' + data.name + '</label></li>';
+        $("#${result.idPrefix}_event-type-list-ul").append(li);
+    });
+	
+	$("#${result.idPrefix}_event-type-list-ul li input").click(function(){
+		if($(this).attr("checked") == "checked"){
+			showEventTypeIcon($(this).attr("id"));
+		}else{
+			hideEventTypeIcon($(this).attr("id"));
+		}
+	});
+}
+
+var view_on_map_splitter;
+refreshIntervalCount = 1000000*1000;//no refresh
+
+$(document).ready(function(){
+	
+	eventTypeListInit();// load the eventTypes
+
+	$("#${result.idPrefix}_event-list").kendoGrid({
+
+		groupable: false,
+        scrollable: true,
+        sortable: true,
+        pageable: true,
+        selectable: true,
+        height: 230,
+        columns: eventColumns,
+        dataSource: {
+        	 pageSize: 3,
+            data: eventData
+        }
+    });
+    
+    $("#${result.idPrefix}_event-list").delegate("td", "click", function(e) {
+    	e.preventDefault();
+        
+        var id = $(this).parent().find("td:last").text();
+        
+        showCurrentInfoWindow(id);
+    });
+    
+	view_on_map_splitter = $("#${result.idPrefix}_view-on-map-splitter").kendoSplitter({
+		orientation: "vertical",
+		panes: [
+            { collapsible: false, resizable:false, size: "233px", min: "233px"},//up
+            { collapsible: false, resizable:false,},//middle 
+            { collapsible: false, resizable:false, min: "35px", size: "35px"}//bottom
+        ],
+        resize:function(e){
+            //if is the first time loading, the map is not required to resize
+            if (map && map != ""){
+                map.resize();
+      		    map.reposition();
+      	    }
+        }
+	}).data("kendoSplitter");
+	
+	$("#${result.idPrefix}_event-type-list").css({"opacity":"0.8"});
+	$("#${result.idPrefix}_event-type-open-btn").click(function(e){
+		$("#${result.idPrefix}_event-type-list").toggle("200");
+	});
+	
+	bindMapinitData("addMarker('" + eventGPSUrl + "')");
+
+});
+
+function selectGridWithMapClick(vid){
+	var id = vid.split("_")[1];
+	var dataSource = $("#${result.idPrefix}_event-list").data("kendoGrid").dataSource;
+	var data = dataSource.data();
+	var pageSize = dataSource.pageSize();
+	var pageNum;
+
+	for(var i =0; i < data.length; i++){
+		if(data[i].id == id){
+			pageNum = Math.ceil(i/pageSize);
+		}
+	}
+	//alert(JSON.stringify(pages));
+	//alert(pageNum);
+
+	$.each($("#${result.idPrefix}_event-list").find(".k-grid-pager a"),function(){
+		if($(this).text() == pageNum){
+			$(this).trigger("click");
+		}
+	});
+	
+	setTimeout("selectGrid(" + id + ")",50);
+}
+function selectGrid(id){
+	// get a reference to the grid widget
+	var grid = $("#${result.idPrefix}_event-list").data("kendoGrid");
+	// selects first grid item
+	$.each(grid.tbody.find("tr"),function(tr){
+		if($(this).find("td:last").text() == id){
+			grid.select($(this));
+		}
+	});
+}
+</script>

@@ -2,6 +2,7 @@ package utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,34 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
+	
+	public static Date addDate(Date source, int day){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(source);
+		cal.add(Calendar.DAY_OF_MONTH, day); 
+
+		return cal.getTime();
+	}
+	
+	public static Date addMonth(Date source, int month){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(source);
+		cal.add(Calendar.MONTH, month);
+
+		return cal.getTime();
+	}
+	
+	public static Date addYear(Date source, int year){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(source);
+		cal.add(Calendar.YEAR, year);
+
+		return cal.getTime();
+	}
+	
+	public static String upperFirst(String s){
+		return s.replaceFirst(s.substring(0, 1),s.substring(0, 1).toUpperCase());
+	}
 	
 	public static Map map(String k, Object v){
 		Map map = new HashMap(1);

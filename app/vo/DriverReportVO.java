@@ -25,7 +25,7 @@ public class DriverReportVO {
 		this.type = r.event.eventRecord.type.techName;
 		this.latitude = r.event.eventRecord.lat;
 		this.longitude = r.event.eventRecord.lng;
-		this.road = r.event.eventRecord.road;
+		this.road = r.event.road;
 		return this;
 	}
 	

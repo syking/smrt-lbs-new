@@ -1,4 +1,4 @@
-dojo.require("dijit.layout.BorderContainer");
+	dojo.require("dijit.layout.BorderContainer");
     dojo.require("esri.dijit.InfoWindow");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("esri.map");
@@ -57,7 +57,7 @@ dojo.require("dijit.layout.BorderContainer");
 
     function showCoordinates(evt) {
         var mp = evt.mapPoint;
-        dojo.byId("info").innerHTML = "Location: " + mp.x + ", " + mp.y;
+        //dojo.byId("info").innerHTML = "Location: " + mp.x + ", " + mp.y;
     }
 
     function closeInfoWindow(evt){
@@ -109,13 +109,13 @@ dojo.require("dijit.layout.BorderContainer");
     
     dojo.addOnLoad(init);
 
-	function bindMapinitData(objstr){
-		//alert("bindMapinitData===" + objstr);
+	function bindMapinitData(url){
+		//alert("bindMapinitData===" + url);
 		if(map.loaded){
 			clearTimeout(bindMapinitDataTimeout);
-			eval(objstr);
+			eval(url);
 		}else{
-			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+objstr+'")',500);
+			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+url+'")',500);
 		}
 	}
 	
@@ -165,7 +165,7 @@ dojo.require("dijit.layout.BorderContainer");
         refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
     }
 
-    function addMarker(getCurrentDataUrlStr){
+    function addMarker(url){
         clearTimeout(refreshInterval);
         if($("#textBox").val()){
         	refreshIntervalCount = $("#textBox").val() * 1000;
@@ -179,7 +179,7 @@ dojo.require("dijit.layout.BorderContainer");
 	        }
 	        
             $.ajax({
-                url: getCurrentDataUrlStr,
+                url: url,
                 dataType: 'json',
                 success: function(data){
                     currentBuses = data;
@@ -210,7 +210,7 @@ dojo.require("dijit.layout.BorderContainer");
                         map.clusterLayer.refreshFeatures(newGraphics.vehicles);
                     }
 					dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
-                    refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
+                    refreshInterval = setTimeout("initRefreshInterval('"+url+"')", refreshIntervalCount);
                 }
             });
             
@@ -240,18 +240,18 @@ dojo.require("dijit.layout.BorderContainer");
 					bus.activeStatus = "off";
 				}
             	attr = {
-            	id:bus.id,
-                xCoord:bus.xCoord,
-                yCoord:bus.yCoord,
-                busPlateNumber:bus.busPlateNumber,
-                driver:bus.driver,
-                serviceNumber:bus.serviceNumber,
-                currentSpeed:bus.currentSpeed,
-                activeStatus:bus.activeStatus,
-                vehicleType:bus.vehicleType
+            			id:bus.id,
+            			xCoord:bus.xCoord,
+            			yCoord:bus.yCoord,
+            			busPlateNumber:bus.busPlateNumber,
+            			driver:bus.driver,
+            			serviceNumber:bus.serviceNumber,
+            			currentSpeed:bus.currentSpeed,
+            			activeStatus:bus.activeStatus,
+            			vehicleType:bus.vehicleType
 	            };
 	
-	            it = new esri.InfoTemplate("Vehicle Information","Driver: ${driver}<br/>Service No.: ${serviceNumber}<br/>Plate Number: ${busPlateNumber}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>")
+	            it = new esri.InfoTemplate("Vehicle Information","Driver: ${driver}<br/>Service No.: ${serviceNumber}<br/>Plate Number: ${busPlateNumber}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>")
 
             }else{
             	attr = {
@@ -264,7 +264,7 @@ dojo.require("dijit.layout.BorderContainer");
                 activeStatus:bus.activeStatus,
 	            };
 	
-	            it = new esri.InfoTemplate("Event Information","Name: ${name}<br/>TechName.: ${techName}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>")
+	            it = new esri.InfoTemplate("Event Information","Name: ${name}<br/>TechName.: ${techName}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>")
 
             }
             //alert(JSON.stringify(attr));

@@ -1,14 +1,10 @@
 package vo;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import utils.CommonUtil;
 
 import models.Counselling;
 
@@ -16,6 +12,7 @@ public class CounselVO {
 	public long id;
 	public String userName;
 	public String driverName;
+	public String date;
 	public String startTime;
 	public String endTime;
 	public String remark;
