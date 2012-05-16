@@ -25,11 +25,11 @@
 	
 	<div style="height:8px"></div>
 	
-	<label for="startTime" class="info" style="width:80px;">Start Time:</label>
-	<input name="startTime" id="mystart_time"/>
+	<label for="start" class="info" style="width:80px;">Start Time:</label>
+	<input name="start" id="mystart_time"/>
 	
-	<label for="endTime" class="info">End Time:</label>
-	<input name="endTime" id="myend_time"/>
+	<label for="end" class="info">End Time:</label>
+	<input name="end" id="myend_time"/>
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="mysearch-button" class="k-button" value="Search" />
@@ -143,7 +143,6 @@
                     	}
                         return {models: kendo.stringify(options.models)};
                     }
-                    
                     return params;
                 }
             },
@@ -154,8 +153,7 @@
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        driverName: { validation: { required: true } },
-                        date: { type: "date", validation: {required: true} },
+                        driverName: { validation: { required: true }, editable: true },
                         startTime: { validation: { required: true } },
                         endTime: { validation: { required: true } },
                         remark: { validation: { required: false } },

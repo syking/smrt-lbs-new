@@ -12,6 +12,8 @@ import vo.ComboVO;
 import vo.CounselVO;
 import vo.Grid;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,10 +69,9 @@ public class Counsellings extends Controller {
 		}
 		String json = models.substring(1, models.toString().length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
-
 		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
-		String startTime = jo.getString("startTime");
+		String startTime =  jo.getString("startTime");
 		String endTime = jo.getString("endTime");
 		String remark = jo.getString("remark");
 		
@@ -168,8 +169,10 @@ public class Counsellings extends Controller {
 				template(renderArgs.get(THEME) + "/Counsels/grid.html"))
 				.render(map));
 	}
-
-	public static Date dateConvertor(String dateStr) throws ParseException {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateStr);
+	
+	public static Date dateConvertor(String sql_date) {
+		System.out.println(sql_date);
+		Timestamp newDate = Timestamp.valueOf(sql_date);
+		return newDate;
 	}
 }
