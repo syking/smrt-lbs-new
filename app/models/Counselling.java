@@ -1,17 +1,10 @@
 package models;
 
+import play.db.jpa.Model;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import play.db.jpa.Model;
 /**
  * 辅导安排信息
  * @author weiwei
@@ -26,7 +19,7 @@ public class Counselling extends Model{
 	
 	@Column(name = "start_time")
 	public Date startTime;
-	
+
 	@Column(name = "end_time")
 	public Date endTime;
 
@@ -40,7 +33,7 @@ public class Counselling extends Model{
 		super();
 	}
 
-	public Counselling(User user, Date startTime ,
+	public Counselling(User user, Date startTime,
 			Date endTime, String remark, Driver driver) {
 		super();
 		this.user = user;
@@ -50,13 +43,14 @@ public class Counselling extends Model{
 		this.driver = driver;
 	}
 	
-	public List<Counselling> list(){
+	public List<Counselling> getAllCoun(){
 		return Counselling.findAll();
 	}
 	
 	public List<Counselling> search(User user, 
 			Driver driver, Date start, Date end, String username, String driverName){
 		String index = "";
+
 		String sql = "";
 		List<Counselling> counsellings = null;
 		if(start==null||end==null){
@@ -95,7 +89,7 @@ public class Counselling extends Model{
 		}
 		return counsellings;	
 	}
-	
+
 	public String formQuery(User user, Driver driver, Date start, Date end){
 		if(start!=null&&end!=null){
 			StringBuilder builder = new StringBuilder();
