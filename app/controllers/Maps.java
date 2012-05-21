@@ -84,6 +84,25 @@ public class Maps extends Controller {
     	
     	renderText(result.get("eventGPS"));
     }
+    
+    /**
+     * 获取某车队下所有司机的 Events List 和 Events GPS
+     * @param departmentId
+     */
+    public static void fleetEvents(Long fleetId){
+    	List<Event> events = Event.find("fleet_id = ?", fleetId).fetch();
+    	
+    	Map result = viewOnMap("fleet_" + fleetId, events, "id", "vehicle", "department", "driver");
+    	result.put("eventGPSUrl", "/Maps/fleetEventsGPS?fleetId=" + fleetId);
+    	render(renderArgs.get(THEME) + "/Map/map.html", result);
+    }
+    
+    public static void fleetEventsGPS(Long fleetId){
+    	List<Event> events = Event.find("fleet_id = ?", fleetId).fetch();
+    	Map result = viewOnMap("fleet_" + fleetId, events, "id", "vehicle", "department", "driver");
+    	
+    	renderText(result.get("eventGPS"));
+    }
 
     
     /**
