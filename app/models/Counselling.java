@@ -3,6 +3,7 @@ package models;
 import play.db.jpa.Model;
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 /**
  * 辅导安排信息
@@ -17,11 +18,10 @@ public class Counselling extends Model{
 	public User user;
 	
 	@Column(name = "start_time")
-	public String startTime;
-	
-	public String date;
+	public Date startTime;
+
 	@Column(name = "end_time")
-	public String endTime;
+	public Date endTime;
 
 	public String remark;
 	
@@ -33,11 +33,10 @@ public class Counselling extends Model{
 		super();
 	}
 
-	public Counselling(User user, String date, String startTime,
-			String endTime, String remark, Driver driver) {
+	public Counselling(User user, Date startTime,
+			Date endTime, String remark, Driver driver) {
 		super();
 		this.user = user;
-		this.date = date;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.remark = remark;
@@ -48,17 +47,21 @@ public class Counselling extends Model{
 		return Counselling.findAll();
 	}
 	
-	public List<Counselling> getCounsellings(User user, 
-			Driver driver, String date, String start, String end, String username, String driverName){
-		
-		String index = "by" + formQuery(user, driver, date, start, end);
+	public List<Counselling> search(User user, 
+			Driver driver, Date start, Date end, String username, String driverName){
+		String index = "";
+
 		String sql = "";
-		
 		List<Counselling> counsellings = null;
-		if(index.contains("byAnd")){
-			sql = "by" + index.substring(5);
+		if(start==null||end==null){
+			index = "by" + formQuery(user, driver, start, end);
+			if(index.contains("byAnd")){
+				sql = "by" + index.substring(5);
+			}else{
+				sql = index;
+			}
 		}else{
-			sql = index;
+			sql = formQuery(user, driver, start, end);
 		}
 		System.out.println(sql);
 		List<Object> params = new ArrayList<Object>();
@@ -69,30 +72,40 @@ public class Counselling extends Model{
 				counsellings = Counselling.findAll();
 			}
 		}else{
-			if(sql.contains("User")){
+			if(user!=null){
 				params.add(user);
 			}
-			if(sql.contains("Driver")){
+			if(driver!=null){
 				params.add(driver);
 			}
-			if(sql.contains("StartTime")){
+			if(start!=null){
 				params.add(start);
 			}
-			if(sql.contains("EndTime")){
+			if(end!=null){
 				params.add(end);
-			}
-			if(sql.contains("Date")){
-				params.add(date);
 			}
 			Object[] p = params.toArray();
 			counsellings = Counselling.find(sql, p).fetch();
 		}
 		return counsellings;	
 	}
-	
-	public String formQuery(User user, Driver driver, String date, String start, String end){
-		return String.format("%s%s%s%s%s", user!=null?"AndUser":"",
-				driver!=null?"AndDriver":"", !date.equals("")?"AndDate":"", !start.equals("")?"AndStartTime":"", !end.equals("")?"AndEndTime":"");
+
+	public String formQuery(User user, Driver driver, Date start, Date end){
+		if(start!=null&&end!=null){
+			StringBuilder builder = new StringBuilder();
+			if(user!=null){
+				builder.append("user = ?").append(" And ");
+			}
+			if(driver!=null){
+				builder.append("driver = ?").append(" And ");
+			}
+			builder.append("startTime >= ?").append(" And ").append("endTime <= ?");
+			System.out.println(builder.toString());
+			return builder.toString();
+		}else{
+			return String.format("%s%s%s%s", user!=null?"AndUser":"",
+					driver!=null?"AndDriver":"", start!=null?"AndStartTime":"", end!=null?"AndEndTime":"");
+		}
 	}
 
 	public static long counselSize() {

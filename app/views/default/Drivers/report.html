@@ -1,0 +1,172 @@
+<script src="/public/js/kendo.chart.min.js" type="text/javascript"></script>
+<style>
+
+	.k-content{
+		background:#f3f3f3;
+	}
+	
+    .k-autocomplete{
+    }
+    
+    .info{
+    	border:none;
+        padding: 3px 5px 7px 5px;
+        display:inline-block;
+        width:120px;
+        text-align:right;
+    }
+    
+</style>
+
+<form action="/driverreports/search" method="post" class="k-content search-wrap" onsubmit="return driverReportSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	
+	<label for="driverId" class="info" style="width:80px;">Driver ID:</label>
+	<input name="driverId" id="driverId"/>
+	
+	<label for="reportType" class="info" >Report Type:</label>
+	<input name="reportType" id="reportType"/>
+	
+	<div style="height:8px"></div>
+	
+	<label for="date" class="info" style="width:80px;">Date:</label>
+	<input name="date" id="date"/>
+
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="search-button" class="k-button" value="Search" />
+	</div>
+</form>
+
+<div id="chart_bg" class="k-content">
+	<div class="chart-wrapper">
+    	<div id="pie_chart">
+    	</div>
+    </div>
+</div>
+
+<div id="grid_${grid.tabId}"></div>
+
+<script>
+    $(document).ready(function () {
+    	
+    	loadReport("${grid.readUrl}");
+    	
+        $("#driverId").kendoComboBox({
+        	dataValueField: "driverName",
+            dataTextField: "text",
+            dataSource: #{verbatim} ${drivers} #{/verbatim}
+        });
+        
+        $("#reportType").kendoComboBox({
+        	dataValueField: "text",
+            dataTextField: "value",
+        	dataSource:[
+                        { text: "type1", value: "daily" },
+                        { text: "type2", value: "weekly" },
+                        { text: "type3", value: "monthly" }
+                    ]		
+        });
+        
+        $("#date").kendoDatePicker({
+        	format: "yyyy-MM-dd"		
+        });
+        
+        
+        setTimeout(function() {
+            createChart("/DriverReports/getCount");
+
+            $("#chart_bg").bind("kendo:skinChange", function(e) {
+                createChart("/DriverReports/getCount");
+            });
+        }, 400);
+
+    });
+    
+    function loadReport(url, params){
+    	$("#grid_${grid.tabId}").empty();
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+            	read:  {
+                    url: url,
+                    dataType: "json",
+                },
+                search: {
+                    url: "${grid.searchUrl}",
+                    dataType: "json"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    return params;
+                }
+            },
+            batch: true,
+            pageSize: 20,
+            schema: {
+                model: {
+                    id: "id",
+                    fields: {
+                        serviceNo: { editable: false },
+                        eventTime: { editable: false },
+                        speed: { editable: false },
+                        type: { editable: false },
+                        latitude: { editable: false },
+                        longitude: {editable: false },
+                        road: { editable: false },
+                    }
+                }
+            }
+        });
+        	
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { title: "Actions", width: "110px", command: { text: "View", className: "view-detail" } };
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            height: "auto",
+            columns: columnsJson
+        });
+    }
+    
+    function driverReportSearchValidate(form) {
+    	var $form = $(form);
+    	
+    	loadReport($form.attr("action"), $form.serializeArray());
+    	
+    	return false;
+    }
+    
+    function createChart(url) {
+        $("#pie_chart").kendoChart({
+            theme: $(document).data("kendoSkin") || "default",
+            dataSource: {
+                transport: {
+                    read: {
+                        url: url,
+                        dataType: "json"
+                    }
+                },
+                sort: {
+                    field: "type",
+                    dir: "asc"
+                }
+            },
+            title: {
+                text: "Driver Report"
+            },
+            legend: {
+                position: "right"
+            },
+            series: [{
+            	type: "pie",
+                field: "value",
+                categoryField: "type"
+            }],
+            tooltip: {
+                visible: true,
+                format: "{0:C}"
+            }
+        });
+    }
+</script>
+

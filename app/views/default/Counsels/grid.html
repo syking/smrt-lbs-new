@@ -28,20 +28,19 @@
 	<label for="date" class="info" style="width:80px;">Date:</label>
 	<input name="date" id="date"/>
 	
-	<label for="startTime" class="info" style="width:80px;margin-left:44px;">Start Time:</label>
-	<input name="startTime" id="start_time"/>
+	<label for="start" class="info" style="width:80px;margin-left:44px;">Start Time:</label>
+	<input name="start" id="start_time"/>
 	
-	<label for="endTime" class="info">End Time:</label>
-	<input name="endTime" id="end_time"/>
+	<label for="end" class="info">End Time:</label>
+	<input name="end" id="end_time"/>
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="search-button" class="k-button" value="Search" />
 	</div>
 	
 </form>
-
+<div id="fm_error" style="display:none; text-align:center;"><p style="color:red; font-size:20px;">The date format must be "yyyy-MM-dd hh:mm:ss"</p></div>
 <div id="grid_${grid.tabId}"></div>
-
 <script>
     $(document).ready(function () {
     	
@@ -69,8 +68,22 @@
         
         $("#end_time").kendoTimePicker({
         	format: "HH:mm:ss"		
-        });
+        })
+
     });
+    
+    function strDateTime(str){
+	    var reg = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/;
+	    var r = str.match(reg);
+	    if(r==null)return false;
+	    var d= new Date(r[1], r[3]-1,r[4],r[5],r[6],r[7]);
+	    var flag = d.getFullYear()==r[1]&&(d.getMonth()+1)==r[3]&&d.getDate()==r[4]&&d.getHours()==r[5]&&d.getMinutes()==r[6]&&d.getSeconds()==r[7];
+	    if(!flag){
+	    	return false;
+	    }else{
+	    	return true;
+	    } 
+    }
     
     function loadCounsels(url, params){
     	$("#grid_${grid.tabId}").empty();
@@ -78,7 +91,7 @@
             transport: {
                 read:  {
                     url: url,
-                    dataType: "json"
+                    dataType: "json",
                 },
                 update: {
                     url: "${grid.updateUrl}",
@@ -90,17 +103,51 @@
                 },
                 create: {
                     url: "${grid.createUrl}",
-                    dataType: "json"
+                    dataType: "json",
                 },
                 search: {
                     url: "${grid.searchUrl}",
                     dataType: "json"
                 },
+                error: function(e){
+                	alert("error...");
+                },
                 parameterMap: function(options, operation) {
                     if (operation !== "read" && options.models) {
+                    	if(operation=="create"){
+                    		var startTime = $("tr[data-uid]").first().find("td:first").next().next().text();
+                    		var endTime = $("tr[data-uid]").first().find("td:first").next().next().next().text();
+                    		alert(startTime+"|"+endTime);
+                    		var checkStartTime = strDateTime(startTime);
+                    		var checkEndTime = strDateTime(endTime);
+                    		if(!checkStartTime||!checkEndTime){
+                    			$("div#fm_error").css("display","block");
+                    			return;
+                    		}else{
+                    			if($("div#fm_error").css("display")=="block")
+                    				$("div#fm_error").css("display","none");
+                    		}
+                    	}
+                    	if(operation=="update"){
+    						var preJsonStr = JSON.stringify(options.models);
+    						var jLen = preJsonStr.length;
+    						var jsonStr = preJsonStr.substring(1, jLen-1);
+    						var jsonData = jQuery.parseJSON(jsonStr);
+                    		var startTime = jsonData.startTime;
+                    		var endTime = jsonData.endTime;
+                    		
+                    		var checkStartTime = strDateTime(startTime);
+                    		var checkEndTime = strDateTime(endTime);
+                    		if(!checkStartTime||!checkEndTime){
+                    			$("div#fm_error").css("display","block");
+                    			return ;
+                    		}else{
+                    			if($("div#fm_error").css("display")=="block")
+                    				$("div#fm_error").css("display","none");	
+                    		}
+                    	}
                         return {models: kendo.stringify(options.models)};
                     }
-                    
                     return params;
                 }
             },
@@ -113,17 +160,33 @@
                         id: { editable: false, nullable: true },
                         userName: { validation: { required: true } },
                         driverName: { validation: { required: true } },
-                        date: { validation: {required: true} },
-                        startTime: { validation: { required: true } },
-                        endTime: { validation: { required: true } },
+                        endTime: { validation: { required: true }, /*type: "date", parse: function(value) { return kendo.toString(value) }*/  },
+                        startTime: { validation: { required: true }, /*type: "date", parse: function(value) { return kendo.toString(value) }*/ },
                         remark: { validation: { required: false } },
                     }
                 }
             }
         });
-        
+
+        	
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Actions", width: "200px" };
+		columnsJson[0] = {title:"User", field:"userName", editor: function (container, options) {
+			$('<input name="' + options.field + '"/>').appendTo(container).kendoComboBox({
+	            dataSource: #{verbatim} ${users} #{/verbatim},
+	            dataValueField: "userName",
+	            dataTextField: "text",
+	            autobind: false
+	        });
+	    }};
+	    columnsJson[1] = {title:"Driver", field:"driverName", editor: function (container, options) {
+			$('<input name="' + options.field + '"/>').appendTo(container).kendoComboBox({
+	            dataSource: #{verbatim} ${drivers} #{/verbatim},
+	            dataValueField: "driverName",
+	            dataTextField: "text",
+	            autobind: false
+	        });
+	    }};
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
@@ -141,4 +204,5 @@
     	
     	return false;
     }
+
 </script>
