@@ -483,6 +483,8 @@ public class Reports extends Controller {
     			return ;
     		
     		lineList = Arrays.asList(line);
+    	}else if (line != null && line.trim().length() > 0 && !line.equals("all")){
+    		lineList = Arrays.asList(line);
     	}
     	
     	List<Map> columns = new ArrayList<Map>(eventTypes.size()+2);

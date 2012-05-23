@@ -89,7 +89,7 @@ $(document).ready(function(){
     });
 //     
 	var lineCombo = #{verbatim} ${lines} #{/verbatim};
-	lineCombo[lineCombo.length] = {text: "top line", value: "0"};
+	lineCombo[lineCombo.length] = {text: "All line", value: "all"};
     $("#lines").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
@@ -109,7 +109,7 @@ $(document).ready(function(){
             var value = this.value();
             var text = this.text();
         	$("#line_time-wrap").empty();
-        	$("#line_time-wrap").html("<input name='line_time' id='line_time'/>");
+        	$("#line_time-wrap").html("<input name='time' id='line_time'/>");
      		$("#line_time-label").html(text);
         	var _format = "yyyy/MM/dd";
         	if ("month" == value){
@@ -122,7 +122,7 @@ $(document).ready(function(){
 		    
         	$("#line_time").kendoDatePicker({
 		    	start: value,
-		    	lineh: value,
+		    	depth: value,
 		    	format: _format
 		    });
 		    
