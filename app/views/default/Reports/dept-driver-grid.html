@@ -1,7 +1,7 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
 
-<div id="driver_view-on-map-wrap">
-	<div id="driver_view-on-map-window"></div>
+<div id="dept_driver_view-on-map-wrap">
+	<div id="dept_driver_view-on-map-window"></div>
 </div>
 <style>
 
@@ -20,27 +20,27 @@
         text-align:right;
     }
 </style>
-<form action="/reports/driverListJsonByDept" method="post" class="k-content search-wrap" onsubmit="return reportDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/reports/driverListJsonByDept" method="post" class="k-content search-wrap" onsubmit="return reportDeptDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
 	
-	<label for="driver-departments" class="info" style="width:80px;">Department:</label>
-	<input name="departmentId" id="driver-departments"/>
+	<label for="dept_driver-departments" class="info" style="width:80px;">Department:</label>
+	<input name="departmentId" id="dept_driver-departments"/>
 	
-	<label for="driver-types" class="info" >Type:</label>
-	<input name="dateType" id="driver-types"/>
+	<label for="dept_driver-types" class="info" >Type:</label>
+	<input name="dateType" id="dept_driver-types"/>
 	
-	<label id="driver-time-label" for="driver-time" class="info">Year:</label>
-	<div style="display:inline;" id="driver-time-wrap">
-		<input name="time" id="driver-time"/>
+	<label id="dept_driver-time-label" for="dept_driver-time" class="info">Year:</label>
+	<div style="display:inline;" id="dept_driver-time-wrap">
+		<input name="time" id="dept_driver-time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="driver-search-button" class="k-button" value="Search" />
+		<input type="submit" id="dept_driver-search-button" class="k-button" value="Search" />
 	</div>
 	
 </form>
 
-<div id="report_driver_grid"></div>
+<div id="dept_report_driver_grid"></div>
 
-<div id="report_driver_bar_chart"></div>
+<div id="dept_report_driver_bar_chart"></div>
 
 <script>
 
@@ -48,18 +48,18 @@ var driverId;
 var departmentId = "${departmentId}";
 $(document).ready(function(){
 	if (departmentId)
-		loadReportDrivers("/reports/driverListJsonByDept?random=" + Math.random(), {departmentId: departmentId});
+		loadReportDeptDrivers("/reports/driverListJsonByDept?random=" + Math.random(), {departmentId: departmentId});
 	
 	var deptCombo = #{verbatim} ${departments} #{/verbatim};
 	
-    $("#driver-departments").kendoComboBox({
+    $("#dept_driver-departments").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         placeholder: "Please select Department first",
         dataSource: deptCombo
     });
     
-    $("#driver-types").kendoComboBox({
+    $("#dept_driver-types").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
@@ -71,9 +71,9 @@ $(document).ready(function(){
         change: function() {
             var value = this.value();
             var text = this.text();
-        	$("#driver-time-wrap").empty();
-        	$("#driver-time-wrap").html("<input name='time' id='driver-time'/>");
-     		$("#driver-time-label").html(text);
+        	$("#dept_driver-time-wrap").empty();
+        	$("#dept_driver-time-wrap").html("<input name='time' id='dept_driver-time'/>");
+     		$("#dept_driver-time-label").html(text);
         	var _format = "yyyy/MM/dd";
         	if ("month" == value){
 		    	_format = "yyyy/MM";
@@ -83,25 +83,25 @@ $(document).ready(function(){
 		    	value = "decade";
 		    }
 		    
-        	$("#driver-time").kendoDatePicker({
+        	$("#dept_driver-time").kendoDatePicker({
 		    	start: value,
 		    	depth: value,
 		    	format: _format
 		    });
 		    
-		    $("#driver-time-wrap").show();
-		    $("#driver-time-label").show();
+		    $("#dept_driver-time-wrap").show();
+		    $("#dept_driver-time-label").show();
         }
     });	
     
-    $("#driver-time-wrap").hide();
-    $("#driver-time-label").hide();
+    $("#dept_driver-time-wrap").hide();
+    $("#dept_driver-time-label").hide();
 
 });
 
-function loadReportDrivers(url, params){
+function loadReportDeptDrivers(url, params){
 	$.getJSON(url, params, function(json){
-		$("#report_driver_grid").empty();
+		$("#dept_report_driver_grid").empty();
 		json.columns[json.columns.length] = { 
 			title: "Actions",
 			width: "200px", 
@@ -112,7 +112,7 @@ function loadReportDrivers(url, params){
 		};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
-		var grid = $("#report_driver_grid").kendoGrid({
+		var grid = $("#dept_report_driver_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
 	    		pageSize:5
@@ -126,8 +126,8 @@ function loadReportDrivers(url, params){
 	   	 	
         }).data("kendoGrid");
 	    
-	    $("#report_driver_bar_chart").empty();
-	    $("#report_driver_bar_chart").kendoChart({
+	    $("#dept_report_driver_bar_chart").empty();
+	    $("#dept_report_driver_bar_chart").kendoChart({
 	        theme: "default",
 	        title: {
 	            text: "Driver Performance Comparison"
@@ -156,11 +156,11 @@ function loadReportDrivers(url, params){
 	        }
 	    });
 	    
-	    $("#report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
+	    $("#dept_report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
 	        e.preventDefault();
 	        driverId = $(this).parent().parent().find("td:last").html();
 	        var w_title = "View Driver("+driverId+") Events On Map "
-	        var wnd = $("#driver_view-on-map-window")
+	        var wnd = $("#dept_driver_view-on-map-window")
 	    	.kendoWindow({
 	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
 	    		content: "http://"+ window.location.host + "/Maps/driverEvents?driverId="+driverId,
@@ -179,17 +179,17 @@ function loadReportDrivers(url, params){
 	        
 	    });
 	    
-	    $("#report_driver_grid").delegate(".view-result-button", "click", function(e) {
+	    $("#dept_report_driver_grid").delegate(".view-result-button", "click", function(e) {
 	        e.preventDefault();
 	        alert("view result");
 	    });
 	});
 }
 
-function reportDriverSearchValidate(form) {
+function reportDeptDriverSearchValidate(form) {
 	var $form = $(form);
 	
-	loadReportDrivers($form.attr("action"), $form.serializeArray());
+	loadReportDeptDrivers($form.attr("action"), $form.serializeArray());
 	
 	return false;
 }

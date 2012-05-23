@@ -1,7 +1,7 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
 
-<div id="driver_view-on-map-wrap">
-	<div id="driver_view-on-map-window"></div>
+<div id="line_driver_view-on-map-wrap">
+	<div id="line_driver_view-on-map-window"></div>
 </div>
 <style>
 
@@ -20,27 +20,27 @@
         text-align:right;
     }
 </style>
-<form action="/reports/driverListJsonByline" method="post" class="k-content search-wrap" onsubmit="return reportDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/reports/driverListJsonByline" method="post" class="k-content search-wrap" onsubmit="return reportLineDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
 	
 	<label for="driver-lines" class="info" style="width:80px;">line:</label>
 	<input name="line" id="driver-lines"/>
 	
-	<label for="driver-types" class="info" >Type:</label>
-	<input name="dateType" id="driver-types"/>
+	<label for="line_driver-types" class="info" >Type:</label>
+	<input name="dateType" id="line_driver-types"/>
 	
-	<label id="driver-time-label" for="driver-time" class="info">Year:</label>
-	<div style="display:inline;" id="driver-time-wrap">
-		<input name="time" id="driver-time"/>
+	<label id="line_driver-time-label" for="line_driver-time" class="info">Year:</label>
+	<div style="display:inline;" id="line_driver-time-wrap">
+		<input name="time" id="line_driver-time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="driver-search-button" class="k-button" value="Search" />
+		<input type="submit" id="line_driver-search-button" class="k-button" value="Search" />
 	</div>
 	
 </form>
 
-<div id="report_driver_grid"></div>
+<div id="line_report_driver_grid"></div>
 
-<div id="report_driver_bar_chart"></div>
+<div id="line_report_driver_bar_chart"></div>
 
 <script>
 
@@ -48,7 +48,7 @@ var driverId;
 var line = "${line}";
 $(document).ready(function(){
 	if (line)
-		loadReportDrivers("/reports/driverListJsonByLine?random=" + Math.random(), {line: line});
+		loadReportLineDrivers("/reports/driverListJsonByLine?random=" + Math.random(), {line: line});
 	
 	var lineCombo = #{verbatim} ${lines} #{/verbatim};
 	
@@ -59,7 +59,7 @@ $(document).ready(function(){
         dataSource: lineCombo
     });
     
-    $("#driver-types").kendoComboBox({
+    $("#line_driver-types").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
@@ -71,9 +71,9 @@ $(document).ready(function(){
         change: function() {
             var value = this.value();
             var text = this.text();
-        	$("#driver-time-wrap").empty();
-        	$("#driver-time-wrap").html("<input name='time' id='driver-time'/>");
-     		$("#driver-time-label").html(text);
+        	$("#line_driver-time-wrap").empty();
+        	$("#line_driver-time-wrap").html("<input name='time' id='line_driver-time'/>");
+     		$("#line_driver-time-label").html(text);
         	var _format = "yyyy/MM/dd";
         	if ("month" == value){
 		    	_format = "yyyy/MM";
@@ -89,19 +89,19 @@ $(document).ready(function(){
 		    	format: _format
 		    });
 		    
-		    $("#driver-time-wrap").show();
-		    $("#driver-time-label").show();
+		    $("#line_driver-time-wrap").show();
+		    $("#line_driver-time-label").show();
         }
     });	
     
-    $("#driver-time-wrap").hide();
-    $("#driver-time-label").hide();
+    $("#line_driver-time-wrap").hide();
+    $("#line_driver-time-label").hide();
 
 });
 
-function loadReportDrivers(url, params){
+function loadReportLineDrivers(url, params){
 	$.getJSON(url, params, function(json){
-		$("#report_driver_grid").empty();
+		$("#line_report_driver_grid").empty();
 		json.columns[json.columns.length] = { 
 			title: "Actions",
 			width: "200px", 
@@ -112,7 +112,7 @@ function loadReportDrivers(url, params){
 		};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
-		var grid = $("#report_driver_grid").kendoGrid({
+		var grid = $("#line_report_driver_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
 	    		pageSize:5
@@ -126,8 +126,8 @@ function loadReportDrivers(url, params){
 	   	 	
         }).data("kendoGrid");
 	    
-	    $("#report_driver_bar_chart").empty();
-	    $("#report_driver_bar_chart").kendoChart({
+	    $("#line_report_driver_bar_chart").empty();
+	    $("#line_report_driver_bar_chart").kendoChart({
 	        theme: "default",
 	        title: {
 	            text: "Driver Performance Comparison"
@@ -156,11 +156,11 @@ function loadReportDrivers(url, params){
 	        }
 	    });
 	    
-	    $("#report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
+	    $("#line_report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
 	        e.preventDefault();
 	        driverId = $(this).parent().parent().find("td:last").html();
 	        var w_title = "View Driver("+driverId+") Events On Map "
-	        var wnd = $("#driver_view-on-map-window")
+	        var wnd = $("#line_driver_view-on-map-window")
 	    	.kendoWindow({
 	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
 	    		content: "http://"+ window.location.host + "/Maps/driverEvents?driverId="+driverId,
@@ -179,17 +179,17 @@ function loadReportDrivers(url, params){
 	        
 	    });
 	    
-	    $("#report_driver_grid").delegate(".view-result-button", "click", function(e) {
+	    $("#line_report_driver_grid").delegate(".view-result-button", "click", function(e) {
 	        e.preventDefault();
 	        alert("view result");
 	    });
 	});
 }
 
-function reportDriverSearchValidate(form) {
+function reportLineDriverSearchValidate(form) {
 	var $form = $(form);
 	
-	loadReportDrivers($form.attr("action"), $form.serializeArray());
+	loadReportLineDrivers($form.attr("action"), $form.serializeArray());
 	
 	return false;
 }

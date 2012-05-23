@@ -20,7 +20,7 @@
         text-align:right;
     }
 </style>
-<form action="/reports/fleetListJson" method="post" class="k-content search-wrap" onsubmit="return reportfleetsearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/reports/fleetListJson" method="post" class="k-content search-wrap" onsubmit="return reportFleetSearchValidate(this)" style="padding:20px 0 10px 10px;">
 	
 	<label for="fleets" class="info" style="width:80px;">Superior:</label>
 	<input name="parentId" id="fleets"/>
@@ -48,7 +48,7 @@ var fleetId;
 
 $(document).ready(function(){
 	
-	loadReportfleets("/reports/fleetListJson");
+	loadReportFleets("/reports/fleetListJson");
     
     $("#report_fleet_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
@@ -136,7 +136,7 @@ $(document).ready(function(){
 
 });
 
-function loadReportfleets(url, params){
+function loadReportFleets(url, params){
 	$.getJSON(url, params, function(json){
 		$("#report_fleet_grid").empty();
 		json.columns[json.columns.length] = { 
@@ -195,10 +195,10 @@ function loadReportfleets(url, params){
 	});
 }
 
-function reportfleetsearchValidate(form) {
+function reportFleetSearchValidate(form) {
 	var $form = $(form);
 	
-	loadReportfleets($form.attr("action"), $form.serializeArray());
+	loadReportFleets($form.attr("action"), $form.serializeArray());
 	
 	return false;
 }
