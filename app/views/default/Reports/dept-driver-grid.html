@@ -1,0 +1,195 @@
+<script src="/public/js/kendo.chart.min.js" language="javascript"></script>
+
+<div id="dept_driver_view-on-map-wrap">
+	<div id="dept_driver_view-on-map-window"></div>
+</div>
+<style>
+
+	.k-content{
+		background:#f3f3f3;
+	}
+	
+    .k-autocomplete{
+    }
+    
+    .info{
+    	border:none;
+        padding: 3px 5px 7px 5px;
+        display:inline-block;
+        width:120px;
+        text-align:right;
+    }
+</style>
+<form action="/reports/driverListJsonByDept" method="post" class="k-content search-wrap" onsubmit="return reportDeptDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	
+	<label for="dept_driver-departments" class="info" style="width:80px;">Department:</label>
+	<input name="departmentId" id="dept_driver-departments"/>
+	
+	<label for="dept_driver-types" class="info" >Type:</label>
+	<input name="dateType" id="dept_driver-types"/>
+	
+	<label id="dept_driver-time-label" for="dept_driver-time" class="info">Year:</label>
+	<div style="display:inline;" id="dept_driver-time-wrap">
+		<input name="time" id="dept_driver-time"/>
+	</div>
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="dept_driver-search-button" class="k-button" value="Search" />
+	</div>
+	
+</form>
+
+<div id="dept_report_driver_grid"></div>
+
+<div id="dept_report_driver_bar_chart"></div>
+
+<script>
+
+var driverId;
+var departmentId = "${departmentId}";
+$(document).ready(function(){
+	if (departmentId)
+		loadReportDeptDrivers("/reports/driverListJsonByDept?random=" + Math.random(), {departmentId: departmentId});
+	
+	var deptCombo = #{verbatim} ${departments} #{/verbatim};
+	
+    $("#dept_driver-departments").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value",
+        placeholder: "Please select Department first",
+        dataSource: deptCombo
+    });
+    
+    $("#dept_driver-types").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value",
+        dataSource: [
+        	{text: "Dayly", value: "day"},
+        	{text: "Weekly", value: "week"},
+        	{text: "Monthly", value: "month"},
+        	{text: "Yearly", value: "year"}
+        ],
+        change: function() {
+            var value = this.value();
+            var text = this.text();
+        	$("#dept_driver-time-wrap").empty();
+        	$("#dept_driver-time-wrap").html("<input name='time' id='dept_driver-time'/>");
+     		$("#dept_driver-time-label").html(text);
+        	var _format = "yyyy/MM/dd";
+        	if ("month" == value){
+		    	_format = "yyyy/MM";
+		    	value = "year";
+		    }else if ("year" == value){
+		    	_format = "yyyy";
+		    	value = "decade";
+		    }
+		    
+        	$("#dept_driver-time").kendoDatePicker({
+		    	start: value,
+		    	depth: value,
+		    	format: _format
+		    });
+		    
+		    $("#dept_driver-time-wrap").show();
+		    $("#dept_driver-time-label").show();
+        }
+    });	
+    
+    $("#dept_driver-time-wrap").hide();
+    $("#dept_driver-time-label").hide();
+
+});
+
+function loadReportDeptDrivers(url, params){
+	$.getJSON(url, params, function(json){
+		$("#dept_report_driver_grid").empty();
+		json.columns[json.columns.length] = { 
+			title: "Actions",
+			width: "200px", 
+			command: [
+				{ text: "Results", className: "view-on-result-button" },
+				{ text: "Map", className: "view-on-map-button" } 
+			]
+		};
+		
+		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
+		var grid = $("#dept_report_driver_grid").kendoGrid({
+	    	dataSource: {
+	    		data: json.data,
+	    		pageSize:5
+	    	},
+	    	columns: json.columns, 
+	   	 	scrollable: true,
+	   	 	sortable: true,
+	   	 	pageable: true,
+	   	 	height: "auto",
+	   	 	selectable: true
+        }).data("kendoGrid");
+	    
+	    $("#dept_report_driver_bar_chart").empty();
+	    $("#dept_report_driver_bar_chart").kendoChart({
+	        theme: "default",
+	        title: {
+	            text: "Driver Performance Comparison"
+	        },
+	        legend: {
+	            position: "bottom"
+	        },
+	        seriesDefaults: {
+	            type: "column",
+	            stack: true
+	        },
+	        series: json.series,
+	        categoryAxis: {
+	            categories: json.categories
+	        },
+	        valueAxis: {
+	            labels: {
+	                format: "{0}"
+	            }
+	        },
+	        
+	        tooltip: {
+	            visible: true,
+	            template: "#= value #",
+	            format: "{0}"
+	        }
+	    });
+	    
+	    $("#dept_report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
+	        e.preventDefault();
+	        driverId = $(this).parent().parent().find("td:last").html();
+	        var w_title = "View Driver("+driverId+") Events On Map "
+	        var wnd = $("#dept_driver_view-on-map-window")
+	    	.kendoWindow({
+	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
+	    		content: "http://"+ window.location.host + "/Maps/driverEvents?driverId="+driverId,
+	    		iframe: true,
+	            modal: true,
+	            visible: false,
+	            resizable: true,
+	            width: 800,
+	            height: 500,
+	            resize:function(e){
+	            	$("#view-on-map-splitter").data("kendoSplitter").size("#map-view", "100%");
+	            }
+	         }).data("kendoWindow");
+	        
+	        wnd.title(w_title).center().open();
+	        
+	    });
+	    
+	    $("#dept_report_driver_grid").delegate(".view-result-button", "click", function(e) {
+	        e.preventDefault();
+	        alert("view result");
+	    });
+	});
+}
+
+function reportDeptDriverSearchValidate(form) {
+	var $form = $(form);
+	
+	loadReportDeptDrivers($form.attr("action"), $form.serializeArray());
+	
+	return false;
+}
+</script>

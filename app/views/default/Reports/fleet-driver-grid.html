@@ -1,7 +1,7 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
 
-<div id="driver_view-on-map-wrap">
-	<div id="driver_view-on-map-window"></div>
+<div id="fleet_driver_view-on-map-wrap">
+	<div id="fleet_driver_view-on-map-window"></div>
 </div>
 <style>
 
@@ -20,46 +20,46 @@
         text-align:right;
     }
 </style>
-<form action="/reports/driverListJson" method="post" class="k-content search-wrap" onsubmit="return reportDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/reports/driverListJsonByFleet" method="post" class="k-content search-wrap" onsubmit="return reportFleetDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
 	
-	<label for="driver-departments" class="info" style="width:80px;">Department:</label>
-	<input name="departmentId" id="driver-departments"/>
+	<label for="fleet_driver-fleets" class="info" style="width:80px;">fleet:</label>
+	<input name="fleetId" id="fleet_driver-fleets"/>
 	
-	<label for="driver-types" class="info" >Type:</label>
-	<input name="dateType" id="driver-types"/>
+	<label for="fleet_driver-types" class="info" >Type:</label>
+	<input name="dateType" id="fleet_driver-types"/>
 	
-	<label id="driver-time-label" for="driver-time" class="info">Year:</label>
-	<div style="display:inline;" id="driver-time-wrap">
-		<input name="time" id="driver-time"/>
+	<label id="fleet_driver-time-label" for="fleet_driver-time" class="info">Year:</label>
+	<div style="display:inline;" id="fleet_driver-time-wrap">
+		<input name="time" id="fleet_driver-time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="driver-search-button" class="k-button" value="Search" />
+		<input type="submit" id="fleet_driver-search-button" class="k-button" value="Search" />
 	</div>
 	
 </form>
 
-<div id="report_driver_grid"></div>
+<div id="fleet_report_driver_grid"></div>
 
-<div id="report_driver_bar_chart"></div>
+<div id="fleet_report_driver_bar_chart"></div>
 
 <script>
 
 var driverId;
-var departmentId = ${departmentId}
+var fleetId = "${fleetId}";
 $(document).ready(function(){
-	if (departmentId)
-		loadReportDrivers("/reports/driverListJson?random=" + Math.random(), {departmentId: departmentId});
+	if (fleetId)
+		loadReportFleetDrivers("/reports/driverListJsonByFleet?random=" + Math.random(), {fleetId: fleetId});
 	
-	var deptCombo = #{verbatim} ${departments} #{/verbatim};
+	var deptCombo = #{verbatim} ${fleets} #{/verbatim};
 	
-    $("#driver-departments").kendoComboBox({
+    $("#fleet_driver-fleets").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
-        placeholder: "Please select Department first",
+        placeholder: "Please select fleet first",
         dataSource: deptCombo
     });
     
-    $("#driver-types").kendoComboBox({
+    $("#fleet_driver-types").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
@@ -71,9 +71,9 @@ $(document).ready(function(){
         change: function() {
             var value = this.value();
             var text = this.text();
-        	$("#driver-time-wrap").empty();
-        	$("#driver-time-wrap").html("<input name='time' id='driver-time'/>");
-     		$("#driver-time-label").html(text);
+        	$("#fleet_driver-time-wrap").empty();
+        	$("#fleet_driver-time-wrap").html("<input name='time' id='fleet_driver-time'/>");
+     		$("#fleet_driver-time-label").html(text);
         	var _format = "yyyy/MM/dd";
         	if ("month" == value){
 		    	_format = "yyyy/MM";
@@ -83,25 +83,25 @@ $(document).ready(function(){
 		    	value = "decade";
 		    }
 		    
-        	$("#driver-time").kendoDatePicker({
+        	$("#fleet_driver-time").kendoDatePicker({
 		    	start: value,
 		    	depth: value,
 		    	format: _format
 		    });
 		    
-		    $("#driver-time-wrap").show();
-		    $("#driver-time-label").show();
+		    $("#fleet_driver-time-wrap").show();
+		    $("#fleet_driver-time-label").show();
         }
     });	
     
-    $("#driver-time-wrap").hide();
-    $("#driver-time-label").hide();
+    $("#fleet_driver-time-wrap").hide();
+    $("#fleet_driver-time-label").hide();
 
 });
 
-function loadReportDrivers(url, params){
+function loadReportFleetDrivers(url, params){
 	$.getJSON(url, params, function(json){
-		$("#report_driver_grid").empty();
+		$("#fleet_report_driver_grid").empty();
 		json.columns[json.columns.length] = { 
 			title: "Actions",
 			width: "200px", 
@@ -112,7 +112,7 @@ function loadReportDrivers(url, params){
 		};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
-		var grid = $("#report_driver_grid").kendoGrid({
+		var grid = $("#fleet_report_driver_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
 	    		pageSize:5
@@ -123,10 +123,11 @@ function loadReportDrivers(url, params){
 	   	 	pageable: true,
 	   	 	height: "auto",
 	   	 	selectable: true
+	   	 	
         }).data("kendoGrid");
 	    
-	    $("#report_driver_bar_chart").empty();
-	    $("#report_driver_bar_chart").kendoChart({
+	    $("#fleet_report_driver_bar_chart").empty();
+	    $("#fleet_report_driver_bar_chart").kendoChart({
 	        theme: "default",
 	        title: {
 	            text: "Driver Performance Comparison"
@@ -155,11 +156,11 @@ function loadReportDrivers(url, params){
 	        }
 	    });
 	    
-	    $("#report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
+	    $("#fleet_report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
 	        e.preventDefault();
 	        driverId = $(this).parent().parent().find("td:last").html();
 	        var w_title = "View Driver("+driverId+") Events On Map "
-	        var wnd = $("#driver_view-on-map-window")
+	        var wnd = $("#fleet_driver_view-on-map-window")
 	    	.kendoWindow({
 	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
 	    		content: "http://"+ window.location.host + "/Maps/driverEvents?driverId="+driverId,
@@ -178,17 +179,17 @@ function loadReportDrivers(url, params){
 	        
 	    });
 	    
-	    $("#report_driver_grid").delegate(".view-result-button", "click", function(e) {
+	    $("#fleet_report_driver_grid").delegate(".view-result-button", "click", function(e) {
 	        e.preventDefault();
 	        alert("view result");
 	    });
 	});
 }
 
-function reportDriverSearchValidate(form) {
+function reportFleetDriverSearchValidate(form) {
 	var $form = $(form);
 	
-	loadReportDrivers($form.attr("action"), $form.serializeArray());
+	loadReportFleetDrivers($form.attr("action"), $form.serializeArray());
 	
 	return false;
 }

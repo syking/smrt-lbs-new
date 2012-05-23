@@ -1,6 +1,8 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,5 +47,13 @@ public class Schedule extends Model {
 	/* 调度安排 例如：851AM04 | 851PM04 */
 	@Column(unique = true, name = "duty_id")
 	public String dutyId;
+	
+	public static List<String> getAllServiceNumber(){
+		
+		List<String> list = Schedule.find("select distinct s.serviceNumber from Schedule s ").fetch();
+		
+		return list;
+		
+	}
 	
 }
