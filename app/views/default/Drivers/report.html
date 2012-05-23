@@ -18,19 +18,18 @@
     
 </style>
 
-<form action="/driverreports/search" method="post" class="k-content search-wrap" onsubmit="return driverReportSearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/DriverReports/search" method="post" class="k-content search-wrap" onsubmit="return searchResult(this)" style="padding:20px 0 10px 10px;">
 	
-	<label for="driverId" class="info" style="width:80px;">Driver ID:</label>
+	<label for="driverId" class="info" style="width:80px;">Driver Name:</label>
 	<input name="driverId" id="driverId"/>
 	
 	<label for="reportType" class="info" >Report Type:</label>
 	<input name="reportType" id="reportType"/>
 	
-	<div style="height:8px"></div>
-	
-	<label for="date" class="info" style="width:80px;">Date:</label>
-	<input name="date" id="date"/>
-
+	<label for="date" class="info" style="width:80px;" id="date_label">Date:</label>
+	<div id="date_wrap" style="display:inline;">
+	<input name="dateStr" id="rp_date"/>
+	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="search-button" class="k-button" value="Search" />
 	</div>
@@ -49,26 +48,54 @@
     $(document).ready(function () {
     	
     	loadReport("${grid.readUrl}");
-    	
         $("#driverId").kendoComboBox({
-        	dataValueField: "driverName",
+        	dataValueField: "value",
             dataTextField: "text",
             dataSource: #{verbatim} ${drivers} #{/verbatim}
         });
         
         $("#reportType").kendoComboBox({
-        	dataValueField: "text",
+        	dataValueField: "value",
             dataTextField: "value",
         	dataSource:[
                         { text: "type1", value: "daily" },
                         { text: "type2", value: "weekly" },
-                        { text: "type3", value: "monthly" }
-                    ]		
+                        { text: "type3", value: "monthly" },
+                        { text: "type4", value: "yearly" }
+            ],
+            change: function() {
+                var value = this.value();
+                var text = this.text();
+				alert(value+" | "+text);
+            	$("#date_wrap").empty();
+            	$("#date_wrap").html("<input name='dateStr' id='rp_date'/>");
+         		$("#date_label").html(text);
+            	var _format = "yyyy-MM-dd";
+            	if ("monthly" == value){
+    		    	_format = "yyyy-MM";
+    		    	value = "year";
+    		    }else if ("yearly" == value){
+    		    	_format = "yyyy";
+    		    	value = "decade";
+    		    }
+    		    
+            	$("#rp_date").kendoDatePicker({
+    		    	start: value,
+    		    	depth: value,
+    		    	format: _format
+    		    });
+    		    
+    		    $("#date_wrap").show();
+    		    $("#date_label").show();
+            }
         });
         
-        $("#date").kendoDatePicker({
+        $("#date_label").hide();
+     	$("#date_wrap").hide();
+        
+     	/*$("#rp_date").kendoDatePicker({
         	format: "yyyy-MM-dd"		
-        });
+        });*/
         
         
         setTimeout(function() {
@@ -88,10 +115,6 @@
             	read:  {
                     url: url,
                     dataType: "json",
-                },
-                search: {
-                    url: "${grid.searchUrl}",
-                    dataType: "json"
                 },
                 parameterMap: function(options, operation) {
                     if (operation !== "read" && options.models) {
@@ -128,16 +151,8 @@
         });
     }
     
-    function driverReportSearchValidate(form) {
-    	var $form = $(form);
-    	
-    	loadReport($form.attr("action"), $form.serializeArray());
-    	
-    	return false;
-    }
-    
     function createChart(url) {
-        $("#pie_chart").kendoChart({
+    	$("#pie_chart").kendoChart({
             theme: $(document).data("kendoSkin") || "default",
             dataSource: {
                 transport: {
@@ -155,18 +170,79 @@
                 text: "Driver Report"
             },
             legend: {
-                position: "right"
+                position: "bottom"
+            },
+            seriesDefaults: {
+            	type: "pie",
+            	labels: {
+                    visible: true,
+                    format: "{0}"
+                }
             },
             series: [{
-            	type: "pie",
                 field: "value",
                 categoryField: "type"
             }],
             tooltip: {
                 visible: true,
-                format: "{0:C}"
+                format: "{0}"
             }
         });
+    }
+    
+    function searchResult(form) {
+    	var $form = $(form);
+    	
+    	loadSearch($form.attr("action"), $form.serializeArray());
+    	
+    	return false;
+    }
+    
+    function loadSearch(url, params){
+    	
+    	$.getJSON(url, params, function(json){
+    		alert(JSON.stringify(json));
+    		$("#grid_${grid.tabId}").empty();
+            
+            var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+        		columnsJson[columnsJson.length] = { title: "Actions", width: "110px", command: { text: "View", className: "view-detail" } };
+                $("#grid_${grid.tabId}").kendoGrid({
+                    dataSource: json.grid,
+                    pageable: true,
+                    scrollable: true,
+        	   	 	sortable: true,
+                    height: "auto",
+                    columns: columnsJson
+                });
+                
+                $("#pie_chart").kendoChart({
+                    theme: $(document).data("kendoSkin") || "default",
+                    dataSource: json.chart,
+                    title: {
+                        text: "Driver Report"
+                    },
+                    legend: {
+                        position: "bottom"
+                    },
+                    seriesDefaults: {
+                    	type: "pie",
+                    	labels: {
+                            visible: true,
+                            format: "{0}"
+                        }
+                    },
+                    series: [{
+                        field: "value",
+                        categoryField: "type"
+                    }],
+                    tooltip: {
+                        visible: true,
+                        format: "{0}"
+                    }
+                });    
+              
+    	});
+  
     }
 </script>
 
