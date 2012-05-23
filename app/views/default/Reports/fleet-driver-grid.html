@@ -45,7 +45,7 @@
 <script>
 
 var driverId;
-var fleetId = ${fleetId}
+var fleetId = "${fleetId}";
 $(document).ready(function(){
 	if (fleetId)
 		loadReportDrivers("/reports/driverListJsonByFleet?random=" + Math.random(), {fleetId: fleetId});

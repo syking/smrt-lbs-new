@@ -20,10 +20,10 @@
         text-align:right;
     }
 </style>
-<form action="/reports/driverListJsonByDept" method="post" class="k-content search-wrap" onsubmit="return reportDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/reports/driverListJsonByline" method="post" class="k-content search-wrap" onsubmit="return reportDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
 	
-	<label for="driver-departments" class="info" style="width:80px;">Department:</label>
-	<input name="departmentId" id="driver-departments"/>
+	<label for="driver-lines" class="info" style="width:80px;">line:</label>
+	<input name="line" id="driver-lines"/>
 	
 	<label for="driver-types" class="info" >Type:</label>
 	<input name="dateType" id="driver-types"/>
@@ -45,18 +45,18 @@
 <script>
 
 var driverId;
-var departmentId = "${departmentId}";
+var line = "${line}";
 $(document).ready(function(){
-	if (departmentId)
-		loadReportDrivers("/reports/driverListJsonByDept?random=" + Math.random(), {departmentId: departmentId});
+	if (line)
+		loadReportDrivers("/reports/driverListJsonByLine?random=" + Math.random(), {line: line});
 	
-	var deptCombo = #{verbatim} ${departments} #{/verbatim};
+	var lineCombo = #{verbatim} ${lines} #{/verbatim};
 	
-    $("#driver-departments").kendoComboBox({
+    $("#driver-lines").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
-        placeholder: "Please select Department first",
-        dataSource: deptCombo
+        placeholder: "Please select line first",
+        dataSource: lineCombo
     });
     
     $("#driver-types").kendoComboBox({
@@ -78,11 +78,11 @@ $(document).ready(function(){
         	if ("month" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
+		    	
 		    }else if ("year" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
 		    }
-		    
         	$("#driver-time").kendoDatePicker({
 		    	start: value,
 		    	depth: value,
