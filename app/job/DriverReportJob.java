@@ -21,7 +21,6 @@ public class DriverReportJob extends Job{
 	public void doJob() throws Exception {
 		List<Long> eventIds = Event.find("select id from Event").fetch();
 		List<Long> reportIds = DriverReport.find("select event.id from DriverReport").fetch();
-		List<Long> newIds = new ArrayList<Long>();
 		if(eventIds.size()!=reportIds.size()){
 			for(int i = 0; i < eventIds.size(); i++){
 				if(reportIds.contains(eventIds.get(i))){

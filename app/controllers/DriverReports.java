@@ -26,6 +26,7 @@ import vo.DriverEventVO;
 import vo.DriverReportPieChartVO;
 import vo.DriverReportVO;
 import vo.Grid;
+
 @With(Interceptor.class)
 public class DriverReports extends Controller{
 	public static final String DEFAULT_TYPE = "daily";
@@ -33,9 +34,6 @@ public class DriverReports extends Controller{
 	public static final long DEFAULT_DRIVER_ID = 2;
 	
 	public static void read() throws ParseException{ 
-		long driverId = DEFAULT_DRIVER_ID;
-		Driver driver = Driver.find("id = ?", driverId).first();
-		List<Event> events = Event.find("byDriver", driver).fetch();
 		List<DriverReport> reports = DriverReport.findAll();
 		List<DriverReportVO> drVOs = new ArrayList<DriverReportVO>();
 		for(DriverReport report : reports){
@@ -62,6 +60,7 @@ public class DriverReports extends Controller{
 			Date start = null;
     		Date end = null;
 			List<Event> events = Event.find("byDriver", driver).fetch();
+			List<DriverReport> reports = new ArrayList<DriverReport>();
 			for(Event event : events){
 				StringBuilder builder = new StringBuilder();
 				List<Object> params = new ArrayList<Object>();
@@ -104,19 +103,17 @@ public class DriverReports extends Controller{
 				}else{
 					sql = (String) builder.toString().subSequence(0, builder.toString().length()-5);
 				}
-				System.out.println(sql);
-				for(int i = 0; i < params.size(); i++){
-					System.out.println(params.get(i));
-				}
+				
 				Object[] p = params.toArray();
-				List<DriverReport> reports = DriverReport.find(sql, p).fetch();
-				List<DriverReportPieChartVO> pieChart = pieChartVO(reports);
-				for(DriverReport report : reports){
-					drVOs.add(new DriverReportVO().init(report));
-					drs.add(report);
-				}
-				pieCharts.addAll(pieChart);
+				List<DriverReport> _reports = DriverReport.find(sql, p).fetch();
+				reports.addAll(_reports);
 			}
+			List<DriverReportPieChartVO> pieChart = pieChartVO(reports);
+			for(DriverReport report : reports){
+				drVOs.add(new DriverReportVO().init(report));
+				drs.add(report);
+			}
+			pieCharts.addAll(pieChart);
 		}
 		Map map = new HashMap();
 		map.put("grid", drVOs);
