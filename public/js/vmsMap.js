@@ -2,6 +2,7 @@
     dojo.require("esri.dijit.InfoWindow");
     dojo.require("dijit.layout.ContentPane");
     dojo.require("esri.map");
+    dojo.require("esri.tasks.route");
     var currentBuses;
     var refreshInterval;
     var refreshIntervalCount =  10 * 1000;
@@ -74,7 +75,6 @@
         	
         }
     }
-
 	
     function init() {
     	//var loading = dojo.byId("loadingImg"); // loading image, id
@@ -98,7 +98,7 @@
 //        	map.showZoomSlider();
 //        });
         //Add the world street map layer to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service
-
+        
         map.addLayer(new OM.CustomTileServiceLayer());
 
         var tooltipLayer = new esri.layers.GraphicsLayer();
@@ -177,7 +177,7 @@
             if (map.infoWindow.isShowing) {
 	            map.infoWindow.hide();
 	        }
-	        
+            
             $.ajax({
                 url: url,
                 dataType: 'json',

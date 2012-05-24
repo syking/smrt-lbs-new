@@ -1,0 +1,141 @@
+#{set 'moreScripts'}
+<script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
+#{/set}
+#{extends theme+'/main_head.html' /}
+<style>
+	.k-content{background:#f3f3f3;}
+    .info{
+    	border:none;
+        padding: 3px 5px 7px 5px;
+        display:inline-block;
+        width:120px;
+        text-align:right;
+    }
+</style>
+<div id="path-view-on-map-splitter" style="width:99%; height:99%;">
+	<div>
+		<br /><br />
+		<label for="path-vehicles" class="info" style="width:80px;">Vehicle:</label>
+		<input name="vehicleId" id="path-vehicles"/>
+		
+		<label id="path-schedules-label" for="path-schedules" class="info" >Schedule:</label>
+		<div style="display:inline;" id="path-schedules-wrap">
+			<input style="width:300px" name="scheduleId" id="path-schedules"/>
+		</div>
+	</div>
+	
+	<div id="path-map-view" region="center" style=" position:relative;"></div>
+	
+</div>
+
+<script>
+
+var map = "";//用于vmsMap.js中
+var map_id = "path-map-view";//用于vmsMap.js中
+
+</script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+(function($){
+	$.getUrlParam = function(name){
+	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	var r = window.location.search.substr(1).match(reg);
+	if (r!=null) return unescape(r[2]);
+	 return null;
+	}
+})(jQuery);
+
+var view_on_map_splitter;
+
+$(document).ready(function(){
+	
+	view_on_map_splitter = $("#path-view-on-map-splitter").kendoSplitter({
+		orientation: "vertical",
+		panes: [
+            { collapsible: false, resizable:false, size: "80px", min: "80px"},//up
+            { collapsible: false, resizable:false,},//middle 
+        ],
+        resize:function(e){
+            //if is the first time loading, the map is not required to resize
+            if (map && map != ""){
+                map.resize();
+      		    map.reposition();
+      	    }
+        }
+	}).data("kendoSplitter");
+	
+	var vehicleCombo = #{verbatim} ${vehicles} #{/verbatim};
+	
+    $("#path-vehicles").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value", 
+        dataSource: vehicleCombo,
+        change: function() {
+            var value = this.value();
+            var text = this.text();
+        	$("#path-schedules-wrap").empty();
+        	$("#path-schedules-wrap").html("<input name='scheduleId' id='path-schedules' style='width:300px'/>");
+     		$("#path-schedules-label").html("Schedule");
+		    
+		    $("#path-schedules-wrap").show();
+		    $("#path-schedules-label").show();
+		    
+		    $.getJSON("/vehicles/schedules", {vehicleNo:value}, function(schedules){
+		    	$("#path-schedules").kendoComboBox({
+		       		dataTextField: "text",
+		        	dataValueField: "value",
+		        	dataSource: schedules,
+		        	change: function(){
+		        		var value = this.value();
+            			var text = this.text();
+		        		$.getJSON("/vehicles/routes", {scheduleId:value}, function(points){
+		        			initRouteTask(points);
+		        		});
+		        	}
+		    	});
+		    });
+        }
+    });
+    
+    $("#path-schedules-wrap").hide();
+	$("#path-schedules-label").hide();
+	
+});
+
+function initRouteTask(points){
+
+	map.graphics.clear();
+	
+	var path = {"paths":[points],"spatialReference":{"wkid":3414}};
+          	
+	// 路径点轨迹
+	var line = new esri.geometry.Polyline(path);
+
+	// 路线图形样式
+	var routeSymbol = new esri.symbol.SimpleLineSymbol().setColor(new dojo.Color("green")).setWidth(3);
+	map.graphics.add(new esri.Graphic(line, routeSymbol));
+	
+	// 首节点图形样式
+	var startNodeSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE).setSize(10);
+    startNodeSymbol.outline.setWidth(2);
+    startNodeSymbol.outline.setColor(new dojo.Color("red"));
+    // 尾节点图形样式
+    var endNodeSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(10);
+    endNodeSymbol.outline.setWidth(2);
+    endNodeSymbol.outline.setColor(new dojo.Color("red"));
+    // var endNodeSymbol = new esri.symbol.TextSymbol("End").setAlign(esri.symbol.TextSymbol.ALIGN_END).setColor(new dojo.Color("red"));
+    
+    // 坐标系
+	var spatial = new esri.SpatialReference({ wkid:4326 })
+    // 首节点
+    var startNodePoint = new esri.geometry.Point(points[0], spatial); 
+    var startNode = new esri.Graphic(startNodePoint, startNodeSymbol);
+    map.graphics.add(startNode);
+    
+    // 尾节点
+    var endNodePoint = new esri.geometry.Point(points[points.length-1], spatial); 
+    var endNode = new esri.Graphic(endNodePoint, endNodeSymbol);
+    map.graphics.add(endNode);
+}
+</script>

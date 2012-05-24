@@ -11,7 +11,7 @@ import play.jobs.Job;
 import play.mvc.Controller;
 import vo.CurrentBusData;
 
-@Every("3s")
+@Every("10s")
 public class GPS extends Job {
 
 	public static CurrentBusData[] currentBusDatas;
@@ -41,7 +41,7 @@ public class GPS extends Job {
             newCurrentData = generateCurrentBusData(count);
         }
         
-        GPSData.deleteAll();
+        //GPSData.deleteAll();
         
         for (CurrentBusData c : newCurrentData){
         	GPSData gps = new GPSData();

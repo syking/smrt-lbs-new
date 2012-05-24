@@ -56,45 +56,4 @@ public class EventService {
 		
 		return result;
 	}
-	public static List<VehicleGPS> findGPS(List<Vehicle> vehicles){
-		
-		if (vehicles == null)
-			return null;
-		
-		List<VehicleGPS> result = new ArrayList<VehicleGPS>(vehicles.size());
-		// 1. 遍历车辆，根据车辆的设备找出对应的最新的GPS信息
-		for (Vehicle v : vehicles){
-			GPSData gps = GPSData.find("device_key = ? order by id desc limit 1", v.device.key).first();
-			if (gps == null)
-				continue;
-			
-			VehicleGPS vGps = new VehicleGPS();
-			vGps.id = v.id;
-			vGps.busPlateNumber = v.number;
-			
-			// TODO
-			/* 暂时直接根据车辆编号找到调度 表的最新的排班记录，其实这样是不行的，
-			 * 因为排班是会把时间排到以后的，因此以后需要修改为按当前时间找符合排班时间的记录
-			 * */
-			Schedule schedule = Schedule.find("vehicle_number = ? order by id desc", v.number).first();
-			if (schedule == null){
-				vGps.driver = "driver001";
-				vGps.serviceNumber = "route001";
-			}else{
-				vGps.driver = schedule.driver.name;
-				vGps.serviceNumber = schedule.serviceNumber;
-			}
-			
-			vGps.currentSpeed = gps.speed;
-			vGps.xCoord = gps.longitude;
-			vGps.yCoord = gps.latitude;
-			vGps.vehicleType = v.type;
-			vGps.activeStatus = "on";
-			vGps.direction = Vehicle.DIRECTIONS[gps.direction];
-			
-			result.add(vGps);
-		}
-	
-		return result;
-	}
 }

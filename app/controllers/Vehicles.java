@@ -346,6 +346,51 @@ public class Vehicles extends Controller
         System.out.print(vehicleJson + "========================");
         renderJSON(vehicleJson);
     }
-
+    
+    /**
+     * 打开Vehicle Path On Map 窗口
+     * @param vehicleNo
+     */
+    public static void path(String vehicleNo){
+    	List<Vehicle> vehicleList = Vehicle.findAll();
+    	List<ComboVO> vc = new ArrayList<ComboVO>();
+		if (vehicleList != null) 
+        	 for (Vehicle v : vehicleList)
+        		 vc.add(new ComboVO(v.number, v.number));
+		
+		String vehicles = CommonUtil.getGson().toJson(vc);
+		
+    	render(renderArgs.get(THEME) + "/Vehicles/path.html",vehicleNo, vehicles);
+    }
+    
+    public static void schedules(String vehicleNo){
+    	List<Schedule> scheList = Schedule.find("vehicle_number = ?", vehicleNo).fetch();
+		List<ComboVO> schedules = new ArrayList<ComboVO>();
+		if (scheList != null) 
+        	 for (Schedule s : scheList)
+        		 schedules.add(new ComboVO(s.startTime+", "+s.endTime, s.id));
+        	 
+    	renderJSON(schedules);
+    }
+    
+    /**
+     * 处理某一特定Schedul下的车的行驶路径
+     * @param vehicleId
+     * @param scheduleId
+     */
+    public static void routes(Long scheduleId){
+    	List<String[]> points = new ArrayList<String[]>();
+    	Schedule s = Schedule.findById(scheduleId);
+    	if (s == null)
+    		return ;
+    	
+    	List<GPSData> gps = GPSData.find("device_key = ? and time >= ? and time < ?", s.vehicle.device.key, s.startTime, s.endTime).fetch();
+    	if (gps == null)
+    		return ;
+    	for (GPSData g : gps)
+    		points.add(new String[]{g.longitude, g.latitude});
+    	
+    	renderJSON(points);
+    }
 
 }

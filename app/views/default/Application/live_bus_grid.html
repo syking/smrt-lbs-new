@@ -1,4 +1,5 @@
 <div id="view-on-map-window" style="overflow:hidden;"></div>
+<div id="route-path-window" style="overflow:hidden;"></div>
 <div id="live_bus_grid"></div>
 
 <script>
@@ -7,7 +8,11 @@ var vehicleNo ;
 $(document).ready(function(){
 	
 	$.getJSON("/vehicles/events",{},function(json){
-		json.columns[json.columns.length] = { title: "Actions", width: "110px", command: { text: "View On Map", className: "view-on-map-button" } };
+		json.columns[json.columns.length] = { title: "Actions", width: "200px", command: [
+			{ text: "View On Map", className: "view-on-map-button" },
+			{ text: "Route Path", className: "route-path-button" }  
+		]};
+		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
 		var grid = $("#live_bus_grid").kendoGrid({
 	    	dataSource: {
@@ -25,9 +30,10 @@ $(document).ready(function(){
 	    
 	});
     $("#live_bus_grid").delegate("td", "click", function(e) {
-    	if ($(this).text() == "View On Map")
+    	if ($(this).text() == "View On MapRoute Path")
     		return ;
         
+        alert("show info window");
         e.preventDefault();
         var id = $(this).parent().find("td:last").text();
         showCurrentInfoWindow(id);
@@ -40,20 +46,43 @@ $(document).ready(function(){
         var w_title = "View Vehicle("+vehicleNo+") Events On Map "
         
         var wnd = $("#view-on-map-window")
-    	.kendoWindow({
-    		actions: ["Custom", "Minimize", "Maximize", "Close"],
-    		content: "http://"+ window.location.host + "/events/list?vehicleNo=" + vehicleNo +"&random="+Math.random(),
-    		//content: { type: "get", url: "/events/list?vehicleNo=" + vehicleNo, data: "data" },
-    		iframe: true,
-            modal: true,
-            visible: false,
-            resizable: true,
-            width: 800,
-            height: 600,
-            resize:function(e){
-            	$("#view-on-map-splitter").data("kendoSplitter").size("#map-view", "100%");
-            }
-         }).data("kendoWindow");
+	    	.kendoWindow({
+	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
+	    		content: "http://"+ window.location.host + "/events/list?vehicleNo=" + vehicleNo +"&random="+Math.random(),
+	    		iframe: true,
+	            modal: true,
+	            visible: false,
+	            resizable: true,
+	            width: 800,
+	            height: 600,
+	            resize:function(e){
+	            	$("#view-on-map-splitter").data("kendoSplitter").size("#map-view", "100%");
+	            }
+	         }).data("kendoWindow");
+	        
+	        wnd.title(w_title).center().open();
+        
+    });
+    
+     $("#live_bus_grid").delegate(".route-path-button", "click", function(e) {
+        e.preventDefault();
+        vehicleNo = $(this).parent().parent().find("td:first").html();
+        var w_title = "View Vehicle("+vehicleNo+") Route Path On Map "
+        
+        var wnd = $("#route-path-window")
+	    	.kendoWindow({
+	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
+	    		content: "http://"+ window.location.host + "/vehicles/path?vehicleNo=" + vehicleNo +"&random="+Math.random(),
+	    		iframe: true,
+	            modal: true,
+	            visible: false,
+	            resizable: true,
+	            width: 800,
+	            height: 600,
+	            resize:function(e){
+	            	$("#path-view-on-map-splitter").data("kendoSplitter").size("#path-map-view", "100%");
+	            }
+	         }).data("kendoWindow");
         
         wnd.title(w_title).center().open();
         
