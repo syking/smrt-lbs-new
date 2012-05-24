@@ -31,7 +31,7 @@ public class CounselVO {
 	}
 	
 	public static String timeConvertor(String time) throws ParseException{
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date dateString = df.parse(time);
 		String dateTime = df.format(dateString);
 		return dateTime;

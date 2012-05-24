@@ -170,7 +170,7 @@ public class Counsellings extends Controller {
 				.render(map));
 	}
 	
-	public static Date dateConvertor(String sql_date) {
+	public static Date dateConvertor(String sql_date) throws ParseException {
 		System.out.println(sql_date);
 		Timestamp newDate = Timestamp.valueOf(sql_date);
 		return newDate;
