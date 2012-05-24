@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : MySql
-Source Server Version : 50511
+Source Server         : localhost
+Source Server Version : 50523
 Source Host           : localhost:3306
 Source Database       : vms_db
 
 Target Server Type    : MYSQL
-Target Server Version : 50511
+Target Server Version : 50523
 File Encoding         : 65001
 
-Date: 2012-05-16 12:14:27
+Date: 2012-05-24 10:39:47
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,23 +20,29 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `t_counsel`;
 CREATE TABLE `t_counsel` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `end_time` varchar(255) DEFAULT NULL,
+  `end_time` datetime DEFAULT NULL,
   `remark` varchar(255) DEFAULT NULL,
-  `start_time` varchar(255) DEFAULT NULL,
+  `start_time` datetime DEFAULT NULL,
   `driver_id` bigint(20) DEFAULT NULL,
   `users_id` bigint(20) DEFAULT NULL,
-  `date` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKF4A9456A4F961CDE` (`driver_id`),
   KEY `FKF4A9456A4004E7A1` (`users_id`),
   CONSTRAINT `FKF4A9456A4004E7A1` FOREIGN KEY (`users_id`) REFERENCES `t_user` (`id`),
   CONSTRAINT `FKF4A9456A4F961CDE` FOREIGN KEY (`driver_id`) REFERENCES `t_driver` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_counsel
 -- ----------------------------
-INSERT INTO `t_counsel` VALUES ('1', '20:30:53', 'sdfasdf', '15:30:21', null, null, '2012-03-05');
+INSERT INTO `t_counsel` VALUES ('1', '2012-05-16 12:30:20', 'sdfasdf', '2012-05-16 12:30:00', '4', '1');
+INSERT INTO `t_counsel` VALUES ('2', '2012-05-16 00:30:20', 'sfasdf', '2012-05-16 00:30:00', '1', '1');
+INSERT INTO `t_counsel` VALUES ('3', '2012-05-20 02:00:00', 'dvdv', '2012-05-20 02:00:00', '9', '1');
+INSERT INTO `t_counsel` VALUES ('4', '2012-05-16 12:30:00', 'scascasc', '2012-05-16 12:30:00', '9', '1');
+INSERT INTO `t_counsel` VALUES ('5', '2012-05-16 12:40:00', 'cccccc', '2012-05-16 12:30:00', '11', '1');
+INSERT INTO `t_counsel` VALUES ('6', '2012-05-16 01:30:00', 'vvvvvvvvvvv', '2012-05-16 12:30:00', '15', '1');
+INSERT INTO `t_counsel` VALUES ('7', '2012-05-01 07:00:00', 'fffffffffffffff', '2012-05-01 02:00:00', '18', '1');
+INSERT INTO `t_counsel` VALUES ('8', '2012-05-01 00:00:00', 'cscscs', '2012-05-01 00:00:00', '4', '1');
 
 -- ----------------------------
 -- Table structure for `t_department`
@@ -164,6 +170,31 @@ INSERT INTO `t_driver` VALUES ('23', 'sdf', 'lijing', '73859', '7');
 INSERT INTO `t_driver` VALUES ('24', 'hdfh', 'lining', '73662', '8');
 
 -- ----------------------------
+-- Table structure for `t_driver_report`
+-- ----------------------------
+DROP TABLE IF EXISTS `t_driver_report`;
+CREATE TABLE `t_driver_report` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `report_time` datetime DEFAULT NULL,
+  `event_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKF7ADB4A0BAFEA2D6` (`event_id`),
+  CONSTRAINT `FKF7ADB4A0BAFEA2D6` FOREIGN KEY (`event_id`) REFERENCES `t_event` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_driver_report
+-- ----------------------------
+INSERT INTO `t_driver_report` VALUES ('1', '2012-05-17 18:02:08', '24');
+INSERT INTO `t_driver_report` VALUES ('2', '2012-05-18 18:16:19', '25');
+INSERT INTO `t_driver_report` VALUES ('3', '2012-05-18 18:16:40', '25');
+INSERT INTO `t_driver_report` VALUES ('5', '2012-05-19 18:17:06', '28');
+INSERT INTO `t_driver_report` VALUES ('6', '2012-05-17 15:36:33', '30');
+INSERT INTO `t_driver_report` VALUES ('7', '2012-05-02 15:37:17', '27');
+INSERT INTO `t_driver_report` VALUES ('8', '2012-05-16 15:37:33', '25');
+INSERT INTO `t_driver_report` VALUES ('9', '2012-05-24 18:16:51', '27');
+
+-- ----------------------------
 -- Table structure for `t_event`
 -- ----------------------------
 DROP TABLE IF EXISTS `t_event`;
@@ -184,8 +215,8 @@ CREATE TABLE `t_event` (
   KEY `FKA035AF0F116C3656` (`fleet_id`),
   KEY `FKA035AF0FCF7D1A96` (`vehicle_id`),
   KEY `FKA035AF0F14A2A29E` (`department_id`),
-  CONSTRAINT `FKA035AF0F14A2A29E` FOREIGN KEY (`department_id`) REFERENCES `t_department` (`id`),
   CONSTRAINT `FKA035AF0F116C3656` FOREIGN KEY (`fleet_id`) REFERENCES `t_fleet` (`id`),
+  CONSTRAINT `FKA035AF0F14A2A29E` FOREIGN KEY (`department_id`) REFERENCES `t_department` (`id`),
   CONSTRAINT `FKA035AF0F4F961CDE` FOREIGN KEY (`driver_id`) REFERENCES `t_driver` (`id`),
   CONSTRAINT `FKA035AF0FC5D3364B` FOREIGN KEY (`event_record_id`) REFERENCES `t_event_record` (`id`),
   CONSTRAINT `FKA035AF0FCF7D1A96` FOREIGN KEY (`vehicle_id`) REFERENCES `t_vehicle` (`id`)
@@ -311,31 +342,31 @@ CREATE TABLE `t_gps_data` (
   PRIMARY KEY (`id`),
   KEY `device_key` (`device_key`) USING BTREE,
   CONSTRAINT `t_gps_data_ibfk_1` FOREIGN KEY (`device_key`) REFERENCES `t_device` (`device_key`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1355876 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2253896 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_gps_data
 -- ----------------------------
-INSERT INTO `t_gps_data` VALUES ('1355856', '2012-05-16 12:14:27', '0', '', '39788.31902789967', '33433.997799046345', '75', '2012-05-16 12:14:27', '2');
-INSERT INTO `t_gps_data` VALUES ('1355857', '2012-05-16 12:14:27', '3', '', '41201.22682833404', '17386.10611096131', '92', '2012-05-16 12:14:27', '1');
-INSERT INTO `t_gps_data` VALUES ('1355858', '2012-05-16 12:14:27', '3', '', '42811.043326017454', '21709.3061276448', '96', '2012-05-16 12:14:27', '4');
-INSERT INTO `t_gps_data` VALUES ('1355859', '2012-05-16 12:14:27', '3', '', '34421.24098941918', '25464.931521868937', '38', '2012-05-16 12:14:27', '3');
-INSERT INTO `t_gps_data` VALUES ('1355860', '2012-05-16 12:14:27', '3', '', '31261.988575185584', '10787.477249394566', '41', '2012-05-16 12:14:27', '5');
-INSERT INTO `t_gps_data` VALUES ('1355861', '2012-05-16 12:14:27', '1', '', '36367.615581374346', '10871.134344224454', '24', '2012-05-16 12:14:27', '6');
-INSERT INTO `t_gps_data` VALUES ('1355862', '2012-05-16 12:14:27', '2', '', '36380.289529483365', '19653.790832340044', '56', '2012-05-16 12:14:27', '001190251');
-INSERT INTO `t_gps_data` VALUES ('1355863', '2012-05-16 12:14:27', '3', '', '34203.280253119774', '14721.3963171296', '33', '2012-05-16 12:14:27', '001014182');
-INSERT INTO `t_gps_data` VALUES ('1355864', '2012-05-16 12:14:27', '2', '', '37883.87214849843', '20787.67310382188', '37', '2012-05-16 12:14:27', 'B5143913');
-INSERT INTO `t_gps_data` VALUES ('1355865', '2012-05-16 12:14:27', '3', '', '43795.96666378059', '31755.928653913765', '63', '2012-05-16 12:14:27', 'B5155298');
-INSERT INTO `t_gps_data` VALUES ('1355866', '2012-05-16 12:14:27', '0', '', '39990.61339723785', '33494.15136236416', '36', '2012-05-16 12:14:27', '001001003');
-INSERT INTO `t_gps_data` VALUES ('1355867', '2012-05-16 12:14:27', '2', '', '34848.18835293481', '30523.313798238003', '7', '2012-05-16 12:14:27', '001067110');
-INSERT INTO `t_gps_data` VALUES ('1355868', '2012-05-16 12:14:27', '0', '', '29676.365714416177', '19761.218482566812', '62', '2012-05-16 12:14:27', 'B5143706');
-INSERT INTO `t_gps_data` VALUES ('1355869', '2012-05-16 12:14:27', '1', '', '42438.59144745175', '35271.853207422515', '7', '2012-05-16 12:14:27', 'amk');
-INSERT INTO `t_gps_data` VALUES ('1355870', '2012-05-16 12:14:27', '3', '', '40259.40827320909', '22122.722238684284', '31', '2012-05-16 12:14:27', 'bbk');
-INSERT INTO `t_gps_data` VALUES ('1355871', '2012-05-16 12:14:27', '0', '', '33701.20706737308', '25147.03726356222', '58', '2012-05-16 12:14:27', 'cck');
-INSERT INTO `t_gps_data` VALUES ('1355872', '2012-05-16 12:14:27', '0', '', '39132.86282100256', '38360.09128770161', '63', '2012-05-16 12:14:27', 'clm');
-INSERT INTO `t_gps_data` VALUES ('1355873', '2012-05-16 12:14:27', '2', '', '29706.328661068783', '11781.629142155087', '1', '2012-05-16 12:14:27', 'hou');
-INSERT INTO `t_gps_data` VALUES ('1355874', '2012-05-16 12:14:27', '1', '', '43997.37606919777', '36079.26779230476', '36', '2012-05-16 12:14:27', 'jur');
-INSERT INTO `t_gps_data` VALUES ('1355875', '2012-05-16 12:14:27', '3', '', '29421.41380540944', '29240.434654701254', '9', '2012-05-16 12:14:27', 'tpy');
+INSERT INTO `t_gps_data` VALUES ('2253876', '2012-05-24 10:39:46', '0', '', '40580.00209461875', '39561.53310376198', '30', '2012-05-24 10:39:46', '2');
+INSERT INTO `t_gps_data` VALUES ('2253877', '2012-05-24 10:39:46', '0', '', '31274.627785540655', '16167.315040237307', '3', '2012-05-24 10:39:46', '1');
+INSERT INTO `t_gps_data` VALUES ('2253878', '2012-05-24 10:39:46', '0', '', '35996.80272776955', '31936.172743954052', '80', '2012-05-24 10:39:46', '4');
+INSERT INTO `t_gps_data` VALUES ('2253879', '2012-05-24 10:39:46', '2', '', '33924.67923477419', '29982.36950481254', '14', '2012-05-24 10:39:46', '3');
+INSERT INTO `t_gps_data` VALUES ('2253880', '2012-05-24 10:39:46', '3', '', '32915.1232490419', '30099.464043146538', '73', '2012-05-24 10:39:46', '5');
+INSERT INTO `t_gps_data` VALUES ('2253881', '2012-05-24 10:39:46', '3', '', '41803.00681983835', '16094.85724792264', '97', '2012-05-24 10:39:46', '6');
+INSERT INTO `t_gps_data` VALUES ('2253882', '2012-05-24 10:39:46', '2', '', '34514.6989559593', '19710.180549816443', '97', '2012-05-24 10:39:46', '001190251');
+INSERT INTO `t_gps_data` VALUES ('2253883', '2012-05-24 10:39:46', '2', '', '42348.31581783587', '34730.43856538492', '59', '2012-05-24 10:39:46', '001014182');
+INSERT INTO `t_gps_data` VALUES ('2253884', '2012-05-24 10:39:46', '2', '', '43959.80739065922', '14147.407832995366', '37', '2012-05-24 10:39:46', 'B5143913');
+INSERT INTO `t_gps_data` VALUES ('2253885', '2012-05-24 10:39:46', '1', '', '33063.63605245259', '17704.46372051886', '52', '2012-05-24 10:39:46', 'B5155298');
+INSERT INTO `t_gps_data` VALUES ('2253886', '2012-05-24 10:39:46', '3', '', '42377.079720304195', '35107.601443968204', '59', '2012-05-24 10:39:46', '001001003');
+INSERT INTO `t_gps_data` VALUES ('2253887', '2012-05-24 10:39:46', '2', '', '44208.622376012965', '35886.97382360459', '75', '2012-05-24 10:39:46', '001067110');
+INSERT INTO `t_gps_data` VALUES ('2253888', '2012-05-24 10:39:46', '3', '', '34033.11222284824', '29163.168631737924', '5', '2012-05-24 10:39:46', 'B5143706');
+INSERT INTO `t_gps_data` VALUES ('2253889', '2012-05-24 10:39:46', '3', '', '40281.835576156984', '31245.943416719303', '96', '2012-05-24 10:39:46', 'amk');
+INSERT INTO `t_gps_data` VALUES ('2253890', '2012-05-24 10:39:46', '3', '', '32280.292278288118', '20276.448983508755', '20', '2012-05-24 10:39:46', 'bbk');
+INSERT INTO `t_gps_data` VALUES ('2253891', '2012-05-24 10:39:46', '2', '', '30657.01104901887', '28445.275835114662', '43', '2012-05-24 10:39:46', 'cck');
+INSERT INTO `t_gps_data` VALUES ('2253892', '2012-05-24 10:39:46', '3', '', '41532.836338353154', '33961.1536097952', '74', '2012-05-24 10:39:46', 'clm');
+INSERT INTO `t_gps_data` VALUES ('2253893', '2012-05-24 10:39:46', '0', '', '36022.26663396323', '19462.369846456517', '91', '2012-05-24 10:39:46', 'hou');
+INSERT INTO `t_gps_data` VALUES ('2253894', '2012-05-24 10:39:46', '2', '', '30883.441160485716', '25194.013018211026', '54', '2012-05-24 10:39:46', 'jur');
+INSERT INTO `t_gps_data` VALUES ('2253895', '2012-05-24 10:39:46', '2', '', '44423.05473249593', '21939.500186696074', '62', '2012-05-24 10:39:46', 'tpy');
 
 -- ----------------------------
 -- Table structure for `t_log`
