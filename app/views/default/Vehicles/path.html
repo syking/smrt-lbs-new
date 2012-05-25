@@ -89,6 +89,7 @@ $(document).ready(function(){
 		        	change: function(){
 		        		var value = this.value();
             			var text = this.text();
+            			map.graphics.clear();
 		        		$.getJSON("/vehicles/routes", {scheduleId:value}, function(points){
 		        			initRouteTask(points);
 		        		});
@@ -104,8 +105,6 @@ $(document).ready(function(){
 });
 
 function initRouteTask(points){
-
-	map.graphics.clear();
 	
 	var path = {"paths":[points],"spatialReference":{"wkid":3414}};
           	
