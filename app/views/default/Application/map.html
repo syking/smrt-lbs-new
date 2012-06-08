@@ -29,6 +29,8 @@ $(document).ready(function(){
         	});
     	//default all fleets,not need fletts arg
     	bindMapinitData("addMarker('" + getCurrentDataUrl({fleets: getFleetData()}) + "')");
+    	
+    	$("#change-level-btn").click(changeLevelHandler);
     });
 
 </script>

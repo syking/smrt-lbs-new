@@ -56,11 +56,6 @@
         }
     });
 
-    function showCoordinates(evt) {
-        var mp = evt.mapPoint;
-        //dojo.byId("info").innerHTML = "Location: " + mp.x + ", " + mp.y;
-    }
-
     function closeInfoWindow(evt){
         map.infoWindow.hide();
         //showCoordinates(evt);
@@ -77,27 +72,24 @@
     }
 	
     function init() {
-    	//var loading = dojo.byId("loadingImg"); // loading image, id
+    	var chageLevelBtn = dojo.byId("change-level-btn");
     	
         var initExtent = getExtentForLevelnCenter(centerPoint, 1);
         
         map = new esri.Map(map_id,{extent:initExtent});
         map.enableMapNavigation();
 
-//		//在地图更新开始的时候显示 Loading 图标
-//        dojo.connect(map, "onUpdateStart", function(){
-//        	esri.show(loading);
-//        	map.disableMapNavigation();
-//        	map.hideZoomSlider();
-//        });
-//        
-//        //在地图更新完成的时候隐藏 Loading 图标
-//        dojo.connect(map, "onUpdateEnd", function(){
-//        	esri.hide(loading);
-//        	map.enableMapNavigation();
-//        	map.showZoomSlider();
-//        });
-        //Add the world street map layer to the map. View the ArcGIS Online site for services http://arcgisonline/home/search.html?t=content&f=typekeywords:service
+        dojo.connect(map, "onUpdateStart", function(){
+        	esri.hide(chageLevelBtn);
+        	map.disableMapNavigation();
+        	map.hideZoomSlider();
+        });
+        
+        dojo.connect(map, "onUpdateEnd", function(){
+        	esri.show(chageLevelBtn);
+        	map.enableMapNavigation();
+        	map.showZoomSlider();
+        });
         
         map.addLayer(new OM.CustomTileServiceLayer());
 
@@ -109,6 +101,13 @@
     
     dojo.addOnLoad(init);
 
+    function changeLevelHandler(evt){
+    	if (map){
+    		map.setLevel(2);
+    		map.centerAt(new esri.geometry.Point(28757.9, 34860.4, new esri.SpatialReference({ wkid: 3414 })));
+    	}
+    }
+    
 	function bindMapinitData(url){
 		//alert("bindMapinitData===" + url);
 		if(map.loaded){
