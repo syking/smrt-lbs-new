@@ -89,8 +89,9 @@ $(document).ready(function(){
 		        	change: function(){
 		        		var value = this.value();
             			var text = this.text();
-            			map.graphics.clear();
+            			
 		        		$.getJSON("/vehicles/routes", {scheduleId:value}, function(points){
+		        			map.graphics.clear();
 		        			initRouteTask(points);
 		        		});
 		        	}
@@ -116,13 +117,17 @@ function initRouteTask(points){
 	map.graphics.add(new esri.Graphic(line, routeSymbol));
 	
 	// 首节点图形样式
-	var startNodeSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE).setSize(10);
-    startNodeSymbol.outline.setWidth(2);
-    startNodeSymbol.outline.setColor(new dojo.Color("red"));
+	var startNodeSymbol;
+	//startNodeSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE).setSize(10);
+    //startNodeSymbol.outline.setWidth(2);
+    //startNodeSymbol.outline.setColor(new dojo.Color("red"));
+    startNodeSymbol = new esri.symbol.PictureMarkerSymbol('/public/images/start-icon.png', 24, 34);
     // 尾节点图形样式
-    var endNodeSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(10);
-    endNodeSymbol.outline.setWidth(2);
-    endNodeSymbol.outline.setColor(new dojo.Color("red"));
+    var endNodeSymbol;
+    //endNodeSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(10);
+    //endNodeSymbol.outline.setWidth(2);
+    //endNodeSymbol.outline.setColor(new dojo.Color("red"));
+    endNodeSymbol = new esri.symbol.PictureMarkerSymbol('/public/images/end-icon.png', 24, 34);
     // var endNodeSymbol = new esri.symbol.TextSymbol("End").setAlign(esri.symbol.TextSymbol.ALIGN_END).setColor(new dojo.Color("red"));
     
     // 坐标系

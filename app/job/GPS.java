@@ -8,7 +8,6 @@ import models.GPSData;
 import models.Vehicle;
 import play.jobs.Every;
 import play.jobs.Job;
-import play.mvc.Controller;
 import vo.CurrentBusData;
 
 @Every("10s")
@@ -41,7 +40,9 @@ public class GPS extends Job {
             newCurrentData = generateCurrentBusData(count);
         }
         
-        //GPSData.deleteAll();
+        long allCount = GPSData.count();
+        if (allCount >= 400)
+        	GPSData.deleteAll();
         
         for (CurrentBusData c : newCurrentData){
         	GPSData gps = new GPSData();
