@@ -33,7 +33,6 @@ $(document).ready(function(){
     	if ($(this).text() == "View On MapRoute Path")
     		return ;
         
-        alert("show info window");
         e.preventDefault();
         var id = $(this).parent().find("td:last").text();
         showCurrentInfoWindow(id);
