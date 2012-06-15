@@ -406,10 +406,14 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
                                     var sbl;
                                     if(point.attributes.vehicleType == 'bus'){
                                         sbl = new esri.symbol.PictureMarkerSymbol('/public/images/bus-32.png', 32, 32);
-                                    }
-                                    else{
+                                    } else if (point.attributes.vehicleType == 'car'){
                                         sbl = new esri.symbol.PictureMarkerSymbol('/public/images/car-32.png', 32, 32);
+                                    } else if (point.attributes.vehicleType == 'depot'){
+                                    	sbl = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
+                                    } else if (point.attributes.vehicleType == 'bus-stop'){
+                                    	sbl = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
                                     }
+                                    
                                     var vehicleGra = new esri.Graphic(point, sbl, dojo.mixin(point.attributes, { isCluster: false }), this._infoTemplate);
 
                                     //this.add(new esri.Graphic(point, this.symbolBank.single, dojo.mixin(point.attributes, { isCluster: false }), this._infoTemplate));

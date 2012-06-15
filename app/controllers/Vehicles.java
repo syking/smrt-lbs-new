@@ -7,6 +7,7 @@ import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
+import services.LocationService;
 import services.VehicleService;
 import utils.CommonUtil;
 import vo.*;
@@ -111,6 +112,7 @@ public class Vehicles extends Controller
         long[] fleetsLong = CommonUtil.splitToLong(fleets, ",");
         List<Vehicle> vehicles = VehicleService.filterByFleet(fleetsLong);
 
+        // 拿到的是车辆GPS数据
         List<VehicleGPS> vehicleGps = VehicleService.findGPS(vehicles);
 
         renderJSON(vehicleGps);

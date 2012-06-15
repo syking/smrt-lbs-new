@@ -4,6 +4,7 @@
     dojo.require("esri.map");
     dojo.require("esri.tasks.route");
     var currentBuses;
+    var currentLocations;
     var refreshInterval;
     var refreshIntervalCount =  10 * 1000;
     var showTextTooltip = true;
@@ -97,6 +98,86 @@
         map.addLayer(tooltipLayer);
         map.tooltipLayer = tooltipLayer;
         map.showTextTooltip = true;
+        
+        loadLocationGPS();
+    }
+    
+    function generateLocations(locations, depotSbl, busStopSbl){
+        var locationGraphics = [];
+    	for(var i = 0; i < locations.length; i++){
+            var loc = locations[i];
+            var gm = new esri.geometry.Point(loc.xCoord, loc.yCoord, new esri.SpatialReference({ wkid: 3414 }));
+            var attr;
+            var it;
+            
+        	if($("#ShowBusStop").attr("checked") != "checked" && bus.vehicleType == "bus-stop"){
+				loc.activeStatus = "off";
+			}
+        	
+			if($("#ShowDepot").attr("checked") != "checked" && bus.vehicleType == "depot"){
+				loc.activeStatus = "off";
+			}
+			
+        	attr = {
+        			id:loc.id,
+        			xCoord:loc.xCoord,
+        			yCoord:loc.yCoord,
+        			activeStatus:loc.activeStatus,
+        			vehicleType:loc.vehicleType,
+        			busPlateNumber:loc.busPlateNumber
+            };
+
+            it = new esri.InfoTemplate("Location Information","Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>type: ${vehicleType}<br/>name: ${busPlateNumber}<br/>")
+
+            
+           // alert(JSON.stringify(attr));
+            var graphic ;
+            
+            if (loc.vehicleType = 'depot'){
+            	graphic = new esri.Graphic(gm, depotSbl, attr, it);
+            	 attr.iconType = 'depot';
+            }else{
+            	graphic = new esri.Graphic(gm, busStopSbl, attr, it);
+            	 attr.iconType = 'busStop';
+            }
+            
+
+            if(loc.activeStatus == 'on'){
+            	graphic.visible = true;
+            }else{
+            	graphic.visible = false;
+            }
+
+            locationGraphics.push(graphic);
+        }
+    	
+        return locationGraphics
+    }
+    
+    function loadLocationGPS(){
+    	var url = "locations/gps";
+    	
+    	var depotIcon = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
+    	var busStopIcon = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
+    	
+    	$.getJSON(url,{},function(json){
+    		//alert(JSON.stringify(json));
+    		currentLocations = json;
+    		var locations = generateLocations(json, depotIcon, busStopIcon);
+    		var layer = new esri.ux.layers.ClusterLayer({
+                displayOnPan: false,
+                map: map,
+                features: locations,
+                infoWindow: {
+                	template : locations[0].infoTemplate
+                },
+                flareLimit: 15,
+                flareDistanceFromCenter: 21
+            });
+
+            map.locationLayer = layer;
+            map.addLayer(layer);
+    	});
     }
     
     dojo.addOnLoad(init);
@@ -354,6 +435,49 @@
         });
     }
     
+    function showLocationIcon(vehicleType){
+        $.each(currentLocations, function(index, g){
+            if(currentLocations[index].vehicleType == vehicleType){
+            	currentLocations[index].activeStatus = 'on';
+            }
+        });
+
+        $.each(map.locationLayer.graphics, function(index, g){
+            if(typeof g.attributes != 'undefined' && typeof g.attributes.vehicleType != 'undefined' && g.attributes.vehicleType == vehicleType){
+                g.show();
+            }
+        });
+
+        $.each(map.tooltipLayer.graphics, function(index, g){
+            if(g.attributes.vehicleType == vehicleType){
+                g.show();
+            }
+        });
+    }
+    
+    function hideLocationIcon(vehicleType){
+    	if (map.infoWindow.isShowing) {
+            map.infoWindow.hide();
+        }
+        $.each(currentLocations, function(index, g){
+            if(currentLocations[index].vehicleType == vehicleType){
+            	currentLocations[index].activeStatus = 'off';
+            }
+        });
+
+        $.each(map.locationLayer.graphics, function(index, g){
+            if(typeof g.attributes != 'undefined' && typeof g.attributes.vehicleType != 'undefined' && g.attributes.vehicleType == vehicleType){
+                g.hide();
+            }
+        });
+
+        $.each(map.tooltipLayer.graphics, function(index, g){
+            if(g.attributes.vehicleType == vehicleType){
+                g.hide();
+            }
+        });
+    }
+    
     function showVehicleIcon(vehicleType){
         $.each(currentBuses, function(index, g){
             if(currentBuses[index].vehicleType == vehicleType){
@@ -447,6 +571,33 @@
         });
         $.each(map.tooltipLayer.graphics, function(index, g){
             if(g.attributes.vehicleType == "car" && showTextTooltip){
+                g.show();
+            }
+            else{
+                g.hide();
+            }
+        });
+    }
+    
+    function showDepotOnly(){
+        $.each(currentLocations, function(index, g){
+            if(currentLocations[index].vehicleType == "depot"){
+            	currentLocations[index].activeStatus = 'on';
+            }
+            else{
+            	currentLocations[index].activeStatus = 'off';
+            }
+        });
+        $.each(map.locationLayer.graphics, function(index, g){
+            if(typeof g.attributes != 'undefined' && typeof g.attributes.vehicleType != 'undefined' && g.attributes.vehicleType == "depot"){
+                g.show();
+            }
+            else{
+                g.hide();
+            }
+        });
+        $.each(map.tooltipLayer.graphics, function(index, g){
+            if(g.attributes.vehicleType == "depot" && showTextTooltip){
                 g.show();
             }
             else{
