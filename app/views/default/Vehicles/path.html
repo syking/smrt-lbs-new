@@ -13,16 +13,22 @@
     }
 </style>
 <div id="path-view-on-map-splitter" style="width:99%; height:99%;">
-	<div>
-		<br /><br />
+	<form action="/vehicles/searchPath" method="post" onsubmit="return pathSearchValidate(this)">
+		<input id="path_schedule_id" type="hidden" name="scheduleId" value="-1" />
+		<br />
 		<label for="path-vehicles" class="info" style="width:80px;">Vehicle:</label>
 		<input name="vehicleId" id="path-vehicles"/>
-		
-		<label id="path-schedules-label" for="path-schedules" class="info" >Schedule:</label>
-		<div style="display:inline;" id="path-schedules-wrap">
-			<input style="width:300px" name="scheduleId" id="path-schedules"/>
-		</div>
-	</div>
+		<label id="path-schedules-label" for="path-schedules" style="width:80px;" class="info" >Schedule:</label>
+		<input style="width:250px" name="scheduleId" id="path-schedules"/>
+		<div style="height:5px;"></div>
+		<label for="path-date" class="info" style="width:80px;">Date:</label>
+		<input name="date" id="path-date" class="date" />
+		<label for="path-start" class="info" style="width:80px;">Start:</label>
+		<input name="startTime" id="path-start" style="width:99px;" />
+		<label for="path-end" class="info" style="width:30px;">End:</label>
+		<input name="endTime" id="path-end"  style="width:99px;"/>
+		<input type="submit" id="path-search-button" class="k-button" value="Search"/>
+	</form>
 	
 	<div id="path-map-view" region="center" style=" position:relative;"></div>
 	
@@ -49,7 +55,6 @@ var map_id = "path-map-view";//用于vmsMap.js中
 var view_on_map_splitter;
 
 $(document).ready(function(){
-	
 	view_on_map_splitter = $("#path-view-on-map-splitter").kendoSplitter({
 		orientation: "vertical",
 		panes: [
@@ -66,11 +71,19 @@ $(document).ready(function(){
 	}).data("kendoSplitter");
 	
 	var vehicleCombo = #{verbatim} ${vehicles} #{/verbatim};
+	var _index = 0;
+	$.each( vehicleCombo, function(i, v){
+		if (v.value == "${vehicleNo}"){
+			_index = i;
+			return ;
+		}
+	});
 	
-    $("#path-vehicles").kendoComboBox({
+    var vehicleSelect = $("#path-vehicles").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value", 
         dataSource: vehicleCombo,
+        index: _index,
         change: function() {
             var value = this.value();
             var text = this.text();
@@ -78,35 +91,74 @@ $(document).ready(function(){
         	$("#path-schedules-wrap").html("<input name='scheduleId' id='path-schedules' style='width:300px'/>");
      		$("#path-schedules-label").html("Schedule");
 		    
-		    $("#path-schedules-wrap").show();
-		    $("#path-schedules-label").show();
-		    
 		    $.getJSON("/vehicles/schedules", {vehicleNo:value}, function(schedules){
-		    	$("#path-schedules").kendoComboBox({
-		       		dataTextField: "text",
-		        	dataValueField: "value",
-		        	dataSource: schedules,
-		        	change: function(){
-		        		var value = this.value();
-            			var text = this.text();
-            			
-		        		$.getJSON("/vehicles/routes", {scheduleId:value}, function(points){
-		        			map.graphics.clear();
-		        			initRouteTask(points);
-		        		});
-		        	}
-		    	});
+		    	createScheduleComboBox(schedules);
 		    });
         }
     });
     
-    $("#path-schedules-wrap").hide();
-	$("#path-schedules-label").hide();
-	
+    var scheduleCombo = #{verbatim} ${schedules} #{/verbatim};
+    createScheduleComboBox(scheduleCombo);
+    
+    $("#path-date").kendoDatePicker({
+        format:"yyyy-MM-dd"
+    });
+
+    $("#path-start, #path-end").kendoTimePicker({
+        format:"HH:mm",
+        interval:1
+    });
 });
 
+
+function loadPath(url, params){
+	var sch = $("#path_schedule_id");
+	$.getJSON(url, params, function(points){
+		map.graphics.clear();
+		initRouteTask(points);
+		sch.attr("value", params["scheduleId"]);
+		$("#path-date").data("kendoDatePicker").value(params["date"]);
+	});
+}
+
+function pathSearchValidate(form) {
+    var $form = $(form);
+	var scheduleId = $("#path_schedule_id").attr("value");
+    if (!scheduleId || scheduleId < 1){
+    	return false;
+    }
+    
+    var startTimePicker = $("#path-start").data("kendoTimePicker");
+    if (startTimePicker.value() == null) {
+        startTimePicker.value("00:00");
+    }
+    var endTimePicker = $("#path-end").data("kendoTimePicker");
+    if (endTimePicker.value() == null) {
+        endTimePicker.value("00:00");
+    }
+    
+    var params = $form.serializeArray();
+    loadPath($form.attr("action"), params);
+    
+    return false;
+}
+
+function createScheduleComboBox(schedules){
+	$("#path-schedules").kendoComboBox({
+   		dataTextField: "text",
+    	dataValueField: "value",
+    	dataSource: schedules,
+    	placeholder: "please choose schedule...",
+    	change: function(){
+    		var value = this.value();
+			var text = this.text();
+			
+    		loadPath("/vehicles/routes", {scheduleId:value, date:text.split(",")[0]});
+    	}
+	});
+}
+
 function initRouteTask(points){
-	
 	var path = {"paths":[points],"spatialReference":{"wkid":3414}};
           	
 	// 路径点轨迹

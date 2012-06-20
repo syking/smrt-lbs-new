@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import play.db.jpa.Model;
+import utils.CommonUtil;
+import vo.ComboVO;
 
 /**
  * 车次安排时间等信息
@@ -54,6 +56,16 @@ public class Schedule extends Model {
 		
 		return list;
 		
+	}
+	
+	public static List<ComboVO> getComboByVehicle(String vehicleNo){
+		List<Schedule> scheList = Schedule.find("vehicle_number = ?", vehicleNo).fetch();
+		List<ComboVO> schedules = new ArrayList<ComboVO>();
+		if (scheList != null) 
+        	 for (Schedule s : scheList)
+        		 schedules.add(new ComboVO(CommonUtil.formatTime("yyyy-MM-dd HH:mm", s.startTime)+", "+CommonUtil.formatTime("yyyy-MM-dd HH:mm", s.endTime), s.id));
+		
+		return schedules;
 	}
 	
 }

@@ -1,6 +1,8 @@
 package utils;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -245,5 +247,16 @@ public class CommonUtil {
 		}
 		
 		return columns;
+	}
+
+	public static Date newDate(String pattern, String time) {
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		try {
+			return sdf.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return new Date(time);
 	}
 }

@@ -1,24 +1,37 @@
-<div class="configuration k-widget k-header" style="padding:10px; margin-bottom:5px;">
+<div class=" k-widget k-header" style="padding:10px; margin-bottom:5px;">
     <span class="configHead">Display</span>
-    <ul class="options">
-        <li>
-            <input id="ShowBusStop" type="checkbox" style="width:15px" checked="checked" /> <label for="BusStop">Bus stop</label>
-        </li>
-        <li>
-            <input id="ShowDepot" type="checkbox" style="width:15px" checked="checked" /> <label for="Depot">Depot</label>
-        </li>
-        <li>
-            <input id="ShowCar" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowCar">Show Car</label>
-        </li>
-        <li>
-            <input id="ShowBus" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowBus">Show Bus</label>
-        </li>
+    <ul class="options" >
+    	<li class="input_tree">
+    		<input id="ShowLocation" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowLocatoin">Show Location</label>
+    		<br />
+    		<ul style="padding:5px 0 5px 20px;">
+    			<li>
+            		<input id="ShowBusStop" type="checkbox" style="width:15px" checked="checked" /> <label for="BusStop">Bus stop</label>
+        		</li>
+        		<li>
+            		<input id="ShowDepot" type="checkbox" style="width:15px" checked="checked" /> <label for="Depot">Depot</label>
+        		</li>
+    		</ul>
+    	</li>
+    	<li class="input_tree">
+    		<input id="ShowVehicleType" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowVehicleType">Show Vehicle Type</label>
+    		<br />
+    		<ul style="padding:5px 0 5px 20px;">
+    			<li>
+		            <input id="ShowCar" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowCar">Show Car</label>
+		        </li>
+		        <li>
+		            <input id="ShowBus" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowBus">Show Bus</label>
+		        </li>
+    		</ul>
+    	</li>
+        
     </ul>
 </div>
 <div class="configuration k-widget k-header" style="padding:10px; margin-bottom:5px; overflow:auto;">
     <span class="configHead">Fleets</span>
 
-    <div id="treeview" class="demo-section"></div>
+    <div id="treeview" class="input_tree demo-section"></div>
 </div>
 <div class="k-widget k-header" style="padding:10px;">
 	<span class="configHead">Refresh (seconds)</span>
@@ -42,66 +55,78 @@
         
 <script>
 $(document).ready(function() {
-	 	$("#treeview").kendoTreeView({
-		    checkChildren:true,
-	        template: kendo.template($("#treeview-template").html()),
+	$("#display_tree").kendoTreeView({
+	});
+ 	$("#treeview").kendoTreeView({
+	    checkChildren:true,
+        template: kendo.template($("#treeview-template").html()),
 
-	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
+        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
 
-	        dataSource: #{verbatim} ${fleetJson} #{/verbatim}
-	    });
-	 
+        dataSource: #{verbatim} ${fleetJson} #{/verbatim}
+    });
+ 
+	$("#ShowDepot").click(showDepotClickHandler);
+    
+    $("#ShowBusStop").click(showBusStopClickHandler);
+    
+    $("#ShowBus").click(showBusClickHandler);
+    
+    $("#ShowCar").click(showCarClickHandler);
+    
+	$(".input_tree input").click(function(){
+		if($(this).attr("checked")=="checked"){
+        	var li = $(this).parents('li:first'); 
+        	li.find("input").attr("checked", true);
+        	li.find("ul").find("input").click();
+        	li.find("input").attr("checked", true);
+        }else{
+            //alert($(this).attr("checked") + " unchecked="+ $(this).attr("name"));//do some thing
+            var li = $(this).parents('li:first'); 
+            li.find("input").attr("checked", false);
+            li.find("ul").find("input").click();
+        	li.find("input").attr("checked", false);
+        }
+	  });
 
-		$("#treeview input").click(function(){
-			if($(this).attr("checked")=="checked"){
-            	var li = $(this).parents('li:first'); 
-            	li.find("input").attr("checked", true);
-	        }else{
-	            //alert($(this).attr("checked") + " unchecked="+ $(this).attr("name"));//do some thing
-	            var li = $(this).parents('li:first'); 
-            	li.find("input").attr("checked", false);
-	        }
-		  });
-	
-	    $("#textBox").kendoNumericTextBox({
-	    	value: 10,
-	        min: 3,
-	        max: 100,
-	        step: 1,
-	        decimals: 1
-	    });
-	    
-	    $("#ShowDepot").click(function(e){
-	    	if($(this).attr("checked") == "checked"){
-				showLocationIcon("depot");
-			}else{
-				hideLocationIcon("depot");
-			}
-	    });
-	    
-	    $("#ShowBusStop").click(function(e){
-	    	if($(this).attr("checked") == "checked"){
-				showLocationIcon("bus-stop");
-			}else{
-				hideLocationIcon("bus-stop");
-			}
-	    });
-	    
-	    $("#ShowBus").click(function(e){
-	    	if($(this).attr("checked") == "checked"){
-				showVehicleIcon("bus");
-			}else{
-				hideVehicleIcon("bus");
-			}
-	    });
-	    
-	    $("#ShowCar").click(function(e){
-	    	if($(this).attr("checked") == "checked"){
-				showVehicleIcon("car");
-			}else{
-				hideVehicleIcon("car");
-			}
-	    });
+    $("#textBox").kendoNumericTextBox({
+    	value: 10,
+        min: 3,
+        max: 100,
+        step: 1,
+        decimals: 1
+    });
 });
+function showDepotClickHandler(e){
+	if($(this).attr("checked") == "checked"){
+		showLocationIcon("depot");
+	}else{
+		hideLocationIcon("depot");
+	}
+}
+
+function showBusStopClickHandler(e){
+	if($(this).attr("checked") == "checked"){
+		showLocationIcon("bus-stop");
+	}else{
+		hideLocationIcon("bus-stop");
+	}
+}
+	    
+function showBusClickHandler(e){
+	if($(this).attr("checked") == "checked"){
+		showVehicleIcon("bus");
+	}else{
+		hideVehicleIcon("bus");
+	}
+}
+
+function showCarClickHandler(e){
+	if($(this).attr("checked") == "checked"){
+		showVehicleIcon("car");
+	}else{
+		hideVehicleIcon("car");
+	}
+}
 
 </script>

@@ -1,6 +1,10 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import play.db.jpa.Model;
+import vo.ComboVO;
 
 import javax.persistence.*;
 
@@ -60,5 +64,15 @@ public class Vehicle extends Model{
         this.description = description;
         this.cctvIp = cctvIp;
         this.type = type;
+    }
+    
+    public static List<ComboVO> getCombo(){
+    	List<Vehicle> vehicleList = Vehicle.findAll();
+    	List<ComboVO> vc = new ArrayList<ComboVO>();
+		if (vehicleList != null) 
+        	 for (Vehicle v : vehicleList)
+        		 vc.add(new ComboVO(v.number, v.number));
+		
+		return vc;
     }
 }
