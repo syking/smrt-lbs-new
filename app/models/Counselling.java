@@ -55,69 +55,66 @@ public class Counselling extends Model{
 		List<Counselling> counsellings = null;
 		if(start==null||end==null){
 			index = "by" + formQuery(user, driver, start, end);
-			if(index.contains("byAnd")){
+			
+			if(index.contains("byAnd"))
 				sql = "by" + index.substring(5);
-			}else{
+			else
 				sql = index;
-			}
-		}else{
+			
+		}else
 			sql = formQuery(user, driver, start, end);
-		}
-		System.out.println(sql);
+		
 		List<Object> params = new ArrayList<Object>();
 		if(sql.equals("by")){
-			if(!username.equals("")||!driverName.equals("")){
+			
+			if(!username.equals("")||!driverName.equals(""))
 				counsellings = null;
-			}else{
+			else
 				counsellings = Counselling.findAll();
-			}
+			
 		}else{
-			if(user!=null){
+			if(user!=null)
 				params.add(user);
-			}
-			if(driver!=null){
+			
+			if(driver!=null)
 				params.add(driver);
-			}
-			if(start!=null){
+			
+			if(start!=null)
 				params.add(start);
-			}
-			if(end!=null){
+			
+			if(end!=null)
 				params.add(end);
-			}
+			
 			Object[] p = params.toArray();
 			counsellings = Counselling.find(sql, p).fetch();
+			
 		}
+		
 		return counsellings;	
 	}
 
 	public String formQuery(User user, Driver driver, Date start, Date end){
-		if(start!=null&&end!=null){
+		
+		if(start != null && end != null){
+			
 			StringBuilder builder = new StringBuilder();
-			if(user!=null){
+			
+			if(user!=null)
 				builder.append("user = ?").append(" And ");
-			}
-			if(driver!=null){
+			
+			if(driver!=null)
 				builder.append("driver = ?").append(" And ");
-			}
+			
 			builder.append("startTime >= ?").append(" And ").append("endTime <= ?");
-			System.out.println(builder.toString());
+			
 			return builder.toString();
-		}else{
-			return String.format("%s%s%s%s", user!=null?"AndUser":"",
-					driver!=null?"AndDriver":"", start!=null?"AndStartTime":"", end!=null?"AndEndTime":"");
-		}
+			
+		}else
+			return String.format("%s%s%s%s", user!=null?"AndUser":"", driver!=null?"AndDriver":"", start!=null?"AndStartTime":"", end!=null?"AndEndTime":"");
+		
 	}
 
 	public static long counselSize() {
 		return Counselling.findAll().size();
 	}
 }
-
-
-
-
-
-
-
-
-

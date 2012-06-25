@@ -94,6 +94,7 @@ public class EventStatusJob extends Job {
 				e.driver = schedule.driver;
 				e.serviceNumber = schedule.serviceNumber;
 				e.department = schedule.driver.department;
+				
 				/*
 				 * TODO 计算得到 road
 				 */
@@ -125,7 +126,5 @@ public class EventStatusJob extends Job {
 				System.out.println(" exception -> " + e.toString() + " -> rollback");
 			} 
 		}
-
 	}
-
 }

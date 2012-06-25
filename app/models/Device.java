@@ -45,7 +45,4 @@ public class Device extends Model {
 				+ ", action=" + action + ", misc=" + misc + ", status="
 				+ status + "]";
 	}
-	
-	
-	
 }

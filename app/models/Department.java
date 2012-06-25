@@ -56,6 +56,4 @@ public class Department extends Model{
 			return false;
 		return true;
 	}
-	
-	
 }

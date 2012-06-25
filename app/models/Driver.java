@@ -79,6 +79,7 @@ public class Driver extends Model{
     				data.put("name", driver.name);
     				continue;
     			}
+    			
     			if ("total".equals(col.get("field"))){
     				data.put("total", 0);
     				continue;
@@ -167,13 +168,13 @@ public class Driver extends Model{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
+		
 		int result = super.hashCode();
-		result = prime * result
-				+ ((department == null) ? 0 : department.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((department == null) ? 0 : department.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((number == null) ? 0 : number.hashCode());
+		
 		return result;
 	}
 
@@ -208,7 +209,4 @@ public class Driver extends Model{
 			return false;
 		return true;
 	}
-    
-	
-    
 }

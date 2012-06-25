@@ -1,5 +1,8 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +14,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import play.db.jpa.Model;
+import vo.EventGPS;
+import vo.EventVO;
 
 /**
  * 事件信息，包括超速、突然加速等等。
@@ -67,6 +72,49 @@ public class Event extends Model{
 				+ ", serviceNumber=" + serviceNumber + ", isHighWay="
 				+ isHighWay + ", isNearBusStop=" + isNearBusStop + ", road="
 				+ road + ", id=" + id + "]";
+	}
+	
+	public static List<EventVO> assemEventVO(Vehicle v){
+		List<EventRecord> eventRecords = EventRecord.find("device_key = ?", v.device.key).fetch();
+    	if (eventRecords == null)
+    		return null;
+    	
+    	List<EventVO> eventVOList = new ArrayList<EventVO>(eventRecords.size());
+    	
+    	for (EventRecord er : eventRecords){
+    		Event e = Event.find("event_record_id = ?", er.id).first();
+    		EventVO eVO = new EventVO().init(e);
+    		eventVOList.add(eVO);
+    	}
+    	
+    	return eventVOList;
+	}
+
+	public static List<EventGPS> findGPS(String vehicleNo) {
+		Vehicle v = Vehicle.find("number = ?", vehicleNo).first();
+		
+		if (v == null)
+			return null;
+		
+		List<EventRecord> eventRecords = EventRecord.find("device_key = ?", v.device.key).fetch();
+    	if (eventRecords == null)
+    		return null;
+    	
+    	List<EventGPS> result = new ArrayList<EventGPS>(eventRecords.size());
+    	for (EventRecord er : eventRecords){
+    		EventGPS gps = new EventGPS();
+    		Event e = Event.find("event_record_id = ?", er.id).first();
+    		gps.id = vehicleNo + "_" + e.id;
+    		gps.currentSpeed = er.speed;
+    		gps.name = er.type.name;
+    		gps.xCoord = er.lng;
+    		gps.yCoord = er.lat;
+    		gps.techName = er.type.techName;
+    		
+    		result.add(gps);
+    	}
+		
+		return result;
 	}
 	
 }

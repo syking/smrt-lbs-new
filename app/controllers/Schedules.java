@@ -4,13 +4,12 @@ import play.mvc.*;
 
 public class Schedules extends Controller {
 
-    public static void index() {
-        render();
-    }
+	public static void index() {
+		render();
+	}
 
-    public static void lines(){
-    	
-    	renderJSON("");
-    }
-    
+	public static void lines() {
+		renderJSON("");
+	}
+
 }

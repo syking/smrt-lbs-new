@@ -9,7 +9,6 @@ import models.Event;
 import models.EventRecord;
 import models.EventType;
 import play.mvc.*;
-import services.EventService;
 import utils.CommonUtil;
 import vo.EventGPS;
 import vo.EventVO;

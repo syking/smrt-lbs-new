@@ -10,6 +10,11 @@ import play.jobs.Every;
 import play.jobs.Job;
 import vo.CurrentBusData;
 
+/**
+ * 模拟GPS定时更新数据
+ * @author weiwei
+ *
+ */
 @Every("10s")
 public class GPS extends Job {
 
@@ -34,11 +39,10 @@ public class GPS extends Job {
      */
     public static void generate(int count, String mode){
         CurrentBusData[] newCurrentData;
-        if(count == currentBusCount && !mode.toLowerCase().equals("reload")){
+        if(count == currentBusCount && !mode.toLowerCase().equals("reload"))
             newCurrentData = moveVehicle(currentBusDatas);
-        }else {
+        else 
             newCurrentData = generateCurrentBusData(count);
-        }
         
         long allCount = GPSData.count();
         if (allCount >= 400)
@@ -68,10 +72,11 @@ public class GPS extends Job {
         double maxXCoord = 39516.1129604966;
         double minYCoord = 28876.64251572593;
         double maxYCoord = 44469.9694430107;
+        
         CurrentBusData[] newCurrentData = new CurrentBusData[currentBusCount];
-        if(currentDatas.length == 0 || currentDatas.length != currentBusCount){
+        
+        if(currentDatas.length == 0 || currentDatas.length != currentBusCount)
             newCurrentData = generateCurrentBusData(currentBusCount);
-        }
         else {
             for(int i = 0; i< currentDatas.length; i++){
                 CurrentBusData currentData = currentDatas[i];
@@ -80,32 +85,34 @@ public class GPS extends Job {
                     currentData.xCoord = currentData.xCoord - (30 + Math.random() * 70);
                     currentData.yCoord = currentData.yCoord - Math.random() * 30;
                 }
+                
                 else if(currentData.direction.equals("right")){
                     currentData.xCoord = currentData.xCoord + (30 + Math.random() * 70);
                     currentData.yCoord = currentData.yCoord + Math.random() * 30;
                 }
+                
                 else if(currentData.direction.equals("up")){
                     currentData.xCoord = currentData.xCoord + Math.random() * 30;
                     currentData.yCoord = currentData.yCoord + (30 + Math.random() * 70);
                 }
+                
                 else if(currentData.direction.equals("down")){
                     currentData.xCoord = currentData.xCoord - Math.random() * 30;
                     currentData.yCoord = currentData.yCoord - (30 + Math.random() * 70);
                 }
 
-                if(currentData.xCoord < minXCoord){
+                if(currentData.xCoord < minXCoord)
                     currentData.direction = "right";
-                }
-                if(currentData.xCoord > maxXCoord){
+                
+                if(currentData.xCoord > maxXCoord)
                     currentData.direction = "left";
-                }
-                if(currentData.yCoord < minYCoord){
+                
+                if(currentData.yCoord < minYCoord)
                     currentData.direction = "up";
-                }
-                if(currentData.yCoord > maxYCoord){
+                
+                if(currentData.yCoord > maxYCoord)
                     currentData.direction = "down";
-                }
-
+                
             }
         }
         return currentDatas;
@@ -128,9 +135,8 @@ public class GPS extends Job {
 
             int id = minId + i;
             String number = String.valueOf(i);
-            if (i < 10){
+            if (i < 10)
             	number = "0"+(i+1);
-            }
             
             String busPlateNumber = "vehicle" + number;
             int currentSpeed = (int)Math.ceil(Math.random() * 100);

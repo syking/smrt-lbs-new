@@ -43,7 +43,7 @@ public class SystemConfigs extends Controller{
 		String name = jo.getString("name");
 		String value = jo.getString("value");
 		String displayName = jo.getString("displayName");
-		System.out.println(name+"|"+value+"|"+displayName);
+		
 		new SystemConfig(name, value, displayName).save();
 	}
 	
@@ -63,7 +63,6 @@ public class SystemConfigs extends Controller{
 		String disname = jo.getString("displayName");
 		String value = jo.getString("value");
 		
-		System.out.println(id+"|"+scName+"|"+disname+"|"+value);
 		SystemConfig sc = SystemConfig.findById(id);
 		sc.name = scName;
 		sc.displayName = disname;
@@ -72,7 +71,6 @@ public class SystemConfigs extends Controller{
 	}
 	
 	public static void grid(String id) {
-		System.out.println("============ "+id);
 		final String preUrl = "/SystemConfigs/";
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -82,8 +80,7 @@ public class SystemConfigs extends Controller{
 		grid.destroyUrl = preUrl + "delete";
 		grid.readUrl = preUrl + "show";
 		grid.editable = "inline";
-		grid.columnsJson = CommonUtil.getGson().toJson(
-				CommonUtil.assemColumns(SystemConfig.class, "id"));
+		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(SystemConfig.class, "id"));
 		map.put("grid", grid);
     	
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/SystemConfigs/grid.html")).render(map));
