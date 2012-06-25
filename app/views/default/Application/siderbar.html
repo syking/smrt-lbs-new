@@ -1,27 +1,25 @@
 <div class=" k-widget k-header" style="padding:10px; margin-bottom:5px;">
     <span class="configHead">Display</span>
-    <ul class="options" >
-    	<li class="input_tree">
-    		<input id="ShowLocation" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowLocatoin">Show Location</label>
-    		<br />
-    		<ul style="padding:5px 0 5px 20px;">
+    <ul class="options" id="display_tree" >
+    	<li class="input_tree" data-expanded="true">
+    		<input id="ShowLocation" type="checkbox"  checked="checked" /> <label for="ShowLocatoin">Show Location</label>
+    		<ul>
     			<li>
-            		<input id="ShowBusStop" type="checkbox" style="width:15px" checked="checked" /> <label for="BusStop">Bus stop</label>
+            		<input id="ShowBusStop" type="checkbox"  checked="checked" /> <label for="BusStop">Bus stop</label>
         		</li>
         		<li>
-            		<input id="ShowDepot" type="checkbox" style="width:15px" checked="checked" /> <label for="Depot">Depot</label>
+            		<input id="ShowDepot" type="checkbox"  checked="checked" /> <label for="Depot">Depot</label>
         		</li>
     		</ul>
     	</li>
-    	<li class="input_tree">
-    		<input id="ShowVehicleType" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowVehicleType">Show Vehicle Type</label>
-    		<br />
-    		<ul style="padding:5px 0 5px 20px;">
+    	<li class="input_tree" data-expanded="true">
+    		<input id="ShowVehicleType" type="checkbox"  checked="checked" /> <label for="ShowVehicleType">Show Vehicle Type</label>
+    		<ul>
     			<li>
-		            <input id="ShowCar" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowCar">Show Car</label>
+		            <input id="ShowCar" type="checkbox"  checked="checked" /> <label for="ShowCar">Show Car</label>
 		        </li>
 		        <li>
-		            <input id="ShowBus" type="checkbox" style="width:15px" checked="checked" /> <label for="ShowBus">Show Bus</label>
+		            <input id="ShowBus" type="checkbox"  checked="checked" /> <label for="ShowBus">Show Bus</label>
 		        </li>
     		</ul>
     	</li>
@@ -50,13 +48,17 @@
 	# var name = item.id; #
     <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
     <!-- <input type="hidden" name="#= name #" value="false" /> -->
-    <input type="checkbox" style="width:15px" name="#= name #" checked="checked" value="true" />
+    <input type="checkbox"  name="#= name #" checked="checked" value="true" />
 </script>
         
 <script>
 $(document).ready(function() {
 	$("#display_tree").kendoTreeView({
+		checkChildren:true,
+        template: kendo.template($("#treeview-template").html()),
+        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html())
 	});
+	
  	$("#treeview").kendoTreeView({
 	    checkChildren:true,
         template: kendo.template($("#treeview-template").html()),

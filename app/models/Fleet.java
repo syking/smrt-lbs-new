@@ -1,7 +1,7 @@
 package models;
 
 import play.db.jpa.Model;
-import vo.FleetTree;
+import vo.TreeView;
 
 import javax.persistence.*;
 
@@ -41,11 +41,11 @@ public class Fleet extends Model{
 		return "Fleet [name=" + name + ", description=" + description + ", placeNumber=" + placeNumber + "]";
 	}
 
-	public static List<FleetTree> assemFleetTree(){
+	public static List<TreeView> assemFleetTree(){
 		return assemFleetTree(null);
 	}
 	
-	private static List<FleetTree> assemFleetTree(Set<Fleet> fleets){
+	private static List<TreeView> assemFleetTree(Set<Fleet> fleets){
 		
 		if (fleets == null){
 			fleets = new HashSet<Fleet>();
@@ -57,10 +57,10 @@ public class Fleet extends Model{
 			fleets.addAll(list);
 		}
 		
-		List<FleetTree> result = new ArrayList<FleetTree>();
+		List<TreeView> result = new ArrayList<TreeView>();
 		
 		for (Fleet fl : fleets){
-			FleetTree ft = new FleetTree(String.valueOf(fl.id), fl.name);
+			TreeView ft = new TreeView(String.valueOf(fl.id), fl.name);
 			
 			if (fl.children != null && fl.children.size() > 0)
 				ft.items.addAll(assemFleetTree(fl.children));
