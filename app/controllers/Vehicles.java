@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import models.Device;
 import models.EventRecord;
@@ -26,6 +27,7 @@ import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
 import vo.Grid;
+import vo.TreeView;
 import vo.VehicleEvent;
 import vo.VehicleGPS;
 import vo.VehicleVO;
@@ -124,7 +126,8 @@ public class Vehicles extends Controller {
 
 	public static void list() {
 		Object user = Cache.get(LOGIN_USER_ATTR);
-		String vehicleJson = new Gson().toJson(Vehicle.assemVehicleTree());
+		Set<TreeView> tree = Vehicle.assemVehicleTree(null);
+		String vehicleJson = new Gson().toJson(tree);
 		List<Vehicle> vehicleList = Vehicle.all().fetch();
 		List<Fleet> fleetList = Fleet.findAll();
 		List<Device> deviceList = Device.findAll();
@@ -308,7 +311,8 @@ public class Vehicles extends Controller {
 				fleets.add(new ComboVO(fleet.name, fleet.id));
 			
 		map.put("fleets", CommonUtil.getGson().toJson(fleets));
-		String vehicleJson = new Gson().toJson(Vehicle.assemVehicleTree());
+		Set<TreeView> tree = Vehicle.assemVehicleTree(null);
+		String vehicleJson = new Gson().toJson(tree);
 		map.put("treeData", vehicleJson);
 		
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/tree.html")).render(map));
@@ -324,7 +328,8 @@ public class Vehicles extends Controller {
 				fleets.add(new ComboVO(fleet.name, fleet.id));
 			
 		map.put("fleets", CommonUtil.getGson().toJson(fleets));
-		String vehicleJson = new Gson().toJson(Vehicle.assemVehicleTreeByFleetidnNumber(fleetid, number));
+		
+		String vehicleJson = new Gson().toJson(Vehicle.assemVehicleTreeByFleetIdAndNumber(fleetid, number));
 		
 		renderJSON(vehicleJson);
 	}
@@ -389,6 +394,32 @@ public class Vehicles extends Controller {
 			points.add(new String[] { g.longitude, g.latitude });
 
 		renderJSON(points);
+	}
+	
+	/**
+	 * 为车辆分配车队
+	 * @param vehicleId
+	 * @param fleetId
+	 */
+	public static void assignFleet(Long vehicleId, Long fleetId){
+		Vehicle vehicle = Vehicle.findById(vehicleId);
+		vehicle.fleet = Fleet.findById(fleetId);
+		if (vehicle.fleet != null){
+			vehicle.save();
+			renderJSON("OK");
+		}else{
+			renderJSON("FAILURE");
+		}
+	}
+	
+	/**
+	 * 
+	 * @param vehicleId
+	 */
+	public static void unassignFleet(Long vehicleId){
+		Vehicle vehicle = Vehicle.findById(vehicleId);
+		vehicle.fleet = null;
+		vehicle.save();
 	}
 
 }

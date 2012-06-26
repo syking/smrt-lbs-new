@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import models.Fleet;
 
 import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.With;
+import vo.TreeView;
 
 import com.google.gson.Gson;
 
@@ -29,7 +31,8 @@ public class Application extends Controller {
 	 */
     public static void index() {
         Object user = Cache.get(LOGIN_USER_ATTR);
-        String fleetJson = new Gson().toJson(Fleet.assemFleetTree());
+        Set<TreeView> tree = Fleet.assemFleetTree();
+        String fleetJson = new Gson().toJson(tree);
         renderTemplate(renderArgs.get(THEME) + "/Application/index.html", user, fleetJson);
     }
     

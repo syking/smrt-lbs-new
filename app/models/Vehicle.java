@@ -1,16 +1,22 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import play.db.jpa.Model;
 import vo.ComboVO;
+import vo.TreeView;
 import vo.VehicleGPS;
-import vo.VehicleTree;
-import vo.VehicleTreeLeaf;
-
-import javax.persistence.*;
 
 /**
  * 车辆信息
@@ -42,6 +48,9 @@ public class Vehicle extends Model {
 	@Transient
 	public final static String[] DIRECTIONS = { "left", "right", "up", "down" };
 
+	@Transient
+	public final static String iconUrl = "../../public/images/vehicle.png";
+
 	@Override
 	public String toString() {
 		return "Vehicle [number=" + number + ", license=" + license
@@ -50,7 +59,8 @@ public class Vehicle extends Model {
 				+ ", id=" + id + "]";
 	}
 
-	public Vehicle(String number, String license, Fleet fleet, Device device, String description, String cctvIp, String type) {
+	public Vehicle(String number, String license, Fleet fleet, Device device,
+			String description, String cctvIp, String type) {
 		this.number = number;
 		this.license = license;
 		this.fleet = fleet;
@@ -60,7 +70,8 @@ public class Vehicle extends Model {
 		this.type = type;
 	}
 
-	public Vehicle(String number, String license, String description, String cctvIp, String type) {
+	public Vehicle(String number, String license, String description,
+			String cctvIp, String type) {
 		this.number = number;
 		this.license = license;
 		this.description = description;
@@ -90,7 +101,8 @@ public class Vehicle extends Model {
 			sb.append(id);
 		}
 
-		return Vehicle.find(String.format(" fleet in(%s)", sb.toString())).fetch();
+		return Vehicle.find(String.format(" fleet in(%s)", sb.toString()))
+				.fetch();
 	}
 
 	public static List<Vehicle> filterVehicleByFleet(long[] fleets) {
@@ -153,96 +165,96 @@ public class Vehicle extends Model {
 		return result;
 	}
 
-	public static List<VehicleTree> assemVehicleTree() {
+	public static Set<TreeView> assemVehicleTree(Set<TreeView> result) {
+		if (result == null)
+			result = Fleet.assemFleetTree();
 
-		List<VehicleTree> result = new ArrayList<VehicleTree>();
-		List<Fleet> fleets = Fleet.findAll();
+		for (TreeView tv : result) {
+			Fleet fl = Fleet.findById(Long.parseLong(tv.id));
+			if (fl == null)
+				continue;
 
-		for (Fleet fl : fleets) {
-			VehicleTree vt = new VehicleTree(String.valueOf(fl.id), fl.name);
-			Set<Vehicle> vehicles = fl.vehicles;
-			for (Vehicle vehicle : vehicles) {
-				VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(
-						vehicle.id.toString(), vehicle.number);
-				vt.items.add(vtreeLeaf);
+			if (tv.items != null && !tv.items.isEmpty()) {
+				// 有子车队
+				assemVehicleTree(tv.items);
 			}
 			
-			result.add(vt);
+			if (!fl.vehicles.isEmpty()){
+				if (tv.items == null)
+					tv.items = new HashSet<TreeView>(fl.vehicles.size());
+				
+				for (Vehicle vehicle : fl.vehicles) {
+					TreeView treeView = new TreeView(vehicle.id.toString(),vehicle.number, Vehicle.iconUrl);
+					treeView.items = null;
+					tv.items.add(treeView);
+				}
+			} else if (tv.items != null && tv.items.isEmpty()){
+				tv.items = null;
+			}
 		}
 
 		return result;
 	}
 
-	public static List<VehicleTree> assemVehicleTreeByFleetidnNumber(
-			long fleetid, String number) {
+	public static Set<TreeView> assemVehicleTreeByFleetIdAndNumber(long fleetid, String number) {
 
-		List<VehicleTree> result = new ArrayList<VehicleTree>();
+		Set<TreeView> result = new HashSet<TreeView>();
 
-		if ((fleetid == 0) && (number.length() == 0)) {
-
-			List<Fleet> fleets = Fleet.findAll();
-
-			for (Fleet fl : fleets) {
-				VehicleTree vt = new VehicleTree(String.valueOf(fl.id), fl.name);
-				Set<Vehicle> vehicles = fl.vehicles;
-				for (Vehicle vehicle : vehicles) {
-					VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(
-							vehicle.id.toString(), vehicle.number);
-					vt.items.add(vtreeLeaf);
-				}
-				
-				result.add(vt);
-			}
+		// no search
+		if (fleetid <= 0 && (number == null || number.trim().length() == 0)) {
+			return assemVehicleTree(null);
 		}
+		
 		// both search
-		if ((fleetid != 0) && (number.length() != 0)) {
-
-			Vehicle ve = Vehicle.find("byNumber", number).first();
-			Fleet fleet1 = ve.fleet;
-			Fleet fleet2 = Fleet.findById(fleetid);
-
-			if (fleet1 == fleet2) {
-				VehicleTree vt = new VehicleTree(String.valueOf(fleet1.id),
-						fleet1.name);
-				Set<Vehicle> vehicles = fleet1.vehicles;
-				for (Vehicle vehicle : vehicles) {
-					VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(
-							vehicle.id.toString(), vehicle.number);
-					vt.items.add(vtreeLeaf);
-				}
-				
-				result.add(vt);
-			}
-		}
-		// by fleet
-		if ((fleetid != 0) && (number.length() == 0)) {
+		if (fleetid > 0 && number != null && number.trim().length() > 0) {
+			// 某个车队下给定车牌号进行模糊查询
 			Fleet fleet = Fleet.findById(fleetid);
-
-			VehicleTree vt = new VehicleTree(String.valueOf(fleet.id),
-					fleet.name);
-			Set<Vehicle> vehicles = fleet.vehicles;
-			for (Vehicle vehicle : vehicles) {
-				VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(
-						vehicle.id.toString(), vehicle.number);
-				vt.items.add(vtreeLeaf);
+			if (fleet == null)
+				return result;
+			
+			Set<Fleet> setFleet = new HashSet<Fleet>();
+			setFleet.add(fleet);
+			
+			Set<Fleet> fleets = new HashSet<Fleet>(Fleet.findAllFleet(fleet));
+			
+			label:for (Fleet f : fleets){
+				for (Fleet fl : setFleet)
+					if (fl.contains(f))
+						continue label;
+				
+				for (Vehicle v : f.vehicles){
+					if (v.number.equals(number) || v.number.contains(number)){
+						setFleet.add(f);
+						break;
+					}
+				}
 			}
 			
-			result.add(vt);
+			return assemVehicleTree(Fleet.assemFleetTree(setFleet));
 		}
-		// by number
-		if ((fleetid == 0) && (number.length() != 0)) {
-			Vehicle ve = Vehicle.find("byNumber", number).first();
-			Fleet fleet = ve.fleet;
-			VehicleTree vt = new VehicleTree(String.valueOf(fleet.id),
-					fleet.name);
-			Set<Vehicle> vehicles = fleet.vehicles;
-			for (Vehicle vehicle : vehicles) {
-				VehicleTreeLeaf vtreeLeaf = new VehicleTreeLeaf(
-						vehicle.id.toString(), vehicle.number);
-				vt.items.add(vtreeLeaf);
-			}
+		
+		// by fleet
+		if (fleetid > 0 && (number == null || number.trim().length() == 0)) {
+			Fleet fleet = Fleet.findById(fleetid);
+			Set<Fleet> set = new HashSet<Fleet>(1);
+			set.add(fleet);
 			
-			result.add(vt);
+			return assemVehicleTree(Fleet.assemFleetTree(set));
+		}
+		
+		// by number
+		if (fleetid <= 0 && (number != null && number.trim().length() > 0)) {
+			List<Vehicle> ves = Vehicle.find("byNumberLike", "%"+number+"%").fetch();
+			Set<Fleet> set = new HashSet<Fleet>();
+			label1:for (Vehicle v : ves){
+				for (Fleet fl : set)
+					if (fl.contains(v.fleet))
+						continue label1;
+				
+				set.add(v.fleet);
+			} 
+			
+			return assemVehicleTree(Fleet.assemFleetTree(set));
 		}
 
 		return result;

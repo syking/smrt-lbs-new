@@ -1,14 +1,21 @@
 package models;
 
-import play.db.jpa.Model;
-import vo.TreeView;
-
-import javax.persistence.*;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import play.db.jpa.Model;
+import vo.TreeView;
 
 /**
  * 车队，车辆分组
@@ -36,16 +43,38 @@ public class Fleet extends Model{
 	@OneToMany(mappedBy = "fleet", fetch = FetchType.EAGER)
 	public Set<Vehicle> vehicles;
 
+	@Transient
+	public final static String iconUrl = "../../public/images/fleet.png";
+	
+
 	@Override
 	public String toString() {
-		return "Fleet [name=" + name + ", description=" + description + ", placeNumber=" + placeNumber + "]";
+		return "Fleet [name=" + name + ", id=" + id + "]";
 	}
-
-	public static List<TreeView> assemFleetTree(){
+	
+	/**
+	 * 
+	 * @param fleet
+	 * @return
+	 */
+	public boolean contains(Fleet fleet){
+		List<Fleet> all = new ArrayList<Fleet>(Fleet.findAllFleet(this));
+		for (Fleet f : all){
+			if (fleet.id.equals(f.id))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public static Set<TreeView> assemFleetTree(){
 		return assemFleetTree(null);
 	}
 	
-	private static List<TreeView> assemFleetTree(Set<Fleet> fleets){
+	public static Set<TreeView> assemFleetTree(Set<Fleet> fleets){
+		return assemFleetTree(fleets, true);
+	}
+	public static Set<TreeView> assemFleetTree(Set<Fleet> fleets, boolean isRecursive){
 		
 		if (fleets == null){
 			fleets = new HashSet<Fleet>();
@@ -57,15 +86,17 @@ public class Fleet extends Model{
 			fleets.addAll(list);
 		}
 		
-		List<TreeView> result = new ArrayList<TreeView>();
+		Set<TreeView> result = new HashSet<TreeView>();
 		
 		for (Fleet fl : fleets){
-			TreeView ft = new TreeView(String.valueOf(fl.id), fl.name);
+			TreeView ft = new TreeView(String.valueOf(fl.id), fl.name, iconUrl);
 			
-			if (fl.children != null && fl.children.size() > 0)
-				ft.items.addAll(assemFleetTree(fl.children));
-			else
-				ft.expanded = false;
+			if (isRecursive && fl.children != null && fl.children.size() > 0){
+				ft.items.addAll(assemFleetTree(fl.children, isRecursive));
+			}else{
+				ft.items = null;
+				ft.expanded = null;
+			}
 			
 			result.add(ft);
 		}
@@ -73,4 +104,22 @@ public class Fleet extends Model{
 		return result;
 	}
 	
+	// 找出某个车队下的所有车队不包含自己
+	public static Collection<Fleet> findAllFleet(Fleet fleet){
+		Collection<Fleet> result = new ArrayList<Fleet>();
+		
+		if (fleet.children == null || fleet.children.isEmpty()){
+			return result;
+		}
+		
+		result.addAll(fleet.children);
+		
+		for (Fleet f : fleet.children){
+			f = Fleet.findById(f.id);
+			if (f.children != null && !f.children.isEmpty())
+				result.addAll(findAllFleet(f));
+		}
+		
+		return result;
+	}
 }

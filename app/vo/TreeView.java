@@ -7,13 +7,21 @@ public class TreeView {
 
 	public String id;
 	public String text;
-	public boolean expanded = true;
-	public Set<TreeView> items = new HashSet<TreeView>();
-	
+	public String expanded;
+	public String imageUrl;
+	public Set<TreeView> items = new HashSet<TreeView>(); 
+
 	public TreeView(String id, String text) {
 		super();
 		this.id = id;
 		this.text = text;
-	}	
-	
+	}
+
+	public TreeView(String id, String text, String imageUrl) {
+		super();
+		this.id = id;
+		this.text = text;
+		this.imageUrl = imageUrl;
+	}
+
 }
