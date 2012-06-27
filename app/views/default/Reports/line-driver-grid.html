@@ -155,7 +155,7 @@ function loadReportLineDrivers(url, params){
 	            format: "{0}"
 	        }
 	    });
-	    
+	   	
 	    $("#line_report_driver_grid").delegate(".view-on-map-button", "click", function(e) {
 	        e.preventDefault();
 	        driverId = $(this).parent().parent().find("td:last").html();
@@ -179,10 +179,20 @@ function loadReportLineDrivers(url, params){
 	        
 	    });
 	    
-	    $("#line_report_driver_grid").delegate(".view-result-button", "click", function(e) {
+	    $("#line_report_driver_grid").delegate(".view-on-result-button", "click", function(e) {
 	        e.preventDefault();
-	        alert("view result");
-	    });
+	    	var driver = $(this).parent().parent().find("td:last").html();
+	        var url = $("#report-driver-result").attr("url");
+	        var newUrl ;
+	       	if ((index = url.indexOf("&driverId=")) > 0){
+	       		newUrl = url.substring(0, "&driverId=".length + index) + driver;
+	       	}else{
+	        	newUrl = url + "&driverId=" + driver;
+	        }
+	        
+	        $("#report-driver-result").attr("url", newUrl);
+	        $("#report-driver-result").find("span").click();
+		 });
 	});
 }
 

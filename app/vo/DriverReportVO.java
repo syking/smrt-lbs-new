@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import models.DriverReport;
+import models.Event;
 
 public class DriverReportVO {
 	public long id;
@@ -17,15 +17,15 @@ public class DriverReportVO {
 	public String longitude;
 	public String road;
 	
-	public DriverReportVO init(DriverReport r) throws ParseException{
-		this.id = r.id;
-		this.serviceNo = r.event.serviceNumber;
-		this.eventTime = timeConvertor(r.event.eventRecord.time.toString());
-		this.speed = r.event.eventRecord.speed;
-		this.type = r.event.eventRecord.type.techName;
-		this.latitude = r.event.eventRecord.lat;
-		this.longitude = r.event.eventRecord.lng;
-		this.road = r.event.road;
+	public DriverReportVO init(Event event) throws ParseException{
+		this.id = event.id;
+		this.serviceNo = event.serviceNumber;
+		this.eventTime = timeConvertor(event.eventRecord.time.toString());
+		this.speed = event.eventRecord.speed;
+		this.type = event.eventRecord.type.techName;
+		this.latitude = event.eventRecord.lat;
+		this.longitude = event.eventRecord.lng;
+		this.road = event.road;
 		return this;
 	}
 	
