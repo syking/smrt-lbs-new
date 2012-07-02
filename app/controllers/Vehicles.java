@@ -41,11 +41,9 @@ import com.google.gson.Gson;
  */
 @With(Interceptor.class)
 public class Vehicles extends Controller {
+	
 	/**
 	 * 统计给定车队的车辆的事件统计信息
-	 * 
-	 * @param fleets
-	 *            车队 ID 形如："1,2,3..."
 	 */
 	public static void events(String fleets) {
 
@@ -110,31 +108,18 @@ public class Vehicles extends Controller {
 
 	/**
 	 * 获取给定车队的车辆的GPS实时信息
-	 * 
-	 * @param fleets
-	 *            形如 "1,2,3"
 	 */
 	public static void gps(String fleets) {
 		long[] fleetsLong = CommonUtil.splitToLong(fleets, ",");
 		List<Vehicle> vehicles = Vehicle.filterByFleet(fleetsLong);
-
-		// 拿到的是车辆GPS数据
 		List<VehicleGPS> vehicleGps = Vehicle.findGPS(vehicles);
 
 		renderJSON(vehicleGps);
 	}
 
-	public static void list() {
-		Object user = Cache.get(LOGIN_USER_ATTR);
-		Set<TreeView> tree = Vehicle.assemVehicleTree(null);
-		String vehicleJson = new Gson().toJson(tree);
-		List<Vehicle> vehicleList = Vehicle.all().fetch();
-		List<Fleet> fleetList = Fleet.findAll();
-		List<Device> deviceList = Device.findAll();
-		
-		renderTemplate(renderArgs.get(THEME) + "/Vehicles/list.html", vehicleList, user, vehicleJson, fleetList, deviceList);
-	}
-
+	/**
+	 * 获取车辆信息 JSON 格式
+	 */
 	public static void listJson() {
 		List<Vehicle> vehicleList = Vehicle.all().fetch();
 
@@ -144,13 +129,15 @@ public class Vehicles extends Controller {
 		pojos.put(Device.class, "device.name");
 
 		Map data = CommonUtil.assemGridData(vehicleList, pojos, "DIRECTIONS");
-
 		// 告诉Gson，跳过 fleet, parent 字段的序列化，因为这些会导致循环引用异常
 		Gson gson = CommonUtil.getGson("vehicles", "parent");
 
 		renderText(gson.toJson(data));
 	}
 
+	/**
+	 * 车辆管理：检索车辆信息
+	 */
 	public static void search(String number, String license, long fleetid, long deviceid, String description, String cctvIp, String type) {
 
 		List<String> criteria = new ArrayList<String>(9);
@@ -195,7 +182,7 @@ public class Vehicles extends Controller {
 			params.add("%" + cctvIp + "%");
 		}
 
-		List<Vehicle> vehicleList = filter(criteria, params);
+		List<Vehicle> vehicleList = Vehicle.findByCondition(criteria, params);
 
 		List<VehicleVO> vehicleVOList = new ArrayList<VehicleVO>();
 		for (Vehicle vehicle : vehicleList) 
@@ -204,17 +191,11 @@ public class Vehicles extends Controller {
 		renderJSON(vehicleVOList);
 	}
 
-	private static List<Vehicle> filter(List<String> criteria, List<Object> params) {
-		Object[] p = params.toArray();
-		
-		String query = StringUtils.join(criteria, " AND ");
-		List<Vehicle> vehicles = Vehicle.find(query, p).fetch();
-		
-		return vehicles;
-	}
-
+	/**
+	 * 车辆管理：更新车辆信息
+	 */
 	public static void update(String models) {
-		VehicleVO vehicleVO = jsonStr2JavaObj(models);
+		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models);
 		Vehicle v = Vehicle.findById(vehicleVO.id);
 		v.number = vehicleVO.number;
 		v.license = vehicleVO.license;
@@ -233,6 +214,9 @@ public class Vehicles extends Controller {
 		renderJSON(models);
 	}
 
+	/**
+	 * 获取所有车辆信息
+	 */
 	public static void read() {
 		List<VehicleVO> result = new ArrayList<VehicleVO>();
 
@@ -245,22 +229,31 @@ public class Vehicles extends Controller {
 		renderJSON(result);
 	}
 
+	/**
+	 * 车辆管理：删除车辆信息
+	 */
 	public static void destroy(String models) {
-		VehicleVO vehicleVO = jsonStr2JavaObj(models);
+		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models);
 		Vehicle v = Vehicle.findById(vehicleVO.id);
 		v.delete();
 		
 		renderJSON(models);
 	}
 
+	/**
+	 * 车辆管理：添加车辆信息
+	 */
 	public static void add(String models) {
-		VehicleVO vehicleVO = jsonStr2JavaObj(models);
+		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models);
 		Vehicle v = new Vehicle(vehicleVO.number, vehicleVO.license,vehicleVO.description, vehicleVO.cctvIp, vehicleVO.type);
 		v.save();
 		
 		renderJSON(models);
 	}
 
+	/**
+	 * 访问车辆管理页面
+	 */
 	public static void grid(String id) {
 		final String preUrl = "/Vehicles/";
 		Map map = new HashMap();
@@ -295,12 +288,9 @@ public class Vehicles extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/grid.html")).render(map));
 	}
 
-	private static VehicleVO jsonStr2JavaObj(String jsonStr) {
-		String json = jsonStr.substring(1, jsonStr.length() - 1);
-		Gson gson = new Gson();
-		return gson.fromJson(json, VehicleVO.class);
-	}
-
+	/**
+	 * 访问车队树形结构
+	 */
 	public static void tree() {
 		Map map = new HashMap();
 
@@ -318,6 +308,9 @@ public class Vehicles extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Vehicles/tree.html")).render(map));
 	}
 
+	/**
+	 * 查询车辆信息，车队保持树形结构
+	 */
 	public static void searchTree(long fleetid, String number) {
 		Map map = new HashMap();
 
@@ -335,9 +328,7 @@ public class Vehicles extends Controller {
 	}
 
 	/**
-	 * 打开Vehicle Path On Map 窗口
-	 * 
-	 * @param vehicleNo
+	 * 打开某辆车的路径显示窗口
 	 */
 	public static void path(String vehicleNo) {
 		List<ComboVO> vc = Vehicle.getCombo();
@@ -349,6 +340,9 @@ public class Vehicles extends Controller {
 		render(renderArgs.get(THEME) + "/Vehicles/path.html", vehicleNo, vehicles, schedules);
 	}
 
+	/**
+	 * 给定车牌号码查询对应的工作安排信息
+	 */
 	public static void schedules(String vehicleNo) {
 		List<ComboVO> schedules = Schedule.getComboByVehicle(vehicleNo);
 		renderJSON(schedules);
@@ -356,9 +350,6 @@ public class Vehicles extends Controller {
 
 	/**
 	 * 处理某一特定Schedul下的车的行驶路径
-	 * 
-	 * @param vehicleId
-	 * @param scheduleId
 	 */
 	public static void routes(Long scheduleId) {
 		List<String[]> points = new ArrayList<String[]>();
@@ -376,16 +367,18 @@ public class Vehicles extends Controller {
 		renderJSON(points);
 	}
 
-	public static void searchPath(Long scheduleId, String date, String startTime, String endTime) {
+	/**
+	 * 查询车辆的行驶路径
+	 */
+	public static void searchPath(Long scheduleId, String startDate, String startTime, String endDate, String endTime) {
 		List<String[]> points = new ArrayList<String[]>();
 		Schedule s = Schedule.findById(scheduleId);
 		if (s == null)
 			return;
 
-		startTime = date + " " + startTime;
-		endTime = date + " " + endTime;
-		Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm", startTime);
-		Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endTime);
+		Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm", startDate + " " + startTime);
+		Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endDate + " " + endTime);
+		
 		List<GPSData> gps = GPSData.find("device_key = ? and time >= ? and time < ?", s.vehicle.device.key, start, end).fetch();
 		if (gps == null)
 			return;
@@ -398,8 +391,6 @@ public class Vehicles extends Controller {
 	
 	/**
 	 * 为车辆分配车队
-	 * @param vehicleId
-	 * @param fleetId
 	 */
 	public static void assignFleet(Long vehicleId, Long fleetId){
 		Vehicle vehicle = Vehicle.findById(vehicleId);
@@ -413,8 +404,7 @@ public class Vehicles extends Controller {
 	}
 	
 	/**
-	 * 
-	 * @param vehicleId
+	 * 取消车辆分配的车队关系
 	 */
 	public static void unassignFleet(Long vehicleId){
 		Vehicle vehicle = Vehicle.findById(vehicleId);

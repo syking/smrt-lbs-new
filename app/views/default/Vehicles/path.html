@@ -2,32 +2,29 @@
 <script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
 #{/set}
 #{extends theme+'/main_head.html' /}
-<style>
-	.k-content{background:#f3f3f3;}
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
 <div id="path-view-on-map-splitter" style="width:99%; height:99%;">
 	<form action="/vehicles/searchPath" method="post" onsubmit="return pathSearchValidate(this)">
 		<input id="path_schedule_id" type="hidden" name="scheduleId" value="-1" />
 		<br />
-		<label for="path-vehicles" class="info" style="width:80px;">Vehicle:</label>
+		<label for="path-vehicles"  style="width:80px;">Vehicle:</label>
 		<input name="vehicleId" id="path-vehicles"/>
-		<label id="path-schedules-label" for="path-schedules" style="width:80px;" class="info" >Schedule:</label>
+		<label id="path-schedules-label" for="path-schedules" style="width:75px;"  >Schedule:</label>
 		<input style="width:250px" name="scheduleId" id="path-schedules"/>
 		<div style="height:5px;"></div>
-		<label for="path-date" class="info" style="width:80px;">Date:</label>
-		<input name="date" id="path-date" class="date" />
-		<label for="path-start" class="info" style="width:80px;">Start:</label>
-		<input name="startTime" id="path-start" style="width:99px;" />
-		<label for="path-end" class="info" style="width:30px;">End:</label>
-		<input name="endTime" id="path-end"  style="width:99px;"/>
-		<input type="submit" id="path-search-button" class="k-button" value="Search"/>
+		<label for="path-start-date"  style="width:80px;">StartDate:</label>
+		<input name="startDate" id="path-start-date" class="date" />
+		<label for="path-start-time"  style="width:80px;">StartTime:</label>
+		<input name="startTime" id="path-start-time" style="width:99px;" />
+		
+		<div style="height:5px;"></div>
+		<label for="path-end-date"  style="width:80px;">EndDate:</label>
+		<input name="endDate" id="path-end-date" class="date" />
+		<label for="path-end-time"  style="width:80px;">EndTime:</label>
+		<input name="endTime" id="path-end-time" style="width:99px;" />
+		
+		<div style="float:right; padding-right:20px;">
+			<input type="submit" id="path-search-button" class="k-button" style="width:auto;" value="Search"/>
+		</div>
 	</form>
 	
 	<div id="path-map-view" region="center" style=" position:relative;"></div>
@@ -58,7 +55,7 @@ $(document).ready(function(){
 	view_on_map_splitter = $("#path-view-on-map-splitter").kendoSplitter({
 		orientation: "vertical",
 		panes: [
-            { collapsible: false, resizable:false, size: "80px", min: "80px"},//up
+            { collapsible: false, resizable:false, size: "130px", min: "130px"},//up
             { collapsible: false, resizable:false,},//middle 
         ],
         resize:function(e){
@@ -100,14 +97,19 @@ $(document).ready(function(){
     var scheduleCombo = #{verbatim} ${schedules} #{/verbatim};
     createScheduleComboBox(scheduleCombo);
     
-    $("#path-date").kendoDatePicker({
+    $("#path-start-date").kendoDatePicker({
         format:"yyyy-MM-dd"
     });
 
-    $("#path-start, #path-end").kendoTimePicker({
+	$("#path-end-date").kendoDatePicker({
+        format:"yyyy-MM-dd"
+    });
+    
+    $("#path-start-time, #path-end-time").kendoTimePicker({
         format:"HH:mm",
         interval:1
     });
+    
 });
 
 
@@ -117,22 +119,27 @@ function loadPath(url, params){
 		map.graphics.clear();
 		initRouteTask(points);
 		sch.attr("value", params["scheduleId"]);
-		$("#path-date").data("kendoDatePicker").value(params["date"]);
+		
+		$("#path-start-date").data("kendoDatePicker").value(params["startDate"]);
+		$("#path-start-time").data("kendoTimePicker").value(params["startTime"]);
+		$("#path-end-date").data("kendoDatePicker").value(params["endDate"]);
+		$("#path-end-time").data("kendoTimePicker").value(params["endTime"]);
 	});
 }
 
 function pathSearchValidate(form) {
     var $form = $(form);
+    
 	var scheduleId = $("#path_schedule_id").attr("value");
     if (!scheduleId || scheduleId < 1){
     	return false;
     }
     
-    var startTimePicker = $("#path-start").data("kendoTimePicker");
+    var startTimePicker = $("#path-start-time").data("kendoTimePicker");
     if (startTimePicker.value() == null) {
         startTimePicker.value("00:00");
     }
-    var endTimePicker = $("#path-end").data("kendoTimePicker");
+    var endTimePicker = $("#path-end-time").data("kendoTimePicker");
     if (endTimePicker.value() == null) {
         endTimePicker.value("00:00");
     }
@@ -153,7 +160,15 @@ function createScheduleComboBox(schedules){
     		var value = this.value();
 			var text = this.text();
 			
-    		loadPath("/vehicles/routes", {scheduleId:value, date:text.split(",")[0]});
+			var start = text.split(",")[0];
+			var startDate = start.split(" ")[0];
+			var startTime = start.split(" ")[1];
+			
+			var end = jQuery.trim(text.split(",")[1]);
+			var endDate = end.split(" ")[0];
+			var endTime = end.split(" ")[1];
+			
+    		loadPath("/vehicles/routes", {scheduleId:value, startDate:startDate, startTime:startTime, endDate:endDate, endTime:endTime});
     	}
 	});
 }

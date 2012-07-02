@@ -19,6 +19,11 @@ import java.util.Map;
 
 import static models.User.Constant.THEME;
 
+/**
+ * Drivers Http Request Handler
+ * @author weiwei
+ *
+ */
 @With(Interceptor.class)
 public class Drivers extends Controller {
 	
@@ -36,20 +41,13 @@ public class Drivers extends Controller {
 			params.add("%" + name + "%");
 		}
 
-		List<Driver> driverList = filter(criteria, params);
+		List<Driver> driverList = Driver.filter(criteria, params);
 
 		List<DriverVO> driverVOList = new ArrayList<DriverVO>();
 		for (Driver driver : driverList) 
 			driverVOList.add(new DriverVO().init(driver));
 
 		renderJSON(driverVOList);
-	}
-
-	private static List<Driver> filter(List<String> criteria, List<Object> params) {
-		Object[] p = params.toArray();
-		String query = StringUtils.join(criteria, " AND ");
-		
-		return Driver.find(query, p).fetch();
 	}
 
 	public static void listJson() {
@@ -92,6 +90,7 @@ public class Drivers extends Controller {
 		Driver driver = jsonStr2JavaObj(models);
 		
 		Driver d = Driver.findById(driver.id);
+		d.number = driver.number;
 		d.name = driver.name;
 		d.description = driver.description;
 		d.save();

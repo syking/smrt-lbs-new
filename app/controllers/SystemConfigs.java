@@ -79,7 +79,7 @@ public class SystemConfigs extends Controller{
 		grid.updateUrl = preUrl + "update";
 		grid.destroyUrl = preUrl + "delete";
 		grid.readUrl = preUrl + "show";
-		grid.editable = "inline";
+		grid.editable = "popup";
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(SystemConfig.class, "id"));
 		map.put("grid", grid);
     	

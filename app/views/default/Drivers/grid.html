@@ -1,17 +1,16 @@
-<form action="/drivers/search" method="post" class="k-content search-wrap" onsubmit="return driverSearchValidate(this)"
-      style="padding:20px 0 10px 10px;">
+<form action="/drivers/search" method="post" class="k-content" onsubmit="return driverSearchValidate(this)" style="padding:10px 0;">
 
-    <label class="info">Number:</label>
-    <input name="number" id="number"/>
+    <label for="${grid.tabId}_number">Number:</label>
+    <input name="number" id="${grid.tabId}_number" class="k-input k-textbox"/>
 
-    <label class="info" style="width:80px;">Name:</label>
-    <input name="name" id="name"/>
+    <label for="${grid.tabId}_name">Name:</label>
+    <input name="name" id="${grid.tabId}_name" class="k-input k-textbox"/>
 
-    <label class="info">Description:</label>
-    <input name="description" id="description"/>
+    <label for="${grid.tabId}_description">Description:</label>
+    <input name="description" id="${grid.tabId}_description" class="k-input k-textbox"/>
 
     <div style="float:right; padding-right:20px;">
-        <input type="submit" id="search-button" class="k-button" value="Search"/>
+        <input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search"/>
     </div>
 
 </form>
@@ -34,7 +33,7 @@
                     <label>Session for: </label>
                 </td>
                 <td>
-                    <input id="driver_name" readonly/>
+                    <input id="driver_name" readonly class="k-input k-textbox"/>
                 </td>
             </tr>
             <tr>
@@ -90,7 +89,9 @@
                         width:"600px"
                     }
             ).data("kendoWindow").center().open();
+            
             sessionfor = $(this).parent().parent().find("td:first").next().html();
+            
             $("#driver_name").val(sessionfor);
         });
 

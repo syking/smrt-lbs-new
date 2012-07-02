@@ -1,44 +1,44 @@
-<form action="/logs/search" method="post" class="k-content search-wrap"
-      onsubmit="return logSearchValidate(this)" style="padding:20px 0 10px 10px;">
+<form action="/logs/search" method="post" class="k-content" onsubmit="return logSearchValidate(this)" style="padding:10px 0;">
 
-    <label class="info" style="width:80px;">Type:</label>
-    <input name="type" id="type"/>
+    <label for="${grid.tabId}_type">Type:</label>
+    <input name="type" id="${grid.tabId}_type" class="k-input k-textbox"/>
 
-    <label class="info">Name:</label>
-    <input name="name" id="name"/>
+    <label for="${grid.tabId}_name">Name:</label>
+    <input name="name" id="${grid.tabId}_name" class="k-input k-textbox" />
 
-    <label class="info">Content</label>
-    <input name="content" id="content"/>
+    <label for="${grid.tabId}_content">Content</label>
+    <input name="content" id="${grid.tabId}_content" class="k-input k-textbox"/>
 
+	<div style="height:8px"></div>
+    <br>
+
+    <label for="${grid.tabId}_actions">Action</label>
+    <input name="actions" id="${grid.tabId}_actions" class="k-input k-textbox" />
+
+    <label for="${grid.tabId}_user_name">UserName:</label>
+    <input name="userid" id="${grid.tabId}_user_name"/>
+
+    <label for="${grid.tabId}_ip">IP:</label>
+    <input name="ip" id="${grid.tabId}_ip" class="k-input k-textbox" />
+    
     <div style="height:8px"></div>
     <br>
 
-    <label class="info">Start Date:</label>
-    <input name="startDate" id="startDate"/>
+    <label for="${grid.tabId}_startDate">Start Date:</label>
+    <input name="startDate" id="${grid.tabId}_startDate"/>
 
-    <label class="info">Start Time:</label>
-    <input name="startTime" id="startTime"/>
+    <label for="${grid.tabId}_startTime" >Start Time:</label>
+    <input name="startTime" id="${grid.tabId}_startTime" />
 
-    <label class="info">End Date:</label>
-    <input name="endDate" id="endDate"/>
+    <label for="${grid.tabId}_endDate">End Date:</label>
+    <input name="endDate" id="${grid.tabId}_endDate" />
 
-    <label class="info">End Time:</label>
-    <input name="endTime" id="endTime"/>
+    <label for="${grid.tabId}_endTime">End Time:</label>
+    <input name="endTime" id="${grid.tabId}_endTime"/>
 
-    <div style="height:8px"></div>
-    <br>
-
-    <label class="info">Action</label>
-    <input name="actions" id="actions"/>
-
-    <label class="info">User Name:</label>
-    <input name="userid" id="user_name"/>
-
-    <label class="info">IP:</label>
-    <input name="ip" id="ip"/>
 
     <div style="float:right; padding-right:20px;">
-        <input type="submit" id="search-button" class="k-button" value="Search"/>
+        <input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search"/>
     </div>
 
 </form>
@@ -50,17 +50,17 @@
     $(document).ready(function () {
         loadLogs("${grid.readUrl}");
 
-        $("#user_name").kendoComboBox({
+        $("#${grid.tabId}_user_name").kendoComboBox({
             dataTextField:"text",
             dataValueField:"value",
             dataSource: #{verbatim} ${users} #{/verbatim}
         });
 
-        $("#startDate,#endDate").kendoDatePicker({
+        $("#${grid.tabId}_startDate,#${grid.tabId}_endDate").kendoDatePicker({
             format:"yyyy-MM-dd"
         });
 
-        $("#startTime, #endTime").kendoTimePicker({
+        $("#${grid.tabId}_startTime, #${grid.tabId}_endTime").kendoTimePicker({
             format:"HH:mm",
             interval:1
         });
@@ -113,7 +113,7 @@
         });
 
         var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-        $("#grid_logs").empty();
+        $("#grid_${grid.tabId}").empty();
         columnsJson[columnsJson.length] = { command:["destroy"], title:"Action", width:"100px" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
@@ -127,11 +127,11 @@
     function logSearchValidate(form) {
         var $form = $(form);
 
-        var startTimePicker = $("#startTime").data("kendoTimePicker");
+        var startTimePicker = $("#${grid.tabId}_startTime").data("kendoTimePicker");
         if (startTimePicker.value() == null) {
             startTimePicker.value("00:00");
         }
-        var endTimePicker = $("#endTime").data("kendoTimePicker");
+        var endTimePicker = $("#${grid.tabId}_endTime").data("kendoTimePicker");
         if (endTimePicker.value() == null) {
             endTimePicker.value("00:00");
         }

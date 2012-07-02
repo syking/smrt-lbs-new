@@ -1,59 +1,39 @@
 <style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
-	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
+	.k-content{background:#f3f3f3;}
+    .info{border:none; padding: 3px 5px 7px 5px; display:inline-block; width:120px; text-align:right;}
 </style>
 
 <form action="/fleets/search" method="post" class="k-content search-wrap" onsubmit="return fleetSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	
-	<label for="name" class="info" style="width:30px">Name:</label>
-	<input name="name" id="name"/> 
-	
-	<label for="placeNumber" class="info">Place Number:</label>
-	<input name="placeNumber" id="placeNumber"/>
-	
+	<label for="${grid.tabId}_name">Name:</label>
+	<input name="name" id="${grid.tabId}_name"/> 
+	<label for="${grid.tabId}_placeNumber">Place No:</label>
+	<input name="placeNumber" id="${grid.tabId}_placeNumber"/>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="search-button" class="k-button" value="Search" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
-	
 </form>
 
 <div id="grid_${grid.tabId}"></div>
 
 <script>
     $(document).ready(function () {
-        
         loadFleets("/Fleets/read");
     	
-    	 $("#name").kendoComboBox({
+    	 $("#${grid.tabId}_name").kendoComboBox({
 	        dataTextField: "text",
 	        dataValueField: "value",
 	        dataSource: #{verbatim} ${names} #{/verbatim}
 	    });
     	
-    	$("#placeNumber").kendoComboBox({
+    	$("#${grid.tabId}_placeNumber").kendoComboBox({
 	        dataTextField: "text",
 	        dataValueField: "value",
 	        dataSource: #{verbatim} ${placeNumbers} #{/verbatim}
 	    });
-	    
     });
     
     function fleetSearchValidate(form) {
 		var $form = $(form);
-		
 		loadFleets($form.attr("action"), $form.serializeArray());
 		
 		return false;
@@ -106,6 +86,26 @@
         
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+		
+		/**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+			
+			if ('parent' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="parent" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${names} #{/verbatim}
+				    });
+				};
+				
+				return ;
+			}
+		});
+		
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,

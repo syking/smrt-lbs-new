@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import play.templates.Template;
-import play.templates.TemplateLoader;
+import vo.VehicleVO;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -20,6 +19,12 @@ import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
 
+	public static VehicleVO jsonStr2JavaObj(String jsonStr) {
+		String json = jsonStr.substring(1, jsonStr.length() - 1);
+		Gson gson = new Gson();
+		return gson.fromJson(json, VehicleVO.class);
+	}
+	
 	public static Date addDate(Date source, int day) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(source);
@@ -278,9 +283,7 @@ public class CommonUtil {
 		try {
 			return sdf.parse(time);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			throw new RuntimeException();
 		}
-
-		return new Date(time);
 	}
 }

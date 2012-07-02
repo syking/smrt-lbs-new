@@ -1,38 +1,21 @@
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
+<form action="/mycounsellings/mysearch" method="post" class="k-content" onsubmit="return counselSearchValidate(this)" style="padding:10px 0;">
 	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/mycounsellings/mysearch" method="post" class="k-content search-wrap" onsubmit="return counselSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	<label for="${grid.tabId}_driverId">Driver Name:</label>
+	<input name="driverId" id="${grid.tabId}_driverId"/>
 	
-	<label for="driverId" class="info" style="width:80px;">Driver Name:</label>
-	<input name="driverId" id="mydriverName"/>
-	
-	<label for="date" class="info" style="width:80px;margin-left:42px">Date:</label>
-	<input name="date" id="mydate"/>
+	<label for="${grid.tabId}_date">Date:</label>
+	<input name="date" id="${grid.tabId}_date"/>
 	
 	<div style="height:8px"></div>
 	
-	<label for="start" class="info" style="width:80px;">Start Time:</label>
-	<input name="start" id="mystart_time"/>
+	<label for="${grid.tabId}_start" >Start Time:</label>
+	<input name="start" id="${grid.tabId}_start"/>
 	
-	<label for="end" class="info">End Time:</label>
-	<input name="end" id="myend_time"/>
+	<label for="${grid.tabId}_end">End Time:</label>
+	<input name="end" id="${grid.tabId}_end"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="mysearch-button" class="k-button" value="Search" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
@@ -45,21 +28,21 @@
     	
     	loadCounsels("${grid.readUrl}");
     	
-        $("#mydriverName").kendoComboBox({
+        $("#${grid.tabId}_driverId").kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: #{verbatim} ${drivers} #{/verbatim}
         });
         
-        $("#mydate").kendoDatePicker({
+        $("#${grid.tabId}_date").kendoDatePicker({
         	format: "yyyy-MM-dd"		
         });
         
-        $("#mystart_time").kendoTimePicker({
+        $("#${grid.tabId}_start").kendoTimePicker({
         	format: "HH:mm:ss"		
         });
         
-        $("#myend_time").kendoTimePicker({
+        $("#${grid.tabId}_end").kendoTimePicker({
         	format: "HH:mm:ss"		
         });
     });

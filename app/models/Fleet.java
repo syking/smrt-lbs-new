@@ -122,4 +122,12 @@ public class Fleet extends Model{
 		
 		return result;
 	}
+
+	public static List<Fleet> findAndOrderByIdDesc() {
+		return find("order by id desc").fetch();
+	}
+
+	public static Fleet findByName(String name) {
+		return find("byName", name).first();
+	}
 }

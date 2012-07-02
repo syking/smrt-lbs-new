@@ -13,6 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import play.db.jpa.Model;
 import vo.ComboVO;
 import vo.TreeView;
@@ -79,6 +81,15 @@ public class Vehicle extends Model {
 		this.type = type;
 	}
 
+	public static List<Vehicle> findByCondition(List<String> criteria, List<Object> params) {
+		Object[] p = params.toArray();
+		
+		String query = StringUtils.join(criteria, " AND ");
+		List<Vehicle> vehicles = Vehicle.find(query, p).fetch();
+		
+		return vehicles;
+	}
+	
 	public static List<ComboVO> getCombo() {
 		List<Vehicle> vehicleList = Vehicle.findAll();
 		List<ComboVO> vc = new ArrayList<ComboVO>();

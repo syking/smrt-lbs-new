@@ -3,43 +3,24 @@
 <div id="fleet_driver_view-on-map-wrap">
 	<div id="fleet_driver_view-on-map-window"></div>
 </div>
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
-	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/reports/driverListJsonByFleet" method="post" class="k-content search-wrap" onsubmit="return reportFleetDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	
-	<label for="fleet_driver-fleets" class="info" style="width:80px;">fleet:</label>
+<form action="/reports/driverListJsonByFleet" method="post" class="k-content" onsubmit="return reportFleetDriverSearchValidate(this)" style="padding:10px 0;">
+	<label for="fleet_driver-fleets">fleet:</label>
 	<input name="fleetId" id="fleet_driver-fleets"/>
 	
-	<label for="fleet_driver-types" class="info" >Type:</label>
+	<label for="fleet_driver-types">Type:</label>
 	<input name="dateType" id="fleet_driver-types"/>
 	
-	<label id="fleet_driver-time-label" for="fleet_driver-time" class="info">Year:</label>
+	<label id="fleet_driver-time-label" for="fleet_driver-time">Year:</label>
 	<div style="display:inline;" id="fleet_driver-time-wrap">
 		<input name="time" id="fleet_driver-time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="fleet_driver-search-button" class="k-button" value="Search" />
+		<input type="submit" id="fleet_driver-search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
 
 <div id="fleet_report_driver_grid"></div>
-
 <div id="fleet_report_driver_bar_chart"></div>
 
 <script>
@@ -47,8 +28,7 @@
 var driverId;
 var fleetId = "${fleetId}";
 $(document).ready(function(){
-	if (fleetId)
-		loadReportFleetDrivers("/reports/driverListJsonByFleet?random=" + Math.random(), {fleetId: fleetId});
+	loadReportFleetDrivers("/reports/driverListJsonByFleet?random=" + Math.random(), {fleetId: fleetId});
 	
 	var deptCombo = #{verbatim} ${fleets} #{/verbatim};
 	
@@ -198,7 +178,6 @@ function loadReportFleetDrivers(url, params){
 
 function reportFleetDriverSearchValidate(form) {
 	var $form = $(form);
-	
 	loadReportFleetDrivers($form.attr("action"), $form.serializeArray());
 	
 	return false;

@@ -3,43 +3,24 @@
 <div id="line_view-on-map-wrap">
 	<div id="line_view-on-map-window"></div>
 </div>
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
-	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/reports/lineListJson" method="post" class="k-content search-wrap" onsubmit="return reportLineSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	
-	<label for="lines" class="info" style="width:80px;">Superior:</label>
+<form action="/reports/lineListJson" method="post" class="k-content" onsubmit="return reportLineSearchValidate(this)" style="padding:10px 0 ;">
+	<label for="lines">Superior:</label>
 	<input name="line" id="lines"/>
 	
-	<label for="line_types" class="info" >Type:</label>
+	<label for="line_types">Type:</label>
 	<input name="dateType" id="line_types"/>
 	
-	<label id="line_time-label" for="line_time" class="info">Year:</label>
+	<label id="line_time-label" for="line_time">Year:</label>
 	<div style="display:inline;" id="line_time-wrap">
 		<input name="time" id="line_time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="line_search-button" class="k-button" value="Search" />
+		<input type="submit" id="line_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
 
 <div id="report_line_grid"></div>
-
 <div id="report_line_bar_chart"></div>
 
 <script>

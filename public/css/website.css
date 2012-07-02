@@ -96,9 +96,20 @@ h2{
 }
 
 label {
-    font-family: verdana;
-    font-size: 14px;
-    color: #000000;
+    display: inline-block;
+	text-align: right;
+	width:80px;
+	padding:0 5px 0 5px;
+	font-family: "arial";
+	font-size: 12px;	
+}
+
+input {
+	width:146px;
+}
+
+.k-content{
+	background:#F3F3F3 !important;
 }
 
 .label1 {

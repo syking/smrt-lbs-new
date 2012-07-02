@@ -1,50 +1,32 @@
 <div id="view-on-map-wrap">
 	<div id="view-on-map-window"></div>
 </div>
-
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
+<form action="/events/search" method="post" class="k-content" onsubmit="return eventSearchValidate(this)" style="padding:10px 0;">
 	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/events/search" method="post" class="k-content search-wrap" onsubmit="return eventSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	<label for="${grid.tabId}_driver">Driver:</label>
+	<input name="driver" id="${grid.tabId}_driver"/>
 	
-	<label for="driver" class="info" style="width:80px;">Driver:</label>
-	<input name="driver" id="driver"/>
+	<label for="serviceNo" >Service No:</label>
+	<input name="serviceNo" id="${grid.tabId}_serviceNo"/>
 	
-	<label for="serviceNo" class="info" >Service No:</label>
-	<input name="serviceNo" id="serviceNo"/>
-	
-	<label for="type" class="info">Type:</label>
-	<input name="type" id="type"/>
+	<label for="type" >Type:</label>
+	<input name="type" id="${grid.tabId}_type"/>
 	
 	<div style="height:8px"></div>
 	
-	<label for="startTime" class="info" style="width:80px;">Start Time:</label>
-	<input name="startTime" id="startTime"/>
+	<label for="${grid.tabId}_startTime">Start Time:</label>
+	<input name="startTime" id="${grid.tabId}_startTime"/>
 	
-	<label for="endTime" class="info">End Time:</label>
-	<input name="endTime" id="endTime"/>
+	<label for="${grid.tabId}_endTime">End Time:</label>
+	<input name="endTime" id="${grid.tabId}_endTime"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="search-button" class="k-button" value="Search" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
 
-<div id="event_grid"></div>
+<div id="${grid.tabId}_event_grid"></div>
 
 <script>
 var vehicleNo ;
@@ -53,7 +35,7 @@ $(document).ready(function(){
 	
 	loadEvents("/events/listJson");
     
-    $("#event_grid").delegate(".view-on-map-button", "click", function(e) {
+    $("#${grid.tabId}_event_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
         eventId = $(this).parent().parent().find("td:last").html();
         var w_title = "View Vehicle("+vehicleNo+") Events On Map "
@@ -76,29 +58,29 @@ $(document).ready(function(){
         
     });
     
-    $("#driver").kendoComboBox({
+    $("#${grid.tabId}_driver").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: #{verbatim} ${drivers} #{/verbatim}
     });
     
-    $("#serviceNo").kendoComboBox({
+    $("#${grid.tabId}_serviceNo").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: #{verbatim} ${lines} #{/verbatim}
     });
     
-    $("#type").kendoComboBox({
+    $("#${grid.tabId}_type").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: #{verbatim} ${types} #{/verbatim}
     });
     
-    $("#startTime").kendoDatePicker({
+    $("#${grid.tabId}_startTime").kendoDatePicker({
     	format: "yyyy-MM-dd HH:mm:ss"		
     });
     
-    $("#endTime").kendoDatePicker({
+    $("#${grid.tabId}_endTime").kendoDatePicker({
     	format: "yyyy-MM-dd HH:mm:ss"		
     });
     
@@ -106,10 +88,10 @@ $(document).ready(function(){
 
 function loadEvents(url, params){
 	$.getJSON(url, params, function(json){
-		$("#event_grid").empty();
+		$("#${grid.tabId}_event_grid").empty();
 		json.columns[json.columns.length] = { title: "Actions", width: "110px", command: { text: "View On Map", className: "view-on-map-button" } };
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
-		var grid = $("#event_grid").kendoGrid({
+		var grid = $("#${grid.tabId}_event_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
 	    		pageSize:18
@@ -122,13 +104,11 @@ function loadEvents(url, params){
 	   	 	selectable: true
 	   	 	
         }).data("kendoGrid");
-	    
 	});
 }
 
 function eventSearchValidate(form) {
 	var $form = $(form);
-	
 	loadEvents($form.attr("action"), $form.serializeArray());
 	
 	return false;

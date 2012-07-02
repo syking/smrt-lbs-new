@@ -2,39 +2,21 @@
 <div id="driver_result_view-on-map-wrap">
 	<div id="driver_result_view-on-map-window"></div>
 </div>
-<style>
 
-	.k-content{
-		background:#f3f3f3;
-	}
+<form action="/DriverReports/search" method="post" class="k-content" onsubmit="return searchResult(this)" style="padding:10px 0;">
 	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-    
-</style>
-
-<form action="/DriverReports/search" method="post" class="k-content search-wrap" onsubmit="return searchResult(this)" style="padding:20px 0 10px 10px;">
+	<label for="${grid.tabId}_driverId">Driver Name:</label>
+	<input name="driverId" id="${grid.tabId}_driverId" />
 	
-	<label for="driverId" class="info" style="width:120px;">Driver Name:</label>
-	<input name="driverId" id="driverId"/>
+	<label for="${grid.tabId}_reportType" >Report Type:</label>
+	<input name="reportType" id="${grid.tabId}_reportType"/>
 	
-	<label for="reportType" class="info" >Report Type:</label>
-	<input name="reportType" id="reportType"/>
-	
-	<label for="date" class="info" style="width:80px;" id="date_label">Date:</label>
+	<label for="${grid.tabId}_date" id="date_label">Date:</label>
 	<div id="date_wrap" style="display:inline;">
-	<input name="dateStr" id="rp_date"/>
+	<input name="dateStr" id="${grid.tabId}_date"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="search-button" class="k-button" value="Search" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 </form>
 <div id="chart_bg">
@@ -62,14 +44,14 @@ var driverId = "${driverId}";
 			}
 		});
 		
-        $("#driverId").kendoComboBox({
+        $("#${grid.tabId}_driverId").kendoComboBox({
         	dataValueField: "value",
             dataTextField: "text",
             index: _index,
             dataSource: driverCombo
         });
         
-        $("#reportType").kendoComboBox({
+        $("#${grid.tabId}_reportType").kendoComboBox({
         	dataValueField: "value",
             dataTextField: "value",
         	dataSource:[
@@ -82,7 +64,7 @@ var driverId = "${driverId}";
                 var value = this.value();
                 var text = this.text();
             	$("#date_wrap").empty();
-            	$("#date_wrap").html("<input name='dateStr' id='rp_date'/>");
+            	$("#date_wrap").html("<input name='dateStr' id='${grid.tabId}_date'/>");
          		$("#date_label").html(text);
             	var _format = "yyyy-MM-dd";
             	if ("monthly" == value){
@@ -93,7 +75,7 @@ var driverId = "${driverId}";
     		    	value = "decade";
     		    }
     		    
-            	$("#rp_date").kendoDatePicker({
+            	$("#${grid.tabId}_date").kendoDatePicker({
     		    	start: value,
     		    	depth: value,
     		    	format: _format
@@ -150,8 +132,6 @@ var driverId = "${driverId}";
             height: "auto",
             columns: columnsJson
         });
-        
-        
     }
     
     function createChart(url) {
@@ -202,6 +182,14 @@ var driverId = "${driverId}";
     }
     
     function loadSearch(url, params){
+    	
+    	// keep the driver selected firstly
+    	$.each(params, function(i, v){
+    		if (params[i].name == "driverId" && (!params[i].value || isNaN(params[i].value) || params[i].value <= 0)){
+    			alert("Please selecte a valid driver first.");
+    			return false;
+    		}
+    	});
     	
     	$.getJSON(url, params, function(json){
     		$("#grid_${grid.tabId}").empty();

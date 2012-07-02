@@ -1,41 +1,24 @@
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
+<form action="/counsellings/search" method="post" class="k-content" onsubmit="return counselSearchValidate(this)" style="padding:10px 0;">
 	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/counsellings/search" method="post" class="k-content search-wrap" onsubmit="return counselSearchValidate(this)" style="padding:20px 0 10px 10px;">
+	<label for="${grid.tabId}_username">User Name:</label>
+	<input name="username" id="${grid.tabId}_username"/>
 	
-	<label for="user" class="info" style="width:80px;">User Name:</label>
-	<input name="username" id="username"/>
-	
-	<label for="driverName" class="info" >Driver Name:</label>
-	<input name="driverName" id="driverName"/>
+	<label for="${grid.tabId}_driverName">Driver Name:</label>
+	<input name="driverName" id="${grid.tabId}_driverName"/>
 	
 	<div style="height:8px"></div>
 	
-	<label for="date" class="info" style="width:80px;">Date:</label>
-	<input name="date" id="date"/>
+	<label for="${grid.tabId}_date">Date:</label>
+	<input name="date" id="${grid.tabId}_date"/>
 	
-	<label for="start" class="info" style="width:80px;margin-left:44px;">Start Time:</label>
-	<input name="start" id="start_time"/>
+	<label for="${grid.tabId}_start_time">Start Time:</label>
+	<input name="start" id="${grid.tabId}_start_time"/>
 	
-	<label for="end" class="info">End Time:</label>
-	<input name="end" id="end_time"/>
+	<label for="${grid.tabId}_end_time" >End Time:</label>
+	<input name="end" id="${grid.tabId}_end_time"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="search-button" class="k-button" value="Search" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
@@ -46,27 +29,27 @@
     	
     	loadCounsels("${grid.readUrl}");
         
-        $("#username").kendoComboBox({
+        $("#${grid.tabId}_username").kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: #{verbatim} ${users} #{/verbatim}
         });
     	
-        $("#driverName").kendoComboBox({
+        $("#${grid.tabId}_driverName").kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: #{verbatim} ${drivers} #{/verbatim}
         });
         
-        $("#date").kendoDatePicker({
+        $("#${grid.tabId}_date").kendoDatePicker({
         	format: "yyyy-MM-dd"		
         });
         
-        $("#start_time").kendoTimePicker({
+        $("#${grid.tabId}_start_time").kendoTimePicker({
         	format: "HH:mm:ss"		
         });
         
-        $("#end_time").kendoTimePicker({
+        $("#${grid.tabId}_end_time").kendoTimePicker({
         	format: "HH:mm:ss"		
         })
 

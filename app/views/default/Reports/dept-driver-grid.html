@@ -1,54 +1,31 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
-
 <div id="dept_driver_view-on-map-wrap">
 	<div id="dept_driver_view-on-map-window"></div>
 </div>
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
-	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/reports/driverListJsonByDept" method="post" class="k-content search-wrap" onsubmit="return reportDeptDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	
-	<label for="dept_driver-departments" class="info" style="width:80px;">Department:</label>
+<form action="/reports/driverListJsonByDept" method="post" class="k-content" onsubmit="return reportDeptDriverSearchValidate(this)" style="padding:10px 0;">
+	<label for="dept_driver-departments">Department:</label>
 	<input name="departmentId" id="dept_driver-departments"/>
 	
-	<label for="dept_driver-types" class="info" >Type:</label>
+	<label for="dept_driver-types">Type:</label>
 	<input name="dateType" id="dept_driver-types"/>
 	
-	<label id="dept_driver-time-label" for="dept_driver-time" class="info">Year:</label>
+	<label id="dept_driver-time-label" for="dept_driver-time">Year:</label>
 	<div style="display:inline;" id="dept_driver-time-wrap">
 		<input name="time" id="dept_driver-time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="dept_driver-search-button" class="k-button" value="Search" />
+		<input type="submit" id="dept_driver-search-button" class="k-button" style="width:auto" value="Search" />
 	</div>
 	
 </form>
-
 <div id="dept_report_driver_grid"></div>
-
 <div id="dept_report_driver_bar_chart"></div>
 
 <script>
-
 var driverId;
 var departmentId = "${departmentId}";
 $(document).ready(function(){
-	if (departmentId)
-		loadReportDeptDrivers("/reports/driverListJsonByDept?random=" + Math.random(), {departmentId: departmentId});
+	loadReportDeptDrivers("/reports/driverListJsonByDept?random=" + Math.random(), {departmentId: departmentId});
 	
 	var deptCombo = #{verbatim} ${departments} #{/verbatim};
 	

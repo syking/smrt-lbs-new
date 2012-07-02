@@ -1,0 +1,6 @@
+29 六月 2012 16:10:20,062 INFO  ~ Starting D:\Java\JEE\EclipseWorkSpace\24A\smrt-lbs-new\.
+29 六月 2012 16:10:20,625 WARN  ~ You're running Play! in DEV mode
+29 六月 2012 16:10:22,078 INFO  ~ Connected to jdbc:mysql://localhost:3306/vms_db?useUnicode=true&amp;characterEncoding=utf8?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci
+29 六月 2012 16:10:24,171 ERROR ~ Unsuccessful: create table t_device (id bigint not null auto_increment, action TEXT, alive bit not null, host varchar(255), device_key varchar(255) unique, misc TEXT, name varchar(255) unique, server_urls TEXT, status varchar(255), primary key (id), unique (device_key)) ENGINE=InnoDB DEFAULT CHARSET=utf8
+29 六月 2012 16:10:24,171 ERROR ~ Table 't_device' already exists
+29 六月 2012 16:10:25,859 INFO  ~ Application 'vms' is now started !

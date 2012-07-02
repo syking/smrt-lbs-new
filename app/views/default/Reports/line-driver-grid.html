@@ -3,43 +3,24 @@
 <div id="line_driver_view-on-map-wrap">
 	<div id="line_driver_view-on-map-window"></div>
 </div>
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
-	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/reports/driverListJsonByline" method="post" class="k-content search-wrap" onsubmit="return reportLineDriverSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	
-	<label for="driver-lines" class="info" style="width:80px;">line:</label>
+<form action="/reports/driverListJsonByline" method="post" class="k-content" onsubmit="return reportLineDriverSearchValidate(this)" style="padding:10px 0;">
+	<label for="driver-lines">line:</label>
 	<input name="line" id="driver-lines"/>
 	
-	<label for="line_driver-types" class="info" >Type:</label>
+	<label for="line_driver-types">Type:</label>
 	<input name="dateType" id="line_driver-types"/>
 	
-	<label id="line_driver-time-label" for="line_driver-time" class="info">Year:</label>
+	<label id="line_driver-time-label" for="line_driver-time">Year:</label>
 	<div style="display:inline;" id="line_driver-time-wrap">
 		<input name="time" id="line_driver-time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="line_driver-search-button" class="k-button" value="Search" />
+		<input type="submit" id="line_driver-search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
 
 <div id="line_report_driver_grid"></div>
-
 <div id="line_report_driver_bar_chart"></div>
 
 <script>
@@ -47,8 +28,7 @@
 var driverId;
 var line = "${line}";
 $(document).ready(function(){
-	if (line)
-		loadReportLineDrivers("/reports/driverListJsonByLine?random=" + Math.random(), {line: line});
+	loadReportLineDrivers("/reports/driverListJsonByLine?random=" + Math.random(), {line: line});
 	
 	var lineCombo = #{verbatim} ${lines} #{/verbatim};
 	

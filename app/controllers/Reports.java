@@ -199,7 +199,7 @@ public class Reports extends Controller {
     		}
     		
     		data.put("total", total);
-    		categories.add(String.format(" (%s) ", total) + dept.name);
+    		categories.add(dept.name);
     		
     		datas.add(data);
     	}
@@ -244,16 +244,17 @@ public class Reports extends Controller {
      * @throws ParseException 
      */
     public static void driverListJsonByFleet(Long fleetId, String dateType, String time) throws ParseException{
+    	List<Schedule> schs = null;
 		if (fleetId == null || fleetId <= 0)
-			return ;
-		
-		List<Schedule> schs = Schedule.find("select s from Schedule s where s.vehicle.id in (select v.id from Vehicle v where v.fleet.id = ?)", fleetId).fetch();
+			schs = Schedule.findAll() ;
+		else
+			schs = Schedule.find("select s from Schedule s where s.vehicle.id in (select v.id from Vehicle v where v.fleet.id = ?)", fleetId).fetch();
 		if (schs == null)
 			return ;
+		
 		Set<Driver> drivers = new HashSet<Driver>(schs.size());
-		for (Schedule s : schs){
+		for (Schedule s : schs)
 			drivers.add(s.driver);
-		}
 		
 		Map map = Driver.assemReport(drivers, dateType, time);
 		
@@ -287,14 +288,18 @@ public class Reports extends Controller {
     	if (eventTypes == null)
     		return;
     	
+    	List<Fleet> fleets = null;
     	String sql = "";
     	List<Long> params = new ArrayList<Long>(1);
     	if (parentId != null && parentId > 0){
     		sql = "and f.parent.id = ? " ;
     		params.add(parentId);
+    		
+    		fleets = Fleet.find("select f from Fleet f where f.id not in (select fl.parent.id from Fleet fl where fl.parent.id is not null) " + sql, params.toArray()).fetch();
+    	}else{
+    		fleets = Fleet.findAll();
     	}
     	
-    	List<Fleet> fleets = Fleet.find("select f from Fleet f where f.id not in (select fl.parent.id from Fleet fl where fl.parent.id is not null) " + sql, params.toArray()).fetch();
     	if (fleets == null)
     		return ;
     	
@@ -304,7 +309,6 @@ public class Reports extends Controller {
     	
     	for (EventType et : eventTypes){
     		Map column = new HashMap();
-		
     		column.put("field", et.techName);
     		column.put("title", CommonUtil.upperFirst(et.name));
     		
@@ -317,9 +321,7 @@ public class Reports extends Controller {
     	
 		List<String> categories = new ArrayList<String>(fleets.size());
 		Map<String, List<Long>> typeMap = new HashMap<String, List<Long>>();
-		
     	for (Fleet f : fleets){
-    		
     		Map data = new HashMap();
     		data.put("id", f.id);
     		long total = 0;
@@ -385,7 +387,7 @@ public class Reports extends Controller {
     		}
     		
     		data.put("total", total);
-    		categories.add(String.format(" (%s) ", total) + f.name);
+    		categories.add(f.name);
     		
     		datas.add(data);
     	}
@@ -432,17 +434,19 @@ public class Reports extends Controller {
      * @throws ParseException 
      */
     public static void driverListJsonByLine(String line, String dateType, String time) throws ParseException{
-		if (line == null)
-			return ;
 		
-		List<Schedule> schs = Schedule.find("line = ?", line).fetch();
+		List<Schedule> schs = null;
+		if (line == null || line.isEmpty())
+			schs = Schedule.findAll();
+		else
+			schs = Schedule.find("line = ?", line).fetch();
+		
 		if (schs == null)
 			return ;
 		
 		Set<Driver> drivers = new HashSet<Driver>(schs.size());
-		for (Schedule s : schs){
+		for (Schedule s : schs)
 			drivers.add(s.driver);
-		}
 		
 		Map map = Driver.assemReport(drivers, dateType, time);
 		
@@ -574,7 +578,7 @@ public class Reports extends Controller {
     		}
     		
     		data.put("total", total);
-    		categories.add(String.format(" (%s) ", total) + l);
+    		categories.add(l);
     		
     		datas.add(data);
     	}

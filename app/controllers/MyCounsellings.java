@@ -86,11 +86,9 @@ public class MyCounsellings extends Controller{
     }
 	
 	public static void updateCounsel(String models) throws ParseException{
-		System.out.println(models);
-		if(models==null){
+		if(models == null)
 			return;
-		}
-		String json = models.substring(1, models.toString().length()-1);
+		String json = models.substring(1, models.length()-1);
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");
 		String userName = jo.getString("userName");
@@ -108,17 +106,17 @@ public class MyCounsellings extends Controller{
 		oldCoun.startTime = Counsellings.dateConvertor(startTime);
 		oldCoun.endTime = Counsellings.dateConvertor(endTime);
 		oldCoun.remark = remark;
+		
 		oldCoun.save();
 	}
 	
 	public static void driverList(){
 		List<Driver> drivers = Driver.findAll();
-		System.out.println("Drivers: " + drivers.size());
+		
 		renderJSON(drivers);
 	}
 	
 	public static void grid(String id) {
-		
 		final String preUrl = "/MyCounsellings/";
 
 		List<Driver> drList = Driver.findAll();
@@ -137,7 +135,7 @@ public class MyCounsellings extends Controller{
 		grid.destroyUrl = preUrl + "deleteCounsel";
 		grid.readUrl = preUrl + "mycounsels";
 		grid.searchUrl = preUrl + "search";
-		grid.editable = "inline";
+		grid.editable = "popup";
 		grid.columnsJson = CommonUtil.getGson().toJson(
 				CommonUtil.assemColumns(CounselVO.class, "id", "userName"));
 		map.put("grid", grid);

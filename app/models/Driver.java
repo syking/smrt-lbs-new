@@ -16,6 +16,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
+
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import utils.Splitter;
@@ -44,6 +46,13 @@ public class Driver extends Model{
         this.description = description;
     }
 
+    public static List<Driver> filter(List<String> criteria, List<Object> params) {
+		Object[] p = params.toArray();
+		String query = StringUtils.join(criteria, " AND ");
+		
+		return Driver.find(query, p).fetch();
+	}
+    
     public static Map assemReport(Collection<Driver> drivers, String dateType, String time) throws ParseException{
     	List<EventType> eventTypes = EventType.findAll();
     	if (eventTypes == null)
@@ -55,7 +64,6 @@ public class Driver extends Model{
     	
     	for (EventType et : eventTypes){
     		Map column = new HashMap();
-		
     		column.put("field", et.techName);
     		column.put("title", CommonUtil.upperFirst(et.name));
     		
@@ -137,7 +145,7 @@ public class Driver extends Model{
     		}
     		
     		data.put("total", total);
-    		categories.add(String.format(" (%s) ", total) + driver.name);
+    		categories.add(driver.name);
     		
     		datas.add(data);
     	}

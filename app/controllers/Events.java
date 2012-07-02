@@ -167,7 +167,7 @@ public class Events extends Controller {
 
 		List<Event> events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch();
 		if (events == null)
-			renderJSON("");
+			return ;
 
 		List<EventVO> eventVOList = new ArrayList<EventVO>();
 
@@ -203,7 +203,10 @@ public class Events extends Controller {
 		map.put("drivers", CommonUtil.getGson().toJson(drivers));
 		map.put("lines", CommonUtil.getGson().toJson(lines));
 		map.put("types", CommonUtil.getGson().toJson(types));
-
+		Map _map = new HashMap();
+		_map.put("tagId", id);
+		map.put("grid", _map);
+		
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Events/grid.html")).render(map));
 	}
 

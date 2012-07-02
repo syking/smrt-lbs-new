@@ -1,13 +1,14 @@
-<label class="info" style="width:80px;">Number:</label>
-<input name="number" id="number"/>
-
-<label class="info">Fleet Name</label>
-<input name="fleetid" id="fleet_id"/>
-
-<div style="float:right; padding-right:20px;">
-    <input type="submit" id="search-button" class="k-button" value="Search"/>
+<div class="k-content" style="padding:10px 0;">
+	<label for="tree_fleet_id">Fleet Name:</label>
+	<input name="fleetid" id="tree_fleet_id"/>
+	
+	<label for="tree_number">Number:</label>
+	<input name="number" id="tree_number" class="k-input k-textbox"/>
+	
+	<div style="float:right; padding-right:20px;">
+	    <input type="submit" id="tree_search-button" style="width:auto;" class="k-button" value="Search"/>
+	</div>
 </div>
-
 <div style="height:8px"></div>
 <div id="treeView"></div>
 
@@ -23,15 +24,15 @@
 
         loadTree(#{verbatim} ${treeData} #{/verbatim});
 
-        $("#fleet_id").kendoComboBox({
+        $("#tree_fleet_id").kendoComboBox({
             dataTextField:"text",
             dataValueField:"value",
             dataSource: #{verbatim} ${fleets} #{/verbatim}
         });
 
-        $("#search-button").click(function (e) {
-            fleetid = $("#fleet_id").val();
-            number = $("#number").val();
+        $("#tree_search-button").click(function (e) {
+            fleetid = $("#tree_fleet_id").val();
+            number = $("#tree_number").val();
 
             $.getJSON(
                     "/vehicles/searchTree",
@@ -49,13 +50,8 @@
                         } else {
                             treeView.select(".k-first");
                         }
-
                     }
             );
-
         })
-
     });
-
-
 </script>

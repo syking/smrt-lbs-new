@@ -1,10 +1,14 @@
 package models;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import play.db.jpa.Model;
@@ -21,14 +25,13 @@ public class User extends Model {
 	@Column(unique = true)
 	public String name;
 
-	public String description;
-
-	@Override
-	public String toString() {
-		return "User [account=" + account + ", password=" + password
-				+ ", name=" + name + ", description=" + description + "]";
-	}
+	@Column(name = "description")
+	public String desc;
 	
+	@ManyToMany
+	@JoinTable(name="t_user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
+	public List<Role> roles = new ArrayList<Role>();
+
 	public static interface Constant {
 		public final String LOGIN_USER_ATTR = "login_user";
 		public final String LOGIN_ACTIVE_TIME = "30mn";

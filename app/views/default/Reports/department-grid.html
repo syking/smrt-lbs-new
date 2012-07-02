@@ -1,39 +1,21 @@
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
-
 <div id="dept_view-on-map-wrap">
 	<div id="dept_view-on-map-window"></div>
 </div>
-<style>
-
-	.k-content{
-		background:#f3f3f3;
-	}
+<form action="/reports/departmentListJson" method="post" class="k-content" onsubmit="return reportDepartmentSearchValidate(this)" style="padding:10px 0;">
 	
-    .k-autocomplete{
-    }
-    
-    .info{
-    	border:none;
-        padding: 3px 5px 7px 5px;
-        display:inline-block;
-        width:120px;
-        text-align:right;
-    }
-</style>
-<form action="/reports/departmentListJson" method="post" class="k-content search-wrap" onsubmit="return reportDepartmentSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	
-	<label for="dept_departments" class="info" style="width:80px;">Superior:</label>
+	<label for="dept_departments">Superior:</label>
 	<input name="parentId" id="dept_departments"/>
 	
-	<label for="dept_types" class="info" >Type:</label>
+	<label for="dept_types">Type:</label>
 	<input name="dateType" id="dept_types"/>
 	
-	<label id="dept_time-label" for="dept_time" class="info">Year:</label>
+	<label id="dept_time-label" for="dept_time">Year:</label>
 	<div style="display:inline;" id="dept_time-wrap">
 		<input name="time" id="dept_time"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="dept_search-button" class="k-button" value="Search" />
+		<input type="submit" id="dept_search-button" class="k-button" style="width:auto;" value="Search" />
 	</div>
 	
 </form>
