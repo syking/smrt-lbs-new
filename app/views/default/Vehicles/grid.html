@@ -12,16 +12,16 @@
     <label for="${grid.tabId}_description">Descript:</label>
     <input name="description" id="${grid.tabId}_description" class="k-input k-textbox"/>
 
-    <div style="height:8px"></div>
+    <div style="height:3px"></div>
     
     <label for="${grid.tabId}_type">Type:</label>
     <input name="type" id="${grid.tabId}_type"/>
     
 	<label for="${grid.tabId}_fleet_id">Fleet:</label>
-    <input name="fleetid" id="${grid.tabId}_fleet_id" />
+    <input name="fleetName" id="${grid.tabId}_fleet_id" />
 
     <label for="${grid.tabId}_device_id">Device:</label>
-    <input name="deviceid" id="${grid.tabId}_device_id" />
+    <input name="deviceName" id="${grid.tabId}_device_id" />
 
     <div style="float:right; padding-right:20px;">
         <input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto" value="Search"/>
@@ -135,7 +135,15 @@
             },
             {
                 field:"type",
-                title:"Type"
+                title:"Type",
+                editor:function(c, o){
+                	$('<input name="type" id="${grid.tabId}_type"/>')
+			            .appendTo(c).kendoComboBox({
+				            dataTextField:"text",
+				            dataValueField:"value",
+				            dataSource: [{text:"bus", value:"bus"},{text:"car", value:"car"}]
+			        	});
+                }
             }
         ];
         columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
@@ -161,19 +169,19 @@
     }
 
     function fleetDropDownEditor(container, options) {
-        $('<input data-text-field="text" data-value-field="text" data-bind="value:' + options.field + '"/>')
-                .appendTo(container)
-                .kendoDropDownList({
-                    autoBind:false,
+        $('<input name="fleetName" />')
+                .appendTo(container).kendoComboBox({
+                	dataTextField:"text",
+				    dataValueField:"value",
                     dataSource: fleetsJson
                 });
     }
 
     function deviceDropDownEditor(container, options) {
-        $('<input data-text-field="text" data-value-field="text" data-bind="value:' + options.field + '"/>')
-                .appendTo(container)
-                .kendoDropDownList({
-                    autoBind:false,
+        $('<input name="deviceName" />')
+                .appendTo(container).kendoComboBox({
+                   	dataTextField:"text",
+				    dataValueField:"value",
                     dataSource: deviceJson
                 });
     }

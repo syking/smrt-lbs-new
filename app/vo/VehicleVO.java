@@ -16,7 +16,9 @@ public class VehicleVO
         this.id = vehicle.id;
         this.number = vehicle.number;
         this.license = vehicle.license;
-        this.fleetName = vehicle.fleet.name;
+        if (vehicle.fleet != null)
+        	this.fleetName = vehicle.fleet.name;
+        if (vehicle.device != null)
         this.deviceName = vehicle.device.name;
         this.description = vehicle.description;
         this.cctvIp = vehicle.cctvIp;
@@ -31,9 +33,9 @@ public class VehicleVO
 
     public String license;//车牌号
 
-    public String fleetName;//车队
+    public String fleetName = "";//车队
 
-    public String deviceName;//一辆车有一台唯一的GPS设备
+    public String deviceName = "";//一辆车有一台唯一的GPS设备
 
     public String description;//描述
 

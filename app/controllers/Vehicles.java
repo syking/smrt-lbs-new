@@ -138,7 +138,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 车辆管理：检索车辆信息
 	 */
-	public static void search(String number, String license, long fleetid, long deviceid, String description, String cctvIp, String type) {
+	public static void search(String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type) {
 
 		List<String> criteria = new ArrayList<String>(9);
 		List<Object> params = new ArrayList<Object>(9);
@@ -152,16 +152,16 @@ public class Vehicles extends Controller {
 			criteria.add("license LIKE ?");
 			params.add("%" + license + "%");
 		}
-
-		if (fleetid != 0) {
-			Fleet fleet = Fleet.findById(fleetid);
+		
+		Fleet fleet = Fleet.findByName(fleetName);
+		if (fleet != null) {
 			long fleet_id = fleet.id;
 			criteria.add("fleet_id = ?");
 			params.add(fleet_id);
 		}
 
-		if (deviceid != 0) {
-			Device device = Device.findById(deviceid);
+		Device device = Device.findByName(deviceName);
+		if (device != null) {
 			long device_id = device.id;
 			criteria.add("device_id = ?");
 			params.add(device_id);
@@ -271,7 +271,7 @@ public class Vehicles extends Controller {
 		List<ComboVO> fleets = new ArrayList<ComboVO>();
 		if (fleetList != null)
 			for (Fleet fleet : fleetList) 
-				fleets.add(new ComboVO(fleet.name, fleet.id));
+				fleets.add(new ComboVO(fleet.name, fleet.name));
 			
 		map.put("fleets", CommonUtil.getGson().toJson(fleets));
 
@@ -280,7 +280,7 @@ public class Vehicles extends Controller {
 		List<ComboVO> devices = new ArrayList<ComboVO>();
 		if (deviceList != null)
 			for (Device device : deviceList) 
-				devices.add(new ComboVO(device.name, device.id));
+				devices.add(new ComboVO(device.name, device.name));
 			
 		map.put("devices", CommonUtil.getGson().toJson(devices));
 		map.put("grid", grid);

@@ -45,4 +45,8 @@ public class Device extends Model {
 				+ ", action=" + action + ", misc=" + misc + ", status="
 				+ status + "]";
 	}
+
+	public static Device findByName(String deviceName) {
+		return find("byName", deviceName).first();
+	}
 }
