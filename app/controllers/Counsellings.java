@@ -31,31 +31,21 @@ public class Counsellings extends Controller {
 		List<CounselVO> result = new ArrayList<CounselVO>();
 		List<Counselling> counsellings = Counselling.findAll();
 		if (counsellings == null)
-			renderJSON("");
+			return ;
 		
-		for (Counselling c : counsellings){
+		for (Counselling c : counsellings)
 			result.add(new CounselVO().init(c));
-		}
+		
 		renderJSON(result);
 	}	
 	
-	public static void search(long username, long driverName, String date, String start, String end) throws ParseException {
+	public static void search(String userName, String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException {
 	
-		Date startTime = null;
-		Date endTime = null;
-		if(!date.equals("")&&!start.equals(""))
-			startTime = dateConvertor(date + " " + start);
-		
-		if(!date.equals("")&&!end.equals(""))
-			endTime = dateConvertor(date + " " + end);
-		
-		User user = User.find("id = ?", username).first();
-		Driver driver = Driver.find("id = ?", driverName).first();
-		Counselling coun = new Counselling();
-		
-		List<Counselling> counsellings = coun.search(user, driver, startTime, endTime, user != null ? user.name : "", driver != null ? driver.name : "");
-		
+		System.out.println("--------- search counselling ..... " + userName + " | " + driverName + " | " + startDate + " | " + startTime + " | " + endDate + " | " + endTime);
+	
+		List<Counselling> counsellings = Counselling.findByCondition(userName, driverName, startDate, startTime, endDate, endTime);
 		List<CounselVO> result = new ArrayList<CounselVO>();
+	
 		for (Counselling counselling : counsellings)
 			result.add(new CounselVO().init(counselling));
 		
@@ -70,16 +60,23 @@ public class Counsellings extends Controller {
 		JSONObject jo = JSONObject.fromObject(json);
 		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
-		String startTime =  jo.getString("startTime");
-		String endTime = jo.getString("endTime");
+		String startDate = jo.getString("startDate");
+		String startTime =  startDate + " " + jo.getString("startTime");
+		String endDate = jo.getString("endDate");
+		String endTime = endDate + " " + jo.getString("endTime");
 		String remark = jo.getString("remark");
 		
 		User user = User.find("byName", userName).first();
+		if (user == null)
+			return ;
+		
 		Driver driver = Driver.find("byName", driverName).first();
-		if(user != null && driver != null)
-			new Counselling(user, dateConvertor(startTime), dateConvertor(endTime), remark, driver).save();
-		else
-			renderJSON(Counselling.findAll());
+		if (driver == null)
+			return ;
+		
+		new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), remark, driver).save();
+		
+		renderJSON(models);
 	}
 
 	public static void deleteCounsel(String models) {
@@ -87,6 +84,7 @@ public class Counsellings extends Controller {
 		JSONObject jo = JSONObject.fromObject(json);
 		long id = jo.getInt("id");
 		Counselling c = Counselling.find("id = ?", id).first();
+		
 		c.delete();
 	}
 
@@ -99,8 +97,10 @@ public class Counsellings extends Controller {
 		long id = jo.getInt("id");
 		String userName = jo.getString("userName");
 		String driverName = jo.getString("driverName");
-		String startTime = jo.getString("startTime");
-		String endTime = jo.getString("endTime");
+		String startDate = jo.getString("startDate");
+		String startTime =  startDate + " " + jo.getString("startTime");
+		String endDate = jo.getString("endDate");
+		String endTime = endDate + " " + jo.getString("endTime");
 		String remark = jo.getString("remark");
 		
 		User user = User.find("byName", userName).first();
@@ -112,9 +112,10 @@ public class Counsellings extends Controller {
 		
 		oldCoun.user = user;
 		oldCoun.driver = driver;
-		oldCoun.startTime = dateConvertor(startTime);
-		oldCoun.endTime = dateConvertor(endTime);
+		oldCoun.startTime = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime);
+		oldCoun.endTime = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime);
 		oldCoun.remark = remark;
+		
 		oldCoun.save();
 	}
 
@@ -138,13 +139,13 @@ public class Counsellings extends Controller {
 		List<ComboVO> users = new ArrayList<ComboVO>();
 		if (userList != null)
     		for (User user : userList)
-    			users.add(new ComboVO(user.name, user.id));
+    			users.add(new ComboVO(user.name, user.name));
     		
 		List<Driver> drList = Driver.findAll();
     	List<ComboVO> drivers = new ArrayList<ComboVO>();
     	if (drList != null)
     		for (Driver dr : drList)
-    			drivers.add(new ComboVO(dr.name, dr.id));
+    			drivers.add(new ComboVO(dr.name, dr.name));
 		
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -154,16 +155,13 @@ public class Counsellings extends Controller {
 		grid.destroyUrl = preUrl + "deleteCounsel";
 		grid.readUrl = preUrl + "counsel";
 		grid.searchUrl = preUrl + "search";
-		grid.editable = "inline";
+		grid.editable = "popup";
+		
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(CounselVO.class, "id"));
 		map.put("grid", grid);
     	map.put("drivers", CommonUtil.getGson().toJson(drivers));
     	map.put("users", CommonUtil.getGson().toJson(users));
     	
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Counsels/grid.html")).render(map));
-	}
-	
-	public static Date dateConvertor(String sql_date) throws ParseException {
-		return Timestamp.valueOf(sql_date);
 	}
 }

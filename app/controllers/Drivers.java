@@ -66,7 +66,7 @@ public class Drivers extends Controller {
 	}
 
 	public static void add(String models) {
-		Driver driver = jsonStr2JavaObj(models);
+		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
 		Driver d = new Driver(driver.number, driver.name, driver.description);
 		d.save();
 		
@@ -74,7 +74,7 @@ public class Drivers extends Controller {
 	}
 
 	public static void destroy(String models) {
-		Driver driver = jsonStr2JavaObj(models);
+		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
 		Driver d = Driver.findById(driver.id);
 		
 		try {
@@ -87,7 +87,7 @@ public class Drivers extends Controller {
 	}
 
 	public static void update(String models) {
-		Driver driver = jsonStr2JavaObj(models);
+		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
 		
 		Driver d = Driver.findById(driver.id);
 		d.number = driver.number;
@@ -128,9 +128,4 @@ public class Drivers extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Drivers/grid.html")).render(map));
 	}
 
-	private static Driver jsonStr2JavaObj(String jsonStr) {
-		String json = jsonStr.substring(1, jsonStr.length() - 1);
-		
-		return new Gson().fromJson(json, Driver.class);
-	}
 }

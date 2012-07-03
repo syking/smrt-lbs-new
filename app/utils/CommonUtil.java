@@ -19,10 +19,10 @@ import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
 
-	public static VehicleVO jsonStr2JavaObj(String jsonStr) {
+	public static <T> T jsonStr2JavaObj(String jsonStr, Class<T> clazz) {
 		String json = jsonStr.substring(1, jsonStr.length() - 1);
 		Gson gson = new Gson();
-		return gson.fromJson(json, VehicleVO.class);
+		return gson.fromJson(json, clazz);
 	}
 	
 	public static Date addDate(Date source, int day) {

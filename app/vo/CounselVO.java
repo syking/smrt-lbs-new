@@ -14,26 +14,26 @@ import models.Counselling;
 
 public class CounselVO {
 	public long id;
-	public String userName;
-	public String driverName;
+	public String userName = "";
+	public String driverName = "";
+	public String startDate;
 	public String startTime;
+	public String endDate;
 	public String endTime;
 	public String remark;
 	
 	public CounselVO init(Counselling c) throws ParseException{
 		this.id = c.id;
-		this.userName = c.user.name;
-		this.driverName = c.driver.name;
-		this.startTime = timeConvertor(c.startTime.toString());
-		this.endTime = timeConvertor(c.endTime.toString());
+		if (c.user != null)
+			this.userName = c.user.name;
+		if (c.driver != null)
+			this.driverName = c.driver.name;
+		
+		this.startDate = c.startTime.toString().split(" ")[0];
+		this.startTime = c.startTime.toString().split(" ")[1];
+		this.endDate =  c.endTime.toString().split(" ")[0];
+		this.endTime = c.endTime.toString().split(" ")[1];
 		this.remark = c.remark;
 		return this;
-	}
-	
-	public static String timeConvertor(String time) throws ParseException{
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date dateString = df.parse(time);
-		String dateTime = df.format(dateString);
-		return dateTime;
 	}
 }

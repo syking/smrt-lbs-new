@@ -195,7 +195,7 @@ public class Vehicles extends Controller {
 	 * 车辆管理：更新车辆信息
 	 */
 	public static void update(String models) {
-		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models);
+		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models, VehicleVO.class);
 		Vehicle v = Vehicle.findById(vehicleVO.id);
 		v.number = vehicleVO.number;
 		v.license = vehicleVO.license;
@@ -233,7 +233,7 @@ public class Vehicles extends Controller {
 	 * 车辆管理：删除车辆信息
 	 */
 	public static void destroy(String models) {
-		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models);
+		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models, VehicleVO.class);
 		Vehicle v = Vehicle.findById(vehicleVO.id);
 		v.delete();
 		
@@ -244,7 +244,7 @@ public class Vehicles extends Controller {
 	 * 车辆管理：添加车辆信息
 	 */
 	public static void add(String models) {
-		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models);
+		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models, VehicleVO.class);
 		Vehicle v = new Vehicle(vehicleVO.number, vehicleVO.license,vehicleVO.description, vehicleVO.cctvIp, vehicleVO.type);
 		v.save();
 		

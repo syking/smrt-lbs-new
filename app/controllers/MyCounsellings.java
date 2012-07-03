@@ -37,25 +37,15 @@ public class MyCounsellings extends Controller{
 		
 	}
 	
-	public static void mysearch(long driverId, String date, String start, String end) throws ParseException{
-		Date startTime = null;
-		Date endTime = null;
-		if(!date.equals("")&&!start.equals("")){
-			startTime = Counsellings.dateConvertor(date + " " + start);
-		}
-		if(!date.equals("")&&!end.equals("")){
-			endTime = Counsellings.dateConvertor(date + " " + end);
-		}
+	public static void mysearch(String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException{
 		
-		Driver driver = Driver.find("id = ?", driverId).first();
 		User user = (User)renderArgs.get("user");
-		Counselling coun = new Counselling();
-		List<Counselling> counsellings = coun.search(user, driver, startTime, endTime, user.name, driver!=null?driver.name:"");
+		List<Counselling> counsellings = Counselling.findByCondition(user.name, driverName, startDate, startTime, endDate, endTime);
 		
 		List<CounselVO> result = new ArrayList<CounselVO>();
-		for (Counselling counselling : counsellings){
+		for (Counselling counselling : counsellings)
 			result.add(new CounselVO().init(counselling));
-		}
+		
 		renderJSON(result);
 	}
 	
@@ -75,7 +65,6 @@ public class MyCounsellings extends Controller{
 		if(user==null||driver==null){
 			return;
 		}
-		new Counselling(user, Counsellings.dateConvertor(startTime), Counsellings.dateConvertor(endTime), remark, driver).save();
 	}
 	public static void deleteCounsel(String models){
 		String json = models.substring(1, models.toString().length()-1);
@@ -103,8 +92,6 @@ public class MyCounsellings extends Controller{
 		Counselling oldCoun = Counselling.findById(id);
 		oldCoun.user = user;
 		oldCoun.driver = driver;
-		oldCoun.startTime = Counsellings.dateConvertor(startTime);
-		oldCoun.endTime = Counsellings.dateConvertor(endTime);
 		oldCoun.remark = remark;
 		
 		oldCoun.save();
