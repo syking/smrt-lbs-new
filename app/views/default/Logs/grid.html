@@ -1,28 +1,26 @@
 <form action="/logs/search" method="post" class="k-content" onsubmit="return logSearchValidate(this)" style="padding:10px 0;">
 
+	<label for="${grid.tabId}_user_name">UserName:</label>
+    <input name="userid" id="${grid.tabId}_user_name"/>
+    
     <label for="${grid.tabId}_type">Type:</label>
     <input name="type" id="${grid.tabId}_type" class="k-input k-textbox"/>
 
     <label for="${grid.tabId}_name">Name:</label>
     <input name="name" id="${grid.tabId}_name" class="k-input k-textbox" />
 
+	<div style="height:3px"></div>
+
     <label for="${grid.tabId}_content">Content</label>
     <input name="content" id="${grid.tabId}_content" class="k-input k-textbox"/>
-
-	<div style="height:5px"></div>
-    <br>
-
+	
     <label for="${grid.tabId}_actions">Action</label>
     <input name="actions" id="${grid.tabId}_actions" class="k-input k-textbox" />
-
-    <label for="${grid.tabId}_user_name">UserName:</label>
-    <input name="userid" id="${grid.tabId}_user_name"/>
 
     <label for="${grid.tabId}_ip">IP:</label>
     <input name="ip" id="${grid.tabId}_ip" class="k-input k-textbox" />
     
-    <div style="height:5px"></div>
-    <br>
+    <div style="height:3px"></div>
 
     <label for="${grid.tabId}_startDate">Start Date:</label>
     <input name="startDate" id="${grid.tabId}_startDate"/>
@@ -30,6 +28,8 @@
     <label for="${grid.tabId}_startTime" >Start Time:</label>
     <input name="startTime" id="${grid.tabId}_startTime" />
 
+	<div style="height:3px"></div>
+	
     <label for="${grid.tabId}_endDate">End Date:</label>
     <input name="endDate" id="${grid.tabId}_endDate" />
 

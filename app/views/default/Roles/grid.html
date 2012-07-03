@@ -1,0 +1,104 @@
+<form action="/roles/search" method="post" class="k-content" onsubmit="return roleSearchValidate(this)" style="padding:10px 0;">
+	
+	<label for="${grid.tabId}_name">Role Name:</label>
+	<input name="roleName" id="${grid.tabId}_name" class="k-input k-textbox"/>
+	
+	<label for="${grid.tabId}_desc">Description:</label>
+	<input name="desc" id="${grid.tabId}_desc" class="k-input k-textbox"/>
+	
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
+	</div>
+	
+</form>
+
+<div id="grid_${grid.tabId}"></div>
+<script>
+    $(document).ready(function(){
+    	loadRoles("${grid.readUrl}");
+    });
+    
+    function loadRoles(url, params){
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  {
+                    url: url,
+                    dataType: "json",
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    dataType: "json"
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    dataType: "json"
+                },
+                parameterMap:function (options, operation) {
+                    if (operation !== "read" && options.models) {
+                    	var model = options.models[0];
+                    	
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    
+                    return params;
+                }
+            },
+            batch: true,
+            pageSize: 20,
+            schema: {
+            	parse: function(data){
+					
+            		return data;
+            	},
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        name: { validation: { required: true } },
+                        desc: { validation: { required: true } },
+                        permissions: { }
+                    }
+                }
+            }
+        });
+        
+		$("#grid_${grid.tabId}").empty();
+		
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+        /**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+			
+			if ('permissions' === _field){
+				columnsJson[i].editor = function(container, options){};
+				return ;
+			}
+		});
+		
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource:dataSource,
+            pageable:true,
+            scrollable:true,
+            sortable:true,
+            height:"auto",
+            toolbar:["create"],
+            columns:columnsJson,
+            editable:"${grid.editable}"
+        });
+    }
+    
+    function roleSearchValidate(form) {
+    	var $form = $(form);
+    	loadRoles($form.attr("action"), $form.serializeArray());
+    	
+    	return false;
+    }
+
+</script>

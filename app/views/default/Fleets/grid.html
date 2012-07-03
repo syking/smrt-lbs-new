@@ -1,10 +1,5 @@
-<style>
-	.k-content{background:#f3f3f3;}
-    .info{border:none; padding: 3px 5px 7px 5px; display:inline-block; width:120px; text-align:right;}
-</style>
-
-<form action="/fleets/search" method="post" class="k-content search-wrap" onsubmit="return fleetSearchValidate(this)" style="padding:20px 0 10px 10px;">
-	<label for="${grid.tabId}_name">Name:</label>
+<form action="/fleets/search" method="post" class="k-content" onsubmit="return fleetSearchValidate(this)" style="padding:10px 0;">
+	<label for="${grid.tabId}_name">Fleet Name:</label>
 	<input name="name" id="${grid.tabId}_name"/> 
 	<label for="${grid.tabId}_placeNumber">Place No:</label>
 	<input name="placeNumber" id="${grid.tabId}_placeNumber"/>
