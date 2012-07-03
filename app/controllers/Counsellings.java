@@ -40,9 +40,6 @@ public class Counsellings extends Controller {
 	}	
 	
 	public static void search(String userName, String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException {
-	
-		System.out.println("--------- search counselling ..... " + userName + " | " + driverName + " | " + startDate + " | " + startTime + " | " + endDate + " | " + endTime);
-	
 		List<Counselling> counsellings = Counselling.findByCondition(userName, driverName, startDate, startTime, endDate, endTime);
 		List<CounselVO> result = new ArrayList<CounselVO>();
 	
@@ -56,81 +53,27 @@ public class Counsellings extends Controller {
 		if(models == null)
 			return;
 		
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		String userName = jo.getString("userName");
-		String driverName = jo.getString("driverName");
-		String startDate = jo.getString("startDate");
-		String startTime =  startDate + " " + jo.getString("startTime");
-		String endDate = jo.getString("endDate");
-		String endTime = endDate + " " + jo.getString("endTime");
-		String remark = jo.getString("remark");
-		
-		User user = User.find("byName", userName).first();
-		if (user == null)
-			return ;
-		
-		Driver driver = Driver.find("byName", driverName).first();
-		if (driver == null)
-			return ;
-		
-		new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), remark, driver).save();
+		Counselling.saveByJson(models, null);
 		
 		renderJSON(models);
 	}
 
 	public static void deleteCounsel(String models) {
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		Counselling c = Counselling.find("id = ?", id).first();
+		if (models == null)
+			return ;
 		
-		c.delete();
+		Counselling.deleteByJson(models);
+		
+		renderJSON(models);
 	}
 
 	public static void updateCounsel(String models) throws ParseException {
 		if(models==null)
 			return;
 		
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		String userName = jo.getString("userName");
-		String driverName = jo.getString("driverName");
-		String startDate = jo.getString("startDate");
-		String startTime =  startDate + " " + jo.getString("startTime");
-		String endDate = jo.getString("endDate");
-		String endTime = endDate + " " + jo.getString("endTime");
-		String remark = jo.getString("remark");
+		Counselling.updateByJson(models, null);
 		
-		User user = User.find("byName", userName).first();
-		Driver driver = Driver.find("byName", driverName).first();
-		
-		Counselling oldCoun = Counselling.findById(id);
-		if (oldCoun == null)
-			return ;
-		
-		oldCoun.user = user;
-		oldCoun.driver = driver;
-		oldCoun.startTime = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime);
-		oldCoun.endTime = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime);
-		oldCoun.remark = remark;
-		
-		oldCoun.save();
-	}
-
-	public static boolean compareTime(String start, String end) {
-		boolean flag = false;
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-		try {
-			if (df.parse(start).before(df.parse(end))) 
-				flag = true;
-			
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-		
-		return flag;
+		renderJSON(models);
 	}
 
 	public static void grid(String id) {

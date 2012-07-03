@@ -23,8 +23,8 @@ import vo.Grid;
 
 @With(Interceptor.class)
 public class MyCounsellings extends Controller{
+	
 	public static void mycounsels() throws ParseException{
-
 		List<CounselVO> result = new ArrayList<CounselVO>();
 		List<Counselling> counsellings = Counselling.find("byUser", renderArgs.get("user")).fetch();
 		if (counsellings == null)
@@ -38,69 +38,41 @@ public class MyCounsellings extends Controller{
 	}
 	
 	public static void mysearch(String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException{
-		
 		User user = (User)renderArgs.get("user");
-		List<Counselling> counsellings = Counselling.findByCondition(user.name, driverName, startDate, startTime, endDate, endTime);
-		
-		List<CounselVO> result = new ArrayList<CounselVO>();
-		for (Counselling counselling : counsellings)
-			result.add(new CounselVO().init(counselling));
-		
-		renderJSON(result);
+		Counsellings.search(user.name, driverName, startDate, startTime, endDate, endTime);
 	}
 	
 	public static void saveMyCounsel(String models) throws ParseException{
-		if(models==null){
+		if(models == null)
 			return;
-		}
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-
-		String driverName = jo.getString("driverName");
-		String startTime = jo.getString("startTime");
-		String endTime = jo.getString("endTime");
-		String remark = jo.getString("remark");
+		
 		User user = (User)renderArgs.get("user");
-		Driver driver = Driver.find("byName", driverName).first();
-		if(user==null||driver==null){
-			return;
-		}
+		Counselling.saveByJson(models, user.name);
+		
+		renderJSON(models);
 	}
+	
 	public static void deleteCounsel(String models){
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		Counselling c = Counselling.find("id = ?", id).first();
-		c.delete();
+		if (models == null)
+			return ;
+		
+		Counselling.deleteByJson(models);
+		
+		renderJSON(models);
     }
 	
 	public static void updateCounsel(String models) throws ParseException{
 		if(models == null)
 			return;
-		String json = models.substring(1, models.length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		String userName = jo.getString("userName");
-		String driverName = jo.getString("driverName");
-		String startTime = jo.getString("startTime");
-		String endTime = jo.getString("endTime");
-		String remark = jo.getString("remark");
 		
-		User user = User.find("byName", userName).first();
-		Driver driver = Driver.find("byName", driverName).first();
+		User user = (User)renderArgs.get("user");
+		Counselling.updateByJson(models, user.name);
 		
-		Counselling oldCoun = Counselling.findById(id);
-		oldCoun.user = user;
-		oldCoun.driver = driver;
-		oldCoun.remark = remark;
-		
-		oldCoun.save();
+		renderJSON(models);
 	}
 	
 	public static void driverList(){
-		List<Driver> drivers = Driver.findAll();
-		
-		renderJSON(drivers);
+		renderJSON(Driver.findAll());
 	}
 	
 	public static void grid(String id) {
@@ -109,10 +81,8 @@ public class MyCounsellings extends Controller{
 		List<Driver> drList = Driver.findAll();
     	List<ComboVO> drivers = new ArrayList<ComboVO>();
     	if (drList != null)
-    		for (Driver dr : drList){
-    			drivers.add(new ComboVO(dr.name, dr.id));
-    		}
-		
+    		for (Driver dr : drList)
+    			drivers.add(new ComboVO(dr.name, dr.name));
 		
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -121,15 +91,12 @@ public class MyCounsellings extends Controller{
 		grid.updateUrl = preUrl + "updateCounsel";
 		grid.destroyUrl = preUrl + "deleteCounsel";
 		grid.readUrl = preUrl + "mycounsels";
-		grid.searchUrl = preUrl + "search";
+		grid.searchUrl = preUrl + "mysearch";
 		grid.editable = "popup";
-		grid.columnsJson = CommonUtil.getGson().toJson(
-				CommonUtil.assemColumns(CounselVO.class, "id", "userName"));
+		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(CounselVO.class, "id", "userName"));
 		map.put("grid", grid);
     	map.put("drivers", CommonUtil.getGson().toJson(drivers));
     	
-		renderHtml(TemplateLoader.load(
-				template(renderArgs.get(THEME) + "/MyCounsels/grid.html"))
-				.render(map));
+		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/MyCounsels/grid.html")).render(map));
 	}
 }

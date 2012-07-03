@@ -1,18 +1,23 @@
-<form action="/mycounsellings/mysearch" method="post" class="k-content" onsubmit="return counselSearchValidate(this)" style="padding:10px 0;">
+<form action="/mycounsellings/mysearch" method="post" class="k-content" onsubmit="return mycounselSearchValidate(this)" style="padding:10px 0;">
 	
-	<label for="${grid.tabId}_driverId">Driver Name:</label>
-	<input name="driverId" id="${grid.tabId}_driverId"/>
+	<label for="${grid.tabId}_driver_name">Driver Name:</label>
+	<input name="driverName" id="${grid.tabId}_driver_name"/>
 	
-	<label for="${grid.tabId}_date">Date:</label>
-	<input name="date" id="${grid.tabId}_date"/>
+	<div style="height:3px"></div>
 	
-	<div style="height:8px"></div>
+	<label for="${grid.tabId}_start_date">Start Date:</label>
+	<input name="startDate" id="${grid.tabId}_start_date"/>
 	
-	<label for="${grid.tabId}_start" >Start Time:</label>
-	<input name="start" id="${grid.tabId}_start"/>
+	<label for="${grid.tabId}_start_time">Start Time:</label>
+	<input name="startTime" id="${grid.tabId}_start_time"/>
 	
-	<label for="${grid.tabId}_end">End Time:</label>
-	<input name="end" id="${grid.tabId}_end"/>
+	<div style="height:3px"></div>
+	
+	<label for="${grid.tabId}_end_date">End Date:</label>
+	<input name="endDate" id="${grid.tabId}_end_date"/>
+	
+	<label for="${grid.tabId}_end_time" >End Time:</label>
+	<input name="endTime" id="${grid.tabId}_end_time"/>
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
@@ -20,55 +25,33 @@
 	
 </form>
 
-<div id="fm_error" style="display:none; text-align:center;"><p style="color:red; font-size:20px;">The date format must be "yyyy-MM-dd hh:mm:ss"</p></div>
 <div id="grid_${grid.tabId}"></div>
-
 <script>
-    $(document).ready(function () {
+    $(document).ready(function(){
     	
-    	loadCounsels("${grid.readUrl}");
-    	
-        $("#${grid.tabId}_driverId").kendoComboBox({
+        $("#${grid.tabId}_driver_name").kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: #{verbatim} ${drivers} #{/verbatim}
         });
         
-        $("#${grid.tabId}_date").kendoDatePicker({
+        $("#${grid.tabId}_start_date, #${grid.tabId}_end_date").kendoDatePicker({
         	format: "yyyy-MM-dd"		
         });
         
-        $("#${grid.tabId}_start").kendoTimePicker({
+        $("#${grid.tabId}_start_time, #${grid.tabId}_end_time").kendoTimePicker({
         	format: "HH:mm:ss"		
         });
         
-        $("#${grid.tabId}_end").kendoTimePicker({
-        	format: "HH:mm:ss"		
-        });
+    	loadMyCounsels("${grid.readUrl}");
     });
     
-    
-    function strDateTime(str){
-	    var reg = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/;
-	    var r = str.match(reg);
-	    if(r==null)return false;
-	    var d= new Date(r[1], r[3]-1,r[4],r[5],r[6],r[7]);
-	    var flag = d.getFullYear()==r[1]&&(d.getMonth()+1)==r[3]&&d.getDate()==r[4]&&d.getHours()==r[5]&&d.getMinutes()==r[6]&&d.getSeconds()==r[7];
-	    if(!flag){
-	    	return false;
-	    }else{
-	    	return true;
-	    } 
-    }
-    
-    
-    function loadCounsels(url, params){
-    	$("#grid_${grid.tabId}").empty();
+    function loadMyCounsels(url, params){
         var dataSource = new kendo.data.DataSource({
             transport: {
                 read:  {
                     url: url,
-                    dataType: "json"
+                    dataType: "json",
                 },
                 update: {
                     url: "${grid.updateUrl}",
@@ -82,94 +65,116 @@
                     url: "${grid.createUrl}",
                     dataType: "json"
                 },
-                search: {
-                    url: "${grid.searchUrl}",
-                    dataType: "json"
-                },
-                parameterMap: function(options, operation) {
+                parameterMap:function (options, operation) {
                     if (operation !== "read" && options.models) {
-                    	if(operation=="create"){
-                    		var preJsonStr = JSON.stringify(options.models);
-    						var jLen = preJsonStr.length;
-    						var jsonStr = preJsonStr.substring(1, jLen-1);
-    						var jsonData = jQuery.parseJSON(jsonStr);
-                    		var startTime = jsonData.startTime;
-                    		var endTime = jsonData.endTime;
-                    		var checkStartTime = strDateTime(startTime);
-                    		var checkEndTime = strDateTime(endTime);
-                    		if(!checkStartTime||!checkEndTime){
-                    			//loadCounsels("${grid.readUrl}");
-                    			$("div#fm_error").css("display","block");
-                    			return;
-                    		}else{
-                    			if($("div#fm_error").css("display")=="block")
-                    				$("div#fm_error").css("display","none");
-                    		}
-                    	}
-                    	if(operation=="update"){
-                    		var preJsonStr = JSON.stringify(options.models);
-    						var jLen = preJsonStr.length;
-    						var jsonStr = preJsonStr.substring(1, jLen-1);
-    						var jsonData = jQuery.parseJSON(jsonStr);
-                    		var startTime = jsonData.startTime;
-                    		var endTime = jsonData.endTime;
-                    		var checkStartTime = strDateTime(startTime);
-                    		var checkEndTime = strDateTime(endTime);
-                    		if(!checkStartTime||!checkEndTime){
-                    			//loadCounsels("${grid.readUrl}");
-                    			$("div#fm_error").css("display","block");
-                    			return "";
-                    		}else{
-                    			if($("div#fm_error").css("display")=="block")
-                    				$("div#fm_error").css("display","none");
-                    		}
-                    	}
+                    	var model = options.models[0];
+                    	
+                    	/**
+                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
+                    	 */
+                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
+                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
+                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
+                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
+                    	
                         return {models: kendo.stringify(options.models)};
                     }
+                    
                     return params;
                 }
             },
             batch: true,
             pageSize: 20,
             schema: {
+            	parse: function(data){
+            		$.each(data, function(i, val){
+            			val.startTime = new Date(val.startDate + " " + val.startTime);
+						val.startDate = new Date(val.startDate);
+						val.endTime = new Date(val.endDate + " " + val.endTime);
+						val.endDate = new Date(val.endDate);
+					});
+					
+            		return data;
+            	},
                 model: {
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        driverName: { validation: { required: true }, editable: true },
+                        driverName: { validation: { required: true } },
+                        startDate: { validation: {required:true}, type: "date"},
                         startTime: { validation: { required: true } },
+                        endDate: {validation: {required:true}, type: "date"},
                         endTime: { validation: { required: true } },
-                        remark: { validation: { required: false } },
+                        remark: { validation: { required: false } }
                     }
                 }
             }
         });
         
+		$("#grid_${grid.tabId}").empty();
+		
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Actions", width: "210px" };
-		columnsJson[0] = {title:"Driver", field:"driverName", editor: function (container, options) {
-			$('<input name="' + options.field + '"/>').appendTo(container).kendoComboBox({
-	            dataSource: #{verbatim} ${drivers} #{/verbatim},
-	            dataValueField: "driverName",
-	            dataTextField: "text",
-	            autobind: false
-	        });
-	    }};
+		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+        /**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+			
+			if ('driverName' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="driverName" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${drivers} #{/verbatim}
+				    });
+				};
+			}
+			
+			if ('startDate' === _field){
+				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
+			}
+			
+			if ('startTime' === _field){
+				columnsJson[i].template = '#= kendo.toString(startTime,"HH:mm:ss") #';
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="startTime" />').appendTo(container).kendoTimePicker({
+			        	format: "HH:mm:ss"
+				    });
+				};
+			}
+			
+			if ('endDate' === _field){
+				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
+			}
+			
+			if ('endTime' === _field){
+				columnsJson[i].template = '#= kendo.toString(endTime,"HH:mm:ss") #';
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="endTime" />').appendTo(container).kendoTimePicker({
+			        	format: "HH:mm:ss"
+				    });
+				};
+			}
+		});
+		
         $("#grid_${grid.tabId}").kendoGrid({
-            dataSource: dataSource,
-            pageable: true,
-            height: "auto",
-            toolbar: ["create"],
-            columns: columnsJson,
-            editable: "${grid.editable}"
+            dataSource:dataSource,
+            pageable:true,
+            scrollable:true,
+            sortable:true,
+            height:"auto",
+            toolbar:["create"],
+            columns:columnsJson,
+            editable:"${grid.editable}"
         });
     }
-   
-    function counselSearchValidate(form) {
+    
+    function mycounselSearchValidate(form) {
     	var $form = $(form);
-    	
-    	loadCounsels($form.attr("action"), $form.serializeArray());
+    	loadMyCounsels($form.attr("action"), $form.serializeArray());
     	
     	return false;
     }
+
 </script>
