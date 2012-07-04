@@ -1,0 +1,153 @@
+<style type="text/css" media="screen">
+	#${tabid}_toolbar{height:5% !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
+	#${tabid}_roles{float:left !important; width:19% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_users{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_perms{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_role_tree{padding:20px 10px;}
+	#${tabid}_user_tree{padding:20px 10px;}
+	#${tabid}_perm_tree{padding:20px 10px;}
+	label{width:auto;}	
+	input{width: auto;}
+</style>
+
+<div id="${tabid}_toolbar" class="k-content">
+	<form id="${tabid}_form" action="roles/assignUserAndPerm" method="post" onsubmit="return assign_role_submit(this);" accept-charset="utf-8">
+		<input type="hidden" name="roleName" />
+		
+		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
+		<div style="float:right;padding:8px 20px 0 0;">
+			<input type="submit" value="Submit" class="k-button"/>
+		</div>
+	</form>
+</div>
+
+<div id="${tabid}_roles" class="k-content">
+	<div id="${tabid}_role_tree" class="input_tree"></div>
+</div>
+
+<div id="${tabid}_perms" class="k-content">
+	<div id="${tabid}_perm_tree" class="input_tree"></div>
+</div>
+
+<div id="${tabid}_users" class="k-content">
+	<div id="${tabid}_user_tree" class="input_tree"></div>
+</div>
+    
+<script id="treeview-checkbox-template" type="text/kendo-ui-template">
+	<!-- # var name = "checkedFiles[" + item.id + "]"; # -->
+	# var name = item.id; #
+    <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
+    <!-- <input type="hidden" name="#= name #" value="true" /> -->
+    <input type="checkbox"  name="#= name #" value="true" />
+</script>
+<script type="text/javascript" charset="utf-8">
+	var roleTreeId = "#${tabid}_role_tree" ;
+	var userTreeId = "#${tabid}_user_tree" ;
+	var permTreeId = "#${tabid}_perm_tree" ;
+	var roleTreeView ;
+	var userTreeView ;
+	var permTreeView ;
+	
+	$(document).ready(function(){
+		roleTreeView = $(roleTreeId).kendoTreeView({
+			checkChildren:true,
+	        dataSource: #{verbatim} ${roles} #{/verbatim},
+	        select: onRoleSelect
+		}).data("kendoTreeView");
+		
+		userTreeView = $(userTreeId).kendoTreeView({
+			checkChildren:true,
+	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
+	        dataSource: #{verbatim} ${users} #{/verbatim},
+	        select: onUserSelect
+		}).data("kendoTreeView");
+		
+		permTreeView = $(permTreeId).kendoTreeView({
+			checkChildren:true,
+	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
+	        dataSource: #{verbatim} ${perms} #{/verbatim},
+	        select: onPermSelect
+		}).data("kendoTreeView");
+		
+		$(".input_tree input").click(tree_click);
+	});	
+	
+	function onRoleSelect(e){
+		var _roleName = roleTreeView.text(e.node);
+		$("#${tabid}_form").find('input[name="roleName"]').attr("value", _roleName);
+		
+		$.getJSON("/roles/users", {roleName:_roleName}, function(users){
+			$(userTreeId).find('input').attr("checked", false);
+			$.each(users, function(i, u){
+				var _i = $(userTreeId).find('input[name='+ u.id +']');
+				_i.attr("checked", true);
+			});
+		});
+		
+		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
+			$(permTreeId).find('input').attr("checked", false);
+			$.each(perms, function(i, p){
+				var _i = $(permTreeId).find('input[name='+ p.id +']');
+				_i.attr("checked", true);
+			});
+		});
+	}
+	
+	function onUserSelect(e){
+	}
+	
+	function onPermSelect(e){
+	}
+	
+	function assign_role_submit(form){
+		var $form = $(form);
+		
+		$("#${tabid}_form_input_wrap").empty();
+		
+		var users = getInputData(userTreeId);
+		if (!users || users.length == 0)
+			users = "0";
+		
+		var perms = getInputData(permTreeId);
+		if (!perms || perms.length == 0)
+			perms = "0";
+		
+		$.each(users.split(","), function(i, v){
+			$("#${tabid}_form_input_wrap").append('<input name="users" value='+ v +' />');
+		});
+		
+		$.each(perms.split(","), function(i, v){
+			$("#${tabid}_form_input_wrap").append('<input name="perms" value='+ v +' />');
+		});
+		
+		$.getJSON($form.attr("action"), $form.serializeArray(), function(json){
+			if (json.success){
+				alert("assign success !");
+			}else{
+				alert("assign fail !");
+			}
+		});
+		
+		return false;
+	}
+	
+	function getInputData(input_id) {
+		var serializedData = $(input_id+" input").serialize()
+            .replace(/%5B/g, "[")
+            .replace(/%5D/g, "]")
+            .replace(/&/g, ",")
+            .replace(/=true/g,"");
+            
+    	return serializedData;
+	}
+	
+	function tree_click(){
+		if($(this).attr("checked")=="checked"){
+	    	var li = $(this).parents('li:first'); 
+	    	li.find("input").attr("checked", true);
+	    }else{
+	        var li = $(this).parents('li:first'); 
+	        li.find("input").attr("checked", false);
+	    }
+	}
+</script>

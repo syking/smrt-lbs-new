@@ -1,0 +1,111 @@
+<form action="/permissions/search" method="post" class="k-content" onsubmit="return permissionSearchValidate(this)" style="padding:10px 0;">
+	
+	<label for="${grid.tabId}_name">Permission Name:</label>
+	<input name="permName" id="${grid.tabId}_name"/>
+	
+	<label for="${grid.tabId}_uri">Uri:</label>
+	<input name="uri" id="${grid.tabId}_uri" class="k-input k-textbox"/>
+	
+	<div style="height:3px"></div>
+	
+	<label for="${grid.tabId}_desc">Description:</label>
+	<input name="desc" id="${grid.tabId}_desc" class="k-input k-textbox"/>
+	
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
+	</div>
+	
+</form>
+
+<div id="grid_${grid.tabId}"></div>
+
+<script>
+    $(document).ready(function(){
+        $("#${grid.tabId}_name").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: #{verbatim} ${perms} #{/verbatim}
+        });
+        
+    	loadPerms("${grid.readUrl}");
+    });
+    
+    function loadPerms(url, params){
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  {
+                    url: url,
+                    dataType: "json",
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    dataType: "json"
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    dataType: "json"
+                },
+                parameterMap:function (options, operation) {
+                    if (operation !== "read" && options.models) {
+                    	var model = options.models[0];
+                    	
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    
+                    return params;
+                }
+            },
+            batch: true,
+            pageSize: 20,
+            schema: {
+            	parse: function(data){
+					
+            		return data;
+            	},
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        name: { validation: { required: true } },
+                        uri: { validation: { required: true } },
+                        desc: { validation: { required: true } }
+                    }
+                }
+            }
+        });
+        
+		$("#grid_${grid.tabId}").empty();
+		
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+        /**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+		});
+		
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource:dataSource,
+            pageable:true,
+            scrollable:true,
+            sortable:true,
+            height:"auto",
+            toolbar:["create"],
+            columns:columnsJson,
+            editable:"${grid.editable}"
+        });
+    }
+    
+    function permissionSearchValidate(form) {
+    	var $form = $(form);
+    	loadPerms($form.attr("action"), $form.serializeArray());
+    	
+    	return false;
+    }
+
+</script>

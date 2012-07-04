@@ -1,22 +1,22 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import net.sf.json.JSONObject;
+import javax.persistence.Transient;
 
 import play.db.jpa.Model;
 import utils.CommonUtil;
+import vo.TreeView;
 import vo.UserVO;
-import vo.VehicleVO;
 
 @Entity
 @Table(name = "t_user")
@@ -33,6 +33,9 @@ public class User extends Model {
 	@Column(name = "description")
 	public String desc;
 	
+	@Transient
+	public final static String iconUrl = "../../public/images/user.png";
+	
 	public User(){
 		super();
 	}
@@ -47,7 +50,7 @@ public class User extends Model {
 
 	@ManyToMany
 	@JoinTable(name="t_user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
-	public List<Role> roles = new ArrayList<Role>();
+	public Set<Role> roles = new HashSet<Role>();
 
 	public static interface Constant {
 		public final String LOGIN_USER_ATTR = "login_user";
@@ -137,5 +140,21 @@ public class User extends Model {
 		List<User> users = User.find(sb.toString(), params.toArray()).fetch() ;
 		
 		return users;
+	}
+	
+	public static List<TreeView> assemTreeView(){
+		List<TreeView> result = new ArrayList<TreeView>();
+		List<User> users = User.findAll();
+		if (users == null)
+			return result;
+		
+		for (User u : users){
+			TreeView tv = new TreeView(String.valueOf(u.id), u.name, User.iconUrl);
+			tv.expanded = null;
+			tv.items = null;
+			result.add(tv);
+		} 
+		
+		return result;
 	}
 }

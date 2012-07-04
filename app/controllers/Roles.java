@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
+import models.Permission;
 import models.Role;
+import models.User;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
@@ -68,6 +72,7 @@ public class Roles extends Controller{
 	public static void destroy(String models) {
 		if (models == null)
 			return ;
+		
 		Role.deleteByJson(models);
 		
 		renderJSON(models);
@@ -84,5 +89,35 @@ public class Roles extends Controller{
 		}
 		
 		renderJSON(result);
+	}
+	
+	public static void assign(String id){
+		Map map = new HashMap();
+		map.put("tabid", id);
+		Gson gson = new Gson();
+		map.put("roles", gson.toJson(Role.assemTreeView()));
+		map.put("users", gson.toJson(User.assemTreeView()));
+		map.put("perms", gson.toJson(Permission.assemTreeView()));
+		
+		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Roles/assign.html")).render(map));
+	}
+	
+	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms){
+		System.out.println(roleName+"|"+users+"|"+perms);
+		boolean flag = Role.assignUserAndPerm(roleName, users, perms);
+		Map map = new HashMap();
+		map.put("success", flag);
+		
+		renderJSON(map);
+	}
+	
+	public static void users(String roleName){
+		Role role = Role.findByName(roleName);
+		renderJSON(CommonUtil.getGson("roles", "password", "account", "desc", "iconUrl").toJson(role.users));
+	}
+	
+	public static void perms(String roleName){
+		Role role = Role.findByName(roleName);
+		renderJSON(CommonUtil.getGson("uri", "desc", "iconUrl").toJson(role.permissions));
 	}
 }

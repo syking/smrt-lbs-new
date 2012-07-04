@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.RoleVO;
+import vo.TreeView;
 
 /**
  * The Role to Visit System of role.
@@ -31,7 +35,14 @@ public class Role extends Model{
 
 	@ManyToMany
 	@JoinTable(name = "t_role_perm", joinColumns=@JoinColumn(name = "role_id"), inverseJoinColumns=@JoinColumn(name="perm_id"))
-	public List<Permission> permissions = new ArrayList<Permission>();
+	public Set<Permission> permissions = new HashSet<Permission>();
+	
+	@ManyToMany
+	@JoinTable(name = "t_user_role", joinColumns=@JoinColumn(name = "role_id"), inverseJoinColumns=@JoinColumn(name="user_id"))
+	public Set<User> users = new HashSet<User>();
+	
+	@Transient
+	public final static String iconUrl = "../../public/images/role.png";
 
 	@Override
 	public String toString() {
@@ -99,5 +110,60 @@ public class Role extends Model{
 		List<Role> roles = Role.find(sb.toString(), params.toArray()).fetch() ;
 		
 		return roles;
+	}
+	
+	public static List<TreeView> assemTreeView(){
+		List<TreeView> result = new ArrayList<TreeView>();
+		
+		List<Role> roles = Role.findAll();
+		if (roles == null)
+			return result;
+		
+		for (Role r : roles){
+			TreeView tv = new TreeView(String.valueOf(r.id), r.name, Role.iconUrl);
+			tv.expanded = null;
+			tv.items = null;
+			result.add(tv);
+		}
+		
+		return result;
+	}
+
+	public static Role findByName(String roleName) {
+		return Role.find("byName", roleName).first();
+	}
+
+	public static boolean assignUserAndPerm(String roleName, List<Long> users, List<Long> perms) {
+		Role role = Role.findByName(roleName);
+		if (role == null)
+			return false;
+		
+		if (users != null){
+			for (Long uid : users){
+				User u = User.findById(uid);
+				if (u == null)
+					continue;
+				
+				role.users.add(u);
+			}
+		}
+		
+		if (perms != null){
+			for (Long pid : perms){
+				Permission p = Permission.findById(pid);
+				if (p == null)
+					continue;
+				
+				role.permissions.add(p);
+			}
+		}
+		
+		if ((users != null && !users.isEmpty()) || (perms != null && !perms.isEmpty())){
+			role.save();
+			
+			return true;
+		}
+		
+		return false;
 	}
 }
