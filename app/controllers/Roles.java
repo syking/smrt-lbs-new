@@ -103,7 +103,6 @@ public class Roles extends Controller{
 	}
 	
 	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms){
-		System.out.println(roleName+"|"+users+"|"+perms);
 		boolean flag = Role.assignUserAndPerm(roleName, users, perms);
 		Map map = new HashMap();
 		map.put("success", flag);
@@ -119,5 +118,9 @@ public class Roles extends Controller{
 	public static void perms(String roleName){
 		Role role = Role.findByName(roleName);
 		renderJSON(CommonUtil.getGson("uri", "desc", "iconUrl").toJson(role.permissions));
+	}
+	
+	public static void filter(String roleName){
+		renderJSON(Role.assemTreeView(Role.findByCondition(roleName, null)));
 	}
 }

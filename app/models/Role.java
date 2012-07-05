@@ -113,9 +113,12 @@ public class Role extends Model{
 	}
 	
 	public static List<TreeView> assemTreeView(){
-		List<TreeView> result = new ArrayList<TreeView>();
-		
 		List<Role> roles = Role.findAll();
+		return assemTreeView(roles);
+	}
+	
+	public static List<TreeView> assemTreeView(List<Role> roles){
+		List<TreeView> result = new ArrayList<TreeView>();
 		if (roles == null)
 			return result;
 		
@@ -128,7 +131,7 @@ public class Role extends Model{
 		
 		return result;
 	}
-
+	
 	public static Role findByName(String roleName) {
 		return Role.find("byName", roleName).first();
 	}

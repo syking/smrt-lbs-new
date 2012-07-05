@@ -3,36 +3,49 @@
 	#${tabid}_roles{float:left !important; width:19% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
 	#${tabid}_users{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
 	#${tabid}_perms{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_role_tree{padding:20px 10px;}
-	#${tabid}_user_tree{padding:20px 10px;}
-	#${tabid}_perm_tree{padding:20px 10px;}
+	#${tabid}_role_tree{padding:5px 10px; height:79%;}
+	#${tabid}_role_filter{padding:15px; padding-bottom:13px; background:#f5f5f5;}
+	#${tabid}_role_form{margin:10px auto; width:auto;}
+	#${tabid}_role_form input{width:auto !important;}
+	#${tabid}_user_tree{padding:5px 10px;}
+	#${tabid}_perm_tree{padding:5px 10px;}
 	label{width:auto;}	
 	input{width: auto;}
+	h1{margin:15px; padding:5px; background:#f5f5f5;}
 </style>
 
 <div id="${tabid}_toolbar" class="k-content">
 	<form id="${tabid}_form" action="roles/assignUserAndPerm" method="post" onsubmit="return assign_role_submit(this);" accept-charset="utf-8">
 		<input type="hidden" name="roleName" />
-		
 		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
 		<div style="float:right;padding:8px 20px 0 0;">
-			<input type="submit" value="Submit" class="k-button"/>
+			<input type="submit" value="Assign" class="k-button"/>
 		</div>
 	</form>
 </div>
 
 <div id="${tabid}_roles" class="k-content">
+	<h1>Roles</h1>
 	<div id="${tabid}_role_tree" class="input_tree"></div>
-</div>
-
-<div id="${tabid}_perms" class="k-content">
-	<div id="${tabid}_perm_tree" class="input_tree"></div>
+	<div id="${tabid}_role_filter">
+		<h2>Filter</h2>
+		<form id="${tabid}_role_form" method="post" action="roles/filter" onsubmit="return filter_role_submit(this);">
+			<input name="roleName" class="k-input k-textbox" style="width:55% !important;" />
+			<input type="submit" class="k-button" value="Search" style="width:40% !important;" />
+		</form>
+	</div>
 </div>
 
 <div id="${tabid}_users" class="k-content">
+	<h1>Users</h1>
 	<div id="${tabid}_user_tree" class="input_tree"></div>
 </div>
-    
+
+<div id="${tabid}_perms" class="k-content">
+	<h1>Permissions</h1>
+	<div id="${tabid}_perm_tree" class="input_tree"></div>
+</div>
+
 <script id="treeview-checkbox-template" type="text/kendo-ui-template">
 	<!-- # var name = "checkedFiles[" + item.id + "]"; # -->
 	# var name = item.id; #
@@ -49,9 +62,10 @@
 	var permTreeView ;
 	
 	$(document).ready(function(){
+		var rolesJson = #{verbatim} ${roles} #{/verbatim};
 		roleTreeView = $(roleTreeId).kendoTreeView({
 			checkChildren:true,
-	        dataSource: #{verbatim} ${roles} #{/verbatim},
+	        dataSource: rolesJson,
 	        select: onRoleSelect
 		}).data("kendoTreeView");
 		
@@ -126,6 +140,19 @@
 			}else{
 				alert("assign fail !");
 			}
+		});
+		
+		return false;
+	}
+	
+	function filter_role_submit(form){
+		var $form = $(form);
+		var _roleName = $form.find("input[name='roleName']").val();
+		$.getJSON($form.attr("action"), $form.serializeArray(), function(roles){
+			if (roles && roles.length > 0) {
+				roleTreeView.remove(".k-item");
+				roleTreeView.append(roles);
+			};
 		});
 		
 		return false;
