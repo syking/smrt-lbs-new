@@ -95,7 +95,6 @@ public class Fleet extends Model{
 				ft.items.addAll(assemFleetTree(fl.children, isRecursive));
 			}else{
 				ft.items = null;
-				ft.expanded = null;
 			}
 			
 			result.add(ft);

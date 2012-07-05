@@ -124,7 +124,6 @@ public class Role extends Model{
 		
 		for (Role r : roles){
 			TreeView tv = new TreeView(String.valueOf(r.id), r.name, Role.iconUrl);
-			tv.expanded = null;
 			tv.items = null;
 			result.add(tv);
 		}
@@ -139,7 +138,10 @@ public class Role extends Model{
 	public static boolean assignUserAndPerm(String roleName, List<Long> users, List<Long> perms) {
 		Role role = Role.findByName(roleName);
 		if (role == null)
-			return false;
+			throw new RuntimeException("Role required !");
+		
+		role.users = new HashSet<User>();
+		role.permissions = new HashSet<Permission>();
 		
 		if (users != null){
 			for (Long uid : users){
@@ -161,7 +163,7 @@ public class Role extends Model{
 			}
 		}
 		
-		if ((users != null && !users.isEmpty()) || (perms != null && !perms.isEmpty())){
+		if (users != null || perms != null){
 			role.save();
 			
 			return true;

@@ -103,9 +103,14 @@ public class Roles extends Controller{
 	}
 	
 	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms){
-		boolean flag = Role.assignUserAndPerm(roleName, users, perms);
 		Map map = new HashMap();
-		map.put("success", flag);
+		try{
+			boolean flag = Role.assignUserAndPerm(roleName, users, perms);
+			map.put("success", flag);
+		}catch(Exception e){
+			map.put("success", false);
+			map.put("msg", e.getMessage());
+		}
 		
 		renderJSON(map);
 	}

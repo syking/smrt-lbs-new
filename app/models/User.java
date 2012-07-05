@@ -147,13 +147,15 @@ public class User extends Model {
 		List<User> users = User.findAll();
 		if (users == null)
 			return result;
-		
+		TreeView root = new TreeView("", "All Users", User.iconUrl);
 		for (User u : users){
 			TreeView tv = new TreeView(String.valueOf(u.id), u.name, User.iconUrl);
-			tv.expanded = null;
 			tv.items = null;
-			result.add(tv);
+			root.items.add(tv);
 		} 
+		
+		root.expanded = true;
+		result.add(root);
 		
 		return result;
 	}

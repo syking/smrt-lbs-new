@@ -1,20 +1,20 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.google.gson.JsonElement;
-
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.PermVO;
 import vo.TreeView;
-import vo.PermVO;
 
 /**
  * Permission of Role.
@@ -125,14 +125,38 @@ public class Permission extends Model{
 		if (perms == null)
 			return result;
 		
+		TreeView root = new TreeView("0", "All Permissions", Permission.iconUrl);
+		
+		final Map<String, TreeView> modules = new HashMap<String, TreeView>();
 		for (Permission p : perms){
-			TreeView tv = new TreeView(String.valueOf(p.id), p.name, Permission.iconUrl);
-			tv.expanded = null;
+			if (!p.name.contains("."))
+				continue;
+			
+			String[] names = p.name.split("\\.");
+			final String moduleName = names[0];
+			final String name = names[1];
+			TreeView module = modules.get(moduleName);
+			if (module == null){
+				module = new TreeView("", moduleName, Permission.iconUrl);
+				modules.put(moduleName, module);
+			}
+			
+			TreeView tv = new TreeView(String.valueOf(p.id), name, Permission.iconUrl);
 			tv.items = null;
-			result.add(tv);
+			
+			module.expanded = true;
+			module.items.add(tv);
 		} 
 		
+		root.expanded = true;
+		root.items.addAll(modules.values());
+		result.add(root);
+		
 		return result;
+	}
+	
+	public static void main(String[] args){
+		System.out.println(Arrays.asList("user.name".split("\\.")));
 	}
 	
 }

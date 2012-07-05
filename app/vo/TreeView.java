@@ -7,7 +7,7 @@ public class TreeView {
 
 	public String id;
 	public String text;
-	public String expanded;
+	public boolean expanded = false;
 	public String imageUrl;
 	public Set<TreeView> items = new HashSet<TreeView>(); 
 

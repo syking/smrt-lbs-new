@@ -137,6 +137,8 @@
 		$.getJSON($form.attr("action"), $form.serializeArray(), function(json){
 			if (json.success){
 				alert("assign success !");
+			}else if (json.msg){
+				alert(json.msg);
 			}else{
 				alert("assign fail !");
 			}
