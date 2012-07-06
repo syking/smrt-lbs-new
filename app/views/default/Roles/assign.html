@@ -12,6 +12,8 @@
 	#${tabid}_perm_tree{padding:5px 10px;}
 	#${tabid}_perm_tree input{width:auto;}
 	h1{margin:15px; padding:5px; background:#f5f5f5;}
+	.search-button{background: url(/public/images/go_search.png) no-repeat 50% 50%;}
+	.save-button{background: url(/public/images/ok.png) no-repeat 50% 50%;}
 </style>
 
 <div id="${tabid}_toolbar" class="k-content">
@@ -19,7 +21,7 @@
 		<input type="hidden" name="roleName" />
 		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
 		<div style="float:right;padding:8px 20px 0 0;">
-			<input type="submit" value="Assign" style="width:auto;" class="k-button"/>
+			<input type="submit" value="" style="width:50px;" class="k-button save-button"/>
 		</div>
 	</form>
 </div>
@@ -30,8 +32,8 @@
 	<div id="${tabid}_role_filter">
 		<h2>Filter</h2>
 		<form id="${tabid}_role_form" method="post" action="roles/filter" onsubmit="return filter_role_submit(this);">
-			<input name="roleName" class="k-input k-textbox" style="width:55% !important;" />
-			<input type="submit" class="k-button" value="Search" style="width:40% !important;" />
+			<input name="roleName" class="k-input k-textbox" style="width:70% !important;" />
+			<input type="submit" class="k-button search-button" value="" style="width:25% !important;" />
 		</form>
 	</div>
 </div>

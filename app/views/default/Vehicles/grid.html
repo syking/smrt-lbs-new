@@ -1,3 +1,7 @@
+<style>
+	.search-button{background: url(/public/images/go_search.png) no-repeat 50% 50%;}
+	.save-button{background: url(/public/images/ok.png) no-repeat 50% 50%;}
+</style>
 <form action="/vehicles/search" method="post" class="k-content" style="padding:10px 0;" onsubmit="return vehicleSearchValidate(this)">
 
     <label for="${grid.tabId}_number">Number:</label>
@@ -24,7 +28,7 @@
     <input name="deviceName" id="${grid.tabId}_device_id" />
 
     <div style="float:right; padding-right:20px;">
-        <input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto" value="Search"/>
+        <input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px" value=""/>
     </div>
 
 </form>

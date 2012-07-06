@@ -1,3 +1,8 @@
+<style>
+	.search-button{background: url(/public/images/go_search.png) no-repeat 50% 50%;}
+	.save-button{background: url(/public/images/ok.png) no-repeat 50% 50%;}
+</style>
+
 <form action="/roles/search" method="post" class="k-content" onsubmit="return roleSearchValidate(this)" style="padding:10px 0;">
 	
 	<label for="${grid.tabId}_name">Role Name:</label>
@@ -7,7 +12,7 @@
 	<input name="desc" id="${grid.tabId}_desc" class="k-input k-textbox"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${grid.tabId}_search-button" class="k-button" style="width:auto;" value="Search" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
 	</div>
 	
 </form>
