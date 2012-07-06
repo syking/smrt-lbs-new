@@ -113,6 +113,9 @@ input {
 	background:#F3F3F3 !important;
 }
 
+.search-button{background: url(/public/images/go_search.png) no-repeat 50% 50% !important;}
+.save-button{background: url(/public/images/ok.png) no-repeat 50% 50% !important;}
+
 .label1 {
     font-family: verdana;
     font-size: 12px;
