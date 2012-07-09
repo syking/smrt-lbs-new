@@ -165,8 +165,8 @@ public class Vehicle extends Model {
 			}
 
 			vGps.currentSpeed = gps.speed;
-			vGps.xCoord = gps.longitude;
-			vGps.yCoord = gps.latitude;
+			vGps.xCoord = Double.parseDouble(gps.longitude);
+			vGps.yCoord = Double.parseDouble(gps.latitude);
 			vGps.vehicleType = v.type;
 			vGps.activeStatus = "on";
 			vGps.direction = Vehicle.DIRECTIONS[gps.direction];

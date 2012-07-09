@@ -58,8 +58,8 @@ public class GPS extends Job {
         	gps.device = Device.findById(v.device.id);
         	gps.direction = dire.get(c.direction);
         	gps.fixed = true;
-        	gps.longitude = String.valueOf(c.xCoord - 6000);
-        	gps.latitude = String.valueOf(c.yCoord - 6000);
+        	gps.longitude = String.valueOf(c.xCoord);
+        	gps.latitude = String.valueOf(c.yCoord);
         	gps.speed = c.currentSpeed;
         	
         	gps.save();

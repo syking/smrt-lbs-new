@@ -15,8 +15,8 @@ public class VehicleGPS {
     public String serviceNumber;
     public String driver;
     public int currentSpeed;
-    public String xCoord;
-    public String yCoord;
+    public Double xCoord;
+    public Double yCoord;
     public String vehicleType;
     public String activeStatus;
     public String direction;

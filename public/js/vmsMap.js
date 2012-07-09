@@ -106,7 +106,9 @@
         var locationGraphics = [];
     	for(var i = 0; i < locations.length; i++){
             var loc = locations[i];
-            var gm = new esri.geometry.Point(loc.xCoord-6000, loc.yCoord-6000, new esri.SpatialReference({ wkid: 3414 }));
+            //loc.xCoord = parseFloat(loc.xCoord);
+            //loc.yCoord = parseFloat(loc.yCoord);
+            var gm = new esri.geometry.Point(loc.xCoord, loc.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var attr;
             var it;
             
@@ -120,8 +122,8 @@
 			
         	attr = {
         			id:loc.id,
-        			xCoord:loc.xCoord-6000,
-        			yCoord:loc.yCoord-6000,
+        			xCoord:loc.xCoord,
+        			yCoord:loc.yCoord,
         			activeStatus:loc.activeStatus,
         			vehicleType:loc.vehicleType,
         			busPlateNumber:loc.busPlateNumber
@@ -308,7 +310,9 @@
         //[{"id":1,"busPlateNumber":"SMB77P","driver":"Jack","currentSpeed":3,"xCoord":"34765.206346922685","yCoord":"36102.84347778058","vehicleType":"bus","activeStatus":"on","direction":"down"},
         for(var i=0; i<buses.length; i++){
             var bus = buses[i];
-            var gm = new esri.geometry.Point(bus.xCoord-6000, bus.yCoord-6000, new esri.SpatialReference({ wkid: 3414 }));
+            //bus.xCoord = parseFloat(bus.xCoord);
+            //bus.yCoord = parseFloat(bus.yCoord);
+            var gm = new esri.geometry.Point(bus.xCoord, bus.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var sbl = new esri.symbol.TextSymbol("");
              var attr;
              var it;
@@ -321,8 +325,8 @@
 				}
             	attr = {
             			id:bus.id,
-            			xCoord:bus.xCoord-6000,
-            			yCoord:bus.yCoord-6000,
+            			xCoord:bus.xCoord,
+            			yCoord:bus.yCoord,
             			busPlateNumber:bus.busPlateNumber,
             			driver:bus.driver,
             			serviceNumber:bus.serviceNumber,
@@ -336,8 +340,8 @@
             }else{
             	attr = {
             	id:bus.id,
-                xCoord:bus.xCoord-6000,
-                yCoord:bus.yCoord-6000,
+                xCoord:bus.xCoord,
+                yCoord:bus.yCoord,
                 name:bus.name,
                 techName:bus.techName,
                 currentSpeed:bus.currentSpeed,
