@@ -3,6 +3,7 @@
     dojo.require("dijit.layout.ContentPane");
     dojo.require("esri.map");
     dojo.require("esri.tasks.route");
+	var map;
     var currentBuses;
     var currentLocations;
     var refreshInterval;
@@ -11,6 +12,9 @@
     var bindMapinitDataTimeout;
     var autoShowInfoWindowTimeout;
     var autoShowInfoWindowCount = 0;
+    
+	
+    // 30038.224073575475, 32851.37626763501
 	
     esriConfig.defaults.map.slider = { left: "15px", top: "10px", width: null, height: "200px" };
 
@@ -56,7 +60,50 @@
                     "jpg";
         }
     });
+    
+    
+    // 个人测试类
+    function addGraphic() 
+    {
+    	// 20330.697191855073, 28666.438497759475
+    	 var s = [];
+    	
+    	 for(var i = 0; i<5; i++)
+    	{
+    		 var x = 20330.697191855073 + Math.random() * 500;
+    		 var y = 28666.438497759475 + Math.random() * 500;
+			
+	        var symbol = new esri.symbol.PictureMarkerSymbol('http://www.baidu.com/img/baidu_sylogo1.gif', 42, 42);
+	
+	        var geometry = new esri.geometry.Point(x, y, new esri.SpatialReference({ wkid: 3414 }));
+		      var attr = {
+		  			id: 'ids'+i,
+					xCoord:x,
+					yCoord:y,
+					activeStatus:'on',
+					vehicleType:'baidu',
+					busPlateNumber:'ids_01'+i
+		    };
+	        graphic = new esri.Graphic(geometry, symbol ,attr);
+	       
+	        s.push(graphic);
+    	}
+    	var layer = new esri.ux.layers.ClusterLayer({
+            displayOnPan: false,
+            map: map,
+            features: s,
+            infoWindow:
+            {
+            	template : new esri.InfoTemplate("Location Information","Status: <br/>")
+            	},
+            flareLimit: 15,
+            flareDistanceFromCenter: 21
+        });
 
+        map.locationLayer = layer;
+        map.addLayer(layer);
+    }
+    
     function closeInfoWindow(evt){
         map.infoWindow.hide();
         //showCoordinates(evt);
@@ -100,16 +147,37 @@
         map.showTextTooltip = true;
         
         loadLocationGPS();
+        addGraphic();
     }
     
     function generateLocations(locations, depotSbl, busStopSbl){
-        var locationGraphics = [];
+    	var locationGraphics = [];
     	for(var i = 0; i < locations.length; i++){
+			
+			 var loc = locations[i];
+			 
+	        var geometry = new esri.geometry.Point(loc.xCoord-6000, loc.yCoord-4000, new esri.SpatialReference({ wkid: 3414 }));
+		      var attr = {
+		  			id: loc.id,
+					xCoord:loc.xCoord - 6000,
+					yCoord:loc.yCoord - 4000,
+					activeStatus:'on',
+					vehicleType:loc.vehicleType,
+					busPlateNumber:loc.busPlateNumber
+		    };
+	        graphic = new esri.Graphic(geometry,  new esri.symbol.PictureMarkerSymbol('http://www.baidu.com/img/baidu_sylogo1.gif', 42, 42) ,attr);
+	       
+	      //  locationGraphics.push(graphic);
+			
+			
+			/*
             var loc = locations[i];
-            var gm = new esri.geometry.Point(loc.xCoord-6000, loc.yCoord-6000, new esri.SpatialReference({ wkid: 3414 }));
+			
+            var gm = new esri.geometry.Point(loc.xCoord, loc.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var attr;
             var it;
             
+			
         	if($("#ShowBusStop").attr("checked") != "checked" && bus.vehicleType == "bus-stop"){
 				loc.activeStatus = "off";
 			}
@@ -117,11 +185,11 @@
 			if($("#ShowDepot").attr("checked") != "checked" && bus.vehicleType == "depot"){
 				loc.activeStatus = "off";
 			}
-			
+			//alert(loc.vehicleType);
         	attr = {
         			id:loc.id,
-        			xCoord:loc.xCoord-6000,
-        			yCoord:loc.yCoord-6000,
+        			xCoord:loc.xCoord,
+        			yCoord:loc.yCoord,
         			activeStatus:loc.activeStatus,
         			vehicleType:loc.vehicleType,
         			busPlateNumber:loc.busPlateNumber
@@ -130,16 +198,23 @@
             it = new esri.InfoTemplate("Location Information","Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>type: ${vehicleType}<br/>name: ${busPlateNumber}<br/>")
 
             
-           // alert(JSON.stringify(attr));
+          //  alert(JSON.stringify(attr.vehicleType));
             var graphic ;
-            
+            /*
             if (loc.vehicleType = 'depot'){
             	graphic = new esri.Graphic(gm, depotSbl, attr, it);
             	 attr.iconType = 'depot';
+            }else if(loc.vehicleType = 'busStop'){
+            	graphic = new esri.Graphic(gm, depotSbl, attr, it);
+           	 attr.iconType = 'depot';
             }else{
-            	graphic = new esri.Graphic(gm, busStopSbl, attr, it);
-            	 attr.iconType = 'busStop';
-            }
+            	
+            	graphic = new esri.Graphic(gm, depotSbl, attr, it);
+           	 attr.iconType = 'depot';
+            }*/
+			/*
+            graphic = new esri.Graphic(gm, new esri.symbol.PictureMarkerSymbol('/public/images/bus-32.png', 32, 32), attr, it);
+          	// attr.iconType = 'bus';
             
 
             if(loc.activeStatus == 'on'){
@@ -147,7 +222,7 @@
             }else{
             	graphic.visible = false;
             }
-
+			*/
             locationGraphics.push(graphic);
         }
     	
@@ -155,8 +230,9 @@
     }
     
     function loadLocationGPS(){
+    	//return;
     	var url = "locations/gps";
-    	
+
     	var depotIcon = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
     	var busStopIcon = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
     	
@@ -164,6 +240,52 @@
     		//alert(JSON.stringify(json));
     		currentLocations = json;
     		var locations = generateLocations(json, depotIcon, busStopIcon);
+			
+			
+			
+			//alert(JSON.stringify(locations[0]))
+			 var s = [];
+			 
+    	
+    	 for(var i = 0; i<20; i++)
+    	{
+    		 var x = 20330.697191855073 + Math.random() * 20000;
+    		 var y = 28666.438497759475 + Math.random() * 20000;
+			
+	        var symbol = new esri.symbol.PictureMarkerSymbol('http://www.baidu.com/img/baidu_sylogo1.gif', 42, 42);
+	
+	        var geometry = new esri.geometry.Point(x, y, new esri.SpatialReference({ wkid: 3414 }));
+		      var attr = {
+		  			id: 'ids'+i,
+					xCoord:x,
+					yCoord:y,
+					activeStatus:'on',
+					vehicleType:'baidu',
+					busPlateNumber:'ids_01'+i
+		    };
+	        graphic = new esri.Graphic(geometry, symbol ,attr);
+	       
+	       s.push(graphic);
+    	}
+		//alert(JSON.stringify(s[0]))
+		//return;
+    	var layer = new esri.ux.layers.ClusterLayer({
+            displayOnPan: false,
+            map: map,
+            features: locations,
+            infoWindow:
+            {
+            	template : new esri.InfoTemplate("Location Information","Status: <br/>")
+            	},
+            flareLimit: 15,
+            flareDistanceFromCenter: 21
+        });
+
+        map.locationLayer = layer;
+        map.addLayer(layer);
+		
+		
+			/*
     		var layer = new esri.ux.layers.ClusterLayer({
                 displayOnPan: false,
                 map: map,
@@ -176,7 +298,7 @@
             });
 
             map.locationLayer = layer;
-            map.addLayer(layer);
+            map.addLayer(layer);*/
     	});
     }
     
@@ -246,6 +368,7 @@
     }
 
     function addMarker(url){
+    	//return;
         clearTimeout(refreshInterval);
         if($("#textBox").val()){
         	refreshIntervalCount = $("#textBox").val() * 1000;
@@ -295,21 +418,31 @@
             });
             
             //dojo.connect(map, "onMouseDrag", showCoordinates);
+			 dojo.connect(map, "onMouseDrag", showCoordinates);
+            dojo.connect(map, "onClick", closeInfoWindow);
+			
             dojo.connect(map, "onClick", closeInfoWindow);
         }
 
     }
 
+    
+    /**
+     * 
+     * @param buses
+     */
     function generateGraphics(buses){
         var gras = {};
         var vehicleGras = [];
         var tooltipGras = [];
-        //alert(JSON.stringify(buses));
+       // alert(JSON.stringify(buses));
         //[{"id":1,"busPlateNumber":"SMB77P","driver":"Jack","currentSpeed":3,"xCoord":"34765.206346922685","yCoord":"36102.84347778058","vehicleType":"bus","activeStatus":"on","direction":"down"},
         for(var i=0; i<buses.length; i++){
+   
             var bus = buses[i];
-            var gm = new esri.geometry.Point(bus.xCoord-6000, bus.yCoord-6000, new esri.SpatialReference({ wkid: 3414 }));
-            var sbl = new esri.symbol.TextSymbol("");
+            var gm = new esri.geometry.Point(bus.xCoord-6000, bus.yCoord-8000, new esri.SpatialReference({ wkid: 3414 }));
+            var sbl = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
+			
              var attr;
              var it;
             if(bus.busPlateNumber){
@@ -319,13 +452,14 @@
 				if($("#ShowCar").attr("checked") != "checked" && bus.vehicleType == "car"){
 					bus.activeStatus = "off";
 				}
+				//alert(JSON.stringify(bus));
             	attr = {
-            			id:bus.id,
+            			id: bus.id,
             			xCoord:bus.xCoord-6000,
-            			yCoord:bus.yCoord-6000,
-            			busPlateNumber:bus.busPlateNumber,
+            			yCoord:bus.yCoord-8000,
+            			busPlateNumber: bus.busPlateNumber,
             			driver:bus.driver,
-            			serviceNumber:bus.serviceNumber,
+            			serviceNumber: bus.serviceNumber,
             			currentSpeed:bus.currentSpeed,
             			activeStatus:bus.activeStatus,
             			vehicleType:bus.vehicleType
@@ -336,8 +470,8 @@
             }else{
             	attr = {
             	id:bus.id,
-                xCoord:bus.xCoord-6000,
-                yCoord:bus.yCoord-6000,
+                xCoord:bus.xCoord,
+                yCoord:bus.yCoord,
                 name:bus.name,
                 techName:bus.techName,
                 currentSpeed:bus.currentSpeed,
@@ -348,7 +482,7 @@
 
             }
             //alert(JSON.stringify(attr));
-            attr.iconType = 'vehicle';
+           attr.iconType = 'vehicle';
             var gra = new esri.Graphic(gm, sbl, attr, it);
 
             if(bus.activeStatus == 'on'){
@@ -381,6 +515,7 @@
         });
 
     }
+	
     function hideAllIcon(){
         $.each(map.clusterLayer.graphics, function(index, g){
             g.hide();
