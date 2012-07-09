@@ -1,0 +1,147 @@
+<style type="text/css" media="screen">
+	#${tabid}_toolbar{height:5% !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
+	#${tabid}_departments{float:left !important; width:24% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_drivers{float:right !important; width:75% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_department_tree{padding:5px 10px; height:79%;}
+	#${tabid}_department_filter{padding:15px; padding-bottom:13px; background:#f5f5f5;}
+	#${tabid}_department_form{margin:10px auto; width:auto;}
+	#${tabid}_department_form input{width:auto !important;}
+	#${tabid}_driver_tree{padding:5px 0 0 15px;}
+	#${tabid}_driver_tree input{width:auto;}
+	h1{margin:15px; padding:5px; background:#f5f5f5;}
+</style>
+
+<div id="${tabid}_toolbar" class="k-content">
+	<form id="${tabid}_form" action="departments/assignDriver" method="post" onsubmit="return assign_department_submit(this);" accept-charset="utf-8">
+		<input type="hidden" name="departmentName" />
+		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
+		<div style="float:right;padding:8px 20px 0 0;">
+			<input type="submit" value="" style="width:50px;" class="k-button save-button"/>
+		</div>
+	</form>
+</div>
+
+<div id="${tabid}_departments" class="k-content">
+	<h1>Departments</h1>
+	<div id="${tabid}_department_tree" class="input_tree"></div>
+	<div id="${tabid}_department_filter">
+		<h2>Filter</h2>
+		<form id="${tabid}_department_form" method="post" action="departments/filter" onsubmit="return filter_department_submit(this);">
+			<input name="departmentName" class="k-input k-textbox" style="width:70% !important;" />
+			<input type="submit" class="k-button search-button" value="" style="width:25% !important;" />
+		</form>
+	</div>
+</div>
+
+<div id="${tabid}_drivers" class="k-content">
+	<h1>Drivers</h1>
+	<div id="${tabid}_driver_tree" class="input_tree"></div>
+</div>
+
+<script id="treeview-checkbox-template" type="text/kendo-ui-template">
+	<!-- # var name = "checkedFiles[" + item.id + "]"; # -->
+	# var name = item.id; #
+    <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
+    <!-- <input type="hidden" name="#= name #" value="true" /> -->
+    <input type="checkbox"  name="#= name #" value="true" />
+</script>
+<script type="text/javascript" charset="utf-8">
+	var departmentTreeId = "#${tabid}_department_tree" ;
+	var driverTreeId = "#${tabid}_driver_tree" ;
+	var departmentTreeView ;
+	var driverTreeView ;
+	
+	$(document).ready(function(){
+		var departmentsJson = #{verbatim} ${departments} #{/verbatim};
+		departmentTreeView = $(departmentTreeId).kendoTreeView({
+			checkChildren:true,
+	        dataSource: departmentsJson,
+	        select: onDepartmentSelect
+		}).data("kendoTreeView");
+		
+		driverTreeView = $(driverTreeId).kendoTreeView({
+			checkChildren:true,
+	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
+	        dataSource: #{verbatim} ${drivers} #{/verbatim},
+	        select: onDriverSelect
+		}).data("kendoTreeView");
+		
+		$(".input_tree input").click(tree_click);
+	});	
+	
+	function onDepartmentSelect(e){
+		var _departmentName = departmentTreeView.text(e.node);
+		$("#${tabid}_form").find('input[name="departmentName"]').attr("value", _departmentName);
+		
+		$.getJSON("/departments/drivers", {departmentName:_departmentName}, function(drivers){
+			$(driverTreeId).find('input').attr("checked", false);
+			$.each(drivers, function(i, u){
+				var _i = $(driverTreeId).find('input[name='+ u.id +']');
+				_i.attr("checked", true);
+			});
+		});
+		
+	}
+	
+	function onDriverSelect(e){
+	}
+	
+	function assign_department_submit(form){
+		var $form = $(form);
+		
+		$("#${tabid}_form_input_wrap").empty();
+		
+		var drivers = getInputData(driverTreeId);
+		if (!drivers || drivers.length == 0)
+			drivers = "0";
+		
+		$.each(drivers.split(","), function(i, v){
+			$("#${tabid}_form_input_wrap").append('<input name="drivers" value='+ v +' />');
+		});
+		
+		$.getJSON($form.attr("action"), $form.serializeArray(), function(json){
+			if (json.success){
+				alert("assign success !");
+			}else if (json.msg){
+				alert(json.msg);
+			}else{
+				alert("assign fail !");
+			}
+		});
+		
+		return false;
+	}
+	
+	function filter_department_submit(form){
+		var $form = $(form);
+		var _departmentName = $form.find("input[name='departmentName']").val();
+		$.getJSON($form.attr("action"), $form.serializeArray(), function(departments){
+			if (departments && departments.length > 0) {
+				departmentTreeView.remove(".k-item");
+				departmentTreeView.append(departments);
+			};
+		});
+		
+		return false;
+	}
+	
+	function getInputData(input_id) {
+		var serializedData = $(input_id+" input").serialize()
+            .replace(/%5B/g, "[")
+            .replace(/%5D/g, "]")
+            .replace(/&/g, ",")
+            .replace(/=true/g,"");
+            
+    	return serializedData;
+	}
+	
+	function tree_click(){
+		if($(this).attr("checked")=="checked"){
+	    	var li = $(this).parents('li:first'); 
+	    	li.find("input").attr("checked", true);
+	    }else{
+	        var li = $(this).parents('li:first'); 
+	        li.find("input").attr("checked", false);
+	    }
+	}
+</script>

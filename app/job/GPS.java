@@ -45,7 +45,7 @@ public class GPS extends Job {
             newCurrentData = generateCurrentBusData(count);
         
         long allCount = GPSData.count();
-        if (allCount >= 400)
+        if (allCount >= 800)
         	GPSData.deleteAll();
         
         for (CurrentBusData c : newCurrentData){
@@ -58,8 +58,8 @@ public class GPS extends Job {
         	gps.device = Device.findById(v.device.id);
         	gps.direction = dire.get(c.direction);
         	gps.fixed = true;
-        	gps.longitude = String.valueOf(c.xCoord);
-        	gps.latitude = String.valueOf(c.yCoord);
+        	gps.longitude = String.valueOf(c.xCoord - 6000);
+        	gps.latitude = String.valueOf(c.yCoord - 6000);
         	gps.speed = c.currentSpeed;
         	
         	gps.save();

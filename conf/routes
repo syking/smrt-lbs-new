@@ -13,3 +13,14 @@ GET     /public/                                staticDir:public
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
+
+# RESTful api
+
+# Users API
+GET		/api/users									api.Users.fetch
+GET		/api/users/{id}								api.Users.show
+POST	/api/users									api.Users.create
+PUT		/api/users/{id}								api.Users.update
+DELETE	/api/users/{id}								api.Users.delete
+POST	/api/sessions								api.Users.authenticate
+DELETE	/api/sessions/{sid}							api.Users.logout

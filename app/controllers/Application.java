@@ -31,7 +31,7 @@ public class Application extends Controller {
 	 */
     public static void index() {
         Object user = Cache.get(LOGIN_USER_ATTR);
-        Set<TreeView> tree = Fleet.assemFleetTree();
+        List<TreeView> tree = Fleet.assemFleetTree();
         String fleetJson = new Gson().toJson(tree);
         renderTemplate(renderArgs.get(THEME) + "/Application/index.html", user, fleetJson);
     }

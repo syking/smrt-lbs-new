@@ -26,7 +26,7 @@ import vo.UserVO;
 
 @With(Interceptor.class)
 public class Users extends Controller {
-	
+
 	/**
 	 * verify the user login
 	 */
@@ -35,7 +35,7 @@ public class Users extends Controller {
         if(validation.hasErrors()) 
            success = false;
         
-        User loginUser = User.authenticate(username, password);
+        User loginUser = new User(username, password, null, null).authen();
         if (loginUser == null)
         	success = false;
         
@@ -50,7 +50,7 @@ public class Users extends Controller {
         
         renderJSON(map);
     }
-	
+
 	public static void grid(String id){
 		List<Role> roleList = Role.findAll();
 		List<ComboVO> roles = new ArrayList<ComboVO>();
@@ -68,62 +68,62 @@ public class Users extends Controller {
 		grid.readUrl = preUrl + "read";
 		grid.searchUrl = preUrl + "search";
 		grid.editable = "popup";
-		
+
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(UserVO.class, "id"));
 		map.put("grid", grid);
     	map.put("roles", CommonUtil.getGson().toJson(roles));
     	
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/grid.html")).render(map));
 	}
-	
+
 	public static void read(){
 		List<UserVO> result = new ArrayList<UserVO>();
 		List<User> users = User.findAll();
 		if (users == null)
 			return ;
-		
+
 		for (User u : users)
 			result.add(new UserVO(u));
-		
+
 		renderJSON(result);
 	}
-	
+
 	public static void create(String models) {
 		if(models == null)
 			return;
-		
+
 		User.createByJson(models);
-		
+
 		renderJSON(models);
 	}
-	
+
 	public static void update(String models){
 		if(models==null)
 			return;
 		User.updateByJson(models);
-		
+
 		renderJSON(models);
-		
+
 	}
 
 	public static void destroy(String models) {
 		if (models == null)
 			return ;
 		User.deleteByJson(models);
-		
+
 		renderJSON(models);
 	}
-	
+
 	public static void search(String roleName, String userName, String account, String desc){
-		List<User> users = User.findByCondition(userName, account, desc);
-		if (users == null || users.isEmpty())
+		List<User> users = User.findByCondition(roleName, userName, account, desc);
+		if (users == null || users.isEmpty()) 
 			return ;
-		
+
 		List<UserVO> result = new ArrayList<UserVO>(users.size());
 		for (User u : users){
 			result.add(new UserVO(u));
 		}
-		
+
 		renderJSON(result);
 	}
 

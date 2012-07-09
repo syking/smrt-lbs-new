@@ -1,6 +1,8 @@
 package vo;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class TreeView {
@@ -9,7 +11,7 @@ public class TreeView {
 	public String text;
 	public boolean expanded = false;
 	public String imageUrl;
-	public Set<TreeView> items = new HashSet<TreeView>(); 
+	public List<TreeView> items = new ArrayList<TreeView>(); 
 
 	public TreeView(String id, String text) {
 		super();

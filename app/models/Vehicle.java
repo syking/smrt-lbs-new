@@ -81,6 +81,7 @@ public class Vehicle extends Model {
 		this.type = type;
 	}
 
+	
 	public static List<Vehicle> findByCondition(List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		
@@ -176,7 +177,26 @@ public class Vehicle extends Model {
 		return result;
 	}
 
-	public static Set<TreeView> assemVehicleTree(Set<TreeView> result) {
+	public static List<TreeView> assemTreeView(){
+		List<TreeView> result = new ArrayList<TreeView>();
+		List<Vehicle> vehicles = Vehicle.findAll();
+		if (vehicles == null)
+			return result;
+		
+		TreeView root = new TreeView("", "All Vehicles", Vehicle.iconUrl);
+		for (Vehicle v : vehicles){
+			TreeView tv = new TreeView(String.valueOf(v.id), v.number, Vehicle.iconUrl);
+			tv.items = null;
+			root.items.add(tv);
+		} 
+		
+		root.expanded = true;
+		result.add(root);
+		
+		return result;
+	}
+	
+	public static List<TreeView> assemVehicleTreeAndFleetTree(List<TreeView> result) {
 		if (result == null)
 			result = Fleet.assemFleetTree();
 
@@ -187,12 +207,12 @@ public class Vehicle extends Model {
 
 			if (tv.items != null && !tv.items.isEmpty()) {
 				// 有子车队
-				assemVehicleTree(tv.items);
+				assemVehicleTreeAndFleetTree(tv.items);
 			}
 			
 			if (!fl.vehicles.isEmpty()){
 				if (tv.items == null)
-					tv.items = new HashSet<TreeView>(fl.vehicles.size());
+					tv.items = new ArrayList<TreeView>(fl.vehicles.size());
 				
 				for (Vehicle vehicle : fl.vehicles) {
 					TreeView treeView = new TreeView(vehicle.id.toString(),vehicle.number, Vehicle.iconUrl);
@@ -207,13 +227,13 @@ public class Vehicle extends Model {
 		return result;
 	}
 
-	public static Set<TreeView> assemVehicleTreeByFleetIdAndNumber(long fleetid, String number) {
+	public static List<TreeView> assemVehicleTreeByFleetIdAndNumber(long fleetid, String number) {
 
-		Set<TreeView> result = new HashSet<TreeView>();
+		List<TreeView> result = new ArrayList<TreeView>();
 
 		// no search
 		if (fleetid <= 0 && (number == null || number.trim().length() == 0)) {
-			return assemVehicleTree(null);
+			return assemVehicleTreeAndFleetTree(null);
 		}
 		
 		// both search
@@ -241,7 +261,7 @@ public class Vehicle extends Model {
 				}
 			}
 			
-			return assemVehicleTree(Fleet.assemFleetTree(setFleet));
+			return assemVehicleTreeAndFleetTree(Fleet.assemFleetTree(setFleet));
 		}
 		
 		// by fleet
@@ -250,7 +270,7 @@ public class Vehicle extends Model {
 			Set<Fleet> set = new HashSet<Fleet>(1);
 			set.add(fleet);
 			
-			return assemVehicleTree(Fleet.assemFleetTree(set));
+			return assemVehicleTreeAndFleetTree(Fleet.assemFleetTree(set));
 		}
 		
 		// by number
@@ -265,7 +285,7 @@ public class Vehicle extends Model {
 				set.add(v.fleet);
 			} 
 			
-			return assemVehicleTree(Fleet.assemFleetTree(set));
+			return assemVehicleTreeAndFleetTree(Fleet.assemFleetTree(set));
 		}
 
 		return result;

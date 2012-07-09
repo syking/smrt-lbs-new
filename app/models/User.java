@@ -58,23 +58,12 @@ public class User extends Model {
 		public final String THEME = "theme";
 	}
 
-	/**
-	 * 用户认证
-	 * 
-	 * @param account
-	 * @param password
-	 * @return
-	 * @throws User.Exception
-	 */
-	public static User authenticate(final String account, final String password) {
-		if (account == null || password == null)
-			return null;
-
+	public User authen(){
 		User loginUser = find("byAccount", account).first();
 		if (loginUser == null)
 			return null;
 
-		if (!account.equals(loginUser.account)|| !password.equals(loginUser.password))
+		if (!account.equals(loginUser.account) || !password.equals(loginUser.password))
 			return null;
 
 		return loginUser;
@@ -109,9 +98,18 @@ public class User extends Model {
 		user.save();
 	}
 	
-	public static List<User> findByCondition(String userName, String account, String desc){
+	public static List<User> findByCondition(String roleName, String userName, String account, String desc){
 		final List<Object> params = new ArrayList<Object>();
 		final StringBuilder sb = new StringBuilder();
+		boolean isRoleHasUsers = false;
+		Role role = null;
+		if (roleName != null && !roleName.isEmpty()){
+			role = Role.findByName(roleName);
+			if (role == null || role.users == null || role.users.isEmpty()) 
+					return null ;
+				
+			isRoleHasUsers = true;
+		}
 		
 		if (userName != null && !userName.isEmpty()){
 			if (sb.length() > 0)
@@ -138,6 +136,20 @@ public class User extends Model {
 		}
 		
 		List<User> users = User.find(sb.toString(), params.toArray()).fetch() ;
+		
+		if (isRoleHasUsers){
+			List<User> result = new ArrayList(role.users.size());
+			for (User u : role.users){
+				for (User uu : users){
+					if (uu.id != u.id)
+						continue;
+				
+					result.add(u);
+				}
+			}
+			
+			return result;
+		}
 		
 		return users;
 	}

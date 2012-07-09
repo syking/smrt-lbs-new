@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import play.db.jpa.Model;
+import play.db.jpa.Transactional;
+import utils.CommonUtil;
+import vo.FleetVO;
 import vo.TreeView;
 
 /**
@@ -41,8 +44,11 @@ public class Fleet extends Model{
 	public String placeNumber;//区域
 	
 	@OneToMany(mappedBy = "fleet", fetch = FetchType.EAGER)
-	public Set<Vehicle> vehicles;
+	public Set<Vehicle> vehicles = new HashSet<Vehicle>();
 
+	@OneToMany(mappedBy = "fleet", fetch = FetchType.EAGER)
+	public Set<Driver> drivers = new HashSet<Driver>();
+	
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
 	
@@ -52,11 +58,64 @@ public class Fleet extends Model{
 		return "Fleet [name=" + name + ", id=" + id + "]";
 	}
 	
-	/**
-	 * 
-	 * @param fleet
-	 * @return
-	 */
+	public static void createByJson(String models) {
+		FleetVO fleetVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), FleetVO.class);
+		Fleet fleet = new Fleet();
+		fleet.name = fleetVO.name;
+		fleet.description = fleetVO.description;
+		fleet.placeNumber = fleetVO.placeNumber;
+		fleet.parent = Fleet.findByName(fleetVO.parent);
+		
+		fleet.save();
+	}
+	
+	public static void updateByJson(String models) {
+		FleetVO fleetVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), FleetVO.class);
+		Long id = fleetVO.id;
+		Fleet fleet = Fleet.findById(id);
+		if (fleet == null)
+			return ;
+		
+		fleet.name = fleetVO.name;
+		fleet.description = fleetVO.description;
+		fleet.placeNumber = fleetVO.placeNumber;
+		fleet.parent = Fleet.findByName(fleetVO.parent);
+		
+		fleet.save();
+	}
+
+	public static void deleteByJson(String models) {
+		FleetVO fleetVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), FleetVO.class);
+		Long id = fleetVO.id;
+		Fleet fleet = Fleet.findById(id);
+		if (fleet == null)
+			return ;
+		
+		fleet.delete();
+	}
+	
+	public static List<Fleet> findByCondition(final String placeNumber, final String name){
+		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		if (placeNumber != null && placeNumber.trim().length() > 0) {
+			sqlSB.append("placeNumber like ?");
+			params.add("%" + placeNumber + "%");
+		}
+
+		if (name != null && name.trim().length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("name like ?");
+			params.add("%" + name + "%");
+		}
+
+		List<Fleet> fleets = Fleet.find(sqlSB.toString(), params.toArray()).fetch();
+		
+		return fleets;
+	}
+	
 	public boolean contains(Fleet fleet){
 		List<Fleet> all = new ArrayList<Fleet>(Fleet.findAllFleet(this));
 		for (Fleet f : all){
@@ -67,15 +126,26 @@ public class Fleet extends Model{
 		return false;
 	}
 	
-	public static Set<TreeView> assemFleetTree(){
+	public static List<FleetVO> assemFleetVO(List<Fleet> fleets){
+		List<FleetVO> result = null ;
+		if (fleets != null && !fleets.isEmpty()){
+			result = new ArrayList<FleetVO>();
+			for (Fleet fleet : fleets)
+				result.add(new FleetVO().init(fleet));
+		}
+		
+		return result;
+	}
+	
+	public static List<TreeView> assemFleetTree(){
 		return assemFleetTree(null);
 	}
 	
-	public static Set<TreeView> assemFleetTree(Set<Fleet> fleets){
+	public static List<TreeView> assemFleetTree(Collection<Fleet> fleets){
 		return assemFleetTree(fleets, true);
 	}
-	public static Set<TreeView> assemFleetTree(Set<Fleet> fleets, boolean isRecursive){
-		
+	
+	public static List<TreeView> assemFleetTree(Collection<Fleet> fleets, boolean isRecursive){
 		if (fleets == null){
 			fleets = new HashSet<Fleet>();
 			// 查询顶级车队
@@ -86,7 +156,7 @@ public class Fleet extends Model{
 			fleets.addAll(list);
 		}
 		
-		Set<TreeView> result = new HashSet<TreeView>();
+		List<TreeView> result = new ArrayList<TreeView>();
 		
 		for (Fleet fl : fleets){
 			TreeView ft = new TreeView(String.valueOf(fl.id), fl.name, iconUrl);
@@ -101,6 +171,41 @@ public class Fleet extends Model{
 		}
 		
 		return result;
+	}
+	
+	@Transactional
+	public static boolean assignDriverAndVehicle(String fleetName, List<Long> drivers, List<Long> vehicles) {
+		Fleet fleet = Fleet.findByName(fleetName);
+		if (fleet == null)
+			throw new RuntimeException("Fleet required !");
+		
+		if (drivers != null){
+			for (Long id : drivers){
+				Driver d = Driver.findById(id);
+				if (d == null)
+					continue;
+				
+				d.fleet = fleet;
+				d.save();
+			}
+		}
+		
+		if (vehicles != null){
+			for (Long id : vehicles){
+				Vehicle v = Vehicle.findById(id);
+				if (v == null)
+					continue;
+				
+				v.fleet = fleet;
+				v.save();
+			}
+		}
+		
+		if (drivers != null || vehicles != null){
+			return true;
+		}
+		
+		return false;
 	}
 	
 	// 找出某个车队下的所有车队不包含自己
@@ -129,4 +234,5 @@ public class Fleet extends Model{
 	public static Fleet findByName(String name) {
 		return find("byName", name).first();
 	}
+
 }

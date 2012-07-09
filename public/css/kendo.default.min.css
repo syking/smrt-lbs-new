@@ -135,7 +135,7 @@ span.k-numeric-wrap.k-state-active,
 .k-state-selected,
 .k-state-focused,
 .k-tabstrip-items .k-item {
-  background-image: url(http://cdn.kendostatic.com/2012.1.322/styles/textures/highlight.png);
+  background-image: url(/public/css/textures/highlight.png);
 }
 .k-header,
 .k-grid-header,
@@ -164,13 +164,13 @@ span.k-numeric-wrap.k-state-active,
 .k-callout,
 .k-progress,
 .k-progress-status {
-  background-image: url('http://cdn.kendostatic.com/2012.1.322/styles/Silver/sprite.png');
+  background-image: url('/public/css/Silver/sprite.png');
 }
 .k-loading {
-  background-image: url('http://cdn.kendostatic.com/2012.1.322/styles/Silver/loading.gif');
+  background-image: url('/public/css/Silver/loading.gif');
 }
 .k-loading-image {
-  background-image: url('http://cdn.kendostatic.com/2012.1.322/styles/Silver/loading-image.gif');
+  background-image: url('/public/css/Silver/loading-image.gif');
 }
 .k-loading-color {
   background-color: #ffffff;
@@ -278,10 +278,10 @@ span.k-numeric-wrap.k-state-active,
   background-color: #006672;
 }
 .k-slider-horizontal .k-tick {
-  background-image: url('http://cdn.kendostatic.com/2012.1.322/styles/Silver/slider-h.gif');
+  background-image: url('/public/css/Silver/slider-h.gif');
 }
 .k-slider-vertical .k-tick {
-  background-image: url('http://cdn.kendostatic.com/2012.1.322/styles/Silver/slider-v.gif');
+  background-image: url('/public/css/Silver/slider-v.gif');
 }
 /* Tooltip */
 .k-tooltip {
@@ -318,7 +318,7 @@ span.k-numeric-wrap.k-state-active,
   border-color: #006672;
 }
 .k-tile .k-folder {
-  background-image: url('http://cdn.kendostatic.com/2012.1.322/styles/Silver/imagebrowser.png');
+  background-image: url('/public/css/Silver/imagebrowser.png');
 }
 /* Shadows */
 .k-popup,

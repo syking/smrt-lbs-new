@@ -1,0 +1,112 @@
+<form action="/departments/search" method="post" class="k-content" onsubmit="return departmentSearchValidate(this)" style="padding:10px 0;">
+	<label for="${grid.tabId}_name">Name:</label>
+	<input name="name" id="${grid.tabId}_name"/> 
+	<label for="${grid.tabId}_parent">Parent:</label>
+	<input name="parent" id="${grid.tabId}_parent"/>
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+	</div>
+</form>
+
+<div id="grid_${grid.tabId}"></div>
+
+<script>
+    $(document).ready(function () {
+        loadDepartments("/departments/read");
+    	
+    	 $("#${grid.tabId}_name").kendoComboBox({
+	        dataTextField: "text",
+	        dataValueField: "value",
+	        dataSource: #{verbatim} ${names} #{/verbatim}
+	    });
+    	
+    	$("#${grid.tabId}_parent").kendoComboBox({
+	        dataTextField: "text",
+	        dataValueField: "value",
+	        dataSource: #{verbatim} ${parents} #{/verbatim}
+	    });
+    });
+    
+    function departmentSearchValidate(form) {
+		var $form = $(form);
+		loadDepartments($form.attr("action"), $form.serializeArray());
+		
+		return false;
+	}
+    
+    function loadDepartments(url, params){
+    	$("#grid_${grid.tabId}").empty();
+    	var dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  { 
+                    url: url,
+                    dataType: "json"
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    dataType: "json"
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    dataType: "json"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    
+                    return params;
+                }
+            },
+            batch: true,
+            pageSize: 18,
+            schema: {
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        name: { validation: { required: true } },
+                        parent: { },
+                    }
+
+                }
+            }
+        });
+        
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+		
+		/**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+			
+			if ('parent' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="parent" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${names} #{/verbatim}
+				    });
+				};
+				
+				return ;
+			}
+		});
+		
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            height: "auto",
+            toolbar: ["create"],
+            columns: columnsJson,
+            editable: "${grid.editable}"
+        });
+    }
+    
+</script>
