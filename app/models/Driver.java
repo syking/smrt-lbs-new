@@ -15,12 +15,16 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.gson.JsonElement;
 
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import utils.Splitter;
+import vo.TreeView;
 
 /**
  * 司机信息
@@ -29,15 +33,6 @@ import utils.Splitter;
 @Entity
 @Table(name="t_driver")
 public class Driver extends Model{
-
-	@Column(unique = true)
-	public String number;
-	public String name;
-	public String description;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	public Department department;
-
 	public Driver(){}
 	
     public Driver(String number, String name, String description){
@@ -45,7 +40,40 @@ public class Driver extends Model{
         this.name = name;
         this.description = description;
     }
+    
+	@Column(unique = true)
+	public String number;
+	public String name;
+	public String description;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	public Department department;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	public Fleet fleet;// 车队
+	
+	@Transient
+	public final static String iconUrl = "../../public/images/wheel.png";
 
+	public static List<TreeView> assemTreeView(){
+		List<TreeView> result = new ArrayList<TreeView>();
+		List<Driver> drivers = Driver.findAll();
+		if (drivers == null)
+			return result;
+		
+		TreeView root = new TreeView("", "All Drivers", Driver.iconUrl);
+		for (Driver d : drivers){
+			TreeView tv = new TreeView(String.valueOf(d.id), d.name, Driver.iconUrl);
+			tv.items = null;
+			root.items.add(tv);
+		} 
+		
+		root.expanded = true;
+		result.add(root);
+		
+		return result;
+	}
+	
     public static List<Driver> filter(List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		String query = StringUtils.join(criteria, " AND ");
@@ -217,4 +245,5 @@ public class Driver extends Model{
 			return false;
 		return true;
 	}
+
 }

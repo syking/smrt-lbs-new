@@ -30,6 +30,7 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
         //holds all the features for this cluster layer
         this._features = [];
 
+
         //set incoming features
         //this will throw an error if the features WKID is not in below list.  
         //projected: 102100, 102113
@@ -139,6 +140,7 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
             if (wkid == 4326 || wkid == 4269 || wkid == 4267 || wkid == 3414) {
                 dojo.forEach(features, function(feature) {
                     //point = esri.geometry.geographicToWebMercator(feature.geometry);
+
                     point = feature.geometry;
                     point.attributes = feature.attributes;
      
@@ -411,10 +413,9 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
                                 dojo.forEach(col, function(point) {
                                     var sbl;
                                     
-                                    // if()
+                             
                                     sbl = point.attributes.symbol;            
-                                    //alert(sbl)
-                                    /*
+									/*
                                     if(point.attributes.vehicleType == 'bus'){
                                         sbl = new esri.symbol.PictureMarkerSymbol('/public/images/bus-32.png', 32, 32);
                                     } else if (point.attributes.vehicleType == 'car'){
@@ -423,11 +424,8 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
                                     	sbl = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
                                     } else if (point.attributes.vehicleType == 'bus-stop'){
                                     	sbl = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
-                                    }else if(point.attributes.vehicleType == 'baidu')
-                                    {
-                                    	sbl = new esri.symbol.PictureMarkerSymbol('http://www.baidu.com/img/baidu_sylogo1.gif', 42, 42);
-                                    }
-                                   */
+                                    }*/
+
                                     
                                     var vehicleGra = new esri.Graphic(point, sbl, dojo.mixin(point.attributes, { isCluster: false }), this._infoTemplate);
 

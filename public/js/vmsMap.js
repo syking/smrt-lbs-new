@@ -312,8 +312,13 @@
         var locationGraphics = [];
     	for(var i = 0; i < locations.length; i++){
             var loc = locations[i];
+<<<<<<< HEAD
             loc.xCoord = parseFloat(loc.xCoord);
             loc.yCoord = parseFloat(loc.yCoord);
+=======
+            //loc.xCoord = parseFloat(loc.xCoord);
+            //loc.yCoord = parseFloat(loc.yCoord);
+>>>>>>> 5f146eac2305b0bd9f6b2eb258bba45f69ca5f47
             var gm = new esri.geometry.Point(loc.xCoord, loc.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var attr;
             var it;
@@ -518,8 +523,13 @@
         //[{"id":1,"busPlateNumber":"SMB77P","driver":"Jack","currentSpeed":3,"xCoord":"34765.206346922685","yCoord":"36102.84347778058","vehicleType":"bus","activeStatus":"on","direction":"down"},
         for(var i=0; i<buses.length; i++){
             var bus = buses[i];
+<<<<<<< HEAD
             bus.xCoord = parseFloat(bus.xCoord);
             bus.yCoord = parseFloat(bus.yCoord);
+=======
+            //bus.xCoord = parseFloat(bus.xCoord);
+            //bus.yCoord = parseFloat(bus.yCoord);
+>>>>>>> 5f146eac2305b0bd9f6b2eb258bba45f69ca5f47
             var gm = new esri.geometry.Point(bus.xCoord, bus.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var sbl = new esri.symbol.TextSymbol("");
             var attr;
@@ -535,6 +545,7 @@
 						bus.activeStatus = "off";
 					}*/
             	attr = {
+<<<<<<< HEAD
             			id: bus.id,
             			xCoord: bus.xCoord,
             			yCoord: bus.yCoord,
@@ -545,6 +556,17 @@
             			activeStatus: bus.activeStatus,
             			vehicleType: bus.vehicleType,
             			symbol: MapCnf.getSymbol(bus.vehicleType)
+=======
+            			id:bus.id,
+            			xCoord:bus.xCoord,
+            			yCoord:bus.yCoord,
+            			busPlateNumber:bus.busPlateNumber,
+            			driver:bus.driver,
+            			serviceNumber:bus.serviceNumber,
+            			currentSpeed:bus.currentSpeed,
+            			activeStatus:bus.activeStatus,
+            			vehicleType:bus.vehicleType
+>>>>>>> 5f146eac2305b0bd9f6b2eb258bba45f69ca5f47
 	            };
             	
 				/*
@@ -553,6 +575,7 @@
 
             }else{
             	attr = {
+<<<<<<< HEAD
 					id: bus.id,
 					xCoord: bus.xCoord,
 					yCoord: bus.yCoord,
@@ -561,6 +584,15 @@
 					currentSpeed: bus.currentSpeed,
 					activeStatus: bus.activeStatus,
 					symbol: MapCnf.getSymbol(bus.vehicleType)
+=======
+            	id:bus.id,
+                xCoord:bus.xCoord,
+                yCoord:bus.yCoord,
+                name:bus.name,
+                techName:bus.techName,
+                currentSpeed:bus.currentSpeed,
+                activeStatus:bus.activeStatus,
+>>>>>>> 5f146eac2305b0bd9f6b2eb258bba45f69ca5f47
 	            };
 				
 				/*

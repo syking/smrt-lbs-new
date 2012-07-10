@@ -301,7 +301,7 @@ public class Vehicles extends Controller {
 				fleets.add(new ComboVO(fleet.name, fleet.id));
 			
 		map.put("fleets", CommonUtil.getGson().toJson(fleets));
-		Set<TreeView> tree = Vehicle.assemVehicleTree(null);
+		List<TreeView> tree = Vehicle.assemVehicleTreeAndFleetTree(null);
 		String vehicleJson = new Gson().toJson(tree);
 		map.put("treeData", vehicleJson);
 		
@@ -387,29 +387,6 @@ public class Vehicles extends Controller {
 			points.add(new String[] { g.longitude, g.latitude });
 
 		renderJSON(points);
-	}
-	
-	/**
-	 * 为车辆分配车队
-	 */
-	public static void assignFleet(Long vehicleId, Long fleetId){
-		Vehicle vehicle = Vehicle.findById(vehicleId);
-		vehicle.fleet = Fleet.findById(fleetId);
-		if (vehicle.fleet != null){
-			vehicle.save();
-			renderJSON("OK");
-		}else{
-			renderJSON("FAILURE");
-		}
-	}
-	
-	/**
-	 * 取消车辆分配的车队关系
-	 */
-	public static void unassignFleet(Long vehicleId){
-		Vehicle vehicle = Vehicle.findById(vehicleId);
-		vehicle.fleet = null;
-		vehicle.save();
 	}
 
 }

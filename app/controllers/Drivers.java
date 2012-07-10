@@ -60,7 +60,7 @@ public class Drivers extends Controller {
 		for (Driver d : drivers) 
 			driverVOList.add(new DriverVO().init(d));
 
-		Map data = CommonUtil.assemGridData(driverVOList, "id");
+		Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
 
 		renderJSON(data);
 	}
@@ -101,7 +101,7 @@ public class Drivers extends Controller {
 	public static void read() {
 		List<Driver> driverList = Driver.findAll();
 		
-		renderJSON(driverList);
+		renderJSON(CommonUtil.getGson("fleet").toJson(driverList));
 	}
 
 	public static void grid(String id) {
