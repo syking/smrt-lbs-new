@@ -13,10 +13,10 @@ input{
     		<input id="ShowLocation" type="checkbox" checked="checked" /><label for="ShowLocation">Show Location</label>
     		<ul>
     			<li>
-            		<input id="ShowBusStop" type="checkbox"  checked="checked" /> <label for="ShowBusStop">Bus stop</label>
+            		<input class="selectSymbol" value="bus-stop" type="checkbox"  checked="checked" /> <label for="ShowBusStop">Bus stop</label>
         		</li>
         		<li>
-            		<input id="ShowDepot" type="checkbox"  checked="checked" /> <label for="ShowDepot">Depot</label>
+            		<input class="selectSymbol" value="depot" type="checkbox"  checked="checked" /> <label for="ShowDepot">Depot</label>
         		</li>
     		</ul>
     	</li>
@@ -24,10 +24,10 @@ input{
     		<input id="ShowVehicleType" type="checkbox"  checked="checked" /> <label for="ShowVehicleType">Show Vehicle Type</label>
     		<ul>
     			<li>
-		            <input id="ShowCar" type="checkbox"  checked="checked" /> <label for="ShowCar">Show Car</label>
+		            <input class="selectSymbol" value="car" type="checkbox"  checked="checked" /> <label for="ShowCar">Show Car</label>
 		        </li>
 		        <li>
-		            <input id="ShowBus" type="checkbox"  checked="checked" /> <label for="ShowBus">Show Bus</label>
+		            <input class="selectSymbol" value="bus" type="checkbox"  checked="checked" /> <label for="ShowBus">Show Bus</label>
 		        </li>
     		</ul>
     	</li>
@@ -75,7 +75,13 @@ $(document).ready(function() {
 
         dataSource: #{verbatim} ${fleetJson} #{/verbatim}
     });
- 
+
+ 	// auto listen show hide
+	$('.selectSymbol').click(function (){
+		MapCnf.setSymbolViews($(this).val(), $(this).attr("checked") == "checked" ?'show':'hide');
+	});
+	
+ 	 /*
 	$("#ShowDepot").click(showDepotClickHandler);
     
     $("#ShowBusStop").click(showBusStopClickHandler);
@@ -83,7 +89,7 @@ $(document).ready(function() {
     $("#ShowBus").click(showBusClickHandler);
     
     $("#ShowCar").click(showCarClickHandler);
-    
+    */
 	$(".input_tree input").click(function(){
 		if($(this).attr("checked")=="checked"){
         	var li = $(this).parents('li:first'); 
@@ -107,6 +113,7 @@ $(document).ready(function() {
         decimals: 1
     });
 });
+/*
 function showDepotClickHandler(e){
 	if($(this).attr("checked") == "checked"){
 		showLocationIcon("depot");
@@ -137,6 +144,6 @@ function showCarClickHandler(e){
 	}else{
 		hideVehicleIcon("car");
 	}
-}
+}*/
 
 </script>
