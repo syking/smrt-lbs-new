@@ -29,9 +29,7 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
 
         //holds all the features for this cluster layer
         this._features = [];
-        
-        // holds alll symbol 对象
-        // this._symbol = [];
+
 
         //set incoming features
         //this will throw an error if the features WKID is not in below list.  
@@ -142,13 +140,10 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
             if (wkid == 4326 || wkid == 4269 || wkid == 4267 || wkid == 3414) {
                 dojo.forEach(features, function(feature) {
                     //point = esri.geometry.geographicToWebMercator(feature.geometry);
-//                	
-//                	// @shengyue 07062012  
-//                	symbol =   feature.symbol;
-//                	this._symbol.push(symbol);
-                	
+
                     point = feature.geometry;
                     point.attributes = feature.attributes;
+     
                     this._features.push(point);
                 }, this);
             } else {
@@ -157,8 +152,6 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
             }
         } else {
             dojo.forEach(features, function(feature) {
-//            	symbol =   feature.symbol;
-//            	this._symbol.push(symbol);
             	
                 point = feature.geometry;
                 point.attributes = feature.attributes;
@@ -416,17 +409,13 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
                                 this.add(new esri.Graphic(new esri.geometry.Point(tileCenterPoint.x, tileCenterPoint.y), new esri.symbol.TextSymbol(col.length).setOffset(0, -5)));
 
                             } else { //single graphic
-//                            	var i = 0;
+                            	
                                 dojo.forEach(col, function(point) {
-//                                	
-//                                	
-//                                	i++;
-//                                	//alert(JSON.stringify(this._symbol[i]));
-//                                	//return;
-//                                    var sbl;
-//                                    
-//                                    sbl = this._symbol[i];
-//                                    
+                                    var sbl;
+                                    
+                             
+                                    sbl = point.attributes.symbol;            
+									/*
                                     if(point.attributes.vehicleType == 'bus'){
                                         sbl = new esri.symbol.PictureMarkerSymbol('/public/images/bus-32.png', 32, 32);
                                     } else if (point.attributes.vehicleType == 'car'){
@@ -435,12 +424,8 @@ dojo.declare('esri.ux.layers.ClusterLayer', esri.layers.GraphicsLayer, {
                                     	sbl = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
                                     } else if (point.attributes.vehicleType == 'bus-stop'){
                                     	sbl = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
-                                    }
-//                                    else if(point.attributes.vehicleType == 'baidu')
-//                                    {
-//                                    	sbl = new esri.symbol.PictureMarkerSymbol('http://www.baidu.com/img/baidu_sylogo1.gif', 42, 42);
-//                                    }
-                                   
+                                    }*/
+
                                     
                                     var vehicleGra = new esri.Graphic(point, sbl, dojo.mixin(point.attributes, { isCluster: false }), this._infoTemplate);
 

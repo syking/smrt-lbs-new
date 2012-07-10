@@ -49,7 +49,6 @@ function eventTypeListInit(){
 		}else{
 			hideEventTypeIcon($(this).attr("id"));
 		}
-		
 	});
 }
 
@@ -62,7 +61,6 @@ $(document).ready(function(){
 	eventTypeListInit();
 
 	$("#event-list").kendoGrid({
-
 		groupable: true,
         scrollable: true,
         sortable: true,
@@ -91,7 +89,7 @@ $(document).ready(function(){
             { collapsible: false, resizable:false, min: "35px", size: "35px"}//bottom
         ],
         resize:function(e){
-            //第一次加载时不需要resize
+            //resize
             if (map && map != ""){
                 map.resize();
       		    map.reposition();
@@ -105,7 +103,7 @@ $(document).ready(function(){
 	});
 	
 	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo: $.getUrlParam('vehicleNo')}) + "')");
-
+	
 });
 
 function selectGridWithMapClick(vid){
