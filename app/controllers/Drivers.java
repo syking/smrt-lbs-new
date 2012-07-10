@@ -101,7 +101,7 @@ public class Drivers extends Controller {
 	public static void read() {
 		List<Driver> driverList = Driver.findAll();
 		
-		renderJSON(CommonUtil.getGson("fleet").toJson(driverList));
+		renderJSON(CommonUtil.getGson("fleet", "department").toJson(driverList));
 	}
 
 	public static void grid(String id) {

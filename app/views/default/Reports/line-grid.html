@@ -7,8 +7,8 @@
 	<label for="lines">Superior:</label>
 	<input name="line" id="lines"/>
 	
-	<label for="line_types">Type:</label>
-	<input name="dateType" id="line_types"/>
+	<label for="line_types">Time Type:</label>
+	<input name="timeType" id="line_types"/>
 	
 	<label id="line_time-label" for="line_time">Year:</label>
 	<div style="display:inline;" id="line_time-wrap">
@@ -81,10 +81,10 @@ $(document).ready(function(){
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
-        	{text: "Dayly", value: "day"},
-        	{text: "Weekly", value: "week"},
-        	{text: "Monthly", value: "month"},
-        	{text: "Yearly", value: "year"}
+        	{text: "Daily", value: "daily"},
+        	{text: "Weekly", value: "weekly"},
+        	{text: "Monthly", value: "monthly"},
+        	{text: "Yearly", value: "yearly"}
         ],
         change: function() {
             var value = this.value();
@@ -93,10 +93,10 @@ $(document).ready(function(){
         	$("#line_time-wrap").html("<input name='time' id='line_time'/>");
      		$("#line_time-label").html(text);
         	var _format = "yyyy/MM/dd";
-        	if ("month" == value){
+        	if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
-		    }else if ("year" == value){
+		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
 		    }

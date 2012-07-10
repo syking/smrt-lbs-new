@@ -19,12 +19,65 @@ import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
 
+	public static int getDayOfYear(Date date){
+		Calendar c = Calendar.getInstance(); 
+        c.setTime(date); 
+        
+        return c.get(Calendar.DAY_OF_YEAR);
+	}
+	
+	public static int getLastDayOfYear(Date date){
+		 Calendar c = Calendar.getInstance(); 
+         c.setTime(date); 
+         
+         return c.getActualMaximum(Calendar.DAY_OF_YEAR);
+	}
+	
+	public static int getDayOfMonth(Date date){
+		Calendar c = Calendar.getInstance(); 
+        c.setTime(date); 
+        
+        return c.get(Calendar.DAY_OF_MONTH);
+	}
+	
+	public static int getLastDayOfMonth(Date date){
+		 Calendar c = Calendar.getInstance(); 
+         c.setTime(date); 
+         
+         return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+	
+	// 判断日期为星期几,0为星期六,依此类推
+	public static int getDayOfWeek(Date date) {
+		// 首先定义一个calendar，必须使用getInstance()进行实例化
+		Calendar aCalendar = Calendar.getInstance();
+		// 里面野可以直接插入date类型
+		aCalendar.setTime(date);
+		// 计算此日期是一周中的哪一天
+		int x = aCalendar.get(Calendar.DAY_OF_WEEK);
+		return x;
+	}
+
 	public static <T> T jsonStr2JavaObj(String jsonStr, Class<T> clazz) {
 		String json = jsonStr.substring(1, jsonStr.length() - 1);
 		Gson gson = new Gson();
 		return gson.fromJson(json, clazz);
 	}
-	
+
+	public static long difference(Date date1, Date date2) {
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(date1);
+
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(date2);
+
+		if (cal2.after(cal1)) {
+			return cal2.getTimeInMillis() - cal1.getTimeInMillis();
+		}
+
+		return cal1.getTimeInMillis() - cal2.getTimeInMillis();
+	}
+
 	public static Date addDate(Date source, int day) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(source);
@@ -47,6 +100,15 @@ public class CommonUtil {
 		cal.add(Calendar.YEAR, year);
 
 		return cal.getTime();
+	}
+	
+	public static Date parse(String format, String source){
+		SimpleDateFormat sdf = new java.text.SimpleDateFormat(format);
+		try {
+			return sdf.parse(source);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static String upperFirst(String s) {
@@ -78,7 +140,8 @@ public class CommonUtil {
 	 */
 	public static long[] splitToLong(String source, String by) {
 
-		if (source == null || source.trim().length() == 0 || by == null || by.trim().length() == 0)
+		if (source == null || source.trim().length() == 0 || by == null
+				|| by.trim().length() == 0)
 			return null;
 
 		String[] strs = source.split(by);
@@ -104,9 +167,9 @@ public class CommonUtil {
 
 		String[] strs = source.split(by);
 		int[] ints = new int[strs.length];
-		for (int i = 0; i < strs.length; i++) 
+		for (int i = 0; i < strs.length; i++)
 			ints[i] = Integer.parseInt(strs[i]);
-		
+
 		return ints;
 	}
 
@@ -115,7 +178,8 @@ public class CommonUtil {
 			return new Gson();
 
 		// 由于Gson没有内置解决循环引用的问题，需要手动给定class或者field的名字告诉它哪些字段跳过
-		return new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+		return new GsonBuilder()
+				.setExclusionStrategies(new ExclusionStrategy() {
 
 					public boolean shouldSkipClass(Class<?> clazz) {
 						return false;

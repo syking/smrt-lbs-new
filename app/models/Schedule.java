@@ -51,21 +51,27 @@ public class Schedule extends Model {
 	public String dutyId;
 	
 	public static List<String> getAllServiceNumber(){
-		
 		List<String> list = Schedule.find("select distinct s.serviceNumber from Schedule s ").fetch();
 		
 		return list;
-		
 	}
 	
 	public static List<ComboVO> getComboByVehicle(String vehicleNo){
-		List<Schedule> scheList = Schedule.find("vehicle_number = ?", vehicleNo).fetch();
+		List<Schedule> scheList = findByVehicleNumber(vehicleNo);
 		List<ComboVO> schedules = new ArrayList<ComboVO>();
 		if (scheList != null) 
         	 for (Schedule s : scheList)
         		 schedules.add(new ComboVO(CommonUtil.formatTime("yyyy-MM-dd HH:mm", s.startTime)+", "+CommonUtil.formatTime("yyyy-MM-dd HH:mm", s.endTime), s.id));
 		
 		return schedules;
+	}
+	
+	public static List<Schedule> findByVehicleNumber(String vehicleNumber){
+		return Schedule.find("vehicle_number = ?", vehicleNumber).fetch() ;
+	}
+	
+	public static List<Schedule> findByDriverNumber(String driverNumber){
+		return Schedule.find("driver_number = ?", driverNumber).fetch() ;
 	}
 	
 }

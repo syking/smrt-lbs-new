@@ -1,14 +1,13 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -115,6 +114,18 @@ public class Event extends Model{
     	}
 		
 		return result;
+	}
+	
+	public static long calculateDriverEventCount(final long driverId, final Date startTime, final Date endTime, final String eventTypeTechName){
+		final List<Object> _params = new ArrayList<Object>(4);
+		_params.add(eventTypeTechName);
+		_params.add(driverId);
+		
+		final String _sql = " and er.time >= ? and er.time < ? " ;
+		_params.add(startTime);
+		_params.add(endTime);
+		
+		return Event.count("select count(e) from Event e left join e.eventRecord er where er.type.techName = ? and e.driver.id = ? " + _sql, _params.toArray());
 	}
 	
 }

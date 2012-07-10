@@ -10,12 +10,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import models.Department;
 import models.Driver;
+import models.DriverReport;
 import models.Event;
 import models.EventType;
 import models.Fleet;
@@ -26,6 +28,9 @@ import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import utils.Splitter;
 import vo.ComboVO;
+import vo.DriverReportPieChartVO;
+import vo.DriverReportVO;
+import vo.Grid;
 
 /**
  * 报表，主要是对Event的报表分析。
@@ -61,7 +66,7 @@ public class Reports extends Controller {
      * 分司机报表
      * @throws ParseException 
      */
-    public static void driverListJsonByDept(Long departmentId, String dateType, String time) throws ParseException{
+    public static void driverListJsonByDept(Long departmentId, String timeType, String time) throws ParseException{
 		
 		List<Driver> drivers = null;
 		if (departmentId == null || departmentId <= 0)
@@ -69,7 +74,7 @@ public class Reports extends Controller {
 		else
 			drivers = Driver.find("select d from Driver d where d.department.id = ?", departmentId).fetch();
 		
-		Map map = Driver.assemReport(drivers, dateType, time);
+		Map map = Driver.assemReport(drivers, timeType, time);
 		
     	renderJSON(map);
     }
@@ -95,7 +100,7 @@ public class Reports extends Controller {
      * 分部门报表
      * @throws ParseException 
      */
-    public static void departmentListJson(Long parentId, String dateType, String time) throws ParseException{
+    public static void departmentListJson(Long parentId, String timeType, String time) throws ParseException{
     	// department list
     	List<EventType> eventTypes = EventType.findAll();
     	if (eventTypes == null)
@@ -155,13 +160,13 @@ public class Reports extends Controller {
     			_params.add(_field);
     			_params.add(dept.id);
     			
-    			if (dateType  != null && dateType.trim().length() > 0 && time != null && time.trim().length() > 0){
+    			if (timeType  != null && !timeType.isEmpty() && time != null && !time.isEmpty()){
     				Date start = null;
     	    		Date end = null;
-    				if ("day".equals(dateType)){
+    				if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					end = CommonUtil.addDate(start, 1); // 往后一天
-    				}else if ("week".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
     					Date _choose = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					Calendar cal = Calendar.getInstance();
     					cal.setTime(_choose);
@@ -169,10 +174,10 @@ public class Reports extends Controller {
     					start = CommonUtil.addDate(_choose, -day+1);
     					end = CommonUtil.addDate(start, 7);
     					
-    				}else if ("month".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM").parse(time);
     					end = CommonUtil.addMonth(start, 1); // 往后一个月
-    				}else if ("year".equals(dateType)) {
+    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
     					start = new SimpleDateFormat("yyyy").parse(time);
     					end = CommonUtil.addYear(start, 1); //往后一年
     				}
@@ -182,6 +187,8 @@ public class Reports extends Controller {
     	    		_params.add(start);
     	    		_params.add(end);
     	    	}
+    			
+    			System.out.println(_sql + " | " + _params);
     			
         		count = Event.count("select count(e) from Event e left join e.eventRecord er where er.type.techName = ? and e.department.id = ? " + _sql, _params.toArray());
         		
@@ -243,7 +250,7 @@ public class Reports extends Controller {
      * 分司机报表
      * @throws ParseException 
      */
-    public static void driverListJsonByFleet(Long fleetId, String dateType, String time) throws ParseException{
+    public static void driverListJsonByFleet(Long fleetId, String timeType, String time) throws ParseException{
     	List<Schedule> schs = null;
 		if (fleetId == null || fleetId <= 0)
 			schs = Schedule.findAll() ;
@@ -256,7 +263,7 @@ public class Reports extends Controller {
 		for (Schedule s : schs)
 			drivers.add(s.driver);
 		
-		Map map = Driver.assemReport(drivers, dateType, time);
+		Map map = Driver.assemReport(drivers, timeType, time);
 		
     	renderJSON(map);
     }
@@ -283,7 +290,7 @@ public class Reports extends Controller {
      * 分车队报表
      * @throws ParseException 
      */
-    public static void fleetListJson(Long parentId, String dateType, String time) throws ParseException{
+    public static void fleetListJson(Long parentId, String timeType, String time) throws ParseException{
     	List<EventType> eventTypes = EventType.findAll();
     	if (eventTypes == null)
     		return;
@@ -343,13 +350,13 @@ public class Reports extends Controller {
     			_params.add(_field);
     			_params.add(f.id);
     			
-    			if (dateType  != null && dateType.trim().length() > 0 && time != null && time.trim().length() > 0){
+    			if (timeType  != null && !timeType.isEmpty() && time != null && !time.isEmpty()){
     				Date start = null;
     	    		Date end = null;
-    				if ("day".equals(dateType)){
+    				if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					end = CommonUtil.addDate(start, 1); // 往后一天
-    				}else if ("week".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
     					Date _choose = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					Calendar cal = Calendar.getInstance();
     					cal.setTime(_choose);
@@ -357,10 +364,10 @@ public class Reports extends Controller {
     					start = CommonUtil.addDate(_choose, -day+1);
     					end = CommonUtil.addDate(start, 7);
     					
-    				}else if ("month".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM").parse(time);
     					end = CommonUtil.addMonth(start, 1); // 往后一个月
-    				}else if ("year".equals(dateType)) {
+    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
     					start = new SimpleDateFormat("yyyy").parse(time);
     					end = CommonUtil.addYear(start, 1); //往后一年
     				}
@@ -433,7 +440,7 @@ public class Reports extends Controller {
      * line 分司机报表
      * @throws ParseException 
      */
-    public static void driverListJsonByLine(String line, String dateType, String time) throws ParseException{
+    public static void driverListJsonByLine(String line, String timeType, String time) throws ParseException{
 		
 		List<Schedule> schs = null;
 		if (line == null || line.isEmpty())
@@ -448,7 +455,7 @@ public class Reports extends Controller {
 		for (Schedule s : schs)
 			drivers.add(s.driver);
 		
-		Map map = Driver.assemReport(drivers, dateType, time);
+		Map map = Driver.assemReport(drivers, timeType, time);
 		
     	renderJSON(map);
     }
@@ -476,7 +483,7 @@ public class Reports extends Controller {
      * line 路线 报表
      * @throws ParseException 
      */
-    public static void lineListJson(String line, String dateType, String time) throws ParseException{
+    public static void lineListJson(String line, String timeType, String time) throws ParseException{
     	List<EventType> eventTypes = EventType.findAll();
     	if (eventTypes == null)
     		return;
@@ -534,13 +541,13 @@ public class Reports extends Controller {
     			_params.add(_field);
     			_params.add(l);
     			
-    			if (dateType  != null && dateType.trim().length() > 0 && time != null && time.trim().length() > 0){
+    			if (timeType  != null && !timeType.isEmpty() && time != null && !time.isEmpty()){
     				Date start = null;
     	    		Date end = null;
-    				if ("day".equals(dateType)){
+    				if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					end = CommonUtil.addDate(start, 1); // 往后一天
-    				}else if ("week".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
     					Date _choose = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					Calendar cal = Calendar.getInstance();
     					cal.setTime(_choose);
@@ -548,10 +555,10 @@ public class Reports extends Controller {
     					start = CommonUtil.addDate(_choose, -day+1);
     					end = CommonUtil.addDate(start, 7);
     					
-    				}else if ("month".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM").parse(time);
     					end = CommonUtil.addMonth(start, 1); // 往后一个月
-    				}else if ("year".equals(dateType)) {
+    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
     					start = new SimpleDateFormat("yyyy").parse(time);
     					end = CommonUtil.addYear(start, 1); //往后一年
     				}
@@ -599,6 +606,132 @@ public class Reports extends Controller {
 		
     	renderJSON(map);
     }
-    
+
+    public static void driverJson() throws ParseException {
+		List<Event> events = Event.findAll();
+		List<DriverReportVO> drVOs = new ArrayList<DriverReportVO>();
+
+		for (Event event : events)
+			drVOs.add(new DriverReportVO().init(event));
+
+		renderJSON(drVOs);
+	}
+
+	public static void getCount() {
+		List<Event> events = Event.findAll();
+		List<DriverReportPieChartVO> pieChart = pieChartVO(events);
+		renderJSON(pieChart);
+	}
+
+	public static void searchDriver(long driverId, String timeType, String time) throws ParseException {
+		if (driverId == 0)
+			return;
+
+		List<DriverReportVO> drVOs = new ArrayList<DriverReportVO>();
+		List<DriverReportPieChartVO> pieCharts = new ArrayList<DriverReportPieChartVO>();
+		Driver driver = Driver.find("id = ?", driverId).first();
+
+		if (driver == null)
+			return;
+
+		Date start = null;
+		Date end = null;
+
+		List<Object> params = new ArrayList<Object>();
+		params.add(driver);
+		String _sql = "";
+		if (timeType != null && !timeType.isEmpty() && time != null && !time.isEmpty()){
+			if (DriverReport.TIME_TYPE.DAILY.equals(timeType)) {
+				start = new SimpleDateFormat("yyyy/MM/dd").parse(time);
+				end = CommonUtil.addDate(start, 1);
+			} else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)) {
+				Date _choose = new SimpleDateFormat("yyyy/MM/dd").parse(time);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(_choose);
+				int day = cal.get(Calendar.DAY_OF_WEEK);
+				start = CommonUtil.addDate(_choose, -day + 1);
+				end = CommonUtil.addDate(start, 7);
+			} else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)) {
+				start = new SimpleDateFormat("yyyy/MM").parse(time);
+				end = CommonUtil.addMonth(start, 1);
+			} else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
+				start = new SimpleDateFormat("yyyy").parse(time);
+				end = CommonUtil.addYear(start, 1);
+			}
+			_sql = " and er.time >= ? and er.time < ? " ;
+			params.add(start);
+			params.add(end);
+		}
+		
+		Object[] p = params.toArray();
+		List<Event> events = Event.find("select e from Event e left join e.eventRecord er where e.driver = ? " + _sql, p).fetch();
+		
+		List<DriverReportPieChartVO> pieChart = pieChartVO(events);
+		for (Event event : events) {
+			drVOs.add(new DriverReportVO().init(event));
+		}
+		
+		pieCharts.addAll(pieChart);
+
+		Map map = new HashMap();
+		map.put("grid", drVOs);
+		map.put("chart", pieCharts);
+
+		renderJSON(map);
+	}
+
+	public static void driver(String id, String driverId) {
+		final String preUrl = "/Reports/";
+		
+		List<Driver> drList = Driver.findAll();
+		List<ComboVO> drivers = new ArrayList<ComboVO>();
+		if (drList != null)
+			for (Driver dr : drList) 
+				drivers.add(new ComboVO(dr.name, dr.id));
+			
+		Grid grid = new Grid();
+		grid.tabId = id;
+		grid.readUrl = preUrl + "driverJson";
+		grid.searchUrl = preUrl + "searchDriver";
+		grid.editable = "popup";
+		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(DriverReportVO.class, "id", "driverName"));
+		
+		Map map = new HashMap();
+		map.put("grid", grid);
+		map.put("drivers", CommonUtil.getGson().toJson(drivers));
+		map.put("driverId", driverId);
+		
+		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Reports/driver-grid.html")).render(map));
+	}
+
+	public static List<DriverReportPieChartVO> pieChartVO(List<Event> events) {
+		Map<String, Integer> map = eventCount(events);
+		List<DriverReportPieChartVO> pieChartVOs = new ArrayList<DriverReportPieChartVO>();
+		DriverReportPieChartVO pieChartVO = null;
+
+		String key = "";
+		Iterator interator = map.keySet().iterator();
+		
+		while (interator.hasNext()) {
+			key = interator.next().toString();
+			pieChartVO = new DriverReportPieChartVO(key, map.get(key));
+			pieChartVOs.add(pieChartVO);
+		}
+		
+		return pieChartVOs;
+	}
+
+	public static Map<String, Integer> eventCount(List<Event> events) {
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < events.size(); i++) {
+			list.add(events.get(i).eventRecord.type.techName);
+		}
+		
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		for (String str : list) 
+			map.put(str, map.get(str) == null ? 1 : map.get(str) + 1);
+		
+		return map;
+	}
 
 }

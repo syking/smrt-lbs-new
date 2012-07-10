@@ -6,8 +6,8 @@
 	<label for="dept_driver-departments">Department:</label>
 	<input name="departmentId" id="dept_driver-departments"/>
 	
-	<label for="dept_driver-types">Type:</label>
-	<input name="dateType" id="dept_driver-types"/>
+	<label for="dept_driver-types">Time Type:</label>
+	<input name="timeType" id="dept_driver-types"/>
 	
 	<label id="dept_driver-time-label" for="dept_driver-time">Year:</label>
 	<div style="display:inline;" id="dept_driver-time-wrap">
@@ -40,10 +40,10 @@ $(document).ready(function(){
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
-        	{text: "Dayly", value: "day"},
-        	{text: "Weekly", value: "week"},
-        	{text: "Monthly", value: "month"},
-        	{text: "Yearly", value: "year"}
+        	{text: "Daily", value: "daily"},
+        	{text: "Weekly", value: "weekly"},
+        	{text: "Monthly", value: "monthly"},
+        	{text: "Yearly", value: "yearly"}
         ],
         change: function() {
             var value = this.value();
@@ -52,10 +52,10 @@ $(document).ready(function(){
         	$("#dept_driver-time-wrap").html("<input name='time' id='dept_driver-time'/>");
      		$("#dept_driver-time-label").html(text);
         	var _format = "yyyy/MM/dd";
-        	if ("month" == value){
+        	if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
-		    }else if ("year" == value){
+		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
 		    }
@@ -174,7 +174,6 @@ function loadReportDeptDrivers(url, params){
 
 function reportDeptDriverSearchValidate(form) {
 	var $form = $(form);
-	
 	loadReportDeptDrivers($form.attr("action"), $form.serializeArray());
 	
 	return false;

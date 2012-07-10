@@ -8,6 +8,7 @@ import models.GPSData;
 import models.Vehicle;
 import play.jobs.Every;
 import play.jobs.Job;
+import utils.CommonUtil;
 import vo.CurrentBusData;
 
 /**
@@ -29,7 +30,11 @@ public class GPS extends Job {
     }
 
     public void doJob(){
-    	GPS.generate(21, "");
+    	try{
+    		GPS.generate(21, "");
+    	}catch(Throwable e){
+    		System.out.println(CommonUtil.getNowTime() + "-----------------" + e);
+    	}
     }
     
     /**

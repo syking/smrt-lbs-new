@@ -21,6 +21,9 @@ public class EventType extends Model {
 	@Column(unique = true)
 	public String name;
 	
+	@Column(unique = true, name="column_name")
+	public String columnName;
+	
 	/**
 	 * 事件类型数据字典，暂时放在这里
 	 * @author weiwei

@@ -7,8 +7,8 @@
 	<label for="dept_departments">Superior:</label>
 	<input name="parentId" id="dept_departments"/>
 	
-	<label for="dept_types">Type:</label>
-	<input name="dateType" id="dept_types"/>
+	<label for="dept_types">Time Type:</label>
+	<input name="timeType" id="dept_types"/>
 	
 	<label id="dept_time-label" for="dept_time">Year:</label>
 	<div style="display:inline;" id="dept_time-wrap">
@@ -69,23 +69,24 @@ $(document).ready(function(){
         $("#report-dept-driver").attr("url", newUrl);
         $("#report-dept-driver").find("span").click();
     });
-//     
+
 	var deptCombo = #{verbatim} ${departments} #{/verbatim};
 	deptCombo[deptCombo.length] = {text: "top department", value: "0"};
+   
     $("#dept_departments").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: deptCombo
     });
-//     
+
     $("#dept_types").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
-        	{text: "Dayly", value: "day"},
-        	{text: "Weekly", value: "week"},
-        	{text: "Monthly", value: "month"},
-        	{text: "Yearly", value: "year"}
+        	{text: "Daily", value: "daily"},
+        	{text: "Weekly", value: "weekly"},
+        	{text: "Monthly", value: "monthly"},
+        	{text: "Yearly", value: "yearly"}
         ],
         change: function() {
             var value = this.value();
@@ -94,10 +95,10 @@ $(document).ready(function(){
         	$("#dept_time-wrap").html("<input name='time' id='dept_time'/>");
      		$("#dept_time-label").html(text);
         	var _format = "yyyy/MM/dd";
-        	if ("month" == value){
+        	if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
-		    }else if ("year" == value){
+		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
 		    }

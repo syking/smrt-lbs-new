@@ -74,6 +74,7 @@ public class Maps extends Controller {
     	
     	Map result = viewOnMap("dept_" + departmentId, events, "id", "vehicle", "fleet", "driver");
     	result.put("eventGPSUrl", "/Maps/departmentEventsGPS?departmentId=" + departmentId);
+    	
     	render(renderArgs.get(THEME) + "/Map/map.html", result);
     }
     
@@ -134,6 +135,7 @@ public class Maps extends Controller {
     	
     	Map result = viewOnMap("driver_" + driverId, events, "id", "vehicle", "fleet", "department");
     	result.put("eventGPSUrl", "/Maps/driverEventsGPS?driverId=" + driverId);
+    	
     	render(renderArgs.get(THEME) + "/Map/map.html", result);
     }
     

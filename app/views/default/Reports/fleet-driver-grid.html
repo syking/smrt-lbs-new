@@ -7,8 +7,8 @@
 	<label for="fleet_driver-fleets">fleet:</label>
 	<input name="fleetId" id="fleet_driver-fleets"/>
 	
-	<label for="fleet_driver-types">Type:</label>
-	<input name="dateType" id="fleet_driver-types"/>
+	<label for="fleet_driver-types">Time Type:</label>
+	<input name="timeType" id="fleet_driver-types"/>
 	
 	<label id="fleet_driver-time-label" for="fleet_driver-time">Year:</label>
 	<div style="display:inline;" id="fleet_driver-time-wrap">
@@ -43,10 +43,10 @@ $(document).ready(function(){
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
-        	{text: "Dayly", value: "day"},
-        	{text: "Weekly", value: "week"},
-        	{text: "Monthly", value: "month"},
-        	{text: "Yearly", value: "year"}
+        	{text: "Daily", value: "daily"},
+        	{text: "Weekly", value: "weekly"},
+        	{text: "Monthly", value: "monthly"},
+        	{text: "Yearly", value: "yearly"}
         ],
         change: function() {
             var value = this.value();
@@ -55,10 +55,10 @@ $(document).ready(function(){
         	$("#fleet_driver-time-wrap").html("<input name='time' id='fleet_driver-time'/>");
      		$("#fleet_driver-time-label").html(text);
         	var _format = "yyyy/MM/dd";
-        	if ("month" == value){
+        	if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
-		    }else if ("year" == value){
+		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
 		    }

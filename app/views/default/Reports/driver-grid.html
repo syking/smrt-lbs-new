@@ -3,17 +3,17 @@
 	<div id="driver_result_view-on-map-window"></div>
 </div>
 
-<form action="/DriverReports/search" method="post" class="k-content" onsubmit="return searchResult(this)" style="padding:10px 0;">
+<form action="/reports/searchDriver" method="post" class="k-content" onsubmit="return searchResult(this)" style="padding:10px 0;">
 	
 	<label for="${grid.tabId}_driverId">Driver Name:</label>
 	<input name="driverId" id="${grid.tabId}_driverId" />
 	
-	<label for="${grid.tabId}_reportType" >Report Type:</label>
-	<input name="reportType" id="${grid.tabId}_reportType"/>
+	<label for="${grid.tabId}_reportType" >Time Type:</label>
+	<input name="timeType" id="${grid.tabId}_reportType"/>
 	
-	<label for="${grid.tabId}_date" id="date_label">Date:</label>
+	<label for="${grid.tabId}_date" id="date_label">Year:</label>
 	<div id="date_wrap" style="display:inline;">
-	<input name="dateStr" id="${grid.tabId}_date"/>
+	<input name="time" id="${grid.tabId}_date"/>
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
@@ -64,11 +64,11 @@ var driverId = "${driverId}";
                 var value = this.value();
                 var text = this.text();
             	$("#date_wrap").empty();
-            	$("#date_wrap").html("<input name='dateStr' id='${grid.tabId}_date'/>");
+            	$("#date_wrap").html("<input name='time' id='${grid.tabId}_date'/>");
          		$("#date_label").html(text);
-            	var _format = "yyyy-MM-dd";
+            	var _format = "yyyy/MM/dd";
             	if ("monthly" == value){
-    		    	_format = "yyyy-MM";
+    		    	_format = "yyyy/MM";
     		    	value = "year";
     		    }else if ("yearly" == value){
     		    	_format = "yyyy";
@@ -175,14 +175,12 @@ var driverId = "${driverId}";
     
     function searchResult(form) {
     	var $form = $(form);
-    	
     	loadSearch($form.attr("action"), $form.serializeArray());
     	
     	return false;
     }
     
     function loadSearch(url, params){
-    	
     	// keep the driver selected firstly
     	$.each(params, function(i, v){
     		if (params[i].name == "driverId" && (!params[i].value || isNaN(params[i].value) || params[i].value <= 0)){

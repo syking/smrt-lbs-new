@@ -7,8 +7,8 @@
 	<label for="fleets">Superior:</label>
 	<input name="parentId" id="fleets"/>
 	
-	<label for="f_types">Type:</label>
-	<input name="dateType" id="f_types"/>
+	<label for="f_types">Time Type:</label>
+	<input name="timeType" id="f_types"/>
 	
 	<label id="f_time-label" for="f_time">Year:</label>
 	<div style="display:inline;" id="f_time-wrap">
@@ -81,10 +81,10 @@ $(document).ready(function(){
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
-        	{text: "Dayly", value: "day"},
-        	{text: "Weekly", value: "week"},
-        	{text: "Monthly", value: "month"},
-        	{text: "Yearly", value: "year"}
+        	{text: "Daily", value: "daily"},
+        	{text: "Weekly", value: "weekly"},
+        	{text: "Monthly", value: "monthly"},
+        	{text: "Yearly", value: "yearly"}
         ],
         change: function() {
             var value = this.value();
@@ -93,10 +93,10 @@ $(document).ready(function(){
         	$("#f_time-wrap").html("<input name='time' id='f_time'/>");
      		$("#f_time-label").html(text);
         	var _format = "yyyy/MM/dd";
-        	if ("month" == value){
+        	if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
-		    }else if ("year" == value){
+		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
 		    }

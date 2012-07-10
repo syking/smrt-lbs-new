@@ -46,29 +46,27 @@ import utils.CommonUtil;
 public class EventStatusJob extends Job {
 
 	public void doJob() {
+		EntityTransaction trans = null;
+		try {
+			List<EventRecord> ers = EventRecord.findAll();
+			if (ers == null)
+				return;
 
-		List<EventRecord> ers = EventRecord.findAll();
-		if (ers == null)
-			return;
-		
-		
-		for (EventRecord er : ers) {
-			if (er.status != 0)
-				continue;
-			
-			System.out.println("\n process event record --> " + er);
-			
-			EntityTransaction trans = GenericModel.em().getTransaction();
-			if (!trans.isActive())
-				continue;
-			
-			try {
+			for (EventRecord er : ers) {
+				if (er.status != 0)
+					continue;
+
+				System.out.println("\n process event record --> " + er);
+
+				trans = GenericModel.em().getTransaction();
+				if (!trans.isActive())
+					continue;
 
 				er.status = 1;// 处理中...
 				er.save();
 
 				System.out.println(" status --> " + 1);
-				
+
 				Vehicle v = Vehicle.find("device_id = ?", er.device.id).first();
 				if (v == null) {
 					trans.rollback();
@@ -94,7 +92,7 @@ public class EventStatusJob extends Job {
 				e.driver = schedule.driver;
 				e.serviceNumber = schedule.serviceNumber;
 				e.department = schedule.driver.department;
-				
+
 				/*
 				 * TODO 计算得到 road
 				 */
@@ -114,17 +112,20 @@ public class EventStatusJob extends Job {
 
 				er.status = 2; // 处理成功
 				er.save();
-				
+
 				trans.commit();
-				System.out.println(CommonUtil.getNowTime() + " success -> commit");
-				
-			} catch (Error e) {
+				System.out.println(CommonUtil.getNowTime()
+						+ " success -> commit");
+			}
+		} catch (Error e) {
+			if (trans != null)
 				trans.rollback();
-				System.out.println(" error -> " + e.toString() + " -> rollback");
-			} catch (Exception e) {
+			
+			System.out.println(" error -> " + e.toString() + " -> rollback");
+		} catch (Exception e) {
+			if (trans != null)
 				trans.rollback();
-				System.out.println(" exception -> " + e.toString() + " -> rollback");
-			} 
+			System.out.println(" exception -> " + e.toString() + " -> rollback");
 		}
 	}
 }

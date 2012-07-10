@@ -81,7 +81,7 @@ public class Driver extends Model{
 		return Driver.find(query, p).fetch();
 	}
     
-    public static Map assemReport(Collection<Driver> drivers, String dateType, String time) throws ParseException{
+    public static Map assemReport(Collection<Driver> drivers, String timeType, String time) throws ParseException{
     	List<EventType> eventTypes = EventType.findAll();
     	if (eventTypes == null)
     		return null;
@@ -129,24 +129,23 @@ public class Driver extends Model{
     			_params.add(_field);
     			_params.add(driver.id);
     			
-    			if (dateType  != null && dateType.trim().length() > 0 && time != null && time.trim().length() > 0){
+    			if (timeType  != null && !timeType.isEmpty() && time != null && !time.isEmpty()){
     				Date start = null;
     	    		Date end = null;
-    				if ("day".equals(dateType)){
+    				if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					end = CommonUtil.addDate(start, 1); // 往后一天
-    				}else if ("week".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
     					Date _choose = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					Calendar cal = Calendar.getInstance();
     					cal.setTime(_choose);
     					int day = cal.get(Calendar.DAY_OF_WEEK);
     					start = CommonUtil.addDate(_choose, -day+1);
     					end = CommonUtil.addDate(start, 7);
-    					
-    				}else if ("month".equals(dateType)){
+    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
     					start = new SimpleDateFormat("yyyy/MM").parse(time);
     					end = CommonUtil.addMonth(start, 1); // 往后一个月
-    				}else if ("year".equals(dateType)) {
+    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
     					start = new SimpleDateFormat("yyyy").parse(time);
     					end = CommonUtil.addYear(start, 1); //往后一年
     				}
@@ -194,6 +193,25 @@ public class Driver extends Model{
 		
 		return map;
     }
+    
+    /**
+	 * unit of time -> second
+	 * @param driverNumber
+	 * @return
+	 */
+	public static float calculateDrivingTime(String driverNumber){
+		float count = 0;
+		List<Schedule> schs = Schedule.findByDriverNumber(driverNumber);
+		if (schs == null || schs.isEmpty())
+			return 0;
+		
+		for (Schedule s : schs){
+			long time = CommonUtil.difference(s.endTime, s.startTime) / 1000;
+			count += time;
+		}
+		
+		return count;
+	}
     
 	@Override
 	public String toString() {
