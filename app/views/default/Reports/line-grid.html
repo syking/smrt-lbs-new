@@ -3,16 +3,16 @@
 <div id="line_view-on-map-wrap">
 	<div id="line_view-on-map-window"></div>
 </div>
-<form action="/reports/lineListJson" method="post" class="k-content" onsubmit="return reportLineSearchValidate(this)" style="padding:10px 0 ;">
+<form id="report_line_search_form_${tabId}" action="/reports/lineListJson" method="post" class="k-content" onsubmit="return reportLineSearchValidate(this)" style="padding:10px 0 ;">
 	<label for="lines">Superior:</label>
-	<input name="line" id="lines"/>
+	<input name="line" id="lines" />
 	
 	<label for="line_types">Time Type:</label>
-	<input name="timeType" id="line_types"/>
+	<input name="timeType" id="line_types" required />
 	
-	<label id="line_time-label" for="line_time">Year:</label>
+	<label id="line_time-label" for="line_time">Day:</label>
 	<div style="display:inline;" id="line_time-wrap">
-		<input name="time" id="line_time"/>
+		<input name="time" id="line_time" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="line_search-button" class="k-button search-button" style="width:50px;" value="" />
@@ -26,11 +26,10 @@
 <script>
 
 var line;
+var timeType;
+var time;
 
 $(document).ready(function(){
-	
-	loadReportLines("/reports/lineListJson");
-    
     $("#report_line_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
         line = $(this).parent().parent().find("td:last").html();
@@ -51,32 +50,26 @@ $(document).ready(function(){
          }).data("kendoWindow");
         
         wnd.title(w_title).center().open();
-        
     });
     
     $("#report_line_grid").delegate(".view-driver-button", "click", function(e) {
         e.preventDefault();
         line = $(this).parent().parent().find("td:last").html();
         var url = $("#report-line-driver").attr("url");
-        var newUrl ;
-       	if ((index = url.indexOf("&line=")) > 0){
-       		newUrl = url.substring(0, "&line=".length + index) + line;
-       	}else{
-        	newUrl = url + "&line="+line;
-        }
-        
+        var newUrl = url + "&line="+line+ "&timeType="+timeType+"&time="+time;;
         $("#report-line-driver").attr("url", newUrl);
         $("#report-line-driver").find("span").click();
+        $("#report-line-driver").attr("url", url);
     });
-//     
-	var lineCombo = #{verbatim} ${lines} #{/verbatim};
+    
+    var lineCombo = #{verbatim} ${lines} #{/verbatim};
 	lineCombo[lineCombo.length] = {text: "All line", value: "all"};
     $("#lines").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
         dataSource: lineCombo
     });
-//     
+    
     $("#line_types").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
@@ -90,16 +83,23 @@ $(document).ready(function(){
             var value = this.value();
             var text = this.text();
         	$("#line_time-wrap").empty();
-        	$("#line_time-wrap").html("<input name='time' id='line_time'/>");
-     		$("#line_time-label").html(text);
+        	$("#line_time-wrap").html("<input name='time' id='line_time' required />");
         	var _format = "yyyy/MM/dd";
-        	if ("monthly" == value){
+        	if ("daily" == value){
+        		text = "Day";
+        	}else if ("weekly" == value){
+				text = "Week";
+			}else if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
+		    	text = "Month";
 		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
+		    	text = "Year";
 		    }
+		    
+		    $("#line_time-label").html(text+":");
 		    
         	$("#line_time").kendoDatePicker({
 		    	start: value,
@@ -114,7 +114,7 @@ $(document).ready(function(){
     
     $("#line_time-wrap").hide();
     $("#line_time-label").hide();
-
+	$("#report_line_search_form_${tabId}").kendoValidator();
 });
 
 function loadReportLines(url, params){
@@ -139,7 +139,6 @@ function loadReportLines(url, params){
 	   	 	scrollable: true,
 	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	height: "auto",
 	   	 	selectable: true
 	   	 	
         }).data("kendoGrid");
@@ -178,8 +177,12 @@ function loadReportLines(url, params){
 
 function reportLineSearchValidate(form) {
 	var $form = $(form);
-	
-	loadReportLines($form.attr("action"), $form.serializeArray());
+	timeType = $form.find("input[name=timeType]").val();
+	time = $form.find("input[name=time]").val();
+	var validatable = $form.kendoValidator().data("kendoValidator");
+ 	if (validatable.validate()) {
+     	loadReportLines($form.attr("action"), $form.serializeArray());
+ 	}
 	
 	return false;
 }

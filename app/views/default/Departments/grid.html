@@ -70,7 +70,7 @@
                     fields: {
                         id: { editable: false, nullable: true },
                         name: { validation: { required: true } },
-                        parent: { },
+                        parentName: { },
                     }
 
                 }
@@ -86,9 +86,9 @@
 		$.each(columnsJson, function(i, v){
 			var _field = columnsJson[i]['field'];
 			
-			if ('parent' === _field){
+			if ('parentName' === _field){
 				columnsJson[i].editor = function(container, options){
-			        $('<input name="parent" />').appendTo(container).kendoComboBox({
+			        $('<input name="parentName" />').appendTo(container).kendoComboBox({
 				        dataTextField: "text",
 				        dataValueField: "value",
 				        dataSource: #{verbatim} ${names} #{/verbatim}
@@ -102,7 +102,7 @@
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
-            height: "auto",
+            selectable: true,
             toolbar: ["create"],
             columns: columnsJson,
             editable: "${grid.editable}"

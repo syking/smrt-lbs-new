@@ -1,18 +1,19 @@
+<!--
 <script src="/public/js/kendo.chart.min.js" language="javascript"></script>
 
 <div id="fleet_view-on-map-wrap">
 	<div id="fleet_view-on-map-window"></div>
 </div>
-<form action="/reports/fleetListJson" method="post" class="k-content" onsubmit="return reportFleetSearchValidate(this)" style="padding:10px 0;">
+<form id="report_fleet_search_form_${tabId}" action="/reports/fleetListJson" method="post" class="k-content" onsubmit="return reportFleetSearchValidate(this)" style="padding:10px 0;">
 	<label for="fleets">Superior:</label>
 	<input name="parentId" id="fleets"/>
 	
 	<label for="f_types">Time Type:</label>
-	<input name="timeType" id="f_types"/>
+	<input name="timeType" id="f_types" required />
 	
 	<label id="f_time-label" for="f_time">Year:</label>
 	<div style="display:inline;" id="f_time-wrap">
-		<input name="time" id="f_time"/>
+		<input name="time" id="f_time" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="f_search-button" class="k-button search-button" style="width:50px;" value="" />
@@ -26,11 +27,10 @@
 <script>
 
 var fleetId;
+var timeType;
+var time;
 
 $(document).ready(function(){
-	
-	loadReportFleets("/reports/fleetListJson");
-    
     $("#report_fleet_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
         fleetId = $(this).parent().parent().find("td:last").html();
@@ -58,17 +58,13 @@ $(document).ready(function(){
         e.preventDefault();
         fleetId = $(this).parent().parent().find("td:last").html();
         var url = $("#report-fleet-driver").attr("url");
-        var newUrl ;
-       	if ((index = url.indexOf("&fleetId=")) > 0){
-       		newUrl = url.substring(0, "&fleetId=".length + index) + fleetId;
-       	}else{
-        	newUrl = url + "&fleetId="+fleetId;
-        }
+        var newUrl = url + "&fleetId="+fleetId+"&timeType="+timeType+"&time="+time;;
         
         $("#report-fleet-driver").attr("url", newUrl);
         $("#report-fleet-driver").find("span").click();
+        $("#report-fleet-driver").attr("url", url);
     });
-//     
+    
 	var deptCombo = #{verbatim} ${fleets} #{/verbatim};
 	deptCombo[deptCombo.length] = {text: "top fleet", value: "0"};
     $("#fleets").kendoComboBox({
@@ -76,7 +72,7 @@ $(document).ready(function(){
         dataValueField: "value",
         dataSource: deptCombo
     });
-//     
+    
     $("#f_types").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
@@ -90,16 +86,23 @@ $(document).ready(function(){
             var value = this.value();
             var text = this.text();
         	$("#f_time-wrap").empty();
-        	$("#f_time-wrap").html("<input name='time' id='f_time'/>");
-     		$("#f_time-label").html(text);
+        	$("#f_time-wrap").html("<input name='time' id='f_time' required/>");
         	var _format = "yyyy/MM/dd";
-        	if ("monthly" == value){
+        	if ("daily" == value){
+        		text = "Day";
+        	}else if ("weekly" == value){
+				text = "Week";
+			}else if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
+		    	text = "Month";
 		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
+		    	text = "Year";
 		    }
+		    
+		    $("#f_time-label").html(text+":");
 		    
         	$("#f_time").kendoDatePicker({
 		    	start: value,
@@ -115,6 +118,7 @@ $(document).ready(function(){
     $("#f_time-wrap").hide();
     $("#f_time-label").hide();
 
+	$("#report_fleet_search_form_${tabId}").kendoValidator();
 });
 
 function loadReportFleets(url, params){
@@ -139,7 +143,6 @@ function loadReportFleets(url, params){
 	   	 	scrollable: true,
 	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	height: "auto",
 	   	 	selectable: true
 	   	 	
         }).data("kendoGrid");
@@ -178,9 +181,14 @@ function loadReportFleets(url, params){
 
 function reportFleetSearchValidate(form) {
 	var $form = $(form);
-	
-	loadReportFleets($form.attr("action"), $form.serializeArray());
+	timeType = $form.find("input[name=timeType]").val();
+	time = $form.find("input[name=time]").val();
+	var validatable = $form.kendoValidator().data("kendoValidator");
+ 	if (validatable.validate()) {
+     	loadReportFleets($form.attr("action"), $form.serializeArray());
+ 	}
 	
 	return false;
 }
 </script>
+-->

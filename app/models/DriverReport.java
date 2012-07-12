@@ -1,9 +1,13 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +17,15 @@ import javax.persistence.Table;
 import play.db.jpa.Model;
 import play.db.jpa.Transactional;
 import utils.CommonUtil;
+import vo.EventTypeReportVO;
 
 /**
  * 司机的事件统计报表。
  * <li>这个表的时间类型字段名跟T_EVENT_TYPE表的tech_name字段值一样</li>
+ * @author weiwei
+ *
+ */
+/**
  * @author weiwei
  *
  */
@@ -105,10 +114,21 @@ public class DriverReport extends Model {
 	@Column(name="sudden_lane_change_total")
 	public long suddenLaneChangeTotal;
 	
+	@Column(name="performance_index")
+	public long performanceIndex;
+	
+	@Column(name="highest_performance_index")
+	public long highestPerformanceIndex;
+	
+	@Column(name="lowest_performance_index")
+	public long lowestPerformanceIndex;
+	
 	public long idling;
 	
 	@Column(name="driving_time")
 	public float drivingTime;// unit of time -> second
+	
+	public long total;
 	
 	public static interface TIME_TYPE {
 		String DAILY = "daily";
@@ -117,12 +137,58 @@ public class DriverReport extends Model {
 		String YEARLY = "yearly";
 	};
 	
-	public static void main(String[] args){
-		Date end = new Date();
-		Date start = CommonUtil.addYear(end, -1);
-		end = CommonUtil.addYear(start, 1);
+	public String toString(){
+		return "[id=" + id + "]";
+	}
+	
+	public static boolean isValidTimeType(String timeType){
+		if (TIME_TYPE.DAILY.equals(timeType))
+			return true;
 		
-		System.out.println(start + "|" + end);
+		if (TIME_TYPE.WEEKLY.equals(timeType))
+			return true;
+		
+		if (TIME_TYPE.MONTHLY.equals(timeType))
+			return true;
+		
+		if (TIME_TYPE.YEARLY.equals(timeType))
+			return true;
+		
+		return false;
+	}
+	
+	public static List<DriverReport> findByDrivers(Collection<Driver> drivers, String timeType, String time) {
+		if (drivers == null || timeType == null || time == null)
+			return null;
+		
+		List<DriverReport> drs = new ArrayList<DriverReport>();
+		
+		for (Driver driver : drivers){
+			Date date = null;
+			try {
+				date = CommonUtil.getDateByTimeTypeAndTime(timeType, time);
+			} catch (Throwable e){
+				continue;
+			}
+			
+			Object[] params = {driver, timeType, date};
+			DriverReport dr = DriverReport.find("driver = ? and timeType = ? and startTime = ?", params).first();
+			if (dr == null)
+				continue;
+			
+			drs.add(dr);
+		}
+		
+		return drs;
+	}
+	
+	public static List<DriverReport> findByDriver(Driver driver, String timeType, String time){
+		List<Driver> drivers = new ArrayList<Driver>();
+		drivers.add(driver);
+		
+		List<DriverReport> drs = findByDrivers(drivers, timeType, time);
+		
+		return drs;
 	}
 	
 	/**
@@ -143,45 +209,51 @@ public class DriverReport extends Model {
 			return ;
 		}
 		
-		// 日报表 -> 要求在每天的00开始之后的一个小时内进行统计工作，统计的都是昨天、昨天以前的
-		//if (!"00".equals(CommonUtil.formatTime("HH", currentTime)))
-			//return ;
-		
+		// 日报表 ->
 		Date start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(currentTime, -1)) + " 00:00:00");
 		Date end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start, 1)) + " 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
 		String timeType = TIME_TYPE.DAILY;
-		
-		// 周报表 -> 判断end是否是星期日
-		if (1 == CommonUtil.getDayOfWeek(end)){
-			start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(end, -7))+" 00:00:00");
-			end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, 7)) + " 00:00:00");
-			timeType = TIME_TYPE.WEEKLY;
-		}else{
-			// 月报表 -> 判断end是否是本月的最后一天
-			int now = CommonUtil.getDayOfMonth(end);
-			int lastDay = CommonUtil.getLastDayOfMonth(end)-1;
-			if (now == lastDay){
-				start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", CommonUtil.addMonth(end, -1))+"-01 00:00:00");
-				end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
-				timeType = TIME_TYPE.MONTHLY;
-			}else{
-				// 年报表 -> 判断end是否是本年的最后一天
-				now = CommonUtil.getDayOfYear(end);
-				lastDay = CommonUtil.getLastDayOfYear(end)-1;
-				if (now == lastDay){
-					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", CommonUtil.addYear(end, -1))+"-01-01 00:00:00");
-					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) + " 00:00:00");
-					timeType = TIME_TYPE.YEARLY;
-				}
-			}
-		}
-		
 		List<DriverReport> db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
-		if (db_dr != null && !db_dr.isEmpty()){
-			System.out.println(CommonUtil.getNowTime() + "------------- start->" + CommonUtil.formatTime(start) + " | end->"+CommonUtil.formatTime(end) + "|" +timeType + " | has aready exist!");
-			return ;
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		}
+			
+		// 周报表 -> 
+		int day = CommonUtil.getDayOfWeek(end);
+		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(end, -day+2))+" 00:00:00");
+		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, 7)) + " 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
+		timeType = TIME_TYPE.WEEKLY;
+		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
 		}
 		
+		// 月报表 -> 
+		int lastDay = CommonUtil.getLastDayOfMonth(end)-1;
+		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", CommonUtil.addMonth(end, -1))+"-01 00:00:00");
+		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
+		timeType = TIME_TYPE.MONTHLY;
+		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		}
+		
+		// 年报表 -> 
+		lastDay = CommonUtil.getLastDayOfYear(end)-1;
+		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", CommonUtil.addYear(end, -1))+"-01-01 00:00:00");
+		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) + " 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
+		timeType = TIME_TYPE.YEARLY;
+		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		}
+	}
+	
+	public static void saveToDb(List<Driver> drivers, String timeType, Date start, Date end, List<EventType> eventTypes){
 		for (Driver d : drivers){
 			DriverReport dr = new DriverReport();
 			dr.startTime = start;
@@ -191,12 +263,12 @@ public class DriverReport extends Model {
 			Map<String, Long> counts = new HashMap<String, Long>();
     		for (EventType et : eventTypes){
     			long count = Event.calculateDriverEventCount(d.id, start, end, et.techName);
-        		counts.put(et.columnName, count);
+        		counts.put(et.fieldName, count);
         		total += count;
     		}
     		
 			dr.driver = d;
-			dr.drivingTime = Driver.calculateDrivingTime(d.number);
+			dr.drivingTime = Driver.calculateDrivingTime(d.number, start, end);
 			
 			dr.highWayMaxSpeed = 0;
 			dr.idling = 0;
@@ -231,7 +303,104 @@ public class DriverReport extends Model {
 			
 			dr.timeType = timeType;
 			
+			dr.performanceIndex = 100 - dr.reduceScore();
+			dr.total = dr.total();
+			
+			Driver _d = Driver.findById(dr.driver.id);
+			Department dept = _d.department;
+			if (dept != null){
+				dept = Department.findById(dept.id);
+				Set<Driver> fleetDrivers = dept.drivers;
+				if (fleetDrivers != null && !fleetDrivers.isEmpty()){
+					List<Long> fleetDriverScores = new ArrayList(fleetDrivers.size());
+					for (Driver fleetDriver : fleetDrivers){
+						List<DriverReport> drs = DriverReport.findByDriver(fleetDriver, timeType, null);
+						if (drs == null || drs.isEmpty())
+							continue;
+						
+						fleetDriverScores.add(fleetDriver.calculateScore(drs));
+					}
+					
+					if (!fleetDriverScores.isEmpty()){
+						Collections.sort(fleetDriverScores);
+						dr.highestPerformanceIndex = fleetDriverScores.get(fleetDriverScores.size()-1);
+						dr.lowestPerformanceIndex = fleetDriverScores.get(0);
+					}
+				}
+			}
+			
 			dr.create();
 		}
 	}
+	
+	/**
+	 * 计算减分
+	 */
+	public long reduceScore(){
+		Map<String, Long> rules = EventType.getPointRule();
+		return this.speedingCountTotal * rules.get("speedingCount") 
+			+ this.suddenAccelerationTotal * rules.get("suddenAcceleration") 
+			+ this.suddenBrakeTotal * rules.get("suddenBrake")
+			+ this.suddenLeftTurnTotal * rules.get("suddenLeftTurn") 
+			+ this.suddenRightTurnTotal * rules.get("suddenRightTurn") 
+			+ this.idling * rules.get("idling");
+	}
+	
+	public long total(){
+		return this.speedingCountTotal + this.suddenAccelerationTotal + this.suddenLeftTurnTotal + this.suddenRightTurnTotal + this.suddenBrakeNearBusStop;
+	}
+	
+	public static List<EventTypeReportVO> generateDriverEventPerformance(Driver driver, String timeType, String time){
+		List<EventType> types = EventType.findAll();
+		List<EventTypeReportVO> result = new ArrayList<EventTypeReportVO>(types.size());
+		
+		Date[] dates = CommonUtil.getStartAndEndDate(timeType, time);
+		String start = CommonUtil.formatTime(dates[0]);
+		String end = CommonUtil.formatTime(dates[1]);
+		List<DriverReport> drs = DriverReport.findByDriver(driver, timeType, time);
+		
+		Map<String, Long> rules = EventType.getPointRule();
+		// to count the percent
+		long totalTimes = 0;
+		
+		for (EventType et : types){
+			long times = 0;
+			long rule = 0;
+			if (EventType.Constant.SPEEDING.equals(et.techName)){
+				for (DriverReport dr : drs)
+					times += dr.speedingCountTotal;
+				rule = rules.get("speedingCount");
+			} else if (EventType.Constant.IDLE.equals(et.techName)){
+				for (DriverReport dr : drs)
+					times += dr.idling;
+				rule = rules.get("idling");
+			} else if (EventType.Constant.SUDDEN_ACCELERATION.equals(et.techName)){
+				for (DriverReport dr : drs)
+					times += dr.suddenAccelerationTotal;
+				rule = rules.get("suddenAcceleration");
+			} else if (EventType.Constant.SUDDEN_BRAKING.equals(et.techName)){
+				for (DriverReport dr : drs)
+					times += dr.suddenBrakeTotal;
+				rule = rules.get("suddenBrake");
+			} else if (EventType.Constant.SUDDEN_LEFT.equals(et.techName)){
+				for (DriverReport dr : drs)
+					times += dr.suddenLeftTurnTotal;
+				rule = rules.get("suddenLeftTurn");
+			} else if (EventType.Constant.SUDDEN_RIGHT.equals(et.techName)){
+				for (DriverReport dr : drs)
+					times += dr.suddenRightTurnTotal;
+				rule = rules.get("suddenRightTurn");
+			}
+			
+			totalTimes += times;
+			result.add(new EventTypeReportVO(et.id, et.name, rule, times, "0%", timeType, start, end));
+		}
+		
+		if (totalTimes > 0)
+			for (EventTypeReportVO etVO : result)
+				etVO.percent = CommonUtil.percent(etVO.times, totalTimes);
+		
+		return result;
+	}
+	
 }

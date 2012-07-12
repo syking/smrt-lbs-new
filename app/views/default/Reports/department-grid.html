@@ -2,17 +2,17 @@
 <div id="dept_view-on-map-wrap">
 	<div id="dept_view-on-map-window"></div>
 </div>
-<form action="/reports/departmentListJson" method="post" class="k-content" onsubmit="return reportDepartmentSearchValidate(this)" style="padding:10px 0;">
+<form id="dept_search_form_${tabId}" action="/reports/departmentListJson" method="post" class="k-content" onsubmit="return reportDepartmentSearchValidate(this)" style="padding:10px 0;">
 	
 	<label for="dept_departments">Superior:</label>
 	<input name="parentId" id="dept_departments"/>
 	
 	<label for="dept_types">Time Type:</label>
-	<input name="timeType" id="dept_types"/>
+	<input name="timeType" id="dept_types" required />
 	
-	<label id="dept_time-label" for="dept_time">Year:</label>
+	<label id="dept_time-label" for="dept_time">Day:</label>
 	<div style="display:inline;" id="dept_time-wrap">
-		<input name="time" id="dept_time"/>
+		<input name="time" id="dept_time" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="dept_search-button" class="k-button search-button" style="width:50px;" value="" />
@@ -27,11 +27,11 @@
 <script>
 
 var departId;
+var timeType;
+var time;
 
 $(document).ready(function(){
 	
-	loadReportDepartments("/reports/departmentListJson");
-    
     $("#dept_report_dept_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
         departId = $(this).parent().parent().find("td:last").html();
@@ -59,15 +59,11 @@ $(document).ready(function(){
         e.preventDefault();
         departId = $(this).parent().parent().find("td:last").html();
         var url = $("#report-dept-driver").attr("url");
-        var newUrl ;
-       	if ((index = url.indexOf("&departmentId=")) > 0){
-       		newUrl = url.substring(0, "&departmentId=".length + index) + departId;
-       	}else{
-        	newUrl = url + "&departmentId="+departId;
-        }
+        var newUrl = url + "&departmentId="+departId+"&timeType="+timeType+"&time="+time;
         
         $("#report-dept-driver").attr("url", newUrl);
         $("#report-dept-driver").find("span").click();
+        $("#report-dept-driver").attr("url", url);
     });
 
 	var deptCombo = #{verbatim} ${departments} #{/verbatim};
@@ -90,18 +86,25 @@ $(document).ready(function(){
         ],
         change: function() {
             var value = this.value();
-            var text = this.text();
+            var text = "Day";
+            var _format = "yyyy/MM/dd";
         	$("#dept_time-wrap").empty();
-        	$("#dept_time-wrap").html("<input name='time' id='dept_time'/>");
-     		$("#dept_time-label").html(text);
-        	var _format = "yyyy/MM/dd";
-        	if ("monthly" == value){
+        	$("#dept_time-wrap").html("<input name='time' id='dept_time' required />");
+     		if ("daily" == value){
+        		text = "Day";
+        	}else if ("weekly" == value){
+				text = "Week";
+			}else if ("monthly" == value){
 		    	_format = "yyyy/MM";
 		    	value = "year";
+		    	text = "Month";
 		    }else if ("yearly" == value){
 		    	_format = "yyyy";
 		    	value = "decade";
+		    	text = "Year";
 		    }
+		    
+		    $("#dept_time-label").html(text+":");
 		    
         	$("#dept_time").kendoDatePicker({
 		    	start: value,
@@ -116,11 +119,16 @@ $(document).ready(function(){
     
     $("#dept_time-wrap").hide();
     $("#dept_time-label").hide();
+    $("#dept_search_form_${tabId}").kendoValidator();
 
 });
 
 function loadReportDepartments(url, params){
 	$.getJSON(url, params, function(json){
+		if (json.message){
+			alert(json.message);
+			return ;
+		}
 		$("#dept_report_dept_grid").empty();
 		json.columns[json.columns.length] = { 
 			title: "Actions",
@@ -141,7 +149,6 @@ function loadReportDepartments(url, params){
 	   	 	scrollable: true,
 	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	height: "auto",
 	   	 	selectable: true
 	   	 	
         }).data("kendoGrid");
@@ -180,8 +187,12 @@ function loadReportDepartments(url, params){
 
 function reportDepartmentSearchValidate(form) {
 	var $form = $(form);
-	
-	loadReportDepartments($form.attr("action"), $form.serializeArray());
+	timeType = $form.find("input[name=timeType]").val();
+	time = $form.find("input[name=time]").val();
+	var validatable = $form.kendoValidator().data("kendoValidator");
+ 	if (validatable.validate()) {
+     	loadReportDepartments($form.attr("action"), $form.serializeArray());
+ 	}
 	
 	return false;
 }

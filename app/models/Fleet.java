@@ -1,9 +1,12 @@
 package models;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -17,6 +20,8 @@ import javax.persistence.Transient;
 import play.db.jpa.Model;
 import play.db.jpa.Transactional;
 import utils.CommonUtil;
+import vo.ChartSerie;
+import vo.EventReportVO;
 import vo.FleetVO;
 import vo.TreeView;
 
@@ -47,7 +52,7 @@ public class Fleet extends Model{
 	public Set<Vehicle> vehicles = new HashSet<Vehicle>();
 
 	@OneToMany(mappedBy = "fleet", fetch = FetchType.EAGER)
-	public Set<Driver> drivers = new HashSet<Driver>();
+	public Set<Driver> leaders = new HashSet<Driver>();
 	
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
@@ -64,7 +69,7 @@ public class Fleet extends Model{
 		fleet.name = fleetVO.name;
 		fleet.description = fleetVO.description;
 		fleet.placeNumber = fleetVO.placeNumber;
-		fleet.parent = Fleet.findByName(fleetVO.parent);
+		fleet.parent = Fleet.findByName(fleetVO.parentName);
 		
 		fleet.save();
 	}
@@ -79,7 +84,7 @@ public class Fleet extends Model{
 		fleet.name = fleetVO.name;
 		fleet.description = fleetVO.description;
 		fleet.placeNumber = fleetVO.placeNumber;
-		fleet.parent = Fleet.findByName(fleetVO.parent);
+		fleet.parent = Fleet.findByName(fleetVO.parentName);
 		
 		fleet.save();
 	}
@@ -235,4 +240,51 @@ public class Fleet extends Model{
 		return find("byName", name).first();
 	}
 
+	public static List<Fleet> findByParent(Long parentId){
+		List<Fleet> fleets = null;
+    	String sql = "";
+    	List<Long> params = new ArrayList<Long>(1);
+    	if (parentId != null && parentId > 0){
+    		sql = "and f.parent.id = ? " ;
+    		params.add(parentId);
+    		
+    		fleets = Fleet.find("select f from Fleet f where f.id not in (select fl.parent.id from Fleet fl where fl.parent.id is not null) " + sql, params.toArray()).fetch();
+    	}else{
+    		fleets = Fleet.findAll();
+    	}
+    	
+    	return fleets;
+	}
+	
+	@Deprecated
+	public static Map assemReport(Collection<Fleet> fleets, String timeType, String time){
+    	//---------------chart----------------------------
+    	List<EventReportVO> datas = new ArrayList<EventReportVO>();
+		List<String> categories = new ArrayList<String>(fleets.size());
+		ChartSerie serie = new ChartSerie();
+		//---------------chart----------------------------
+		
+		for (Fleet fleet : fleets){
+			categories.add(fleet.name);
+			fleet = Fleet.findById(fleet.id);
+			System.out.println("fleet->"+fleet.name + " | drivers->" + fleet.leaders);
+			List<DriverReport> drs = DriverReport.findByDrivers(fleet.leaders, timeType, time);
+			if (drs == null || drs.isEmpty())
+				continue;
+			
+			EventReportVO drVO = new EventReportVO(drs, fleet);
+			//--------char-------------
+			serie.assemDriverReportData(drVO);
+			datas.add(drVO);
+    	}
+		
+		List<Map> series = serie.generateChartSeries();
+    	Map map = new HashMap();
+		map.put("data", datas);
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department", "route", "driver", "driverNo", "date", "id"));
+		map.put("series", series);
+		map.put("categories", categories);
+		
+		return map;
+    }
 }

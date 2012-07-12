@@ -82,6 +82,10 @@ public class Vehicle extends Model {
 	}
 
 	
+	public Vehicle() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public static List<Vehicle> findByCondition(List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		

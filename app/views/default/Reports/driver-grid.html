@@ -3,22 +3,25 @@
 	<div id="driver_result_view-on-map-window"></div>
 </div>
 
-<form action="/reports/searchDriver" method="post" class="k-content" onsubmit="return searchResult(this)" style="padding:10px 0;">
+<form id="report_driver_search_form_${tabId}" action="/reports/driverListJson" method="post" class="k-content" onsubmit="return reportDriverSearchValidate(this)" style="padding:10px 0;">
 	
-	<label for="${grid.tabId}_driverId">Driver Name:</label>
-	<input name="driverId" id="${grid.tabId}_driverId" />
+	<label for="${tabId}_driverId">Driver Name:</label>
+	<input name="driverId" id="${tabId}_driverId" required />
 	
-	<label for="${grid.tabId}_reportType" >Time Type:</label>
-	<input name="timeType" id="${grid.tabId}_reportType"/>
+	<label for="${tabId}_reportType" >Time Type:</label>
+	<input name="timeType" id="${tabId}_reportType" required />
 	
-	<label for="${grid.tabId}_date" id="date_label">Year:</label>
+	<label for="${tabId}_date" id="date_label">Day:</label>
 	<div id="date_wrap" style="display:inline;">
-	<input name="time" id="${grid.tabId}_date"/>
+		<input name="time" id="${tabId}_date" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="submit" id="${tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
 	</div>
 </form>
+
+<div id="grid_${tabId}"></div>
+
 <div id="chart_bg">
 	<div class="chart-wrapper">
     	<div id="pie_chart">
@@ -26,15 +29,13 @@
     </div>
 </div>
 
-<div id="grid_${grid.tabId}"></div>
+<div id="event_grid_${tabId}"></div>
 
 <script>
-var driverId = "${driverId}";
+	var driverId = "${driverId}";
+	var timeType = "${timeType}";
+	var time = "${time}";
     $(document).ready(function () {
-    	
-    	if (driverId && driverId > 0)
-    		loadSearch("${grid.searchUrl}", {driverId:driverId});
-    	
     	var driverCombo = #{verbatim} ${drivers} #{/verbatim} ;
     	var _index = 0;
 		$.each( driverCombo, function(i, v){
@@ -44,14 +45,44 @@ var driverId = "${driverId}";
 			}
 		});
 		
-        $("#${grid.tabId}_driverId").kendoComboBox({
+        $("#${tabId}_driverId").kendoComboBox({
         	dataValueField: "value",
             dataTextField: "text",
             index: _index,
             dataSource: driverCombo
         });
         
-        $("#${grid.tabId}_reportType").kendoComboBox({
+        var time_type_index = 0;
+    
+	    var _format = "yyyy/MM/dd";
+	    var depth = timeType;
+	    var text = "Day";
+	    if ("daily" == timeType){
+			text = "Day";
+		}else if ("weekly" == timeType){
+			text = "Week";
+			time_type_index = 1;
+		}else if ("monthly" == timeType){
+	    	_format = "yyyy/MM";
+	    	depth = "year";
+	    	text = "Month";
+	    	time_type_index = 2;
+	    }else if ("yearly" == timeType){
+	    	_format = "yyyy";
+	    	depth = "decade";
+	    	text = "Year";
+	    	time_type_index = 3;
+	    }
+	    
+	    $("#date_label").html(text+":");
+	    $("#${tabId}_date").kendoDatePicker({
+	    	start: timeType,
+	    	depth: depth,
+	    	format: _format,
+	    	value: time
+	    });
+	    
+        $("#${tabId}_reportType").kendoComboBox({
         	dataValueField: "value",
             dataTextField: "value",
         	dataSource:[
@@ -60,127 +91,42 @@ var driverId = "${driverId}";
                         { text: "type3", value: "monthly" },
                         { text: "type4", value: "yearly" }
             ],
+            index: time_type_index,
             change: function() {
                 var value = this.value();
-                var text = this.text();
+                var text = "Day";
             	$("#date_wrap").empty();
-            	$("#date_wrap").html("<input name='time' id='${grid.tabId}_date'/>");
-         		$("#date_label").html(text);
+            	$("#date_wrap").html("<input name='time' id='${tabId}_date' required />");
             	var _format = "yyyy/MM/dd";
-            	if ("monthly" == value){
-    		    	_format = "yyyy/MM";
-    		    	value = "year";
-    		    }else if ("yearly" == value){
-    		    	_format = "yyyy";
-    		    	value = "decade";
-    		    }
+	        	if ("daily" == value){
+	        		text = "Day";
+	        	}else if ("weekly" == value){
+					text = "Week";
+				}else if ("monthly" == value){
+			    	_format = "yyyy/MM";
+			    	value = "year";
+			    	text = "Month";
+			    }else if ("yearly" == value){
+			    	_format = "yyyy";
+			    	value = "decade";
+			    	text = "Year";
+			    }
+			    
+    		    $("#date_label").html(text+":");
     		    
-            	$("#${grid.tabId}_date").kendoDatePicker({
+            	$("#${tabId}_date").kendoDatePicker({
     		    	start: value,
     		    	depth: value,
     		    	format: _format
     		    });
-    		    
-    		    $("#date_wrap").show();
-    		    $("#date_label").show();
             }
         });
         
-        $("#date_label").hide();
-     	$("#date_wrap").hide();
-        
+        $("#report_driver_search_form_${tabId}").kendoValidator();
+        reportDriverSearchValidate($("#report_driver_search_form_${tabId}"));
     });
     
-    function loadReport(url, params){
-    	$("#grid_${grid.tabId}").empty();
-        var dataSource = new kendo.data.DataSource({
-            transport: {
-            	read:  {
-                    url: url,
-                    dataType: "json",
-                },
-                parameterMap: function(options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models: kendo.stringify(options.models)};
-                    }
-                    return params;
-                }
-            },
-            batch: true,
-            pageSize: 20,
-            schema: {
-                model: {
-                    id: "id",
-                    fields: {
-                        serviceNo: { editable: false },
-                        eventTime: { editable: false },
-                        speed: { editable: false },
-                        type: { editable: false },
-                        latitude: { editable: false },
-                        longitude: {editable: false },
-                        road: { editable: false },
-                    }
-                }
-            }
-        });
-        	
-		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { title: "Actions", width: "110px", command: { text: "Map", className: "view-on-map-button" }  };
-        $("#grid_${grid.tabId}").kendoGrid({
-            dataSource: dataSource,
-            pageable: true,
-            height: "auto",
-            columns: columnsJson
-        });
-    }
-    
-    function createChart(url) {
-    	$("#pie_chart").kendoChart({
-            theme: $(document).data("kendoSkin") || "default",
-            dataSource: {
-                transport: {
-                    read: {
-                        url: url,
-                        dataType: "json"
-                    }
-                },
-                sort: {
-                    field: "type",
-                    dir: "asc"
-                }
-            },
-            title: {
-                text: "Driver Report"
-            },
-            legend: {
-                position: "bottom"
-            },
-            seriesDefaults: {
-            	type: "pie",
-            	labels: {
-                    visible: true,
-                    format: "{0}"
-                }
-            },
-            series: [{
-                field: "value",
-                categoryField: "type"
-            }],
-            tooltip: {
-                visible: true,
-                format: "{0}"
-            }
-        });
-    }
-    
-    function searchResult(form) {
-    	var $form = $(form);
-    	loadSearch($form.attr("action"), $form.serializeArray());
-    	
-    	return false;
-    }
-    
-    function loadSearch(url, params){
+    function loadReportDrivers(url, params){
     	// keep the driver selected firstly
     	$.each(params, function(i, v){
     		if (params[i].name == "driverId" && (!params[i].value || isNaN(params[i].value) || params[i].value <= 0)){
@@ -189,72 +135,76 @@ var driverId = "${driverId}";
     		}
     	});
     	
+    	//---------- driver performance report -------------
     	$.getJSON(url, params, function(json){
-    		$("#grid_${grid.tabId}").empty();
-            
-            var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-    		columnsJson[columnsJson.length] = { title: "Actions", width: "110px", command: { text: "Map", className: "view-on-map-button" } };
-    		columnsJson[columnsJson.length] = { title: "id", width: "1px", field: "id" };
-    		
-            $("#grid_${grid.tabId}").kendoGrid({
-                dataSource: json.grid,
-                pageable: true,
-                scrollable: true,
-    	   	 	sortable: true,
-                height: "auto",
-                columns: columnsJson
+    		$("#grid_${tabId}").empty();
+    		// json.columns[json.columns.length] = { title: "id", width: "0px", field: "id" };
+            $("#grid_${tabId}").kendoGrid({
+                dataSource: json.data,
+                pageable: false,
+    	   	 	sortable: false,
+    	   	 	scrollable: false,
+                columns: json.columns
             });
             
-            $("#pie_chart").kendoChart({
-                theme: $(document).data("kendoSkin") || "default",
-                dataSource: json.chart,
-                title: {
-                    text: "Driver Report"
+            var chartJson = json.chart;
+            var eventJson = json.events;
+            
+            //---------- driver event-type report --------------
+	    	$("#pie_chart").kendoChart({
+	            theme: $(document).data("kendoSkin") || "default",
+	            dataSource: json.chart,
+	            title: {
+	                text: "Driver Report"
+	            },
+	            legend: {
+	                position: "bottom"
+	            },
+	            seriesDefaults: {
+	            	type: "pie",
+	            	labels: {
+	                    visible: true,
+	                    format: "{0}"
+	                }
+	            },
+	            series: [{
+	                field: "value",
+	                categoryField: "type"
+	            }],
+	            tooltip: {
+	                visible: true,
+	                format: "{0}"
+	            }
+	        });
+	        
+	        //--------- driver event grid report ---------------
+	        $("#event_grid_${tabId}").kendoGrid({
+                dataSource: {
+                	data: eventJson.data,
+                	pageSize:8
                 },
-                legend: {
-                    position: "bottom"
-                },
-                seriesDefaults: {
-                	type: "pie",
-                	labels: {
-                        visible: true,
-                        format: "{0}"
-                    }
-                },
-                series: [{
-                    field: "value",
-                    categoryField: "type"
-                }],
-                tooltip: {
-                    visible: true,
-                    format: "{0}"
-                }
-            });    
-          
-          	$("#grid_${grid.tabId}").delegate(".view-on-map-button", "click", function(e) {
-		        e.preventDefault();
-		       	var eventId = $(this).parent().parent().find("td:last").html();
-		        var w_title = "View Event On Map "
-		        var wnd = $("#driver_result_view-on-map-window")
-		    	.kendoWindow({
-		    		actions: ["Custom", "Minimize", "Maximize", "Close"],
-		    		content: "http://"+ window.location.host + "/events/viewEventOnMap?eventId="+eventId,
-		    		iframe: true,
-		            modal: true,
-		            visible: false,
-		            resizable: true,
-		            width: 800,
-		            height: 500,
-		            resize:function(e){
-		            	$("#view-on-map-splitter").data("kendoSplitter").size("#map-view", "100%");
-		            }
-		         }).data("kendoWindow");
-		        
-		        wnd.title(w_title).center().open();
-		        
-		    });
+                pageable: true,
+    	   	 	sortable: true,
+    	   	 	scrollable: true,
+                columns: eventJson.columns
+            });
     	});
+    	
+    	
   
     }
+    
+    function reportDriverSearchValidate(form) {
+    	var $form = $(form);
+    	timeType = $form.find("input[name=timeType]").val();
+		time = $form.find("input[name=time]").val();
+		
+		var validatable = $form.kendoValidator().data("kendoValidator");
+	 	if (validatable.validate()) {
+	     	loadReportDrivers($form.attr("action"), $form.serializeArray());
+	 	}
+	    
+	    return false;
+	}
 </script>
 

@@ -33,25 +33,37 @@
         $("#tree_search-button").click(function (e) {
             fleetid = $("#tree_fleet_id").val();
             number = $("#tree_number").val();
-
-            $.getJSON(
-                    "/vehicles/searchTree",
-                    {
-                        fleetid:fleetid,
-                        number:number
-                    },
-                    function (data) {
-                        var treeView = $("#treeView").data("kendoTreeView");
-                        treeView.remove(".k-item");
-                        treeView.append(data);
-                        treeView.expand(".k-item");
-                        if (number.length != 0) {
-                            treeView.select(".k-item li:contains(" + number + ")");
-                        } else {
-                            treeView.select(".k-first");
-                        }
-                    }
-            );
+			var treeView = $("#treeView").data("kendoTreeView");
+			if (number.length != 0) {
+				var found = $.find(".k-item li:contains(" + number + ")");
+				if (found.length > 2){
+					treeView.expand(".k-item");
+					treeView.select(".k-item li:contains(" + number + ")");
+				} else {
+            		treeView.collapse(".k-item");
+            	}
+            } else {
+            	treeView.collapse(".k-item");
+            }
+            // $.getJSON(
+                    // "/vehicles/searchTree",
+                    // {
+                        // fleetid:fleetid,
+                        // number:number
+                    // },
+                    // function (data) {
+                    	// var fleetName = data[0].text;
+                    	// alert(fleetName);
+                        // var treeView = $("#treeView").data("kendoTreeView");
+                        // var foundNode = treeView.findByText(fleetName);
+                        // if (number.length != 0) {
+                        	// treeView.expand(".k-item");
+                            // var selectedNode = treeView.select(".k-item li:contains(" + number + ")");
+                        // } else {
+                            // treeView.select(".k-first");
+                        // }
+                    // }
+            // );
         })
     });
 </script>

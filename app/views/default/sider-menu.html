@@ -1,13 +1,11 @@
 <ul id="panelBar">
 
-    <li class="k-state-active">
-        Data Management
+	<li class="k-state-active">
+    	Data CRUD
         <ul>
-            <li url="/drivers/grid?id=drivers">Driver List</li>
-            <li url="/vehicles/grid?id=vehicles">Vehicle List</li>
-            <li url="/vehicles/tree" id=vehicles_tree>Vehicle Tree</li>
-            <li url="/logs/grid?id=logs">Log List</li>
-            <li id="counsel_1" url="/counsellings/grid?id=counsel">Counseling List</li>
+        	<li url="/drivers/grid?id=drivers">Driver List</li>
+        	<li url="/vehicles/grid?id=vehicles">Vehicle List</li>
+        	<li id="counsel_1" url="/counsellings/grid?id=counsel">Counseling List</li>
             <li id="counsel_2" url="/mycounsellings/grid?id=mycounsel">My Counseling List</li>
             <li id="sys_config" url="/systemconfigs/grid?id=systemconfigs">System Configuration</li>
             <li url="/events/grid?id=events?id=event_list">Event List</li>
@@ -16,22 +14,38 @@
             <li url="/users/grid?id=users">User List</li>
             <li url="/roles/grid?id=roles">Role List</li>
             <li url="/permissions/grid?id=perms">Permission List</li>
-            <li url="/roles/assign?id=assign_roles">Role Assign</li>
-            <li url="/fleets/assign?id=assign_fleets">Fleet Assign</li>
-            <li url="/departments/assign?id=assign_departments">Department Assign</li>
-       </ul>
-   </li>
-   <li class="k-state-active">
-   		Data Report
+       	</ul>
+    </li>
+    
+    <li class="k-state-active">
+    	Assign
         <ul>
-            <li url="/reports/department?id=report_depts">Report Department</li>
-            <li id = "report-dept-driver" url="/reports/driverByDept?id=report_dept_driver">Report Driver by Department</li>
-            <li url="/reports/fleet?id=report_fleet">Report Fleet</li>
-            <li id = "report-fleet-driver" url="/reports/driverByFleet?id=report_fleet_driver">Report Driver by Fleet</li>
-            <li url="/reports/line?id=report_line?id=report_line">Report Line</li>
-            <li id = "report-line-driver" url="/reports/driverByLine?id=report_line_driver">Report Driver by Line</li>
-            <li id = "report-driver-result" url="/reports/driver?id=driver">Report Driver</li>
+        	<li url="/roles/assign?id=assign_roles">Role Assign</li>
+    		<li url="/fleets/assign?id=assign_fleets">Fleet Assign</li>
+    		<li url="/departments/assign?id=assign_departments">Department Assign</li>
         </ul>
     </li>
+    
+	<li class="k-state-active">
+	Data Query
+		<ul>
+			<li url="/reports/dataQuery?id=date_query">Report Query</li>
+			<li url="/vehicles/tree" id=vehicles_tree>Vehicle Tree Query</li>
+			<li url="/logs/grid?id=logs">Logger Query</li>
+		</ul>
+	</li>
+	
+	<li class="k-state-active">
+	Chart Report
+    	<ul>
+            <li url="/reports/department?id=report_depts">Report Department</li>
+            <li id = "report-dept-driver" url="/reports/driverByDept?id=report_dept_driver">Report Driver by Department</li>
+            <!--li url="/reports/fleet?id=report_fleet">Report Fleet</li>
+            <li id = "report-fleet-driver" url="/reports/driverByFleet?id=report_fleet_driver">Report Driver by Fleet</li -->
+            <li url="/reports/line?id=report_line?id=report_route">Report Route</li>
+            <li id = "report-line-driver" url="/reports/driverByLine?id=report_route_driver">Report Driver by Route</li>
+            <li id = "report-driver-result" url="/reports/driver?id=report_driver">Report Driver</li>
+    	</ul>
+	</li>
     
 </ul>

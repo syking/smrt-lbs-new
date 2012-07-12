@@ -118,7 +118,7 @@
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
             pageable:true,
-            height:"auto",
+            selectable:true,
             columns:columnsJson,
             editable:"${grid.editable}"
         }).data("kendoGrid");

@@ -133,9 +133,8 @@
         $("#${grid.tabId}_grid").kendoGrid({
             dataSource:dataSource,
             pageable:true,
-            scrollable:true,
             sortable:true,
-            height:"auto",
+            selectable:true,
             toolbar:["create"],
             columns:columnsJson,
             editable:"${grid.editable}"

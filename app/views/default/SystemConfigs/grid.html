@@ -51,7 +51,7 @@
             $("#grid_${grid.tabId}").kendoGrid({
                 dataSource: dataSource,
                 pageable: true,
-                height: "auto",
+                selectable:true,
                 toolbar: ["create"],
                 columns: columnsJson,
                 editable: "${grid.editable}"

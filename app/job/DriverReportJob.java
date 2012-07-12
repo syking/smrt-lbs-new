@@ -13,12 +13,12 @@ import utils.CommonUtil;
  * @author weiwei
  *
  */
-@Every("5s")
+@Every("1min")
 public class DriverReportJob extends Job{
 
 	public void doJob(){
 		try{
-			System.out.println(CommonUtil.getNowTime() + "----------- start DriverRecord Job -------------------");
+			//System.out.println(CommonUtil.getNowTime() + "----------- start DriverRecord Job -------------------");
 			DriverReport.doStatistics(new Date());
 		}catch(Throwable e){
 			e.printStackTrace();

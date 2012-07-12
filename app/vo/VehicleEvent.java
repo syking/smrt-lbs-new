@@ -32,8 +32,8 @@ public class VehicleEvent{
 	/* 当前速度 */
 	public long currentSpeed;
 	
-	/* 超速持续时间 */
-	public long speedingTime;
+	/* 超速*/
+	public long speeding;
 	
 	/* 突然加速 */
 	public long suddenAcceleration;
@@ -50,6 +50,10 @@ public class VehicleEvent{
 	/* 空载 */
 	public long idling;
 	
+	public long total;
 	
+	public long countTotal(){
+		return this.speeding + this.suddenAcceleration + this.suddenBrake + this.suddenLeftTurn + this.suddenRightTurn + this.idling;
+	}
 	
 }

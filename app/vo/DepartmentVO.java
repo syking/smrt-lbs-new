@@ -7,12 +7,12 @@ public class DepartmentVO {
 
 	public long id;
 	public String name;
-	public String parent;
+	public String parentName;
 
 	public DepartmentVO init(Department dept) {
 		id = dept.id;
 		name = dept.name;
-		parent = dept.parent == null ? "" : dept.parent.name;
+		parentName = dept.parent == null ? "" : dept.parent.name;
 		return this;
 	}
 

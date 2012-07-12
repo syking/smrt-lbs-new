@@ -160,9 +160,9 @@ public class Fleets extends Controller {
 		renderJSON(map);
 	}
 	
-	public static void drivers(String fleetName){
+	public static void leaders(String fleetName){
 		Fleet fleet = Fleet.findByName(fleetName);
-		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(fleet.drivers));
+		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(fleet.leaders));
 	}
 	
 	public static void vehicles(String fleetName){

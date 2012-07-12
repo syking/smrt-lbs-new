@@ -1,8 +1,15 @@
 package models;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +20,9 @@ import javax.persistence.Table;
 
 import play.db.jpa.Model;
 import utils.CommonUtil;
+import vo.ChartSerie;
 import vo.ComboVO;
+import vo.EventReportVO;
 
 /**
  * 车次安排时间等信息
@@ -72,6 +81,75 @@ public class Schedule extends Model {
 	
 	public static List<Schedule> findByDriverNumber(String driverNumber){
 		return Schedule.find("driver_number = ?", driverNumber).fetch() ;
+	}
+
+	public static Map assemReportByLine(Collection<String> lines, String timeType, String time){
+    	//---------------chart----------------------------
+    	List<EventReportVO> datas = new ArrayList<EventReportVO>();
+		List<String> categories = new ArrayList<String>(lines.size());
+		ChartSerie serie = new ChartSerie();
+		//---------------chart----------------------------
+		
+		for (String line : lines){
+			categories.add(line);
+			
+			List<Driver> drivers = Schedule.findDriverByLine(line);
+			List<DriverReport> drs = DriverReport.findByDrivers(drivers, timeType, time);
+			if (drs == null || drs.isEmpty())
+				continue;
+			
+			EventReportVO drVO = new EventReportVO(drs, line);
+			
+			//--------char-------------
+			serie.assemDriverReportData(drVO);
+			datas.add(drVO);
+    	}
+		
+		List<Map> series = serie.generateChartSeries();
+    	Map map = new HashMap();
+		map.put("data", datas);
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department", "fleet", "driver","driverNo", "date", "id"));
+		map.put("series", series);
+		map.put("categories", categories);
+		
+		return map;
+    }
+
+	public static List<String> findLinesByLine(String line){
+		List<String> lineList = Schedule.getAllServiceNumber();
+    	if (lineList == null || lineList.size() == 0){
+    		if (line == null)
+    			return null;
+    		
+    		lineList = Arrays.asList(line);
+    	}else if (line != null && line.trim().length() > 0 && !line.equals("all")){
+    		lineList = Arrays.asList(line);
+    	}
+    	
+    	return lineList;
+	}
+	
+	public static List<Driver> findDriverByLine(String line) {
+		List<Schedule> schs = Schedule.find("serviceNumber = ?", line).fetch();
+		if (schs == null || schs.isEmpty())
+			return null;
+		
+		Set<Long> driverIds = new HashSet<Long>();
+		for (Schedule sch : schs){
+			Driver driver = sch.driver;
+			if (driver == null)
+				continue;
+			
+			driverIds.add(driver.id);
+		}
+		
+		List<Driver> drivers = new ArrayList<Driver>(driverIds.size());
+		for (Long id : driverIds){
+			Driver d  = Driver.findById(id);
+			drivers.add(d);
+		}
+		
+		return drivers;
 	}
 	
 }

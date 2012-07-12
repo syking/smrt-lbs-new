@@ -1,9 +1,12 @@
 package models;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -17,8 +20,10 @@ import javax.persistence.Transient;
 import play.db.jpa.Model;
 import play.db.jpa.Transactional;
 import utils.CommonUtil;
+import vo.ChartSerie;
 import vo.DepartmentVO;
 import vo.DepartmentVO;
+import vo.EventReportVO;
 import vo.TreeView;
 
 /**
@@ -49,7 +54,7 @@ public class Department extends Model{
 		DepartmentVO deptVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), DepartmentVO.class);
 		Department dept = new Department();
 		dept.name = deptVO.name;
-		dept.parent = Department.findByName(deptVO.parent);
+		dept.parent = Department.findByName(deptVO.parentName);
 		
 		dept.save();
 	}
@@ -62,7 +67,7 @@ public class Department extends Model{
 			return ;
 		
 		department.name = departmentVO.name;
-		department.parent = Department.findByName(departmentVO.parent);
+		department.parent = Department.findByName(departmentVO.parentName);
 		
 		department.save();
 	}
@@ -195,4 +200,47 @@ public class Department extends Model{
 	public static Department findByName(String name) {
 		return find("byName", name).first();
 	}
+	
+	public static List<Department> findByParent(Long parentId){
+		String sql = "";
+    	List<Long> params = new ArrayList<Long>(1);
+    	if (parentId != null && parentId > 0){
+    		sql = "and d.parent.id = ? " ;
+    		params.add(parentId);
+    	}
+    	
+		return Department.find("select d from Department d where d.id not in (select dt.parent.id from Department dt where dt.parent.id is not null) " + sql, params.toArray()).fetch();
+	}
+	
+	public static Map assemReport(Collection<Department> departments, String timeType, String time) {
+    	//---------------chart----------------------------
+    	List<EventReportVO> datas = new ArrayList<EventReportVO>();
+		List<String> categories = new ArrayList<String>(departments.size());
+		ChartSerie serie = new ChartSerie();
+		//---------------chart----------------------------
+		
+		for (Department department : departments){
+			categories.add(department.name);
+			
+			List<DriverReport> drs = DriverReport.findByDrivers(department.drivers, timeType, time);
+			if (drs == null || drs.isEmpty())
+				continue;
+			
+			EventReportVO drVO = new EventReportVO(drs, department);
+			
+			//--------char-------------
+			serie.assemDriverReportData(drVO);
+			datas.add(drVO);
+    	}
+		
+		List<Map> series = serie.generateChartSeries();
+    	Map map = new HashMap();
+		map.put("data", datas);
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "fleet", "route", "driver","driverNo", "date", "id"));
+		map.put("series", series);
+		map.put("categories", categories);
+		
+		return map;
+    }
+
 }

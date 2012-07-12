@@ -1,5 +1,9 @@
 package models;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -21,8 +25,10 @@ public class EventType extends Model {
 	@Column(unique = true)
 	public String name;
 	
-	@Column(unique = true, name="column_name")
-	public String columnName;
+	@Column(unique = true, name="field_name")
+	public String fieldName;
+	
+	public long points;
 	
 	/**
 	 * 事件类型数据字典，暂时放在这里
@@ -54,5 +60,18 @@ public class EventType extends Model {
 		super();
 		this.techName = techName;
 		this.name = name;
+	}
+	
+	public static Map<String, Long> getPointRule(){
+		List<EventType> eventTypes = EventType.findAll();
+		if (eventTypes == null)
+			return null;
+		
+		Map<String, Long> map = new HashMap<String, Long>();
+		for (EventType t : eventTypes){
+			map.put(t.fieldName, t.points);
+		}
+		
+		return map;
 	}
 }

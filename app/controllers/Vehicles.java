@@ -46,7 +46,6 @@ public class Vehicles extends Controller {
 	 * 统计给定车队的车辆的事件统计信息
 	 */
 	public static void events(String fleets) {
-
 		long[] fleetsLong = CommonUtil.splitToLong(fleets, ",");
 
 		List<Vehicle> vehicles = Vehicle.filterByFleet(fleetsLong);
@@ -78,7 +77,7 @@ public class Vehicles extends Controller {
 				}
 
 				if (EventType.Constant.SPEEDING.equals(er.type.techName)) {
-					event.speedingTime = EventRecord.count("event_type_tech_name = ? and device_key = ?", er.type.techName, v.device.key);
+					event.speeding = EventRecord.count("event_type_tech_name = ? and device_key = ?", er.type.techName, v.device.key);
 					continue;
 				}
 
@@ -97,7 +96,7 @@ public class Vehicles extends Controller {
 					continue;
 				}
 			}
-
+			event.total = event.countTotal();
 			events.add(event);
 		}
 
@@ -245,7 +244,20 @@ public class Vehicles extends Controller {
 	 */
 	public static void add(String models) {
 		VehicleVO vehicleVO = CommonUtil.jsonStr2JavaObj(models, VehicleVO.class);
-		Vehicle v = new Vehicle(vehicleVO.number, vehicleVO.license,vehicleVO.description, vehicleVO.cctvIp, vehicleVO.type);
+		Vehicle v = new Vehicle();
+		v.number = vehicleVO.number;
+		v.license = vehicleVO.license;
+
+		Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
+		v.fleet = fleet;
+
+		Device device = Device.find("byName", vehicleVO.deviceName).first();
+		v.device = device;
+
+		v.cctvIp = vehicleVO.cctvIp;
+		v.description = vehicleVO.description;
+		v.type = vehicleVO.type;
+		
 		v.save();
 		
 		renderJSON(models);
