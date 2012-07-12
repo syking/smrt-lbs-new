@@ -28,12 +28,12 @@ var timeType ;
 var startTime ;
 var endTime ;
 $(document).ready(function(){
+	dataQueryValidate($("#data-query-form-${tabId}"));
 	var driverCombo = #{verbatim} ${drivers} #{/verbatim};
 	
     $("#data-query-drivers").kendoComboBox({
         dataTextField: "text",
         dataValueField: "value",
-        placeholder: "Please select Driver first",
         dataSource: driverCombo,
     });
     
