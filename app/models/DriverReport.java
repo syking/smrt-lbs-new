@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -157,6 +158,45 @@ public class DriverReport extends Model {
 		return false;
 	}
 	
+	public static List<DriverReport> findByDriver(Driver driver, String timeType, String startTime, String endTime) {
+		List<DriverReport> drs = new ArrayList<DriverReport>();
+		StringBuilder sql = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		if (driver != null){
+			sql.append("driver = ?");
+			params.add(driver);
+		}
+		
+		if (timeType != null && !timeType.isEmpty()) {
+			if (sql.length() > 0)
+				sql.append(" and ");
+			
+			sql.append("timeType = ?");
+			params.add(timeType);
+			
+			if (startTime != null && !startTime.isEmpty()){
+				sql.append(" and startTime >= ?");
+				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, startTime));
+			}
+			
+			if (endTime != null && !endTime.isEmpty()){
+				sql.append(" and endTime < ?");
+				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, endTime));
+			}
+		}
+		
+		List<DriverReport> _drs = null;
+		if (sql.length() > 0)
+			_drs = DriverReport.find(sql.toString(), params.toArray()).fetch();
+		else
+			_drs = DriverReport.findAll();
+		
+		if (_drs != null && !_drs.isEmpty())
+			drs.addAll(_drs);
+		
+		return drs;
+	}
+	
 	public static List<DriverReport> findByDrivers(Collection<Driver> drivers, String timeType, String time) {
 		if (drivers == null || timeType == null || time == null)
 			return null;
@@ -168,6 +208,7 @@ public class DriverReport extends Model {
 			try {
 				date = CommonUtil.getDateByTimeTypeAndTime(timeType, time);
 			} catch (Throwable e){
+				e.printStackTrace();
 				continue;
 			}
 			

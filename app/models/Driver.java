@@ -79,6 +79,31 @@ public class Driver extends Model{
 		return Driver.find(query, p).fetch();
 	}
     
+    public static Map queryReport(Long driverId, String timeType, String startTime, String endTime){
+    	List<EventReportVO> datas = new ArrayList<EventReportVO>();
+    	
+    	List<Driver> drivers = null;
+    	Driver driver = Driver.findById(driverId);
+    	if (driver != null){
+    		drivers = new ArrayList<Driver>(1);
+    		drivers.add(driver);
+    	}
+    	
+		List<DriverReport> drs = DriverReport.findByDriver(driver, timeType, startTime, endTime);
+		if (drs != null && !drs.isEmpty()){
+			for (DriverReport dr : drs){
+				EventReportVO drVO = new EventReportVO(dr);
+				datas.add(drVO);
+			}
+		}
+		
+    	Map map = new HashMap();
+		map.put("data", datas);
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department","fleet","route", "id"));
+		
+    	return map;
+    }
+    
     public static Map assemReport(Collection<Driver> drivers, String timeType, String time){
     	//---------------chart----------------------------
     	List<EventReportVO> datas = new ArrayList<EventReportVO>();
@@ -102,7 +127,7 @@ public class Driver extends Model{
 		List<Map> series = serie.generateChartSeries();
     	Map map = new HashMap();
 		map.put("data", datas);
-		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "date","department","fleet","route", "id"));
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department","fleet","route", "id"));
 		
 		map.put("series", series);
 		map.put("categories", categories);

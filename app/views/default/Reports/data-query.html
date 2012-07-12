@@ -1,0 +1,126 @@
+<form  id="data-query-form-${tabId}" action="/reports/queryData" method="post" class="k-content" onsubmit="return dataQueryValidate(this)" style="padding:10px 0;">
+	<label for="data-query-drivers">Driver:</label>
+	<input name="driverId" id="data-query-drivers" />
+	
+	<label for="data-query-time-types">Time Type:</label>
+	<input name="timeType" id="data-query-time-types" />
+	
+	<label id="data-query-start-time-label" for="data-query-time">Start Time:</label>
+	<div style="display:inline;" id="data-query-start-time-wrap">
+		<input name="startTime" id="data-query-start-time" />
+	</div>
+	
+	<label id="data-query-end-time-label" for="data-query-end-time">End Time:</label>
+	<div style="display:inline;" id="data-query-end-time-wrap">
+		<input name="endTime" id="data-query-end-time" />
+	</div>
+	
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="data-query-search-button" class="k-button search-button" style="width:50px" value="" />
+	</div>
+	
+</form>
+<div id="data-query-grid-${tabId}"></div>
+
+<script>
+var driverId;
+var timeType ;
+var startTime ;
+var endTime ;
+$(document).ready(function(){
+	var driverCombo = #{verbatim} ${drivers} #{/verbatim};
+	
+    $("#data-query-drivers").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value",
+        placeholder: "Please select Driver first",
+        dataSource: driverCombo,
+    });
+    
+    assemDateTime("start", "daily");
+    assemDateTime("end", "daily");
+    
+    $("#data-query-time-types").kendoComboBox({
+        dataTextField: "text",
+        dataValueField: "value",
+        dataSource: [
+        	{text: "Daily", value: "daily"},
+        	{text: "Weekly", value: "weekly"},
+        	{text: "Monthly", value: "monthly"},
+        	{text: "Yearly", value: "yearly"}
+        ],
+        change: function() {
+            var value = this.value();
+        	assemDateTime("start", value);
+        	assemDateTime("end", value);
+        }
+    });
+	
+});
+
+function hideDateTime(name){
+	$("#data-query-"+name+"-time-wrap").hide();
+    $("#data-query-"+name+"-time-label").hide();
+}
+
+function assemDateTime(name, value){
+	$("#data-query-"+name+"-time-wrap").empty();
+	$("#data-query-"+name+"-time-wrap").html("<input name='"+name+"Time' id='data-query-"+name+"-time' />");
+	var _format = "yyyy/MM/dd";
+	var text = "Day";
+	if ("daily" == value){
+		text = "Day";
+	}else if ("weekly" == value){
+		text = "Week";
+	}else if ("monthly" == value){
+    	_format = "yyyy/MM";
+    	value = "year";
+    	text = "Month";
+    }else if ("yearly" == value){
+    	_format = "yyyy";
+    	value = "decade";
+    	text = "Year";
+    }
+    
+    $("#data-query-"+name+"-time-label").html(name+" "+text+":");
+    
+	$("#data-query-"+name+"-time").kendoDatePicker({
+    	start: value,
+    	depth: value,
+    	format: _format
+    });
+}
+
+function loadDataQuery(url, params){
+	$.getJSON(url, params, function(json){
+		if (!json){
+			return ;
+		}
+		
+		$("#data-query-grid-${tabId}").empty();
+		
+		var grid = $("#data-query-grid-${tabId}").kendoGrid({
+	    	dataSource: {
+	    		data: json.data,
+	    		pageSize:15
+	    	},
+	    	columns: json.columns, 
+	   	 	scrollable: true,
+	   	 	sortable: true,
+	   	 	pageable: true,
+	   	 	selectable: true
+        }).data("kendoGrid");
+	    
+	});
+}
+
+function dataQueryValidate(form) {
+	var $form = $(form);
+	timeType = $form.find("input[name=timeType]").val();
+	time = $form.find("input[name=time]").val();
+    
+    loadDataQuery($form.attr("action"), $form.serializeArray());
+	
+	return false;
+}
+</script>

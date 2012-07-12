@@ -36,6 +36,52 @@ public class CommonUtil {
 		return new long[]{hour, minute, second};
 	}
 
+	public static Date[] getStartAndEndDate(String timeType, String startTime, String endTime){
+		Date start = null;
+		Date end = null;
+		
+		try{
+			if (timeType  != null && !timeType.isEmpty()){
+				if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()){
+					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
+						start = new SimpleDateFormat("yyyy/MM/dd").parse(startTime);
+    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", start) + " 00:00:00");
+    					
+    					end = new SimpleDateFormat("yyyy/MM/dd").parse(endTime);
+    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(end, 1)) + " 00:00:00");
+    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
+    					start = new SimpleDateFormat("yyyy/MM/dd").parse(startTime);
+    					int day = CommonUtil.getDayOfWeek(start);
+    					// day == 1 表示星期日， 所以要补回2
+    					start = CommonUtil.addDate(start, -day+2);
+    					
+    					end = new SimpleDateFormat("yyyy/MM/dd").parse(endTime);
+    					int _day = CommonUtil.getDayOfWeek(end);
+    					// day == 1 表示星期日， 所以要补回2
+    					end = CommonUtil.addDate(end, -_day+2);
+    					end = CommonUtil.addDate(end, 7);
+    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
+    					start = new SimpleDateFormat("yyyy/MM").parse(startTime);
+    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", start)+"-01 00:00:00");
+    					
+    					end = new SimpleDateFormat("yyyy/MM").parse(endTime);
+    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", CommonUtil.addMonth(end, 1))+"-01 00:00:00");
+    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
+    					start = new SimpleDateFormat("yyyy").parse(startTime);
+    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", start)+"-01-01 00:00:00");
+    					
+    					end = new SimpleDateFormat("yyyy").parse(endTime);
+    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", CommonUtil.addYear(end, 1))+"-01-01 00:00:00");
+    				}
+				}
+	    	}
+		}catch(Throwable e){
+			throw new RuntimeException(e);
+		}
+		
+		return new Date[]{start, end};
+	}
+	
 	public static Date[] getStartAndEndDate(String timeType, String time){
 		Date start = null;
 		Date end = null;

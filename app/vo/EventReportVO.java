@@ -1,12 +1,12 @@
 package vo;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 
-import utils.CommonUtil;
 import models.Department;
 import models.DriverReport;
 import models.Fleet;
+import utils.CommonUtil;
 
 public class EventReportVO {
 
@@ -17,7 +17,8 @@ public class EventReportVO {
 	public String driver;
 	public String driverNo;
 	public String reportType;
-	public String date;
+	public String startTime;
+	public String endTime;
 	public long speeding;
 	public long suddenAcceleration;
 	public long suddenBrake;
@@ -75,7 +76,8 @@ public class EventReportVO {
 		this.driverNo = dr.driver.number;
 		this.driver = dr.driver.name;
 		this.reportType = dr.timeType;
-		this.date = CommonUtil.formatTime("yyyy-MM-dd", dr.startTime);
+		this.startTime = CommonUtil.formatTime(dr.startTime);
+		this.endTime = CommonUtil.formatTime(dr.endTime);
 		
 		this.speeding = dr.speedingCountTotal;
 		this.suddenAcceleration = dr.suddenAccelerationTotal;
@@ -88,12 +90,10 @@ public class EventReportVO {
 	}
 	
 	public void init(Collection<DriverReport> drs, Department dept, Fleet fleet, String route) {
-		
 		this.department = dept == null ? null : dept.name;
 		this.fleet = fleet == null ? null : fleet.name;
 		this.route = route;
 		
-		this.date = null;
 		int i = 0;
 		long reduceTotal = 0;
 		for (DriverReport dr : drs){
@@ -102,6 +102,8 @@ public class EventReportVO {
 				this.driverNo = dr.driver.number;
 				this.driver = dr.driver.name;
 				this.reportType = dr.timeType;
+				this.startTime = CommonUtil.formatTime(dr.startTime);
+				this.endTime = CommonUtil.formatTime(dr.endTime);
 			}
 			
 			this.speeding += dr.speedingCountTotal;

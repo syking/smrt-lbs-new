@@ -281,7 +281,7 @@ public class Fleet extends Model{
 		List<Map> series = serie.generateChartSeries();
     	Map map = new HashMap();
 		map.put("data", datas);
-		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department", "route", "driver", "driverNo", "date", "id"));
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department", "route", "driver", "driverNo", "id"));
 		map.put("series", series);
 		map.put("categories", categories);
 		

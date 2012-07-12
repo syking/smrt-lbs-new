@@ -61,7 +61,6 @@ public class Reports extends Controller {
     
     /**
      * 分司机报表
-     * @throws ParseException 
      */
     public static void driverListJsonByDept(Long departmentId, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
@@ -99,7 +98,6 @@ public class Reports extends Controller {
     
     /**
      * 分部门报表
-     * @throws ParseException 
      */
     public static void departmentListJson(Long parentId, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
@@ -136,7 +134,6 @@ public class Reports extends Controller {
     
     /**
      * 分车队司机报表
-     * @throws ParseException 
      */
     @Deprecated
     public static void driverListJsonByFleet(Long fleetId, String timeType, String time){
@@ -182,7 +179,6 @@ public class Reports extends Controller {
     
     /**
      * 分车队报表
-     * @throws ParseException 
      */
     @Deprecated
     public static void fleetListJson(Long parentId, String timeType, String time){
@@ -200,6 +196,10 @@ public class Reports extends Controller {
     
     /**
      * 分路线司机报表Grid
+     * @param line service number
+     * @param id tab id
+     * @param timeType report type e.g daily|weekly|monthly|yearly
+     * @param time select a date time to get the report data
      */
     public static void driverByLine(String line, String id, String timeType, String time){
     	List<String> lineList = Schedule.getAllServiceNumber();
@@ -221,7 +221,9 @@ public class Reports extends Controller {
     
     /**
      * 分路线司机报表
-     * @throws ParseException 
+     * @param line service number
+     * @param timeType report type e.g daily|weekly|monthly|yearly
+     * @param time select a date time to get the report data
      */
     public static void driverListJsonByLine(String line, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
@@ -248,6 +250,7 @@ public class Reports extends Controller {
     
     /**
      * 分路线报表 Grid
+     * @param id tab id
      */
     public static void line(String id){
     	List<String> lineList = Schedule.getAllServiceNumber();
@@ -266,7 +269,9 @@ public class Reports extends Controller {
     
     /**
      * 分路线 报表
-     * @throws ParseException 
+     * @param line service number
+     * @param timeType report type e.g daily|weekly|monthly|yearly
+     * @param time select a date to get the report
      */
     public static void lineListJson(String line, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
@@ -282,6 +287,13 @@ public class Reports extends Controller {
     	renderJSON(map);
     }
 
+    /**
+     * 打开单个司机报表页
+     * @param id tab id
+     * @param driverId driver id 
+     * @param timeType report type e.g daily|weekly|monthly|yearly
+     * @param time
+     */
 	public static void driver(String id, long driverId, String timeType, String time) {
 		List<Driver> driverList = Driver.findAll();
     	List<ComboVO> drivers = new ArrayList<ComboVO>();
@@ -305,7 +317,6 @@ public class Reports extends Controller {
      * @param driverId
      * @param timeType
      * @param time
-     * @throws ParseException
      */
 	public static void driverListJson(long driverId, String timeType, String time){
 		if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
@@ -344,5 +355,28 @@ public class Reports extends Controller {
 
 		renderJSON(map);
 	}
+	
+	/**
+	 * Open Data Query Page 
+	 * @param id tab id
+	 */
+	public static void query(String id) {
+		List<Driver> driverList = Driver.findAll();
+    	List<ComboVO> drivers = new ArrayList<ComboVO>();
+    	if (driverList != null)
+    		for (Driver d : driverList)
+    			drivers.add(new ComboVO(d.name, d.id));
+    	
+    	Map map = new HashMap();
+    	map.put("drivers", CommonUtil.getGson().toJson(drivers));
+    	map.put("tabId", id);
+    	
+    	renderHtml(TemplateLoader.load(template(renderArgs.get(THEME)+"/Reports/data-query.html")).render(map));
+	}
 
+	public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
+		driverId = driverId == null ? 0 : driverId;
+		Map map = Driver.queryReport(driverId, timeType, startTime, endTime);
+    	renderJSON(map);
+	}
 }
