@@ -143,9 +143,10 @@ public class Vehicle extends Model {
 		List<VehicleGPS> result = new ArrayList<VehicleGPS>(vehicles.size());
 		// 1. 遍历车辆，根据车辆的设备找出对应的最新的GPS信息
 		for (Vehicle v : vehicles) {
-			GPSData gps = GPSData.find(
-					"device_key = ? order by id desc limit 1", v.device.key)
-					.first();
+			if (v.device == null)
+				continue;
+			
+			GPSData gps = GPSData.find("device_key = ? order by id desc limit 1", v.device.key).first();
 			if (gps == null)
 				continue;
 
@@ -158,8 +159,7 @@ public class Vehicle extends Model {
 			 * 暂时直接根据车辆编号找到调度 表的最新的排班记录，其实这样是不行的，
 			 * 因为排班是会把时间排到以后的，因此以后需要修改为按当前时间找符合排班时间的记录
 			 */
-			Schedule schedule = Schedule.find(
-					"vehicle_number = ? order by id desc", v.number).first();
+			Schedule schedule = Schedule.find("vehicle_number = ? order by id desc", v.number).first();
 			if (schedule == null) {
 				vGps.driver = "driver001";
 				vGps.serviceNumber = "route001";

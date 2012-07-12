@@ -54,6 +54,9 @@ public class Vehicles extends Controller {
 
 		List<VehicleEvent> events = new ArrayList<VehicleEvent>(vehicles.size());
 		for (Vehicle v : vehicles) {
+			if (v.device == null)
+				continue;
+			
 			// ======= 统计事件数据 ======
 			List<EventRecord> eventRecords = EventRecord.find("device_key = ?", v.device.key).fetch();
 			if (eventRecords == null)
