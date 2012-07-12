@@ -115,12 +115,12 @@
 	function filter_department_submit(form){
 		var $form = $(form);
 		var _departmentName = $form.find("input[name='departmentName']").val();
-		$.getJSON($form.attr("action"), $form.serializeArray(), function(departments){
-			if (departments && departments.length > 0) {
-				departmentTreeView.remove(".k-item");
-				departmentTreeView.append(departments);
-			};
-		});
+		// $.getJSON($form.attr("action"), $form.serializeArray(), function(departments){
+			// if (departments && departments.length > 0) {
+				// departmentTreeView.remove(".k-item");
+				// departmentTreeView.append(departments);
+			// };
+		// });
 		
 		return false;
 	}

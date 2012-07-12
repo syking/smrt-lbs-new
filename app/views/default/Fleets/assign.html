@@ -150,12 +150,13 @@
 	function filter_fleet_submit(form){
 		var $form = $(form);
 		var _fleetName = $form.find("input[name='fleetName']").val();
-		$.getJSON($form.attr("action"), $form.serializeArray(), function(fleets){
-			if (fleets && fleets.length > 0) {
-				fleetTreeView.remove(".k-item");
-				fleetTreeView.append(fleets);
-			};
-		});
+		
+		// $.getJSON($form.attr("action"), $form.serializeArray(), function(fleets){
+			// if (fleets && fleets.length > 0) {
+				// fleetTreeView.remove(".k-item");
+				// fleetTreeView.append(fleets);
+			// };
+		// });
 		
 		return false;
 	}
