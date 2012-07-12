@@ -150,12 +150,12 @@
 	function filter_role_submit(form){
 		var $form = $(form);
 		var _roleName = $form.find("input[name='roleName']").val();
-		$.getJSON($form.attr("action"), $form.serializeArray(), function(roles){
-			if (roles && roles.length > 0) {
-				roleTreeView.remove(".k-item");
-				roleTreeView.append(roles);
-			};
-		});
+		// $.getJSON($form.attr("action"), $form.serializeArray(), function(roles){
+			// if (roles && roles.length > 0) {
+				// roleTreeView.remove(".k-item");
+				// roleTreeView.append(roles);
+			// };
+		// });
 		
 		return false;
 	}
