@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import play.db.jpa.Model;
+import utils.CommonUtil;
 import vo.EventGPS;
 import vo.EventVO;
 
@@ -126,6 +128,60 @@ public class Event extends Model{
 		_params.add(endTime);
 		
 		return Event.count("select count(e) from Event e left join e.eventRecord er where er.type.techName = ? and e.driver.id = ? " + _sql, _params.toArray());
+	}
+	
+	public static Map search(Long driver, String serviceNo, Long type, Date startTime, Date endTime){
+		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		if (driver != null && driver > 0) {
+			sqlSB.append("e.driver.id = ?");
+			params.add(driver);
+		}
+
+		if (serviceNo != null && serviceNo.trim().length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+
+			sqlSB.append("e.serviceNumber = ?");
+			params.add(serviceNo);
+		}
+
+		if (type != null && type > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+
+			sqlSB.append("er.type.id = ?");
+			params.add(type);
+		}
+
+		if (startTime != null) {
+			Date _endTime = new Date();
+			if (endTime != null) 
+				_endTime = endTime;
+
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+
+			sqlSB.append("er.time between ? and ?");
+			params.add(startTime);
+			params.add(_endTime);
+		}
+
+		if (sqlSB.length() > 0)
+			sqlSB.insert(0, "left join e.eventRecord er where ");
+
+		List<Event> events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch();
+		if (events == null)
+			return null;
+
+		List<EventVO> eventVOList = new ArrayList<EventVO>();
+
+		for (Event e : events) 
+			eventVOList.add(new EventVO().init(e));
+
+		Map data = CommonUtil.assemGridData(eventVOList, "id");
+		return data;
 	}
 	
 }

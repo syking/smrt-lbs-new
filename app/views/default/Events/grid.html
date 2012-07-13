@@ -1,7 +1,7 @@
 <div id="view-on-map-wrap">
 	<div id="view-on-map-window"></div>
 </div>
-<form action="/events/search" method="post" class="k-content" onsubmit="return eventSearchValidate(this)" style="padding:10px 0;">
+<form id="event_form_${grid.tabId}" action="/events/search" method="post" class="k-content" onsubmit="return eventSearchValidate(this)" style="padding:10px 0;">
 	
 	<label for="${grid.tabId}_driver">Driver:</label>
 	<input name="driver" id="${grid.tabId}_driver"/>
@@ -22,12 +22,15 @@
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="button" url="/excels/reportEvent" formId="event_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 	
 </form>
 
 <div id="${grid.tabId}_event_grid"></div>
 
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
 var vehicleNo ;
 
