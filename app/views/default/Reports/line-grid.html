@@ -16,6 +16,8 @@
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="line_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="button" url="/excels/reportRoute" formId="report_line_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 	
 </form>
@@ -23,8 +25,8 @@
 <div id="report_line_grid"></div>
 <div id="report_line_bar_chart"></div>
 
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
-
 var line;
 var timeType;
 var time;

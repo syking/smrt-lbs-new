@@ -16,21 +16,23 @@
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="dept_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="button" url="/excels/reportDepartment" formId="dept_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 	
 </form>
 
 <div id="dept_report_dept_grid"></div>
-
 <div id="dept_report_dept_bar_chart"></div>
 
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
-
 var departId;
 var timeType;
 var time;
 
 $(document).ready(function(){
+	var form = $("#dept_search_form_${tabId}");
 	
     $("#dept_report_dept_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();

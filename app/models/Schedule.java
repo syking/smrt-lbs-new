@@ -108,7 +108,7 @@ public class Schedule extends Model {
 		List<Map> series = serie.generateChartSeries();
     	Map map = new HashMap();
 		map.put("data", datas);
-		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department", "fleet", "driver","driverNo", "id"));
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "performanceIndex", "drivingTime", "department", "fleet", "driver","driverNo", "id"));
 		map.put("series", series);
 		map.put("categories", categories);
 		

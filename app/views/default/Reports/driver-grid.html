@@ -17,6 +17,8 @@
 	</div>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="${tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="button" url="/excels/reportDriver" formId="report_driver_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 </form>
 
@@ -31,6 +33,7 @@
 
 <div id="event_grid_${tabId}"></div>
 
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
 	var driverId = "${driverId}";
 	var timeType = "${timeType}";

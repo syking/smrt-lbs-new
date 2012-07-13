@@ -236,7 +236,7 @@ public class Department extends Model{
 		List<Map> series = serie.generateChartSeries();
     	Map map = new HashMap();
 		map.put("data", datas);
-		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "fleet", "route", "driver","driverNo", "id"));
+		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "drivingTime","performanceIndex","fleet", "route", "driver","driverNo", "id"));
 		map.put("series", series);
 		map.put("categories", categories);
 		

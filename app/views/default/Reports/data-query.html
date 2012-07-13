@@ -17,12 +17,14 @@
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="data-query-search-button" class="k-button search-button" style="width:50px" value="" />
-		<input type="button" url="/excels/queryData" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" url="/excels/queryData" formId="data-query-form-${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 	
 </form>
 <div id="data-query-grid-${tabId}"></div>
 
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
 var driverId;
 var timeType ;
@@ -30,9 +32,7 @@ var startTime ;
 var endTime ;
 $(document).ready(function(){
 	var form = $("#data-query-form-${tabId}");
-	$(".export-excel-button").click(function(){
-		exportButtonClick(form, this);
-	});
+	
 	dataQueryValidate(form);
 	var driverCombo = #{verbatim} ${drivers} #{/verbatim};
 	
@@ -117,13 +117,6 @@ function loadDataQuery(url, params){
         }).data("kendoGrid");
 	    
 	});
-}
-
-function exportButtonClick(form, button){
-	var $form = $(form);
-	var params = $form.serialize();
-	var url = $(button).attr("url") + "?"+params;
-	var win = window.open().location = url;
 }
 
 function dataQueryValidate(form) {
