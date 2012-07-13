@@ -123,7 +123,6 @@ function exportButtonClick(form, button){
 	var $form = $(form);
 	var params = $form.serialize();
 	var url = $(button).attr("url") + "?"+params;
-	alert(url);
 	var win = window.open().location = url;
 }
 
