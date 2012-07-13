@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import models.Contact;
 import models.Driver;
 import models.DriverReport;
 
