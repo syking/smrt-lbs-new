@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import models.Department;
+import models.Driver;
 import models.DriverReport;
 import models.Fleet;
 import utils.CommonUtil;
@@ -16,6 +17,7 @@ public class EventReportVO {
 	public String route;
 	public String driver;
 	public String driverNo;
+	public String drivingTime;
 	public String reportType;
 	public String startTime;
 	public String endTime;
@@ -25,8 +27,8 @@ public class EventReportVO {
 	public long suddenLTurn;
 	public long suddenRTurn;
 	public long idling;
-	public long performanceIndex;
 	public long total;
+	public long performanceIndex;
 	
 	public EventReportVO(){}
 	
@@ -74,6 +76,8 @@ public class EventReportVO {
 		this.fleet = fleet == null ? null : fleet.name;
 		this.route = route;
 		this.driverNo = dr.driver.number;
+		long[] times = CommonUtil.changeSecondsToTime(dr.drivingTime);
+		this.drivingTime = times[0] + "h " + times[1] + "m " + times[2] + "s " ;
 		this.driver = dr.driver.name;
 		this.reportType = dr.timeType;
 		this.startTime = CommonUtil.formatTime(dr.startTime);
@@ -104,6 +108,8 @@ public class EventReportVO {
 				this.reportType = dr.timeType;
 				this.startTime = CommonUtil.formatTime(dr.startTime);
 				this.endTime = CommonUtil.formatTime(dr.endTime);
+				long[] times = CommonUtil.changeSecondsToTime(dr.drivingTime);
+				this.drivingTime = times[0] + "h " + times[1] + "m " + times[2] + "s " ;
 			}
 			
 			this.speeding += dr.speedingCountTotal;

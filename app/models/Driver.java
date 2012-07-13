@@ -140,8 +140,8 @@ public class Driver extends Model{
 	 * @param driverNumber
 	 * @return
 	 */
-	public static float calculateDrivingTime(String driverNumber, final Date start, final Date end){
-		float count = 0;
+	public static long calculateDrivingTime(String driverNumber, final Date start, final Date end){
+		long count = 0;
 		List<Schedule> schs = Schedule.findByDriverNumber(driverNumber);
 		if (schs == null || schs.isEmpty())
 			return 0;

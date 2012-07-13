@@ -1,4 +1,4 @@
-<form  id="data-query-form-${tabId}" action="/reports/queryData" method="post" class="k-content" onsubmit="return dataQueryValidate(this)" style="padding:10px 0;">
+<form  id="data-query-form-${tabId}" action="" method="post" class="k-content" onsubmit="return dataQueryValidate(this)" style="padding:10px 0;">
 	<label for="data-query-drivers">Driver:</label>
 	<input name="driverId" id="data-query-drivers" />
 	
@@ -17,6 +17,7 @@
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="data-query-search-button" class="k-button search-button" style="width:50px" value="" />
+		<input type="button" url="/excels/queryData" class="k-button export-excel-button" style="width:50px" value="" />
 	</div>
 	
 </form>
@@ -28,7 +29,11 @@ var timeType ;
 var startTime ;
 var endTime ;
 $(document).ready(function(){
-	dataQueryValidate($("#data-query-form-${tabId}"));
+	var form = $("#data-query-form-${tabId}");
+	$(".export-excel-button").click(function(){
+		exportButtonClick(form, this);
+	});
+	dataQueryValidate(form);
 	var driverCombo = #{verbatim} ${drivers} #{/verbatim};
 	
     $("#data-query-drivers").kendoComboBox({
@@ -114,12 +119,20 @@ function loadDataQuery(url, params){
 	});
 }
 
+function exportButtonClick(form, button){
+	var $form = $(form);
+	var params = $form.serialize();
+	var url = $(button).attr("url") + "?"+params;
+	alert(url);
+	var win = window.open().location = url;
+}
+
 function dataQueryValidate(form) {
 	var $form = $(form);
 	timeType = $form.find("input[name=timeType]").val();
 	time = $form.find("input[name=time]").val();
     
-    loadDataQuery($form.attr("action"), $form.serializeArray());
+    loadDataQuery("/reports/queryData", $form.serializeArray());
 	
 	return false;
 }

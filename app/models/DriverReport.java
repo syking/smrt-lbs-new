@@ -127,7 +127,7 @@ public class DriverReport extends Model {
 	public long idling;
 	
 	@Column(name="driving_time")
-	public float drivingTime;// unit of time -> second
+	public long drivingTime;// unit of time -> second
 	
 	public long total;
 	

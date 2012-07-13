@@ -415,7 +415,7 @@ public class CommonUtil {
 	public static String getNowTime() {
 		return getNowTime(null);
 	}
-
+	
 	/**
 	 * 组装KendoGrid需要的data
 	 * 
@@ -453,8 +453,7 @@ public class CommonUtil {
 	 *            哪些字段不需要显示的
 	 * @return {data:data, columns:columns}
 	 */
-	public static Map assemGridData(List<?> models,
-			Map<Class<?>, String> pojos, String... unless) {
+	public static Map assemGridData(List<?> models, Map<Class<?>, String> pojos, String... unless) {
 		if (models == null || models.size() == 0)
 			return null;
 
@@ -477,8 +476,7 @@ public class CommonUtil {
 	 *            哪些字段不需要显示的。
 	 * @return {field:xxx, title:xxx}
 	 */
-	public static List<Map> assemColumns(Class<?> model,
-			Map<Class<?>, String> pojos, String... unless) {
+	public static List<Map> assemColumns(Class<?> model, Map<Class<?>, String> pojos, String... unless) {
 
 		Field[] fields = model.getDeclaredFields();
 
