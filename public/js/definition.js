@@ -1,9 +1,9 @@
 // ************ Misc Urls *********************************************
 var image_dir           = base + '/' + theme + '/images/';
 var loader_url          = base + '/' + theme + "/images/loader.gif";
-var login_url           = apibase + "/users/authenticate";
-var logout_url          = apibase + "/logout";
-var authentication_url  = apibase + "/users/authenticate";
+var login_url           = apibase + "/sessions/create";
+var logout_url          = apibase + "/sessions/destroy";
+var authentication_url  = apibase + "/sessions/create";
 var successLogin_url    = apibase + "/live";
 var successLogout_url   = apibase + "/";
 var version_check_url   = apibase + "/api/checkversion";

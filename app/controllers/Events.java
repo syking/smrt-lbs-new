@@ -83,6 +83,7 @@ public class Events extends Controller {
 		renderJSON(eGps);
 	}
 
+	@annotations.Permission
 	public static void read() {
 		List<EventRecord> ers = EventRecord.findAll();
 		if (ers == null)
@@ -100,6 +101,7 @@ public class Events extends Controller {
 		renderJSON(result);
 	}
 
+	@annotations.Permission
 	public static void listJson() {
 		List<Event> events = Event.findAll();
 		if (events == null)
@@ -115,14 +117,17 @@ public class Events extends Controller {
 		renderJSON(data);
 	}
 
+	@annotations.Permission
 	public static void destroy(String models) {
 		renderJSON(models);
 	}
 
+	@annotations.Permission
 	public static void update(String models) {
 		renderJSON(models);
 	}
 
+	@annotations.Permission
 	public static void search(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
 		Map data = Event.search(driver, serviceNo, type, startTime, endTime);
 		if (data == null)
@@ -131,6 +136,7 @@ public class Events extends Controller {
 		renderJSON(data);
 	}
 
+	@annotations.Permission
 	public static void grid(String id) {
 
 		List<Driver> drList = Driver.findAll();

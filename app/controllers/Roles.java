@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 import models.Permission;
 import models.Role;
 import models.User;
@@ -18,6 +16,8 @@ import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.Grid;
 import vo.RoleVO;
+
+import com.google.gson.Gson;
 
 @With(Interceptor.class)
 public class Roles extends Controller{
@@ -51,6 +51,7 @@ public class Roles extends Controller{
 		renderJSON(result);
 	}
 	
+	@annotations.Permission
 	public static void create(String models) {
 		if(models == null)
 			return;
@@ -60,6 +61,7 @@ public class Roles extends Controller{
 		renderJSON(models);
 	}
 	
+	@annotations.Permission
 	public static void update(String models){
 		if(models==null)
 			return;
@@ -69,6 +71,7 @@ public class Roles extends Controller{
 		
 	}
 
+	@annotations.Permission
 	public static void destroy(String models) {
 		if (models == null)
 			return ;
@@ -91,6 +94,7 @@ public class Roles extends Controller{
 		renderJSON(result);
 	}
 	
+	@annotations.Permission
 	public static void assign(String id){
 		Map map = new HashMap();
 		map.put("tabid", id);
@@ -102,6 +106,7 @@ public class Roles extends Controller{
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Roles/assign.html")).render(map));
 	}
 	
+	@annotations.Permission
 	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms){
 		Map map = new HashMap();
 		try{

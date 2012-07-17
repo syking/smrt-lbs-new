@@ -67,7 +67,7 @@ public class Logs extends Controller {
 	public static void read() {
 		List<LogVO> result = new ArrayList<LogVO>();
 
-		List<Log> logList = Log.findAll();
+		List<Log> logList = Log.findAllOrderByIdDesc();
 		for (Log log : logList) {
 			LogVO lv = new LogVO().init(log);
 			result.add(lv);

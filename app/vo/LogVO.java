@@ -4,34 +4,36 @@ import models.Log;
 
 import java.util.Date;
 
+import utils.CommonUtil;
+
 /**
  * Created with IntelliJ IDEA.
  * User: JunXi
  * Date: 5/10/12
  * Time: 6:35 PM
  */
-public class LogVO
-{
+public class LogVO{
     public LogVO init(Log log) {
         this.id  = log.id;
-        this.type = log.type;
-        this.name = log.name;
+        //this.type = log.type;
+        //this.name = log.name;
         this.content = log.content;
         this.action = log.action;
         this.userName = log.userName;
-        this.dateTime = log.dateTime;
+        this.dateTime = CommonUtil.formatTime(log.dateTime);
         this.ip = log.ip;
-
+        this.result = log.isSuccess ? "ok" : "denied";
         return this;
 
     }
 
     public long id;
-    public String type;
-    public String name;
-    public String content;
+    //public String type;
+    //public String name;
     public String action;
+    public String content;
     public String userName;
-    public Date dateTime;
     public String ip;
+    public String result;
+    public String dateTime;
 }

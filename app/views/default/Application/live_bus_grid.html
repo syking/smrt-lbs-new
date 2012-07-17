@@ -28,16 +28,18 @@ $(document).ready(function(){
 	   	 	
         }).data("kendoGrid");
 	    
+	}).error(function(e){
+		if ((e.status && 403 == e.status))
+			alert(e.responseText);
 	});
     $("#live_bus_grid").delegate("td", "click", function(e) {
-    	if ($(this).text() == "View On MapRoute Path")
-    		return ;
-        
-        e.preventDefault();
-        var id = $(this).parent().find("td:last").text();
-        showCurrentInfoWindow(id);
-       }
-     );
+		if ($(this).text() == "View On MapRoute Path")
+			return ;
+		
+		e.preventDefault();
+		var id = $(this).parent().find("td:last").text();
+		    showCurrentInfoWindow(id);
+	});
     
     $("#live_bus_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
@@ -99,8 +101,6 @@ function selectGridWithMapClick(id){
 				pageNum = Math.ceil((i+1)/pageSize);
 			}
 		}
-		//alert(JSON.stringify(pages));
-		//alert(pageNum);
 
 		$.each($("#live_bus_grid").find(".k-grid-pager a"),function(){
 			if($(this).text() == pageNum){

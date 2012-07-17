@@ -30,29 +30,11 @@ public class Application extends Controller {
 	 * Home page
 	 */
     public static void index() {
-        Object user = Cache.get(LOGIN_USER_ATTR);
         List<TreeView> tree = Fleet.assemFleetTree();
         String fleetJson = new Gson().toJson(tree);
-        renderTemplate(renderArgs.get(THEME) + "/Application/index.html", user, fleetJson);
+        renderTemplate(renderArgs.get(THEME) + "/Application/index.html", fleetJson);
     }
     
-    /**
-     * Login page
-     */
-    public static void login() {
-		renderTemplate(renderArgs.get(THEME)+"/users/login.html");
-	}
-
-    /**
-     * Logout
-     * @throws Throwable
-     */
-	public static void logout() throws Throwable {
-		Cache.delete(LOGIN_USER_ATTR);
-		login();
-	}
-
-	
 	/**
 	 * Management
 	 */

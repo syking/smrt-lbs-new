@@ -96,6 +96,9 @@
 				var _i = $(userTreeId).find('input[name='+ u.id +']');
 				_i.attr("checked", true);
 			});
+		}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
 		});
 		
 		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
@@ -104,6 +107,9 @@
 				var _i = $(permTreeId).find('input[name='+ p.id +']');
 				_i.attr("checked", true);
 			});
+		}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
 		});
 	}
 	
@@ -142,6 +148,9 @@
 			}else{
 				alert("assign fail !");
 			}
+		}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
 		});
 		
 		return false;

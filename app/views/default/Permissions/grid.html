@@ -1,10 +1,7 @@
 <form action="/permissions/search" method="post" class="k-content" onsubmit="return permissionSearchValidate(this)" style="padding:10px 0;">
 	
-	<label for="${grid.tabId}_name">Permission Name:</label>
-	<input name="permName" id="${grid.tabId}_name"/>
-	
-	<label for="${grid.tabId}_uri">Uri:</label>
-	<input name="uri" id="${grid.tabId}_uri" class="k-input k-textbox"/>
+	<label for="${grid.tabId}_name">Action:</label>
+	<input name="permAction" id="${grid.tabId}_name"/>
 	
 	<div style="height:3px"></div>
 	
@@ -20,11 +17,12 @@
 <div id="grid_${grid.tabId}"></div>
 
 <script>
+
     $(document).ready(function(){
         $("#${grid.tabId}_name").kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
-            dataSource: #{verbatim} ${perms} #{/verbatim}
+            dataSource: #{verbatim} ${permActions} #{/verbatim}
         });
         
     	loadPerms("${grid.readUrl}");
@@ -32,6 +30,13 @@
     
     function loadPerms(url, params){
         var dataSource = new kendo.data.DataSource({
+        	error: function(e) {
+		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
+		        	alert(e.responseText);
+		        else{
+		        	alert("Oops! 500 error!");
+		        }
+		    },
             transport: {
                 read:  {
                     url: url,
@@ -39,15 +44,27 @@
                 },
                 update: {
                     url: "${grid.updateUrl}",
-                    dataType: "json"
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("update success");
+                    }
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
-                    dataType: "json"
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("delete success");
+                    }
                 },
                 create: {
                     url: "${grid.createUrl}",
-                    dataType: "json"
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("create success");
+                    }
                 },
                 parameterMap:function (options, operation) {
                     if (operation !== "read" && options.models) {
@@ -70,8 +87,7 @@
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        name: { validation: { required: true } },
-                        uri: { validation: { required: true } },
+                        action: { validation: { required: true } },
                         desc: { validation: { required: true } }
                     }
                 }
@@ -87,6 +103,26 @@
 		 */
 		$.each(columnsJson, function(i, v){
 			var _field = columnsJson[i]['field'];
+			if ("action" == _field){
+		        columnsJson[i].editor = function(container, options){
+			        $('<input name="action" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        autoBind: false,
+				        dataSource: {
+                            type: "json",
+                            serverPaging: true,
+                            pageSize: 20,
+                            transport: {
+                                read: "/permissions/actions"
+                            }
+                        },
+                        open: function(){
+                        	
+                        }
+				    });
+				};
+			}
 		});
 		
         $("#grid_${grid.tabId}").kendoGrid({

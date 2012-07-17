@@ -1,10 +1,11 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,17 +26,13 @@ import vo.TreeView;
 @Table(name = "t_permission")
 public class Permission extends Model{
 
-	/**
-	 * the route of Controller.method
-	 */
-	@Column(unique = true)
-	public String uri;
+	public static List<String> actions = new ArrayList<String>();
 	
 	/**
-	 * the business name of Controller.method
+	 * the name of Controller.method
 	 */
 	@Column(unique = true)
-	public String name;
+	public String action;
 	
 	@Column(name="description")
 	public String desc;
@@ -44,21 +41,20 @@ public class Permission extends Model{
 	public final static String iconUrl = "../../public/images/permission.png";
 
 	public String toString(){
-		return name;
+		return action;
 	}
 	
 	public Permission(){super();}
 	
-	public Permission(String name, String uri, String desc) {
+	public Permission(String action, String desc) {
 		super();
-		this.uri = uri;
-		this.name = name;
+		this.action = action;
 		this.desc = desc;
 	}
 
 	public static void createByJson(String models) {
 		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-		Permission permission = new Permission(permVO.name, permVO.uri, permVO.desc);
+		Permission permission = new Permission(permVO.action, permVO.desc);
 		
 		permission.save();
 	}
@@ -78,31 +74,22 @@ public class Permission extends Model{
 		if (permission == null)
 			return ;
 		
-		permission.name = permVO.name;
-		permission.uri = permVO.uri;
+		permission.action = permVO.action;
 		permission.desc = permVO.desc;
 		
 		permission.save();
 	}
 	
-	public static List<Permission> findByCondition(String permName, String uri, String desc){
+	public static List<Permission> findByCondition(String action, String desc){
 		final List<Object> params = new ArrayList<Object>();
 		final StringBuilder sb = new StringBuilder();
 		
-		if (permName != null && !permName.isEmpty()){
+		if (action != null && !action.isEmpty()){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
-			sb.append("name like ?");
-			params.add(new StringBuilder("%").append(permName).append("%").toString());
-		}
-		
-		if (uri != null && !uri.isEmpty()){
-			if (sb.length() > 0)
-				sb.append(" and ");
-			
-			sb.append("uri like ?");
-			params.add(new StringBuilder("%").append(uri).append("%").toString());
+			sb.append("action like ?");
+			params.add(new StringBuilder("%").append(action).append("%").toString());
 		}
 		
 		if (desc != null && !desc.isEmpty()){
@@ -129,10 +116,10 @@ public class Permission extends Model{
 		
 		final Map<String, TreeView> modules = new HashMap<String, TreeView>();
 		for (Permission p : perms){
-			if (!p.name.contains("."))
+			if (!p.action.contains("."))
 				continue;
 			
-			String[] names = p.name.split("\\.");
+			String[] names = p.action.split("\\.");
 			final String moduleName = names[0];
 			final String name = names[1];
 			TreeView module = modules.get(moduleName);
@@ -153,10 +140,6 @@ public class Permission extends Model{
 		result.add(root);
 		
 		return result;
-	}
-	
-	public static void main(String[] args){
-		System.out.println(Arrays.asList("user.name".split("\\.")));
 	}
 	
 }

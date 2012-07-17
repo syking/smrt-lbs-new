@@ -1,55 +1,25 @@
 package controllers;
 
-import static models.User.Constant.LOGIN_USER_ATTR;
 import static models.User.Constant.THEME;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Counselling;
-import models.Driver;
 import models.Role;
 import models.User;
-import play.cache.Cache;
-import play.data.validation.Required;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
-import vo.CounselVO;
 import vo.Grid;
 import vo.UserVO;
+import annotations.Permission;
 
 @With(Interceptor.class)
 public class Users extends Controller {
-
-	/**
-	 * verify the user login
-	 */
-	public static void authenticate(@Required String username, @Required String password) throws Throwable {
-		boolean success = true;
-        if(validation.hasErrors()) 
-           success = false;
-        
-        User loginUser = new User(username, password, null, null).authen();
-        if (loginUser == null)
-        	success = false;
-        
-        Map map = new HashMap();
-        if (!success)
-        	 map.put("message", play.i18n.Messages.get("login-unsuccessful"));
-        
-        Cache.set(LOGIN_USER_ATTR, loginUser);
-       
-        map.put("authenticate", success);
-        map.put("redirectUrl", "/");
-        
-        renderJSON(map);
-    }
 
 	public static void grid(String id){
 		List<Role> roleList = Role.findAll();
@@ -76,6 +46,7 @@ public class Users extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/grid.html")).render(map));
 	}
 
+	@Permission
 	public static void read(){
 		List<UserVO> result = new ArrayList<UserVO>();
 		List<User> users = User.findAll();
@@ -88,6 +59,7 @@ public class Users extends Controller {
 		renderJSON(result);
 	}
 
+	@Permission
 	public static void create(String models) {
 		if(models == null)
 			return;
@@ -97,6 +69,7 @@ public class Users extends Controller {
 		renderJSON(models);
 	}
 
+	@Permission
 	public static void update(String models){
 		if(models==null)
 			return;
@@ -106,6 +79,7 @@ public class Users extends Controller {
 
 	}
 
+	@Permission
 	public static void destroy(String models) {
 		if (models == null)
 			return ;
@@ -114,6 +88,7 @@ public class Users extends Controller {
 		renderJSON(models);
 	}
 
+	@Permission
 	public static void search(String roleName, String userName, String account, String desc){
 		List<User> users = User.findByCondition(roleName, userName, account, desc);
 		if (users == null || users.isEmpty()) 

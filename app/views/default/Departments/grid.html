@@ -37,6 +37,13 @@
     function loadDepartments(url, params){
     	$("#grid_${grid.tabId}").empty();
     	var dataSource = new kendo.data.DataSource({
+    		error: function(e) {
+		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
+		        	alert(e.responseText);
+		        else{
+		        	alert("Oops! 500 error!");
+		        }
+		    },
             transport: {
                 read:  { 
                     url: url,
@@ -44,15 +51,27 @@
                 },
                 update: {
                     url: "${grid.updateUrl}",
-                    dataType: "json"
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("update success");
+                    }
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
-                    dataType: "json"
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("delete success");
+                    }
                 },
                 create: {
                     url: "${grid.createUrl}",
-                    dataType: "json"
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("create success");
+                    }
                 },
                 parameterMap: function(options, operation) {
                     if (operation !== "read" && options.models) {

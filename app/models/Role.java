@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -33,7 +34,7 @@ public class Role extends Model{
 	@Column(name = "description")
 	public String desc;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "t_role_perm", joinColumns=@JoinColumn(name = "role_id"), inverseJoinColumns=@JoinColumn(name="perm_id"))
 	public Set<Permission> permissions = new HashSet<Permission>();
 	
@@ -167,6 +168,18 @@ public class Role extends Model{
 			role.save();
 			
 			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean hasPermissions(Permission perm){
+		if (this.permissions != null) {
+			for (Permission p : this.permissions){
+				if (p.getId().equals(perm.id)) {
+					return true;
+				}
+			}
 		}
 		
 		return false;

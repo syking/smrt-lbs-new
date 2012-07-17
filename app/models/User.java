@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -33,6 +34,9 @@ public class User extends Model {
 	@Column(name = "description")
 	public String desc;
 	
+	@Column(name = "super_power")
+	public int superPower = 0;// 1 or 0
+	
 	@Transient
 	public final static String iconUrl = "../../public/images/user.png";
 	
@@ -48,7 +52,7 @@ public class User extends Model {
 		this.desc = desc;
 	}
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="t_user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
 	public Set<Role> roles = new HashSet<Role>();
 
@@ -170,5 +174,9 @@ public class User extends Model {
 		result.add(root);
 		
 		return result;
+	}
+
+	public static User findByName(String userName) {
+		return find("byName", userName).first();
 	}
 }

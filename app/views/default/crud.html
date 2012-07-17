@@ -17,7 +17,7 @@
 		<link href="/public/css/kendo.common.min.css" rel="stylesheet" />
 		<link href="/public/css/kendo.default.min.css" rel="stylesheet" />
 		#{get 'moreStyles' /}
-		
+		<script src="${static_dir}/js/definition.js" type="text/javascript" charset="utf-8"></script>
 		<script src="${static_dir}/js/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="${static_dir}/js/json2.js" type="text/javascript" charset="utf-8"></script>
         <script src="${static_dir}/js/common.js" type="text/javascript" charset="utf-8"></script>
@@ -98,11 +98,11 @@
                             <span class="copy-text-white">&nbsp;|&nbsp;</span>
                             <a class="copy-text-white" href="/admin">Admin</a>
                             <span class="copy-text-white">&nbsp;|&nbsp;</span>
-                            <a class="copy-text-white" href="users/logout">&{'log-out'}</a>
+                            <a class="copy-text-white" href="/sessions/destroy">&{'log-out'}</a>
                         </div>
                     </div>
                     <div class="afterlogin-welcome-wrap">
-                        <span>&{'welcome'} ${user.name}!</span>
+                        <span>&{'welcome'} ${user}!</span>
                     </div>
                 </div>
             </div>

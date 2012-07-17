@@ -441,7 +441,7 @@ function login(username, pwd, url) {
     if (url != null) {
         params.url = url;
     }
-    ajaxPost(login_url, params,
+    ajaxPost("/sessions/create", params,
         function(data) {
             var authenticate = data.authenticate;
             var redirect_url = data.redirectUrl;
