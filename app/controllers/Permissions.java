@@ -82,7 +82,7 @@ public class Permissions extends Controller {
 	public static void create(String models) {
 		if(models == null)
 			return;
-		
+		System.out.println(">>>>>>>>>>>>>>>>----------------->"+models);
 		Permission.createByJson(models);
 		
 		renderJSON(models);

@@ -70,7 +70,6 @@
                 },
                 update: {
                     url: "${grid.updateUrl}",
-                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("update success");
@@ -78,7 +77,6 @@
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
-                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("delete success");
@@ -86,25 +84,25 @@
                 },
                 create: {
                     url: "${grid.createUrl}",
-                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("create success");
                     }
                 },
-                parameterMap:function (options, operation) {
-                    if (operation !== "read" && options.models) {
-                    	var model = options.models[0];
+                parameterMap:function (data, operation) {
+                    if (operation !== "read" && data.models) {
+                    	$.each(data.models, function(i, v){
+                    		var model = data.models[i];
+	                    	/**
+	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
+	                    	 */
+	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
+	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
+	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
+	                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
+                    	});
                     	
-                    	/**
-                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
-                    	 */
-                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
-                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
-                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
-                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
-                    	
-                        return {models: kendo.stringify(options.models)};
+                        return {models: kendo.stringify(data.models)};
                     }
                     
                     return params;
@@ -142,7 +140,7 @@
 		$("#grid_${grid.tabId}").empty();
 		
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+		columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100px" };
         /**
 		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
 		 */
@@ -201,10 +199,11 @@
             pageable:true,
             scrollable:true,
             sortable:true,
-            selectable:true,
-            toolbar:["create"],
+            selectable:false,
+            toolbar:["create", "save", "cancel"],
             columns:columnsJson,
-            editable:"${grid.editable}"
+            editable:true,
+            navigatable: true
         });
     }
     

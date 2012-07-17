@@ -53,31 +53,31 @@ public class Permission extends Model{
 	}
 
 	public static void createByJson(String models) {
-		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-		Permission permission = new Permission(permVO.action, permVO.desc);
-		
-		permission.create();
+//		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
+//		Permission permission = new Permission(permVO.action, permVO.desc);
+//		
+//		permission.create();
 	}
 
 	public static void deleteByJson(String models) {
-		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-		Permission permission = Permission.findById(Long.parseLong(permVO.id));
-		if (permission == null)
-			return ;
-		
-		permission.delete();
+//		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
+//		Permission permission = Permission.findById(Long.parseLong(permVO.id));
+//		if (permission == null)
+//			return ;
+//		
+//		permission.delete();
 	}
 
 	public static void updateByJson(String models) {
-		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-		Permission permission = Permission.findById(Long.parseLong(permVO.id));
-		if (permission == null)
-			return ;
-		
-		permission.action = permVO.action;
-		permission.desc = permVO.desc;
-		
-		permission.save();
+//		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
+//		Permission permission = Permission.findById(Long.parseLong(permVO.id));
+//		if (permission == null)
+//			return ;
+//		
+//		permission.action = permVO.action;
+//		permission.desc = permVO.desc;
+//		
+//		permission.save();
 	}
 	
 	public static List<Permission> findByCondition(String action, String desc){

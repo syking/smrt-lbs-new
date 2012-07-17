@@ -54,7 +54,6 @@ $(document).ready(function(){
          }).data("kendoWindow");
         
         wnd.title(w_title).center().open();
-        
     });
     
     $("#dept_report_dept_grid").delegate(".view-driver-button", "click", function(e) {
@@ -184,6 +183,9 @@ function loadReportDepartments(url, params){
 	            format: "{0}"
 	        }
 	    });
+	}).error(function(e){
+		if (e.status && 403 == e.status)
+     			alert(e.responseText);
 	});
 }
 

@@ -34,7 +34,7 @@ var eventGPSUrl = "${result.eventGPSUrl}";
 	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
 	var r = window.location.search.substr(1).match(reg);
 	if (r!=null) return unescape(r[2]);
-	 return null;
+		return null;
 	}
 })(jQuery);
 
@@ -61,7 +61,6 @@ $(document).ready(function(){
 	eventTypeListInit();// load the eventTypes
 
 	$("#${result.idPrefix}_event-list").kendoGrid({
-
 		groupable: false,
         scrollable: true,
         sortable: true,
@@ -77,9 +76,7 @@ $(document).ready(function(){
     
     $("#${result.idPrefix}_event-list").delegate("td", "click", function(e) {
     	e.preventDefault();
-        
         var id = $(this).parent().find("td:last").text();
-        
         showCurrentInfoWindow(id);
     });
     
@@ -105,7 +102,6 @@ $(document).ready(function(){
 	});
 	
 	bindMapinitData("addMarker('" + eventGPSUrl + "')");
-
 });
 
 function selectGridWithMapClick(vid){

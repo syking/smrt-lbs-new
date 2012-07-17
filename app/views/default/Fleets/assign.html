@@ -96,6 +96,9 @@
 				var _i = $(driverTreeId).find('input[name='+ u.id +']');
 				_i.attr("checked", true);
 			});
+		}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
 		});
 		
 		$.getJSON("/fleets/vehicles", {fleetName:_fleetName}, function(vehicles){
@@ -104,6 +107,9 @@
 				var _i = $(vehicleTreeId).find('input[name='+ p.id +']');
 				_i.attr("checked", true);
 			});
+		}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
 		});
 	}
 	
@@ -142,6 +148,9 @@
 			}else{
 				alert("assign fail !");
 			}
+		}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
 		});
 		
 		return false;

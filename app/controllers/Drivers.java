@@ -42,7 +42,6 @@ public class Drivers extends Controller {
 		}
 
 		List<Driver> driverList = Driver.filter(criteria, params);
-
 		List<DriverVO> driverVOList = new ArrayList<DriverVO>();
 		for (Driver driver : driverList) 
 			driverVOList.add(new DriverVO().init(driver));
@@ -54,53 +53,31 @@ public class Drivers extends Controller {
 		List<Driver> drivers = Driver.findAll();
 		if (drivers == null)
 			renderJSON("");
-
 		List<DriverVO> driverVOList = new ArrayList<DriverVO>();
-
 		for (Driver d : drivers) 
 			driverVOList.add(new DriverVO().init(d));
-
 		Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
 
 		renderJSON(data);
 	}
 
 	public static void add(String models) {
-		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
-		Driver d = new Driver(driver.number, driver.name, driver.description);
-		d.create();
-		
-		renderJSON(models);
+		if (Driver.createByJson(models))
+			renderJSON(models);
 	}
 
 	public static void destroy(String models) {
-		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
-		Driver d = Driver.findById(driver.id);
-		
-		try {
-			d.delete();
-		} catch (Exception e) {
-			renderJSON("[]");
-		}
-		
-		renderJSON(models);
+		if (Driver.deleteByJson(models))
+			renderJSON(models);
 	}
 
 	public static void update(String models) {
-		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
-		
-		Driver d = Driver.findById(driver.id);
-		d.number = driver.number;
-		d.name = driver.name;
-		d.description = driver.description;
-		d.save();
-		
-		renderJSON(models);
+		if (Driver.updateByJson(models))
+			renderJSON(models);
 	}
 
 	public static void read() {
-		List<Driver> driverList = Driver.findAll();
-		
+		List<Driver> driverList = Driver.find("order by id desc").fetch();
 		renderJSON(CommonUtil.getGson("fleet", "department").toJson(driverList));
 	}
 

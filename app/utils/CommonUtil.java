@@ -13,14 +13,24 @@ import java.util.Map;
 
 import models.DriverReport;
 
+import vo.DriverVO;
 import vo.VehicleVO;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
+	
+	public static <T> List<T> parseArray(String json, Class<T> clazz){
+		return JSON.parseArray(json, clazz);
+	}
+	
+	public static <T> T parse(String json, Class<T> clazz){
+		return JSON.parseObject(json, clazz);
+	}
 	
 	public static String percent(long a, long b){
 		double k = (double)a/b*100;
@@ -202,12 +212,6 @@ public class CommonUtil {
         return c.getActualMaximum(Calendar.DAY_OF_WEEK);
 	}
 
-	public static <T> T jsonStr2JavaObj(String jsonStr, Class<T> clazz) {
-		String json = jsonStr.substring(1, jsonStr.length() - 1);
-		Gson gson = new Gson();
-		return gson.fromJson(json, clazz);
-	}
-
 	public static long difference(Date date1, Date date2) {
 		Calendar cal1 = Calendar.getInstance();
 		cal1.setTime(date1);
@@ -277,6 +281,10 @@ public class CommonUtil {
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static Date parse(String source){
+		return parse("yyyy-MM-dd HH:mm:ss", source);
 	}
 
 	public static String upperFirst(String s) {

@@ -124,6 +124,9 @@ function loadPath(url, params){
 		$("#path-start-time").data("kendoTimePicker").value(params["startTime"]);
 		$("#path-end-date").data("kendoDatePicker").value(params["endDate"]);
 		$("#path-end-time").data("kendoTimePicker").value(params["endTime"]);
+	}).error(function(e){
+		if (e.status && 403 == e.status)
+     			alert(e.responseText);
 	});
 }
 

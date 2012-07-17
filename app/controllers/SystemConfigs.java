@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import models.Counselling;
 import models.Driver;
 import models.SystemConfig;
@@ -38,36 +36,18 @@ public class SystemConfigs extends Controller{
     }
 	
 	public static void create(String models){
-		String json = models.toString().substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		String name = jo.getString("name");
-		String value = jo.getString("value");
-		String displayName = jo.getString("displayName");
-		
-		new SystemConfig(name, value, displayName).create();
+		if (SystemConfig.createByJson(models))
+			renderJSON(models);
 	}
 	
 	public static void delete(String models){
-		String json = models.toString().substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		SystemConfig s = SystemConfig.find("id = ?", id).first();
-		s.delete();
+		if (SystemConfig.deleteByJson(models))
+			renderJSON(models);
 	}
 	
 	public static void update(String models){
-		String json = models.toString().substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getLong("id");
-		String scName = jo.getString("name");
-		String disname = jo.getString("displayName");
-		String value = jo.getString("value");
-		
-		SystemConfig sc = SystemConfig.findById(id);
-		sc.name = scName;
-		sc.displayName = disname;
-		sc.value = value;
-		sc.save();
+		if (SystemConfig.updateByJson(models))
+			renderJSON(models);
 	}
 	
 	public static void grid(String id) {

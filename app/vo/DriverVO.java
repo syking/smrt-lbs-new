@@ -12,7 +12,7 @@ public class DriverVO
 {
 
     public DriverVO init(Driver driver){
-        this.id = driver.id;
+        this.id = String.valueOf(driver.id);
         this.number = driver.number;
         this.name = driver.name;
         this.description = driver.description;
@@ -20,8 +20,14 @@ public class DriverVO
         return this;
     }
 
-    public long id;
+    public String id;
     public String number;
     public String name;
     public String description;
+	@Override
+	public String toString() {
+		return "DriverVO [id=" + id + ", number=" + number + ", name=" + name
+				+ ", description=" + description + "]";
+	}
+    
 }

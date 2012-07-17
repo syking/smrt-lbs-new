@@ -28,9 +28,9 @@
                                  <div class="login-form-warp background-login" align="center">
                                      <div id="loginError" class="margin-bottom"></div>
                                      <form action="javascript:void(0);" onsubmit="submitLogin(${url != null ? "'"+url+"'" : "null"});">
-                                         <label>&{'user-name'}:</label>
+                                         <label style="float:left;">&{'user-name'}:</label>
                                          <input type="text" name="username" size="20"/>
-                                         <label>&{'password'}:</label>
+                                         <label style="float:left;">&{'password'}:</label>
                                          <input type="password" name="password" size="8"/>
                                          <input id="login-btn" class="background-image" type="submit" value="&{'login'}">
                                      </form>
@@ -53,6 +53,6 @@
      </table>
 <script type="text/javascript">
 $(document).ready(function(){
-	autoLogin();
+	//autoLogin();
 });
 </script>

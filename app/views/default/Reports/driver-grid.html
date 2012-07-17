@@ -191,10 +191,10 @@
     	   	 	scrollable: true,
                 columns: eventJson.columns
             });
-    	});
-    	
-    	
-  
+    	}).error(function(e){
+			if (e.status && 403 == e.status)
+	     			alert(e.responseText);
+		});
     }
     
     function reportDriverSearchValidate(form) {

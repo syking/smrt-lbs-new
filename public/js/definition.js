@@ -1,83 +1,81 @@
 // ************ Misc Urls *********************************************
-var image_dir           = base + '/' + theme + '/images/';
-var loader_url          = base + '/' + theme + "/images/loader.gif";
-var login_url           = apibase + "/sessions/create";
-var logout_url          = apibase + "/sessions/destroy";
-var authentication_url  = apibase + "/sessions/create";
-var successLogin_url    = apibase + "/live";
-var successLogout_url   = apibase + "/";
-var version_check_url   = apibase + "/api/checkversion";
-var time_to_live_url    = apibase + "/api/ttl";
-var keep_alive_url      = apibase + "/api/keepalive";
-var timeout_url         = apibase + "/error/timeout";
+var login_url           = "/sessions/create";
+var logout_url          = "/sessions/destroy";
+var authentication_url  = "/sessions/create";
+var successLogin_url    = "/live";
+var successLogout_url   = "/";
+var version_check_url   = "/api/checkversion";
+var time_to_live_url    = "/api/ttl";
+var keep_alive_url      = "/api/keepalive";
+var timeout_url         = "/error/timeout";
 
 // ************ Role Management Urls **********************************
-var searchRole_url      = apibase + "/api/role/search";
-var addRole_url         = apibase + "/api/role/add";
-var editRole_url        = apibase + "/api/role/edit";
-var deleteRole_url      = apibase + "/api/role/delete";
+var searchRole_url      = "/api/role/search";
+var addRole_url         = "/api/role/add";
+var editRole_url        = "/api/role/edit";
+var deleteRole_url      = "/api/role/delete";
 
 // ************ User Management Urls **********************************
-var addUser_url         = apibase + "/api/user/add";
-var deleteUser_url      = apibase + "/api/user/delete";
-var searchUser_url      = apibase + "/api/user/search";
-var searchAssignedUser_url = apibase + "/api/user/search_assigned";
-var searchUnassignedUser_url = apibase + "/api/user/search_unassigned";
-var getUserDetail_url   = apibase + "/api/user/detail";
-var editUser_url        = apibase + "/api/user/edit";
-var editUserPage_url    = apibase + "/user/edit";
-var assignDevPage_url   = apibase + "/user/assign_device";
-var changePassword_url  = apibase + "/login/change_password";
-var resetPassword_url   = apibase + "/api/user/reset_password";
-var forgotPwdPage_url   = apibase + "/login/forgot_password";
+var addUser_url         = "/api/user/add";
+var deleteUser_url      = "/api/user/delete";
+var searchUser_url      = "/api/user/search";
+var searchAssignedUser_url = "/api/user/search_assigned";
+var searchUnassignedUser_url = "/api/user/search_unassigned";
+var getUserDetail_url   = "/api/user/detail";
+var editUser_url        = "/api/user/edit";
+var editUserPage_url    = "/user/edit";
+var assignDevPage_url   = "/user/assign_device";
+var changePassword_url  = "/login/change_password";
+var resetPassword_url   = "/api/user/reset_password";
+var forgotPwdPage_url   = "/login/forgot_password";
 
 // ************* Device Management Urls *******************************
-var addDevice_url       = apibase + "/api/device/add";
-var getModels_url       = apibase + "/api/model/search";
-var snapshot_url        = apibase + "/api/snapshot";
-var editDevicePage_url  = apibase + "/profile/device/edit";
-var locationLiveView_url= apibase + "/camera/view";
-var editDevice_url      = apibase + "/api/device/edit";
-var deleteDevice_url    = apibase + "/api/device/delete";
-var searchDevice_url    = apibase + "/api/device/search";
-var searchAssignedDevice_url = apibase + "/api/device/search_assigned";
-var searchUnassignedDevice_url = apibase + "/api/device/search_unassigned";
-var searchEvent_url     = apibase + "/api/event/search";
-var getDeviceDetail_url = apibase + "/api/device/detail";
-var assignDevices_url   = apibase + "/api/device/assigntouser";
-var unassignDevices_url = apibase + "/api/device/unassignfromuser";
+var addDevice_url       = "/api/device/add";
+var getModels_url       = "/api/model/search";
+var snapshot_url        = "/api/snapshot";
+var editDevicePage_url  = "/profile/device/edit";
+var locationLiveView_url= "/camera/view";
+var editDevice_url      = "/api/device/edit";
+var deleteDevice_url    = "/api/device/delete";
+var searchDevice_url    = "/api/device/search";
+var searchAssignedDevice_url = "/api/device/search_assigned";
+var searchUnassignedDevice_url = "/api/device/search_unassigned";
+var searchEvent_url     = "/api/event/search";
+var getDeviceDetail_url = "/api/device/detail";
+var assignDevices_url   = "/api/device/assigntouser";
+var unassignDevices_url = "/api/device/unassignfromuser";
 var aimetisServer_url   = "http://kztech-demo.safe100.net:50000/default1.aspx";
 
 // ************* Voucher ***************************************
-//var voucher_login_url           = apibase + "/api/voucherlogin";
-//var listVoucherPage_url         = apibase + "/voucher/list";
-//var deleteVoucherPage_url       = apibase + "/voucher/delete";
-//var getAllvouchers_url          = apibase + "/api/voucher/search";
-//var addVoucher_url              = apibase + "/api/voucher/add";
-//var deleteVoucher_url           = apibase + "/api/voucher/delete";
-//var searchVoucher_url           = apibase + "/api/voucher/search";
-//var getVoucherDetail_url        = apibase + "/api/voucher/detail";
-//var editVoucher_url             = apibase + "/api/voucher/edit";
-//var editVoucherPage_url         = apibase + "/voucher/edit";
-//var createAccountByVoucher_url  = apibase + "/api/voucher/create_account";
+//var voucher_login_url           = "/api/voucherlogin";
+//var listVoucherPage_url         = "/voucher/list";
+//var deleteVoucherPage_url       = "/voucher/delete";
+//var getAllvouchers_url          = "/api/voucher/search";
+//var addVoucher_url              = "/api/voucher/add";
+//var deleteVoucher_url           = "/api/voucher/delete";
+//var searchVoucher_url           = "/api/voucher/search";
+//var getVoucherDetail_url        = "/api/voucher/detail";
+//var editVoucher_url             = "/api/voucher/edit";
+//var editVoucherPage_url         = "/voucher/edit";
+//var createAccountByVoucher_url  = "/api/voucher/create_account";
 
 // ************* Live View Urls ***************************************
-var getViewConfigs_url  = apibase + "/api/view/search";
-var getViewDetails_url  = apibase + "/api/view/detail";
-var sendPTZ_url         = apibase + "/api/device/ptz";
-var saveViewConfig_url  = apibase + "/api/view/config";
+var getViewConfigs_url  = "/api/view/search";
+var getViewDetails_url  = "/api/view/detail";
+var sendPTZ_url         = "/api/device/ptz";
+var saveViewConfig_url  = "/api/view/config";
 
 // ************* Account Management Urls ******************************
-var addAccount_url              = apibase + "/api/account/add";
-var getAllAccounts_url          = apibase + "/api/account/search";
-var editAccount_url             = apibase + "/api/account/edit";
-var deleteAccount_url           = apibase + "/api/account/delete";
-var getAccountDetail_url        = apibase + "/api/account/detail";
-var searchAccount_url           = apibase + "/api/account/search";
-var assignDevicesToAcc_url      = apibase + "/api/account/assign/device";
-var unassignDevicesToAcc_url    = apibase + "/api/account/unassign/device";
-var assignUsersToAcc_url        = apibase + "/api/account/assign/user";
-var unassignUsersToAcc_url      = apibase + "/api/account/unassign/user";
+var addAccount_url              = "/api/account/add";
+var getAllAccounts_url          = "/api/account/search";
+var editAccount_url             = "/api/account/edit";
+var deleteAccount_url           = "/api/account/delete";
+var getAccountDetail_url        = "/api/account/detail";
+var searchAccount_url           = "/api/account/search";
+var assignDevicesToAcc_url      = "/api/account/assign/device";
+var unassignDevicesToAcc_url    = "/api/account/unassign/device";
+var assignUsersToAcc_url        = "/api/account/assign/user";
+var unassignUsersToAcc_url      = "/api/account/unassign/user";
 
 // *************** Constants *********************************************
 var NULL_VALUE      = -1;

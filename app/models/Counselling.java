@@ -1,15 +1,20 @@
 package models;
 
-import play.db.jpa.Model;
-import utils.CommonUtil;
-
-import javax.persistence.*;
-
-import net.sf.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import play.db.jpa.Model;
+import utils.CommonUtil;
+import vo.CounselVO;
+import vo.DriverVO;
 /**
  * 辅导安排信息
  * @author weiwei
@@ -38,66 +43,84 @@ public class Counselling extends Model{
 		super();
 	}
 
-	public static void saveByJson(String models, String userName){
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		if (userName == null)
-			userName = jo.getString("userName");
+	public static boolean createByJson(String models, String userName){
+		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
+		if (vos == null)
+			return false;
 		
-		String driverName = jo.getString("driverName");
-		String startDate = jo.getString("startDate");
-		String startTime =  startDate + " " + jo.getString("startTime");
-		String endDate = jo.getString("endDate");
-		String endTime = endDate + " " + jo.getString("endTime");
-		String remark = jo.getString("remark");
+		for (CounselVO vo : vos){
+			if (userName != null)
+				vo.userName = userName;
+			
+			vo.startTime = vo.startDate + " " + vo.startTime;
+			vo.endTime = vo.endDate + " " + vo.endTime;
+			
+			User user = User.find("byName", vo.userName).first();
+			if (user == null)
+				continue ;
+			
+			Driver driver = Driver.find("byName", vo.driverName).first();
+			if (driver == null)
+				continue ;
+			
+			new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", vo.startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", vo.endTime), vo.remark, driver).create();
+		}
 		
-		User user = User.find("byName", userName).first();
-		if (user == null)
-			return ;
-		
-		Driver driver = Driver.find("byName", driverName).first();
-		if (driver == null)
-			return ;
-		
-		new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), remark, driver).create();
+		return true;
 	}
 	
-	public static void updateByJson(String models, String userName){
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		if (userName == null)
-			userName = jo.getString("userName");
+	public static boolean updateByJson(String models, String userName){
+		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
+		if (vos == null)
+			return false;
 		
-		String driverName = jo.getString("driverName");
-		String startDate = jo.getString("startDate");
-		String startTime =  startDate + " " + jo.getString("startTime");
-		String endDate = jo.getString("endDate");
-		String endTime = endDate + " " + jo.getString("endTime");
-		String remark = jo.getString("remark");
+		for (CounselVO vo : vos){
+			if (vo.id == null)
+				continue;
+			
+			Counselling c = Counselling.findById(Long.parseLong(vo.id));
+			if (c == null)
+				continue ;
+			
+			vo.startTime = vo.startDate + " " + vo.startTime;
+			vo.endTime = vo.endDate + " " + vo.endTime;
+			
+			if (userName != null)
+				vo.userName = userName;
+			
+			User user = User.find("byName", vo.userName).first();
+			c.user = user;
+			
+			Driver driver = Driver.find("byName", vo.driverName).first();
+			c.driver = driver;
+			
+			c.endTime = CommonUtil.parse(vo.endTime); 
+			c.startTime = CommonUtil.parse(vo.startTime);
+			c.remark = vo.remark;
+			
+			c.save();
+		}
 		
-		User user = User.find("byName", userName).first();
-		Driver driver = Driver.find("byName", driverName).first();
-		
-		Counselling oldCoun = Counselling.findById(id);
-		if (oldCoun == null)
-			return ;
-		
-		oldCoun.user = user;
-		oldCoun.driver = driver;
-		oldCoun.startTime = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime);
-		oldCoun.endTime = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime);
-		oldCoun.remark = remark;
-		
-		oldCoun.save();
+		return true;
 	}
 	
-	public static void deleteByJson(String models){
-		String json = models.substring(1, models.toString().length()-1);
-		JSONObject jo = JSONObject.fromObject(json);
-		long id = jo.getInt("id");
-		Counselling c = Counselling.find("id = ?", id).first();
-		c.delete();
+	public static boolean deleteByJson(String models){
+		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
+		if (vos == null)
+			return false;
+		
+		for (CounselVO vo : vos){
+			if (vo.id == null)
+				continue;
+			
+			Counselling c = Counselling.findById(Long.parseLong(vo.id));
+			if (c == null)
+				continue ;
+			
+			c.delete();
+		}
+		
+		return true;
 	}
 	
 	public static List<Counselling> findByCondition(String userName, String driverName, String startDate, String startTime, String endDate, String endTime){

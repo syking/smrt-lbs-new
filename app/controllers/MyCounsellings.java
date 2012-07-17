@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.json.JSONObject;
 import models.Counselling;
 import models.Driver;
 import models.User;
@@ -24,9 +23,10 @@ import vo.Grid;
 @With(Interceptor.class)
 public class MyCounsellings extends Controller{
 	
-	public static void mycounsels() throws ParseException{
+	public static void read() throws ParseException{
 		List<CounselVO> result = new ArrayList<CounselVO>();
-		List<Counselling> counsellings = Counselling.find("byUser", renderArgs.get("user")).fetch();
+		User user = User.findByName((String)renderArgs.get("user"));
+		List<Counselling> counsellings = Counselling.find("user = ? order by id desc", user).fetch();
 		if (counsellings == null)
 			renderJSON("");
 		
@@ -38,37 +38,25 @@ public class MyCounsellings extends Controller{
 	}
 	
 	public static void mysearch(String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException{
-		User user = (User)renderArgs.get("user");
-		Counsellings.search(user.name, driverName, startDate, startTime, endDate, endTime);
+		String userName = (String)renderArgs.get("user");
+		Counsellings.search(userName, driverName, startDate, startTime, endDate, endTime);
 	}
 	
-	public static void saveMyCounsel(String models) throws ParseException{
-		if(models == null)
-			return;
-		
-		User user = (User)renderArgs.get("user");
-		Counselling.saveByJson(models, user.name);
-		
-		renderJSON(models);
+	public static void createMyCounsel(String models) throws ParseException{
+		String userName = (String)renderArgs.get("user");
+		if (Counselling.createByJson(models, userName))
+			renderJSON(models);
 	}
 	
 	public static void deleteCounsel(String models){
-		if (models == null)
-			return ;
-		
-		Counselling.deleteByJson(models);
-		
-		renderJSON(models);
+		if (Counselling.deleteByJson(models))
+			renderJSON(models);
     }
 	
 	public static void updateCounsel(String models) throws ParseException{
-		if(models == null)
-			return;
-		
-		User user = (User)renderArgs.get("user");
-		Counselling.updateByJson(models, user.name);
-		
-		renderJSON(models);
+		String userName = (String)renderArgs.get("user");
+		if (Counselling.updateByJson(models, userName))
+			renderJSON(models);
 	}
 	
 	public static void driverList(){
@@ -87,10 +75,10 @@ public class MyCounsellings extends Controller{
 		Map map = new HashMap();
 		Grid grid = new Grid();
 		grid.tabId = id;
-		grid.createUrl = preUrl + "saveMyCounsel";
+		grid.createUrl = preUrl + "createMyCounsel";
 		grid.updateUrl = preUrl + "updateCounsel";
 		grid.destroyUrl = preUrl + "deleteCounsel";
-		grid.readUrl = preUrl + "mycounsels";
+		grid.readUrl = preUrl + "read";
 		grid.searchUrl = preUrl + "mysearch";
 		grid.editable = "popup";
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(CounselVO.class, "id", "userName"));

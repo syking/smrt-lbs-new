@@ -74,32 +74,32 @@ public class User extends Model {
 	}
 
 	public static void createByJson(String models) {
-		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
-		User user = new User(userVO.account, "default", userVO.name, userVO.desc);
-		
-		user.create();
+//		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
+//		User user = new User(userVO.account, "default", userVO.name, userVO.desc);
+//		
+//		user.create();
 	}
 
 	public static void deleteByJson(String models) {
-		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
-		User user = User.findById(Long.parseLong(userVO.id));
-		if (user == null)
-			return ;
-		
-		user.delete();
+//		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
+//		User user = User.findById(Long.parseLong(userVO.id));
+//		if (user == null)
+//			return ;
+//		
+//		user.delete();
 	}
 
 	public static void updateByJson(String models) {
-		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
-		User user = User.findById(Long.parseLong(userVO.id));
-		if (user == null)
-			return ;
-		
-		user.account = userVO.account;
-		user.name = userVO.name;
-		user.desc = userVO.desc;
-		
-		user.save();
+//		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
+//		User user = User.findById(Long.parseLong(userVO.id));
+//		if (user == null)
+//			return ;
+//		
+//		user.account = userVO.account;
+//		user.name = userVO.name;
+//		user.desc = userVO.desc;
+//		
+//		user.save();
 	}
 	
 	public static List<User> findByCondition(String roleName, String userName, String account, String desc){

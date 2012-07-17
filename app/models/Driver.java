@@ -17,15 +17,23 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.ChartSerie;
 import vo.DriverPerformanceVO;
+import vo.DriverVO;
 import vo.EventReportVO;
 import vo.TreeView;
+import vo.VehicleVO;
 
 /**
  * 司机信息
+ *
+ */
+/**
+ * @author weiwei
  *
  */
 @Entity
@@ -162,12 +170,13 @@ public class Driver extends Model{
 		
 		return count;
 	}
-    
+
 	@Override
 	public String toString() {
-		return "Driver [number=" + number + "]";
+		return "Driver [number=" + number + ", name=" + name + ", description="
+				+ description + "]";
 	}
-	
+
 	/**
 	 * 计算得分
 	 * @param drs
@@ -182,4 +191,60 @@ public class Driver extends Model{
 		return 100 - reduceTotal;
 	}
 
+	public static boolean deleteByJson(String models) {
+		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
+		if (vos == null)
+			return false;
+		
+		for (DriverVO vo : vos){
+			if (vo.id == null)
+				continue;
+			
+			Driver obj = Driver.findById(Long.parseLong(vo.id));
+			if (obj == null)
+				continue;
+			
+			obj.delete();
+		}
+		
+		return true;
+	}
+
+	public static boolean createByJson(String models) {
+		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
+		if (vos == null)
+			return false;
+		
+		for (DriverVO vo : vos){
+			Driver obj = new Driver();
+			obj.number = vo.number;
+			obj.name = vo.name;
+			obj.description = vo.description;
+			obj.create();
+		}
+		
+		return true;
+	}
+
+	public static boolean updateByJson(String models) {
+		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
+		if (vos == null)
+			return false;
+		
+		for (DriverVO vo : vos){
+			if (vo.id == null)
+				continue;
+			
+			Driver obj = Driver.findById(Long.parseLong(vo.id));
+			if (obj == null)
+				continue;
+			
+			obj.number = vo.number;
+			obj.name = vo.name;
+			obj.description = vo.description;
+			obj.save();
+		}
+		
+		return true;
+	}
 }

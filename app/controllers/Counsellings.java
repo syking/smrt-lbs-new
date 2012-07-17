@@ -3,7 +3,6 @@ package controllers;
 import models.Counselling;
 import models.Driver;
 import models.User;
-import net.sf.json.JSONObject;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
@@ -22,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Permission;
+
 import static models.User.Constant.THEME;
 
 /**
@@ -32,9 +33,10 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Counsellings extends Controller {
 
-	public static void counsel() throws ParseException {
+	@Permission
+	public static void read() throws ParseException {
 		List<CounselVO> result = new ArrayList<CounselVO>();
-		List<Counselling> counsellings = Counselling.findAll();
+		List<Counselling> counsellings = Counselling.find("order by id desc").fetch();
 		if (counsellings == null)
 			return ;
 		
@@ -44,6 +46,7 @@ public class Counsellings extends Controller {
 		renderJSON(result);
 	}	
 	
+	@Permission
 	public static void search(String userName, String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException {
 		List<Counselling> counsellings = Counselling.findByCondition(userName, driverName, startDate, startTime, endDate, endTime);
 		List<CounselVO> result = new ArrayList<CounselVO>();
@@ -54,33 +57,25 @@ public class Counsellings extends Controller {
 		renderJSON(result);
 	}
 
-	public static void saveCounselling(String models) throws ParseException {
-		if(models == null)
-			return;
-		
-		Counselling.saveByJson(models, null);
-		
-		renderJSON(models);
+	@Permission
+	public static void createCounselling(String models) throws ParseException {
+		if (Counselling.createByJson(models, null))
+			renderJSON(models);
 	}
 
+	@Permission
 	public static void deleteCounsel(String models) {
-		if (models == null)
-			return ;
-		
-		Counselling.deleteByJson(models);
-		
-		renderJSON(models);
+		if (Counselling.deleteByJson(models))
+			renderJSON(models);
 	}
 
+	@Permission
 	public static void updateCounsel(String models) throws ParseException {
-		if(models==null)
-			return;
-		
-		Counselling.updateByJson(models, null);
-		
-		renderJSON(models);
+		if (Counselling.updateByJson(models, null))
+			renderJSON(models);
 	}
 
+	@Permission
 	public static void grid(String id) {
 		final String preUrl = "/Counsellings/";
 		List<User> userList = User.findAll();
@@ -98,10 +93,10 @@ public class Counsellings extends Controller {
 		Map map = new HashMap();
 		Grid grid = new Grid();
 		grid.tabId = id;
-		grid.createUrl = preUrl + "saveCounselling";
+		grid.createUrl = preUrl + "createCounselling";
 		grid.updateUrl = preUrl + "updateCounsel";
 		grid.destroyUrl = preUrl + "deleteCounsel";
-		grid.readUrl = preUrl + "counsel";
+		grid.readUrl = preUrl + "read";
 		grid.searchUrl = preUrl + "search";
 		grid.editable = "popup";
 		

@@ -62,26 +62,41 @@
 
     function loadVehicles(url, params) {
         var dataSource = new kendo.data.DataSource({
+        	error: function(e) {
+		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
+		        	alert(e.responseText);
+		        else{
+		        	alert("Oops! 500 error!");
+		        }
+		    },
             transport:{
                 read:{
                     url:url,
-                    dataType:"json"
                 },
                 update:{
                     url:"${grid.updateUrl}",
-                    dataType:"json"
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("update success");
+                    }
                 },
                 destroy:{
                     url:"${grid.destroyUrl}",
-                    dataType:"json"
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("delete success");
+                    }
                 },
                 create:{
                     url:"${grid.createUrl}",
-                    dataType:"json"
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("create success");
+                    }
                 },
-                parameterMap:function (options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models:kendo.stringify(options.models)};
+                parameterMap:function (data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models:kendo.stringify(data.models)};
                     }
                     return params;
                 }
@@ -146,16 +161,16 @@
                 }
             }
         ];
-        columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Actions", width:"200px" };
+        columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100" };
         var grid = $("#${grid.tabId}_grid").kendoGrid({
             dataSource:dataSource,
             columns:columnsJson,
-            toolbar:["create"],
+            toolbar:["create", "save", "cancel"],
             scrollable:true,
             sortable:true,
             pageable:true,
-            selectable:true,
-            editable:"${grid.editable}"
+            selectable:false,
+            editable:true
         }).data("kendoGrid");
 
 
@@ -184,6 +199,4 @@
                     dataSource: deviceJson
                 });
     }
-
-
 </script>

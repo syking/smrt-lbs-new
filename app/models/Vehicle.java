@@ -15,10 +15,14 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
+import utils.CommonUtil;
 import vo.ComboVO;
 import vo.TreeView;
 import vo.VehicleGPS;
+import vo.VehicleVO;
 
 /**
  * 车辆信息
@@ -293,5 +297,81 @@ public class Vehicle extends Model {
 		}
 
 		return result;
+	}
+
+	public static boolean deleteByJson(String models) {
+		List<VehicleVO> vehicleVOs = CommonUtil.parseArray(models, VehicleVO.class);
+		if (vehicleVOs == null)
+			return false;
+		
+		for (VehicleVO vo : vehicleVOs){
+			if (vo.id == null)
+				continue;
+			
+			Vehicle v = Vehicle.findById(Long.parseLong(vo.id));
+			if (v == null)
+				continue;
+			
+			v.delete();
+		}
+		
+		return true;
+	}
+
+	public static boolean createByJson(String models) {
+		List<VehicleVO> vehicleVOs = CommonUtil.parseArray(models, VehicleVO.class);
+		if (vehicleVOs == null)
+			return false;
+		
+		for (VehicleVO vehicleVO : vehicleVOs){
+			Vehicle v = new Vehicle();
+			v.number = vehicleVO.number;
+			v.license = vehicleVO.license;
+	
+			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
+			v.fleet = fleet;
+	
+			Device device = Device.find("byName", vehicleVO.deviceName).first();
+			v.device = device;
+	
+			v.cctvIp = vehicleVO.cctvIp;
+			v.description = vehicleVO.description;
+			v.type = vehicleVO.type;
+			
+			v.create();
+		}
+		
+		return true;
+	}
+
+	public static boolean updateByJson(String models) {
+		List<VehicleVO> vehicleVOs = CommonUtil.parseArray(models, VehicleVO.class);
+		if (vehicleVOs == null)
+			return false;
+		
+		for (VehicleVO vehicleVO : vehicleVOs){
+			if (vehicleVO.id == null)
+				continue;
+			
+			Vehicle v = Vehicle.findById(Long.parseLong(vehicleVO.id));
+			if (v == null)
+				continue;
+			
+			v.number = vehicleVO.number;
+			v.license = vehicleVO.license;
+	
+			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
+			v.fleet = fleet;
+	
+			Device device = Device.find("byName", vehicleVO.deviceName).first();
+			v.device = device;
+	
+			v.cctvIp = vehicleVO.cctvIp;
+			v.description = vehicleVO.description;
+			v.type = vehicleVO.type;
+			v.save();
+		}
+		
+		return true;
 	}
 }

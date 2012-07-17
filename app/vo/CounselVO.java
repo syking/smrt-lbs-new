@@ -13,7 +13,7 @@ import utils.CommonUtil;
 import models.Counselling;
 
 public class CounselVO {
-	public long id;
+	public String id;
 	public String userName = "";
 	public String driverName = "";
 	public String startDate;
@@ -23,7 +23,7 @@ public class CounselVO {
 	public String remark;
 	
 	public CounselVO init(Counselling c) throws ParseException{
-		this.id = c.id;
+		this.id = String.valueOf(c.id);
 		if (c.user != null)
 			this.userName = c.user.name;
 		if (c.driver != null)

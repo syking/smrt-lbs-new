@@ -61,31 +61,31 @@ public class Role extends Model{
 	}
 	
 	public static void createByJson(String models) {
-		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
-		Role role = new Role(roleVO.name, roleVO.desc);
-		
-		role.create();
+//		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
+//		Role role = new Role(roleVO.name, roleVO.desc);
+//		
+//		role.create();
 	}
 
 	public static void deleteByJson(String models) {
-		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
-		Role role = Role.findById(Long.parseLong(roleVO.id));
-		if (role == null)
-			return ;
-		
-		role.delete();
+//		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
+//		Role role = Role.findById(Long.parseLong(roleVO.id));
+//		if (role == null)
+//			return ;
+//		
+//		role.delete();
 	}
 
 	public static void updateByJson(String models) {
-		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
-		Role role = Role.findById(Long.parseLong(roleVO.id));
-		if (role == null)
-			return ;
-		
-		role.name = roleVO.name;
-		role.desc = roleVO.desc;
-		
-		role.save();
+//		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
+//		Role role = Role.findById(Long.parseLong(roleVO.id));
+//		if (role == null)
+//			return ;
+//		
+//		role.name = roleVO.name;
+//		role.desc = roleVO.desc;
+//		
+//		role.save();
 	}
 	
 	public static List<Role> findByCondition(String roleName, String desc){

@@ -55,34 +55,6 @@
     
     $(document).ready(function () {
     	loadDrivers("drivers/read");
-        
-        $("#${grid.tabId}_grid").delegate(".create-counsel", "click", function (e) {
-        	sessionfor = $(this).parent().parent().find("td:first").next().html();
-        	$("#counselling_form_driver_name").val(sessionfor);
-        	$("#couselling_win").css("display", "");
-			$("#couselling_win").kendoWindow({
-                actions:["Refresh", "Maximize", "Minimize", "Close"],
-                draggable:true,
-                height:"280px",
-                modal:true,
-                resizable:true,
-                title:"Create Counselling",
-                width:"500px"
-            }).data("kendoWindow").center().open();            
-        });
-
-        $("#counselling_form_user_name").kendoComboBox({
-            dataTextField:"text",
-            dataValueField:"value",
-            dataSource: #{verbatim} ${users} #{/verbatim}
-        });
-
-        // DatePicker, TimePicker
-        $("#counselling_form_date").kendoDatePicker();
-        $("#counselling_form_starttime,#counselling_form_endtime").kendoTimePicker({
-        	format: "HH:mm",
-            interval:15
-        });
     });
 
     function loadDrivers(url, params) {
@@ -96,12 +68,10 @@
 		    },
             transport:{
                 read:{
-                    url:url,
-                    dataType:"json"
+                    url:url
                 },
                 update:{
                     url:"${grid.updateUrl}",
-                    dataType:"json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("update success");
@@ -109,7 +79,6 @@
                 },
                 destroy:{
                     url:"${grid.destroyUrl}",
-                    dataType:"json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("delete success");
@@ -117,20 +86,20 @@
                 },
                 create:{
                     url:"${grid.createUrl}",
-                    dataType:"json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("create success");
                     }
                 },
-                parameterMap:function (options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models:kendo.stringify(options.models)};
+                parameterMap: function(data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models:kendo.stringify(data.models)};
                     }
+                    
                     return params;
                 }
             },
-            batch:true,
+            batch:true,//
             pageSize:15,
             schema:{
                 model:{
@@ -148,15 +117,16 @@
         $("#${grid.tabId}_grid").empty();
         
         var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-        columnsJson[columnsJson.length] = { command:["edit", "destroy", {text:"Create Counsel", className:"create-counsel"}], title:"Actions", width:"300px" };
+        columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100px" };
         $("#${grid.tabId}_grid").kendoGrid({
             dataSource:dataSource,
+            toolbar: ["create", "save", "cancel"], // specify toolbar commands
             pageable:true,
             sortable:true,
-            selectable:true,
-            toolbar:["create"],
+            selectable:false,
             columns:columnsJson,
-            editable:"${grid.editable}"
+            editable:true,
+            navigatable: true
         });
     }
 
