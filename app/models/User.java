@@ -77,7 +77,7 @@ public class User extends Model {
 		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
 		User user = new User(userVO.account, "default", userVO.name, userVO.desc);
 		
-		user.save();
+		user.create();
 	}
 
 	public static void deleteByJson(String models) {

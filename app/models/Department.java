@@ -56,7 +56,7 @@ public class Department extends Model{
 		dept.name = deptVO.name;
 		dept.parent = Department.findByName(deptVO.parentName);
 		
-		dept.save();
+		dept.create();
 	}
 	
 	public static void updateByJson(String models) {

@@ -44,7 +44,7 @@ public class SystemConfigs extends Controller{
 		String value = jo.getString("value");
 		String displayName = jo.getString("displayName");
 		
-		new SystemConfig(name, value, displayName).save();
+		new SystemConfig(name, value, displayName).create();
 	}
 	
 	public static void delete(String models){

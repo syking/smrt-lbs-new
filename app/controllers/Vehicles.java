@@ -261,7 +261,7 @@ public class Vehicles extends Controller {
 		v.description = vehicleVO.description;
 		v.type = vehicleVO.type;
 		
-		v.save();
+		v.create();
 		
 		renderJSON(models);
 	}

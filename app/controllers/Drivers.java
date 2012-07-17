@@ -68,7 +68,7 @@ public class Drivers extends Controller {
 	public static void add(String models) {
 		Driver driver = CommonUtil.jsonStr2JavaObj(models, Driver.class);
 		Driver d = new Driver(driver.number, driver.name, driver.description);
-		d.save();
+		d.create();
 		
 		renderJSON(models);
 	}

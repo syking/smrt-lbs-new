@@ -71,7 +71,7 @@ public class Fleet extends Model{
 		fleet.placeNumber = fleetVO.placeNumber;
 		fleet.parent = Fleet.findByName(fleetVO.parentName);
 		
-		fleet.save();
+		fleet.create();
 	}
 	
 	public static void updateByJson(String models) {

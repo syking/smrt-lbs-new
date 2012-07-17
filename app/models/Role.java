@@ -64,7 +64,7 @@ public class Role extends Model{
 		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
 		Role role = new Role(roleVO.name, roleVO.desc);
 		
-		role.save();
+		role.create();
 	}
 
 	public static void deleteByJson(String models) {

@@ -56,7 +56,7 @@ public class Permission extends Model{
 		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
 		Permission permission = new Permission(permVO.action, permVO.desc);
 		
-		permission.save();
+		permission.create();
 	}
 
 	public static void deleteByJson(String models) {

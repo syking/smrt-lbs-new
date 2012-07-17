@@ -59,7 +59,7 @@ public class Counselling extends Model{
 		if (driver == null)
 			return ;
 		
-		new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), remark, driver).save();
+		new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), remark, driver).create();
 	}
 	
 	public static void updateByJson(String models, String userName){
