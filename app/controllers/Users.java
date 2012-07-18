@@ -49,7 +49,7 @@ public class Users extends Controller {
 	@Permission
 	public static void read(){
 		List<UserVO> result = new ArrayList<UserVO>();
-		List<User> users = User.findAll();
+		List<User> users = User.find("order by id desc").fetch();
 		if (users == null)
 			return ;
 
@@ -61,31 +61,21 @@ public class Users extends Controller {
 
 	@Permission
 	public static void create(String models) {
-		if(models == null)
-			return;
-
-		User.createByJson(models);
-
-		renderJSON(models);
+		if (User.createByJson(models))
+			renderJSON(models);
 	}
 
 	@Permission
 	public static void update(String models){
-		if(models==null)
-			return;
-		User.updateByJson(models);
-
-		renderJSON(models);
+		if (User.updateByJson(models))
+			renderJSON(models);
 
 	}
 
 	@Permission
 	public static void destroy(String models) {
-		if (models == null)
-			return ;
-		User.deleteByJson(models);
-
-		renderJSON(models);
+		if (User.deleteByJson(models))
+			renderJSON(models);
 	}
 
 	@Permission

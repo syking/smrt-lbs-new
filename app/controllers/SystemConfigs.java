@@ -22,15 +22,13 @@ import vo.Grid;
 @With(Interceptor.class)
 public class SystemConfigs extends Controller{
 	
-	public static void show(){
-		List<SystemConfig> sysConfigs = SystemConfig.findAll();
-		
-		if(SystemConfig.findAll()==null) renderJSON("");
+	public static void read(){
+		List<SystemConfig> sysConfigs = SystemConfig.find("order by id desc").fetch();
 		renderJSON(sysConfigs);
 	}
 	
 	public static void listJson(){
-		List<SystemConfig> sysConfigs = SystemConfig.findAll();
+		List<SystemConfig> sysConfigs = SystemConfig.find("order by id desc").fetch();
         Map data = CommonUtil.assemGridData(sysConfigs);
         renderJSON(data);
     }
@@ -58,7 +56,7 @@ public class SystemConfigs extends Controller{
 		grid.createUrl = preUrl + "create";
 		grid.updateUrl = preUrl + "update";
 		grid.destroyUrl = preUrl + "delete";
-		grid.readUrl = preUrl + "show";
+		grid.readUrl = preUrl + "read";
 		grid.editable = "popup";
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(SystemConfig.class, "id"));
 		map.put("grid", grid);

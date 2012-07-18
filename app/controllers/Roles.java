@@ -41,7 +41,7 @@ public class Roles extends Controller{
 	
 	public static void read(){
 		List<RoleVO> result = new ArrayList<RoleVO>();
-		List<Role> Roles = Role.findAll();
+		List<Role> Roles = Role.find("order by id desc").fetch();
 		if (Roles == null)
 			return ;
 		
@@ -53,32 +53,21 @@ public class Roles extends Controller{
 	
 	@annotations.Permission
 	public static void create(String models) {
-		if(models == null)
-			return;
-		
-		Role.createByJson(models);
-		
-		renderJSON(models);
+		if (Role.createByJson(models))
+			renderJSON(models);
 	}
 	
 	@annotations.Permission
 	public static void update(String models){
-		if(models==null)
-			return;
-		Role.updateByJson(models);
-		
-		renderJSON(models);
+		if (Role.updateByJson(models))
+			renderJSON(models);
 		
 	}
 
 	@annotations.Permission
 	public static void destroy(String models) {
-		if (models == null)
-			return ;
-		
-		Role.deleteByJson(models);
-		
-		renderJSON(models);
+		if (Role.deleteByJson(models))
+			renderJSON(models);
 	}
 	
 	public static void search(String roleName, String desc){

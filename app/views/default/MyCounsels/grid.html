@@ -131,7 +131,7 @@
 		$("#grid_${grid.tabId}").empty();
 		
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"200px" };
+		columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100px" };
         /**
 		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
 		 */

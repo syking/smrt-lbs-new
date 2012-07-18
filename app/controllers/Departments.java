@@ -87,33 +87,24 @@ public class Departments extends Controller {
 	 * 部门管理：添加部门信息
 	 */
 	public static void create(String models) {
-		if (models == null)
-			return ;
-		
-		Department.createByJson(models);
-		renderJSON(models);
+		if (Department.createByJson(models))
+			renderJSON(models);
 	}
 	
 	/**
 	 * 部门管理：更新部门信息
 	 */
 	public static void update(String models) {
-		if (models == null)
-			return;
-			
-		Department.updateByJson(models);
-		renderJSON(models);
+		if (Department.updateByJson(models))
+			renderJSON(models);
 	}
 
 	/**
 	 * 部门管理：删除部门信息
 	 */
 	public static void destroy(String models) {
-		if (models == null)
-			return ;
-		
-		Department.deleteByJson(models);
-		renderJSON(models);
+		if (Department.deleteByJson(models))
+			renderJSON(models);
 	}
 
 	/**

@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
 import play.db.jpa.Transactional;
 import utils.CommonUtil;
@@ -63,40 +65,61 @@ public class Fleet extends Model{
 		return "Fleet [name=" + name + ", id=" + id + "]";
 	}
 	
-	public static void createByJson(String models) {
-		FleetVO fleetVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), FleetVO.class);
-		Fleet fleet = new Fleet();
-		fleet.name = fleetVO.name;
-		fleet.description = fleetVO.description;
-		fleet.placeNumber = fleetVO.placeNumber;
-		fleet.parent = Fleet.findByName(fleetVO.parentName);
+	public static boolean createByJson(String models) {
+		List<FleetVO> vos = JSON.parseArray(models, FleetVO.class);
+		if (vos == null)
+			return false;
 		
-		fleet.create();
+		for (FleetVO vo : vos){
+			Fleet fleet = new Fleet();
+			fleet.name = vo.name;
+			fleet.description = vo.description;
+			fleet.placeNumber = vo.placeNumber;
+			fleet.parent = Fleet.findByName(vo.parentName);
+			
+			fleet.create();
+		}
+		
+		return true;
 	}
 	
-	public static void updateByJson(String models) {
-		FleetVO fleetVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), FleetVO.class);
-		Long id = fleetVO.id;
-		Fleet fleet = Fleet.findById(id);
-		if (fleet == null)
-			return ;
+	public static boolean updateByJson(String models) {
+		List<FleetVO> vos = JSON.parseArray(models, FleetVO.class);
+		if (vos == null)
+			return false;
 		
-		fleet.name = fleetVO.name;
-		fleet.description = fleetVO.description;
-		fleet.placeNumber = fleetVO.placeNumber;
-		fleet.parent = Fleet.findByName(fleetVO.parentName);
+		for (FleetVO vo : vos){
+			Long id = Long.parseLong(vo.id);
+			Fleet fleet = Fleet.findById(id);
+			if (fleet == null)
+				continue ;
+			
+			fleet.name = vo.name;
+			fleet.description = vo.description;
+			fleet.placeNumber = vo.placeNumber;
+			fleet.parent = Fleet.findByName(vo.parentName);
+			
+			fleet.save();
+		}
 		
-		fleet.save();
+		return true;
 	}
 
-	public static void deleteByJson(String models) {
-		FleetVO fleetVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), FleetVO.class);
-		Long id = fleetVO.id;
-		Fleet fleet = Fleet.findById(id);
-		if (fleet == null)
-			return ;
+	public static boolean deleteByJson(String models) {
+		List<FleetVO> vos = JSON.parseArray(models, FleetVO.class);
+		if (vos == null)
+			return false;
 		
-		fleet.delete();
+		for (FleetVO vo : vos){
+			Long id = Long.parseLong(vo.id);
+			Fleet fleet = Fleet.findById(id);
+			if (fleet == null)
+				continue ;
+			
+			fleet.delete();
+		}
+		
+		return true;
 	}
 	
 	public static List<Fleet> findByCondition(final String placeNumber, final String name){

@@ -69,7 +69,7 @@ public class Permissions extends Controller {
 	@annotations.Permission
 	public static void read(){
 		List<PermVO> result = new ArrayList<PermVO>();
-		List<Permission> perms = Permission.findAll();
+		List<Permission> perms = Permission.find("order by action").fetch();
 		if (perms == null)
 			return ;
 		
@@ -80,29 +80,19 @@ public class Permissions extends Controller {
 	}
 	@annotations.Permission
 	public static void create(String models) {
-		if(models == null)
-			return;
-		System.out.println(">>>>>>>>>>>>>>>>----------------->"+models);
-		Permission.createByJson(models);
-		
-		renderJSON(models);
+		if (Permission.createByJson(models))
+			renderJSON(models);
 	}
 	@annotations.Permission
 	public static void update(String models){
-		if(models==null)
-			return;
-		Permission.updateByJson(models);
-		
-		renderJSON(models);
+		if (Permission.updateByJson(models))
+			renderJSON(models);
 		
 	}
 	@annotations.Permission
 	public static void destroy(String models) {
-		if (models == null)
-			return ;
-		Permission.deleteByJson(models);
-		
-		renderJSON(models);
+		if (Permission.deleteByJson(models))
+			renderJSON(models);
 	}
 	@annotations.Permission
 	public static void search(String permAction, String desc){

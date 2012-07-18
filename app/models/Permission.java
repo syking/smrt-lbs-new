@@ -12,9 +12,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.PermVO;
+import vo.RoleVO;
 import vo.TreeView;
 
 /**
@@ -52,32 +55,50 @@ public class Permission extends Model{
 		this.desc = desc;
 	}
 
-	public static void createByJson(String models) {
-//		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-//		Permission permission = new Permission(permVO.action, permVO.desc);
-//		
-//		permission.create();
+	public static boolean createByJson(String models) {
+		List<PermVO> vos = JSON.parseArray(models, PermVO.class);
+		if (vos == null)
+			return false;
+		
+		for (PermVO vo : vos){
+			new Permission(vo.action, vo.desc).create();
+		}
+		
+		return true;
 	}
 
-	public static void deleteByJson(String models) {
-//		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-//		Permission permission = Permission.findById(Long.parseLong(permVO.id));
-//		if (permission == null)
-//			return ;
-//		
-//		permission.delete();
+	public static boolean deleteByJson(String models) {
+		List<PermVO> vos = JSON.parseArray(models, PermVO.class);
+		if (vos == null)
+			return false;
+		
+		for (PermVO vo : vos){
+			Permission permission = Permission.findById(Long.parseLong(vo.id));
+			if (permission == null)
+				continue ;
+			
+			permission.delete();
+		}
+		
+		return true;
 	}
 
-	public static void updateByJson(String models) {
-//		PermVO permVO = CommonUtil.jsonStr2JavaObj(models, PermVO.class);
-//		Permission permission = Permission.findById(Long.parseLong(permVO.id));
-//		if (permission == null)
-//			return ;
-//		
-//		permission.action = permVO.action;
-//		permission.desc = permVO.desc;
-//		
-//		permission.save();
+	public static boolean updateByJson(String models) {
+		List<PermVO> vos = JSON.parseArray(models, PermVO.class);
+		if (vos == null)
+			return false;
+		
+		for (PermVO vo : vos){
+			Permission permission = Permission.findById(Long.parseLong(vo.id));
+			if (permission == null)
+				continue ;
+			permission.action = vo.action;
+			permission.desc = vo.desc;
+			
+			permission.save();
+		}
+		
+		return true;
 	}
 	
 	public static List<Permission> findByCondition(String action, String desc){

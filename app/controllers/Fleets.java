@@ -87,33 +87,24 @@ public class Fleets extends Controller {
 	 * 车队管理：添加车队信息
 	 */
 	public static void create(String models) {
-		if (models == null)
-			return ;
-		
-		Fleet.createByJson(models);
-		renderJSON(models);
+		if (Fleet.createByJson(models))
+			renderJSON(models);
 	}
 	
 	/**
 	 * 车队管理：更新车队信息
 	 */
 	public static void update(String models) {
-		if (models == null)
-			return;
-			
-		Fleet.updateByJson(models);
-		renderJSON(models);
+		if (Fleet.updateByJson(models))
+			renderJSON(models);
 	}
 
 	/**
 	 * 车队管理：删除车队信息
 	 */
 	public static void destroy(String models) {
-		if (models == null)
-			return ;
-		
-		Fleet.deleteByJson(models);
-		renderJSON(models);
+		if (Fleet.deleteByJson(models))
+			renderJSON(models);
 	}
 
 	/**

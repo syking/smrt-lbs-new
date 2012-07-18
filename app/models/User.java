@@ -14,8 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
 import utils.CommonUtil;
+import vo.DepartmentVO;
 import vo.TreeView;
 import vo.UserVO;
 
@@ -73,33 +76,50 @@ public class User extends Model {
 		return loginUser;
 	}
 
-	public static void createByJson(String models) {
-//		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
-//		User user = new User(userVO.account, "default", userVO.name, userVO.desc);
-//		
-//		user.create();
+	public static boolean createByJson(String models) {
+		List<UserVO> vos = JSON.parseArray(models, UserVO.class);
+		if (vos == null)
+			return false;
+		
+		for (UserVO vo : vos){
+			new User(vo.account, "123456", vo.name, vo.desc).create();
+		}
+		
+		return true;
 	}
 
-	public static void deleteByJson(String models) {
-//		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
-//		User user = User.findById(Long.parseLong(userVO.id));
-//		if (user == null)
-//			return ;
-//		
-//		user.delete();
+	public static boolean deleteByJson(String models) {
+		List<UserVO> vos = JSON.parseArray(models, UserVO.class);
+		if (vos == null)
+			return false;
+		
+		for (UserVO vo : vos){
+			User user = User.findById(Long.parseLong(vo.id));
+			if (user == null)
+				continue ;
+			
+			user.delete();
+		}
+		return true;
 	}
 
-	public static void updateByJson(String models) {
-//		UserVO userVO = CommonUtil.jsonStr2JavaObj(models, UserVO.class);
-//		User user = User.findById(Long.parseLong(userVO.id));
-//		if (user == null)
-//			return ;
-//		
-//		user.account = userVO.account;
-//		user.name = userVO.name;
-//		user.desc = userVO.desc;
-//		
-//		user.save();
+	public static boolean updateByJson(String models) {
+		List<UserVO> vos = JSON.parseArray(models, UserVO.class);
+		if (vos == null)
+			return false;
+		
+		for (UserVO vo : vos){
+			User user = User.findById(Long.parseLong(vo.id));
+			if (user == null)
+				continue ;
+		
+			user.account = vo.account;
+			user.name = vo.name;
+			user.desc = vo.desc;
+			user.save();
+		}
+		
+		return true;
 	}
 	
 	public static List<User> findByCondition(String roleName, String userName, String account, String desc){

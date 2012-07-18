@@ -13,12 +13,10 @@
 		    },
             transport: {
                 read:  {
-                    url: "${grid.readUrl}",
-                    dataType: "json"
+                    url: "${grid.readUrl}"
                 },
                 update: {
                     url: "${grid.updateUrl}",
-                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("update success");
@@ -26,7 +24,6 @@
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
-                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("delete success");
@@ -34,19 +31,14 @@
                 },
                 create: {
                     url: "${grid.createUrl}",
-                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
                     		alert("create success");
                     }
                 },
-                search: {
-                    url: "${grid.searchUrl}",
-                    dataType: "json"
-                },
-                parameterMap: function(options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models: kendo.stringify(options.models)};
+                parameterMap: function(data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models: kendo.stringify(data.models)};
                     }
                 }
             },
@@ -66,14 +58,15 @@
         });
         
     	var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "&nbsp;", width: "210px" };
+		columnsJson[columnsJson.length] = { command: "destroy", title: "&nbsp;", width: "100px" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
-            selectable:true,
-            toolbar: ["create"],
+            selectable:false,
+            toolbar: ["create","save","cancel"],
             columns: columnsJson,
-            editable: "${grid.editable}"
+            editable: true,
+            navigatable: true
         });
     });
 

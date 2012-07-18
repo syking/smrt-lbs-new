@@ -14,10 +14,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.RoleVO;
 import vo.TreeView;
+import vo.UserVO;
 
 /**
  * The Role to Visit System of role.
@@ -60,32 +63,51 @@ public class Role extends Model{
 		this.desc = desc;
 	}
 	
-	public static void createByJson(String models) {
-//		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
-//		Role role = new Role(roleVO.name, roleVO.desc);
-//		
-//		role.create();
+	public static boolean createByJson(String models) {
+		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
+		if (vos == null)
+			return false;
+		
+		for (RoleVO vo : vos){
+			Role role = new Role(vo.name, vo.desc);
+			role.create();
+		}
+		
+		return true;
 	}
 
-	public static void deleteByJson(String models) {
-//		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
-//		Role role = Role.findById(Long.parseLong(roleVO.id));
-//		if (role == null)
-//			return ;
-//		
-//		role.delete();
+	public static boolean deleteByJson(String models) {
+		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
+		if (vos == null)
+			return false;
+		
+		for (RoleVO vo : vos){
+			Role role = Role.findById(Long.parseLong(vo.id));
+			if (role == null)
+				continue ;
+			
+			role.delete();
+		}
+		
+		return true;
 	}
 
-	public static void updateByJson(String models) {
-//		RoleVO roleVO = CommonUtil.jsonStr2JavaObj(models, RoleVO.class);
-//		Role role = Role.findById(Long.parseLong(roleVO.id));
-//		if (role == null)
-//			return ;
-//		
-//		role.name = roleVO.name;
-//		role.desc = roleVO.desc;
-//		
-//		role.save();
+	public static boolean updateByJson(String models) {
+		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
+		if (vos == null)
+			return false;
+		
+		for (RoleVO vo : vos){
+			Role role = Role.findById(Long.parseLong(vo.id));
+			if (role == null)
+				continue ;
+			role.name = vo.name;
+			role.desc = vo.desc;
+			
+			role.save();
+		}
+		
+		return true;
 	}
 	
 	public static List<Role> findByCondition(String roleName, String desc){

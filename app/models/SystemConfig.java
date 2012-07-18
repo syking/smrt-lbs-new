@@ -27,7 +27,7 @@ public class SystemConfig extends Model {
 	}
 
 	public static boolean deleteByJson(String models) {
-		List<SystemConfig> vos = JSON.parseObject(models, List.class);
+		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
 			return false;
 		
@@ -35,7 +35,7 @@ public class SystemConfig extends Model {
 			if (vo.id == null)
 				continue;
 			
-			SystemConfig obj = Driver.findById(vo.id);
+			SystemConfig obj = SystemConfig.findById(vo.id);
 			if (obj == null)
 				continue;
 			
@@ -46,7 +46,7 @@ public class SystemConfig extends Model {
 	}
 
 	public static boolean createByJson(String models) {
-		List<SystemConfig> vos = JSON.parseObject(models, List.class);
+		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
 			return false;
 		
@@ -58,7 +58,7 @@ public class SystemConfig extends Model {
 	}
 
 	public static boolean updateByJson(String models) {
-		List<SystemConfig> vos = JSON.parseObject(models, List.class);
+		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
 			return false;
 		

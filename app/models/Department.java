@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.JSON;
+
 import play.db.jpa.Model;
 import play.db.jpa.Transactional;
 import utils.CommonUtil;
@@ -24,6 +26,7 @@ import vo.ChartSerie;
 import vo.DepartmentVO;
 import vo.DepartmentVO;
 import vo.EventReportVO;
+import vo.FleetVO;
 import vo.TreeView;
 
 /**
@@ -50,36 +53,57 @@ public class Department extends Model{
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
 	
-	public static void createByJson(String models) {
-		DepartmentVO deptVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), DepartmentVO.class);
-		Department dept = new Department();
-		dept.name = deptVO.name;
-		dept.parent = Department.findByName(deptVO.parentName);
+	public static boolean createByJson(String models) {
+		List<DepartmentVO> vos = JSON.parseArray(models, DepartmentVO.class);
+		if (vos == null)
+			return false;
 		
-		dept.create();
+		for (DepartmentVO vo : vos){
+			Department dept = new Department();
+			dept.name = vo.name;
+			dept.parent = Department.findByName(vo.parentName);
+			
+			dept.create();
+		}
+		
+		return true;
 	}
 	
-	public static void updateByJson(String models) {
-		DepartmentVO departmentVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), DepartmentVO.class);
-		Long id = departmentVO.id;
-		Department department = Department.findById(id);
-		if (department == null)
-			return ;
+	public static boolean updateByJson(String models) {
+		List<DepartmentVO> vos = JSON.parseArray(models, DepartmentVO.class);
+		if (vos == null)
+			return false;
 		
-		department.name = departmentVO.name;
-		department.parent = Department.findByName(departmentVO.parentName);
+		for (DepartmentVO vo : vos){
+			Long id = vo.id;
+			Department department = Department.findById(id);
+			if (department == null)
+				continue ;
+			
+			department.name = vo.name;
+			department.parent = Department.findByName(vo.parentName);
+			
+			department.save();
+		}
 		
-		department.save();
+		return true;
 	}
 
-	public static void deleteByJson(String models) {
-		DepartmentVO departmentVO = CommonUtil.getGson().fromJson(models.substring(1, models.length() - 1), DepartmentVO.class);
-		Long id = departmentVO.id;
-		Department department = Department.findById(id);
-		if (department == null)
-			return ;
+	public static boolean deleteByJson(String models) {
+		List<DepartmentVO> vos = JSON.parseArray(models, DepartmentVO.class);
+		if (vos == null)
+			return false;
 		
-		department.delete();
+		for (DepartmentVO vo : vos){
+			Long id = vo.id;
+			Department department = Department.findById(id);
+			if (department == null)
+				continue ;
+		
+			department.delete();
+		}
+		
+		return true;
 	}
 	
 	public static List<Department> findByCondition(final String name, final String parentName){
