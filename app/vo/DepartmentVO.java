@@ -1,5 +1,6 @@
 package vo;
 
+import utils.CommonUtil;
 import models.Department;
 import models.Fleet;
 
@@ -14,6 +15,17 @@ public class DepartmentVO {
 		name = dept.name;
 		parentName = dept.parent == null ? "" : dept.parent.name;
 		return this;
+	}
+	
+	public void validate(){
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can't be empty, ";
+		if (CommonUtil.isEmptyString(name))
+			builder.append(CommonUtil.formatStr(msg, "Name"));
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
 	}
 
 }

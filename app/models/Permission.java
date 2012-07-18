@@ -61,6 +61,7 @@ public class Permission extends Model{
 			return models;
 		
 		for (PermVO vo : vos){
+			vo.validate();
 			Permission p = new Permission(vo.action, vo.desc);
 			p.create();
 			vo.id = String.valueOf(p.id);
@@ -92,6 +93,7 @@ public class Permission extends Model{
 			return false;
 		
 		for (PermVO vo : vos){
+			vo.validate();
 			Permission permission = Permission.findById(Long.parseLong(vo.id));
 			if (permission == null)
 				continue ;

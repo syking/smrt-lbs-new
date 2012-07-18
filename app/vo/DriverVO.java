@@ -1,5 +1,6 @@
 package vo;
 
+import utils.CommonUtil;
 import models.Driver;
 
 /**
@@ -24,10 +25,25 @@ public class DriverVO
     public String number;
     public String name;
     public String description;
+    
+    public void validate(){
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can't be empty, ";
+		if (CommonUtil.isEmptyString(number))
+			builder.append(CommonUtil.formatStr(msg, "Number"));
+		
+		if (CommonUtil.isEmptyString(name))
+			builder.append(CommonUtil.formatStr(msg, "Name"));
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
+	}
+    
 	@Override
 	public String toString() {
 		return "DriverVO [id=" + id + ", number=" + number + ", name=" + name
 				+ ", description=" + description + "]";
 	}
-    
+	
 }

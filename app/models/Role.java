@@ -69,6 +69,7 @@ public class Role extends Model{
 			return models;
 		
 		for (RoleVO vo : vos){
+			vo.validate();
 			Role role = new Role(vo.name, vo.desc);
 			role.create();
 			vo.id = String.valueOf(role.id);
@@ -101,6 +102,7 @@ public class Role extends Model{
 			return false;
 		
 		for (RoleVO vo : vos){
+			vo.validate();
 			Role role = Role.findById(Long.parseLong(vo.id));
 			if (role == null)
 				continue ;

@@ -1,5 +1,6 @@
 package vo;
 
+import utils.CommonUtil;
 import models.User;
 
 public class UserVO {
@@ -21,4 +22,17 @@ public class UserVO {
 		this.desc = user.desc;
 	}
 	
+	public void validate(){
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can't be empty, ";
+		if (CommonUtil.isEmptyString(account))
+			builder.append(CommonUtil.formatStr(msg, "Account"));
+		
+		if (CommonUtil.isEmptyString(name))
+			builder.append(CommonUtil.formatStr(msg, "Name"));
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
+	}
 }

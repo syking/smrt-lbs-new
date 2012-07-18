@@ -31,7 +31,7 @@
 
 <div id="grid_${grid.tabId}"></div>
 
-
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
     var fleetsJson = #{verbatim} ${fleets} #{/verbatim};
     var deviceJson = #{verbatim} ${devices} #{/verbatim};
@@ -62,12 +62,7 @@
     function loadVehicles(url, params) {
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
-		        	alert(e.responseText);
-		        else{
-		        	alert("Oops! 500 error!");
-		        }
-		        
+		        alert(e.responseText);
 		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
 	        	grid.cancelChanges();//roll back 
 		    },
@@ -110,13 +105,24 @@
                     id:"id",
                     fields:{
                         id:{ editable:false, nullable:true },
-                        number:{ type:"string", validation:{ required:true } },
-                        license:{ type:"string", validation:{ required:true } },
-                        fleetName:"FleetName",
-                        deviceName:"DeviceName",
-                        description:{ type:"string", validation:{ required:true }},
-                        cctvIp:{ type:"string", validation:{ required:true }},
-                        type:{ type:"string", validation:{ required:true }}
+                        number:{ validation:{ required:true } },
+                        license:{ validation:{ required:true } },
+                        fleetName: {},
+                        deviceName: {validation: {required:true}},
+                        description: {},
+                        cctvIp: {},
+                        type: { 
+                        	validation:{
+                        		required: true,
+	                            custom: function(input) {
+	                            	var name = input.attr("name");
+	                            	if (name != "description" && name != "cctvIp" && name != "fleetName")
+	                            		return validate_empty(input);
+	                            	
+	                            	return true;
+	                            }
+                        	}
+                        }
                     }
                 }
             }

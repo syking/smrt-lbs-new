@@ -14,6 +14,7 @@
 </form>
 
 <div id="grid_${grid.tabId}"></div>
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
 <script>
     $(document).ready(function(){
     	loadRoles("${grid.readUrl}");
@@ -22,12 +23,7 @@
     function loadRoles(url, params){
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
-		        	alert(e.responseText);
-		        else{
-		        	alert("Oops! 500 error!");
-		        }
-		        
+	        	alert(e.responseText);
 		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
 	        	grid.cancelChanges();//roll back 
 		    },
@@ -76,7 +72,17 @@
                     fields: {
                         id: { editable: false, nullable: true },
                         name: { validation: { required: true } },
-                        desc: { validation: { required: true } },
+                        desc: { 
+                        	validation: {
+	                            custom: function(input) {
+	                            	var name = input.attr("name");
+	                            	if (name != "permissions" && name != "desc")
+	                            		return validate_empty(input);
+	                            	
+	                            	return true;
+	                            }
+                        	}
+                        },
                         permissions: { }
                     }
                 }

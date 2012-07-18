@@ -16,40 +16,7 @@
 </form>
 
 <div id="grid_${grid.tabId}"></div>
-
-<div id="couselling_win" style="display:none;">
-    <form action="Counsellings/saveCounselling" onsubmit="return counselling_form_submit(this)">
-    	<label for="counselling_form_user_name">Hosted by: </label>
-        <input id="counselling_form_user_name" name="userName"/>
-        <div style="height:5px" ></div>
-        
-        <label for="counselling_form_driver_name">Session for: </label>
-        <input id="counselling_form_driver_name" name="driverName" readonly class="k-input k-textbox"/>
-        <div style="height:5px" ></div>
-        
-        <label for="counselling_form_date">Date:</label>
-        <input id="counselling_form_date" name="date"/>
-        <div style="height:5px" ></div>
-        
-        <label for="counselling_form_starttime">Start Time: </label>
-        <input id="counselling_form_starttime" name="startTime"/>
-        <div style="height:5px" ></div>
-        
-        <label for="counselling_form_endtime">End Time:</label>
-        <input id="counselling_form_endtime" name="endTime"/>
-        <div style="height:5px" ></div>
-        
-   		<label for="counselling_form_remark">Remark:</label>
-    	<textarea id="counselling_form_remark" name="remark" cols="50" rows="5"></textarea>
-    	<div style="height:5px" ></div>
-    	
-    	<div style="float:right; padding-right:20px;">
-        	<input type="submit" id="counselling-form_create-btn" class="k-button" style="width:auto" value="Create" />
-        	<input type="reset" id="counselling-form_cancle-btn" class="k-button" style="width:auto" value="Cancel" />
-       </div>
-    </form>
-</div>
-
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var sessionfor = "";
     
@@ -60,11 +27,7 @@
     function loadDrivers(url, params) {
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
-		        	alert(e.responseText);
-		        else{
-		        	alert("Oops! 500 error!");
-		        }
+		        alert(e.responseText);
 		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
 	        	grid.cancelChanges();//roll back
 		    },
@@ -108,9 +71,27 @@
                     id:"id",
                     fields:{
                         id:{ editable:false, nullable:true },
-                        number:{ type:"string", validation:{ required:true } },
-                        name:{ type:"string", validation:{ required:true } },
-                        description:{ type:"string", validation:{ required:true }}
+                        name:{
+                        	type: "string",
+                        	validation:{
+                        		required: true
+                        	}
+                        },
+                        description:{
+                        	type: "string"
+                        },
+                        number:{ 
+                        	validation:{
+                        		required: true,
+	                            custom: function(input) {
+	                            	var name = input.attr("name");
+	                            	if (name != "description")
+	                            		return validate_empty(input);
+	                            	
+	                            	return true;
+	                            }
+                        	}
+                        }
                     }
                 }
             }

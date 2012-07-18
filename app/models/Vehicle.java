@@ -324,14 +324,22 @@ public class Vehicle extends Model {
 			return models;
 		
 		for (VehicleVO vo : vos){
+			vo.validate();
+			
 			Vehicle v = new Vehicle();
 			v.number = vo.number;
 			v.license = vo.license;
 	
+			
 			Fleet fleet = Fleet.find("byName", vo.fleetName).first();
+			if (vo.fleetName != null && fleet == null)
+					throw new RuntimeException("FleetName is invalid!");
 			v.fleet = fleet;
 	
 			Device device = Device.find("byName", vo.deviceName).first();
+			if (device == null)
+				throw new RuntimeException("DeviceName is invalid!");
+			
 			v.device = device;
 	
 			v.cctvIp = vo.cctvIp;
@@ -352,6 +360,8 @@ public class Vehicle extends Model {
 			return false;
 		
 		for (VehicleVO vehicleVO : vehicleVOs){
+			vehicleVO.validate();
+			
 			if (vehicleVO.id == null)
 				continue;
 			
@@ -363,9 +373,14 @@ public class Vehicle extends Model {
 			v.license = vehicleVO.license;
 	
 			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
+			if (vehicleVO.fleetName != null && fleet == null)
+				throw new RuntimeException("FleetName is invalid!");
+			
 			v.fleet = fleet;
 	
 			Device device = Device.find("byName", vehicleVO.deviceName).first();
+			if (device == null)
+				throw new RuntimeException("DeviceName is invalid!");
 			v.device = device;
 	
 			v.cctvIp = vehicleVO.cctvIp;

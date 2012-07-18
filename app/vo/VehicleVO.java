@@ -1,6 +1,7 @@
 package vo;
 
 
+import utils.CommonUtil;
 import models.Vehicle;
 
 /**
@@ -42,6 +43,30 @@ public class VehicleVO
     public String cctvIp;//录像IP地址
 
     public String type;//车辆类型
+    
+    public void validate(){
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can't be empty, ";
+		if (CommonUtil.isEmptyString(number))
+			builder.append(CommonUtil.formatStr(msg, "Number"));
+		
+		if (CommonUtil.isEmptyString(license))
+			builder.append(CommonUtil.formatStr(msg, "License"));
+		
+		if (CommonUtil.isEmptyString(deviceName))
+			builder.append(CommonUtil.formatStr(msg, "DeviceName"));
+		
+		if (CommonUtil.isEmptyString(type))
+			builder.append(CommonUtil.formatStr(msg, "Type"));
+		
+		if (!"bus".equals(type) && !"car".equals(type))
+			builder.append("Type is bus or car");
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
+		
+	}
 
 	@Override
 	public String toString() {

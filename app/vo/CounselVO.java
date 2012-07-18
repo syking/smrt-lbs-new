@@ -36,6 +36,45 @@ public class CounselVO {
 		this.remark = c.remark;
 		return this;
 	}
+	
+	public void validate(){
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can't be empty, ";
+		if (CommonUtil.isEmptyString(userName))
+			builder.append(CommonUtil.formatStr(msg, "UserName"));
+		
+		if (CommonUtil.isEmptyString(driverName))
+			builder.append(CommonUtil.formatStr(msg, "DriverName"));
+		
+		if (CommonUtil.isEmptyString(startDate))
+			builder.append(CommonUtil.formatStr(msg, "StartDate"));
+		
+		if (!CommonUtil.isValidDate(startDate))
+			builder.append("StartDate yyyy-MM-dd, ");
+		
+		if (CommonUtil.isEmptyString(startTime))
+			builder.append(CommonUtil.formatStr(msg, "StartTime"));
+		
+		if (!CommonUtil.isValidTime(startTime))
+			builder.append("StartTime HH:mm:ss, ");
+		
+		if (CommonUtil.isEmptyString(endDate))
+			builder.append(CommonUtil.formatStr(msg, "EndDate"));
+		
+		if (!CommonUtil.isValidDate(endDate))
+			builder.append("EndDate yyyy-MM-dd, ");
+		
+		if (CommonUtil.isEmptyString(endTime))
+			builder.append(CommonUtil.formatStr(msg, "EndTime"));
+		
+		if (!CommonUtil.isValidTime(endTime))
+			builder.append("EndTime HH:mm:ss, ");
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
+		
+	}
 
 	@Override
 	public String toString() {

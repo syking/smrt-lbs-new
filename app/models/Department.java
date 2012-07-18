@@ -59,9 +59,13 @@ public class Department extends Model{
 			return models;
 		
 		for (DepartmentVO vo : vos){
+			vo.validate();
+			
 			Department dept = new Department();
 			dept.name = vo.name;
 			dept.parent = Department.findByName(vo.parentName);
+			if (vo.parentName != null && dept.parent == null)
+				throw new RuntimeException("ParentName is invalid!");
 			
 			dept.create();
 			vo.id = String.valueOf(dept.id);

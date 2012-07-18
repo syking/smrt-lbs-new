@@ -71,11 +71,15 @@ public class Fleet extends Model{
 			return models;
 		
 		for (FleetVO vo : vos){
+			vo.validate();
+			
 			Fleet fleet = new Fleet();
 			fleet.name = vo.name;
 			fleet.description = vo.description;
 			fleet.placeNumber = vo.placeNumber;
 			fleet.parent = Fleet.findByName(vo.parentName);
+			if (vo.parentName != null && fleet.parent == null)
+				throw new RuntimeException("ParentName is invalid!");
 			
 			fleet.create();
 			vo.id = String.valueOf(fleet.id);
@@ -91,6 +95,8 @@ public class Fleet extends Model{
 			return false;
 		
 		for (FleetVO vo : vos){
+			vo.validate();
+			
 			Long id = Long.parseLong(vo.id);
 			Fleet fleet = Fleet.findById(id);
 			if (fleet == null)
@@ -100,6 +106,8 @@ public class Fleet extends Model{
 			fleet.description = vo.description;
 			fleet.placeNumber = vo.placeNumber;
 			fleet.parent = Fleet.findByName(vo.parentName);
+			if (vo.parentName != null && fleet.parent == null)
+				throw new RuntimeException("ParentName is invalid!");
 			
 			fleet.save();
 		}

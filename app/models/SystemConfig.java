@@ -27,6 +27,24 @@ public class SystemConfig extends Model {
 		this.displayName = displayName;
 	}
 
+	public void validate(){
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can't be empty, ";
+		if (CommonUtil.isEmptyString(value))
+			builder.append(CommonUtil.formatStr(msg, "Value"));
+		
+		if (CommonUtil.isEmptyString(name))
+			builder.append(CommonUtil.formatStr(msg, "Name"));
+		
+		if (CommonUtil.isEmptyString(displayName))
+			builder.append(CommonUtil.formatStr(msg, "DisplayName"));
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
+		
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
@@ -52,6 +70,7 @@ public class SystemConfig extends Model {
 			return models;
 		
 		for (SystemConfig vo : vos){
+			vo.validate();
 			vo.create();
 		}
 		
@@ -71,6 +90,8 @@ public class SystemConfig extends Model {
 			SystemConfig obj = SystemConfig.findById(vo.id);
 			if (obj == null)
 				continue;
+			
+			vo.validate();
 			
 			obj.name = vo.name;
 			obj.value = vo.value;

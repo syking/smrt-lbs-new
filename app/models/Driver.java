@@ -216,6 +216,8 @@ public class Driver extends Model{
 			return models;
 		
 		for (DriverVO vo : vos){
+			vo.validate();
+			
 			Driver obj = new Driver();
 			obj.number = vo.number;
 			obj.name = vo.name;
@@ -234,6 +236,8 @@ public class Driver extends Model{
 			return false;
 		
 		for (DriverVO vo : vos){
+			vo.validate();
+			
 			if (vo.id == null)
 				continue;
 			

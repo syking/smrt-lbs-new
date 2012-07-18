@@ -42,7 +42,7 @@ public class Counselling extends Model{
 	public Counselling() {
 		super();
 	}
-
+	
 	public static String createByJson(String models, String userName){
 		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
 		if (vos == null)
@@ -52,16 +52,18 @@ public class Counselling extends Model{
 			if (userName != null)
 				vo.userName = userName;
 			
+			vo.validate();
+			
 			String startTime = vo.startDate + " " + vo.startTime;
 			String endTime = vo.endDate + " " + vo.endTime;
 			
 			User user = User.find("byName", vo.userName).first();
 			if (user == null)
-				continue ;
+				throw new RuntimeException("UserName is invalid!, ");
 			
 			Driver driver = Driver.find("byName", vo.driverName).first();
 			if (driver == null)
-				continue ;
+				throw new RuntimeException("DriverName is invalid!, ");
 			
 			Counselling c = new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), vo.remark, driver);
 			c.create();
@@ -86,6 +88,8 @@ public class Counselling extends Model{
 			if (c == null)
 				continue ;
 			
+			vo.validate();
+			
 			vo.startTime = vo.startDate + " " + vo.startTime;
 			vo.endTime = vo.endDate + " " + vo.endTime;
 			
@@ -93,9 +97,13 @@ public class Counselling extends Model{
 				vo.userName = userName;
 			
 			User user = User.find("byName", vo.userName).first();
+			if (user == null)
+				throw new RuntimeException("UserName is invalid!, ");
 			c.user = user;
 			
 			Driver driver = Driver.find("byName", vo.driverName).first();
+			if (driver == null)
+				throw new RuntimeException("DriverName is invalid!, ");
 			c.driver = driver;
 			
 			c.endTime = CommonUtil.parse(vo.endTime); 

@@ -24,6 +24,18 @@ import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
 	
+	public static void main(String[] args){
+		System.out.println(isValidTime("45:21:3d0"));
+	}
+	
+	public static boolean isValidTime(String str){
+		return str.matches("^\\d{2}:\\d{2}:\\d{2}$");
+	}
+	
+	public static boolean isValidDate(String str){
+		return str.matches("^\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}$");
+	}
+	
 	public static <T> List<T> parseArray(String json, Class<T> clazz){
 		return JSON.parseArray(json, clazz);
 	}
@@ -527,5 +539,13 @@ public class CommonUtil {
 		} catch (ParseException e) {
 			throw new RuntimeException();
 		}
+	}
+
+	public static boolean isEmptyString(String str) {
+		return null == str ? true : str.trim().length() == 0 ? true : false;
+	}
+	
+	public static String formatStr(String format, Object... args){
+		return String.format(format, args);
 	}
 }

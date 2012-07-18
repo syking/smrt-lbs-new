@@ -82,6 +82,8 @@ public class User extends Model {
 			return models;
 		
 		for (UserVO vo : vos){
+			vo.validate();
+			
 			User user = new User(vo.account, "123456", vo.name, vo.desc);
 			user.create();
 			vo.id = String.valueOf(user.id);
@@ -113,6 +115,8 @@ public class User extends Model {
 			return false;
 		
 		for (UserVO vo : vos){
+			vo.validate();
+			
 			User user = User.findById(Long.parseLong(vo.id));
 			if (user == null)
 				continue ;

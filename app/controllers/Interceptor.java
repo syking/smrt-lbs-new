@@ -13,6 +13,7 @@ import play.Play;
 import play.cache.Cache;
 import play.i18n.Lang;
 import play.mvc.Before;
+import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
 
@@ -94,4 +95,9 @@ public class Interceptor extends Controller {
 		if (!flag)
 			forbidden("Access denied");
 	}
+	
+	@Catch(Throwable.class)
+    public static void logIllegalState(Throwable e) {
+		error(e.getMessage());
+    }
 }
