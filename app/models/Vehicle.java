@@ -318,30 +318,32 @@ public class Vehicle extends Model {
 		return true;
 	}
 
-	public static boolean createByJson(String models) {
-		List<VehicleVO> vehicleVOs = CommonUtil.parseArray(models, VehicleVO.class);
-		if (vehicleVOs == null)
-			return false;
+	public static String createByJson(String models) {
+		List<VehicleVO> vos = CommonUtil.parseArray(models, VehicleVO.class);
+		if (vos == null)
+			return models;
 		
-		for (VehicleVO vehicleVO : vehicleVOs){
+		for (VehicleVO vo : vos){
 			Vehicle v = new Vehicle();
-			v.number = vehicleVO.number;
-			v.license = vehicleVO.license;
+			v.number = vo.number;
+			v.license = vo.license;
 	
-			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
+			Fleet fleet = Fleet.find("byName", vo.fleetName).first();
 			v.fleet = fleet;
 	
-			Device device = Device.find("byName", vehicleVO.deviceName).first();
+			Device device = Device.find("byName", vo.deviceName).first();
 			v.device = device;
 	
-			v.cctvIp = vehicleVO.cctvIp;
-			v.description = vehicleVO.description;
-			v.type = vehicleVO.type;
+			v.cctvIp = vo.cctvIp;
+			v.description = vo.description;
+			v.type = vo.type;
 			
 			v.create();
+			vo.id = String.valueOf(v.id);
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		return _models;
 	}
 
 	public static boolean updateByJson(String models) {

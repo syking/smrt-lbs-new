@@ -62,8 +62,7 @@ public class Drivers extends Controller {
 	}
 
 	public static void add(String models) {
-		if (Driver.createByJson(models))
-			renderJSON(models);
+		renderJSON(Driver.createByJson(models));
 	}
 
 	public static void destroy(String models) {

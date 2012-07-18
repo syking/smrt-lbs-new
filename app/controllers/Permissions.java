@@ -80,8 +80,7 @@ public class Permissions extends Controller {
 	}
 	@annotations.Permission
 	public static void create(String models) {
-		if (Permission.createByJson(models))
-			renderJSON(models);
+		renderJSON(Permission.createByJson(models));
 	}
 	@annotations.Permission
 	public static void update(String models){

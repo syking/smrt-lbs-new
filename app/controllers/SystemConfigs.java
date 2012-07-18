@@ -34,8 +34,7 @@ public class SystemConfigs extends Controller{
     }
 	
 	public static void create(String models){
-		if (SystemConfig.createByJson(models))
-			renderJSON(models);
+		renderJSON(SystemConfig.createByJson(models));
 	}
 	
 	public static void delete(String models){

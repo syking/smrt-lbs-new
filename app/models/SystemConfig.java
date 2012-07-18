@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import com.alibaba.fastjson.JSON;
 
 import play.db.jpa.Model;
+import utils.CommonUtil;
 import vo.DriverVO;
 
 @Entity
@@ -45,16 +46,17 @@ public class SystemConfig extends Model {
 		return true;
 	}
 
-	public static boolean createByJson(String models) {
+	public static String createByJson(String models) {
 		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (SystemConfig vo : vos){
 			vo.create();
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		return _models;
 	}
 
 	public static boolean updateByJson(String models) {

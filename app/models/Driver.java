@@ -210,10 +210,10 @@ public class Driver extends Model{
 		return true;
 	}
 
-	public static boolean createByJson(String models) {
+	public static String createByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (DriverVO vo : vos){
 			Driver obj = new Driver();
@@ -221,9 +221,11 @@ public class Driver extends Model{
 			obj.name = vo.name;
 			obj.description = vo.description;
 			obj.create();
+			vo.id = String.valueOf(obj.id);
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		return _models;
 	}
 
 	public static boolean updateByJson(String models) {

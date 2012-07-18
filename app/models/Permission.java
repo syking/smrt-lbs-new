@@ -55,16 +55,19 @@ public class Permission extends Model{
 		this.desc = desc;
 	}
 
-	public static boolean createByJson(String models) {
+	public static String createByJson(String models) {
 		List<PermVO> vos = JSON.parseArray(models, PermVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (PermVO vo : vos){
-			new Permission(vo.action, vo.desc).create();
+			Permission p = new Permission(vo.action, vo.desc);
+			p.create();
+			vo.id = String.valueOf(p.id);
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		return _models;
 	}
 
 	public static boolean deleteByJson(String models) {

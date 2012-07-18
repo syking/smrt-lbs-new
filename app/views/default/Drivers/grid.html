@@ -15,7 +15,7 @@
 
 </form>
 
-<div id="${grid.tabId}_grid"></div>
+<div id="grid_${grid.tabId}"></div>
 
 <div id="couselling_win" style="display:none;">
     <form action="Counsellings/saveCounselling" onsubmit="return counselling_form_submit(this)">
@@ -65,6 +65,8 @@
 		        else{
 		        	alert("Oops! 500 error!");
 		        }
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back
 		    },
             transport:{
                 read:{
@@ -114,18 +116,18 @@
             }
         });
         
-        $("#${grid.tabId}_grid").empty();
+        $("#grid_${grid.tabId}").empty();
         
         var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-        columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100px" };
-        $("#${grid.tabId}_grid").kendoGrid({
+        columnsJson[columnsJson.length] = { command:["edit","destroy"], title:"Action", width:"200px" };
+        $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
-            toolbar: ["create", "save", "cancel"], // specify toolbar commands
+            toolbar: ["create"], // specify toolbar commands
             pageable:true,
             sortable:true,
-            selectable:false,
+            selectable:true,
             columns:columnsJson,
-            editable:true,
+            editable:"popup",
             navigatable: true
         });
     }

@@ -65,10 +65,10 @@ public class Fleet extends Model{
 		return "Fleet [name=" + name + ", id=" + id + "]";
 	}
 	
-	public static boolean createByJson(String models) {
+	public static String createByJson(String models) {
 		List<FleetVO> vos = JSON.parseArray(models, FleetVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (FleetVO vo : vos){
 			Fleet fleet = new Fleet();
@@ -78,9 +78,11 @@ public class Fleet extends Model{
 			fleet.parent = Fleet.findByName(vo.parentName);
 			
 			fleet.create();
+			vo.id = String.valueOf(fleet.id);
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		return _models;
 	}
 	
 	public static boolean updateByJson(String models) {

@@ -40,6 +40,9 @@
 		        else{
 		        	alert("Oops! 500 error!");
 		        }
+		        
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  {
@@ -97,7 +100,7 @@
 		$("#grid_${grid.tabId}").empty();
 		
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100px" };
+		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Action", width:"200px" };
         /**
 		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
 		 */
@@ -116,10 +119,10 @@
             pageable:true,
             scrollable:true,
             sortable:true,
-            selectable:false,
-            toolbar:["create", "save", "cancel"],
+            selectable:true,
+            toolbar:["create"],
             columns:columnsJson,
-            editable:true,
+            editable:"popup",
             navigatable:true
         });
     }

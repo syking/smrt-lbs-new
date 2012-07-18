@@ -63,17 +63,20 @@ public class Role extends Model{
 		this.desc = desc;
 	}
 	
-	public static boolean createByJson(String models) {
+	public static String createByJson(String models) {
 		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (RoleVO vo : vos){
 			Role role = new Role(vo.name, vo.desc);
 			role.create();
+			vo.id = String.valueOf(role.id);
 		}
 		
-		return true;
+		String _models = JSON.toJSONString(vos);
+		
+		return _models;
 	}
 
 	public static boolean deleteByJson(String models) {

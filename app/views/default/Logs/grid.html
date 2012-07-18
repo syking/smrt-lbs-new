@@ -74,6 +74,9 @@
 		        else{
 		        	alert("Oops! 500 error!");
 		        }
+		        
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back 
 		    },
             transport:{
                 read:{

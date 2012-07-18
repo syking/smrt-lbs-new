@@ -53,10 +53,10 @@ public class Department extends Model{
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
 	
-	public static boolean createByJson(String models) {
+	public static String createByJson(String models) {
 		List<DepartmentVO> vos = JSON.parseArray(models, DepartmentVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (DepartmentVO vo : vos){
 			Department dept = new Department();
@@ -64,9 +64,11 @@ public class Department extends Model{
 			dept.parent = Department.findByName(vo.parentName);
 			
 			dept.create();
+			vo.id = String.valueOf(dept.id);
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		return _models;
 	}
 	
 	public static boolean updateByJson(String models) {
@@ -75,7 +77,7 @@ public class Department extends Model{
 			return false;
 		
 		for (DepartmentVO vo : vos){
-			Long id = vo.id;
+			Long id = Long.parseLong(vo.id);
 			Department department = Department.findById(id);
 			if (department == null)
 				continue ;
@@ -95,7 +97,7 @@ public class Department extends Model{
 			return false;
 		
 		for (DepartmentVO vo : vos){
-			Long id = vo.id;
+			Long id = Long.parseLong(vo.id);
 			Department department = Department.findById(id);
 			if (department == null)
 				continue ;

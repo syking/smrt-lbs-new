@@ -48,19 +48,13 @@ public class Logs extends Controller {
 	}
 
 	public static void destroy(String models) {
-		LogVO logvo = jsonStr2JavaObj(models);
-		Log lg = Log.findById(logvo.id);
+		List<LogVO> vos = CommonUtil.parseArray(models, LogVO.class);
+		for (LogVO vo : vos){
+			Log lg = Log.findById(vo.id);
+			if (lg == null) continue;
+			lg.delete();
+		}
 
-		lg.delete();
-
-		renderJSON(models);
-	}
-
-	public static void update(String models) {
-		renderJSON(models);
-	}
-
-	public static void add(String models) {
 		renderJSON(models);
 	}
 
@@ -74,12 +68,6 @@ public class Logs extends Controller {
 		}
 
 		renderJSON(result);
-	}
-
-	private static LogVO jsonStr2JavaObj(String jsonStr) {
-		String json = jsonStr.substring(1, jsonStr.length() - 1);
-		
-		return new Gson().fromJson(json, LogVO.class);
 	}
 
 	public static void search(String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip) {

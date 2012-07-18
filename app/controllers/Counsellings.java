@@ -59,8 +59,7 @@ public class Counsellings extends Controller {
 
 	@Permission
 	public static void createCounselling(String models) throws ParseException {
-		if (Counselling.createByJson(models, null))
-			renderJSON(models);
+		renderJSON(Counselling.createByJson(models, null));
 	}
 
 	@Permission

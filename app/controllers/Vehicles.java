@@ -229,8 +229,7 @@ public class Vehicles extends Controller {
 	 * 车辆管理：添加车辆信息
 	 */
 	public static void add(String models) {
-		if (Vehicle.createByJson(models))
-			renderJSON(models);
+		renderJSON(Vehicle.createByJson(models));
 	}
 
 	/**

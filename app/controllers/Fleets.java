@@ -87,8 +87,7 @@ public class Fleets extends Controller {
 	 * 车队管理：添加车队信息
 	 */
 	public static void create(String models) {
-		if (Fleet.createByJson(models))
-			renderJSON(models);
+		renderJSON(Fleet.createByJson(models));
 	}
 	
 	/**

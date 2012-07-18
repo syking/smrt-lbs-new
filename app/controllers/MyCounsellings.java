@@ -44,8 +44,7 @@ public class MyCounsellings extends Controller{
 	
 	public static void createMyCounsel(String models) throws ParseException{
 		String userName = (String)renderArgs.get("user");
-		if (Counselling.createByJson(models, userName))
-			renderJSON(models);
+		renderJSON(Counselling.createByJson(models, userName));
 	}
 	
 	public static void deleteCounsel(String models){

@@ -87,8 +87,7 @@ public class Departments extends Controller {
 	 * 部门管理：添加部门信息
 	 */
 	public static void create(String models) {
-		if (Department.createByJson(models))
-			renderJSON(models);
+		renderJSON(Department.createByJson(models));
 	}
 	
 	/**

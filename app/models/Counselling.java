@@ -43,17 +43,17 @@ public class Counselling extends Model{
 		super();
 	}
 
-	public static boolean createByJson(String models, String userName){
+	public static String createByJson(String models, String userName){
 		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (CounselVO vo : vos){
 			if (userName != null)
 				vo.userName = userName;
 			
-			vo.startTime = vo.startDate + " " + vo.startTime;
-			vo.endTime = vo.endDate + " " + vo.endTime;
+			String startTime = vo.startDate + " " + vo.startTime;
+			String endTime = vo.endDate + " " + vo.endTime;
 			
 			User user = User.find("byName", vo.userName).first();
 			if (user == null)
@@ -63,10 +63,14 @@ public class Counselling extends Model{
 			if (driver == null)
 				continue ;
 			
-			new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", vo.startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", vo.endTime), vo.remark, driver).create();
+			Counselling c = new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), vo.remark, driver);
+			c.create();
+			vo.id = String.valueOf(c.id);
 		}
 		
-		return true;
+		String _models = CommonUtil.toJson(vos);
+		
+		return _models;
 	}
 	
 	public static boolean updateByJson(String models, String userName){

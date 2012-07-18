@@ -36,4 +36,14 @@ public class CounselVO {
 		this.remark = c.remark;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return "CounselVO [id=" + id + ", userName=" + userName
+				+ ", driverName=" + driverName + ", startDate=" + startDate
+				+ ", startTime=" + startTime + ", endDate=" + endDate
+				+ ", endTime=" + endTime + ", remark=" + remark + "]";
+	}
+	
+	
 }

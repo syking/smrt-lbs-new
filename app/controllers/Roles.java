@@ -10,6 +10,7 @@ import java.util.Map;
 import models.Permission;
 import models.Role;
 import models.User;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
@@ -53,8 +54,7 @@ public class Roles extends Controller{
 	
 	@annotations.Permission
 	public static void create(String models) {
-		if (Role.createByJson(models))
-			renderJSON(models);
+		renderJSON(Role.createByJson(models));
 	}
 	
 	@annotations.Permission

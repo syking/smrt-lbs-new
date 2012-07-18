@@ -61,8 +61,7 @@ public class Users extends Controller {
 
 	@Permission
 	public static void create(String models) {
-		if (User.createByJson(models))
-			renderJSON(models);
+		renderJSON(User.createByJson(models));
 	}
 
 	@Permission

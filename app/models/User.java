@@ -76,16 +76,20 @@ public class User extends Model {
 		return loginUser;
 	}
 
-	public static boolean createByJson(String models) {
-		List<UserVO> vos = JSON.parseArray(models, UserVO.class);
+	public static String createByJson(String models) {
+		List<UserVO> vos = CommonUtil.parseArray(models, UserVO.class);
 		if (vos == null)
-			return false;
+			return models;
 		
 		for (UserVO vo : vos){
-			new User(vo.account, "123456", vo.name, vo.desc).create();
+			User user = new User(vo.account, "123456", vo.name, vo.desc);
+			user.create();
+			vo.id = String.valueOf(user.id);
 		}
 		
-		return true;
+		final String _models = CommonUtil.toJson(vos);
+		
+		return _models;
 	}
 
 	public static boolean deleteByJson(String models) {

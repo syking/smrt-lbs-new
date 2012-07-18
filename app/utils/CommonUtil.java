@@ -32,6 +32,10 @@ public class CommonUtil {
 		return JSON.parseObject(json, clazz);
 	}
 	
+	public static String toJson(Object object){
+		return JSON.toJSONString(object);
+	}
+	
 	public static String percent(long a, long b){
 		double k = (double)a/b*100;
 		java.math.BigDecimal big = new java.math.BigDecimal(k);   

@@ -29,7 +29,7 @@
 
 </form>
 
-<div id="${grid.tabId}_grid"></div>
+<div id="grid_${grid.tabId}"></div>
 
 
 <script type="text/javascript">
@@ -37,7 +37,6 @@
     var deviceJson = #{verbatim} ${devices} #{/verbatim};
 
     $(document).ready(function () {
-
         loadVehicles("${grid.readUrl}");
 
 		$("#${grid.tabId}_type").kendoComboBox({
@@ -68,6 +67,9 @@
 		        else{
 		        	alert("Oops! 500 error!");
 		        }
+		        
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back 
 		    },
             transport:{
                 read:{
@@ -119,7 +121,7 @@
                 }
             }
         });
-        $("#${grid.tabId}_grid").empty();
+        $("#grid_${grid.tabId}").empty();
         //columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
         columnsJson = [
             {
@@ -161,16 +163,16 @@
                 }
             }
         ];
-        columnsJson[columnsJson.length] = { command:"destroy", title:"Actions", width:"100" };
-        var grid = $("#${grid.tabId}_grid").kendoGrid({
+        columnsJson[columnsJson.length] = { command:["edit","destroy"], title:"Action", width:"200" };
+        var grid = $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
             columns:columnsJson,
-            toolbar:["create", "save", "cancel"],
+            toolbar:["create"],
             scrollable:true,
             sortable:true,
             pageable:true,
-            selectable:false,
-            editable:true
+            selectable:true,
+            editable:"popup"
         }).data("kendoGrid");
 
 

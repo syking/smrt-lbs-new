@@ -10,6 +10,9 @@
 		        else{
 		        	alert("Oops! 500 error!");
 		        }
+		        
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  {
@@ -58,14 +61,14 @@
         });
         
     	var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-		columnsJson[columnsJson.length] = { command: "destroy", title: "&nbsp;", width: "100px" };
+		columnsJson[columnsJson.length] = { command: ["edit","destroy"], title: "Action", width: "200px" };
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
-            selectable:false,
-            toolbar: ["create","save","cancel"],
+            selectable:true,
+            toolbar: ["create"],
             columns: columnsJson,
-            editable: true,
+            editable: "popup",
             navigatable: true
         });
     });
