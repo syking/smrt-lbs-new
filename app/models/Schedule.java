@@ -1,5 +1,10 @@
 package models;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +27,10 @@ import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.ChartSerie;
 import vo.ComboVO;
+import vo.CounselVO;
 import vo.EventReportVO;
+import vo.EventVO;
+import vo.ScheduleVO;
 
 /**
  * 车次安排时间等信息
@@ -58,6 +66,8 @@ public class Schedule extends Model {
 	/* 调度安排 例如：851AM04 | 851PM04 */
 	@Column(unique = true, name = "duty_id")
 	public String dutyId;
+	
+	public Schedule(){}
 	
 	public static List<String> getAllServiceNumber(){
 		List<String> list = Schedule.find("select distinct s.serviceNumber from Schedule s ").fetch();
@@ -151,5 +161,241 @@ public class Schedule extends Model {
 		
 		return drivers;
 	}
+
+	public static List<Schedule> findAndOrderByIdDesc() {
+		return Schedule.find("order by id desc").fetch();
+	}
+
+	public static List<ScheduleVO> assemScheduleVO(List<Schedule> schedules) {
+		if (schedules == null)
+			return null;
+		
+		List<ScheduleVO> result = new ArrayList<ScheduleVO>(schedules.size());
+		for (Schedule sch : schedules){
+			ScheduleVO vo = new ScheduleVO(sch);
+			result.add(vo);
+		}
+		
+		return result;
+	}
+
+	public static void createByVO(final ScheduleVO vo){
+		vo.validate();
+		Schedule sch = parseByVO(vo);
+		if (sch.vehicle == null)
+			throw new RuntimeException("VehicleNumber is invalid!");
+		if (sch.driver == null)
+			throw new RuntimeException("DriverNumber is invalid!");
+		
+		sch.create();
+	}
 	
+	private static Schedule parseByVO(final ScheduleVO vo){
+		Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
+		
+		Driver driver = Driver.find("byNumber", vo.driverNumber).first();
+		
+		Schedule sch = new Schedule();
+		sch.driver = driver;
+		sch.vehicle = vehicle;
+		sch.dutyId = vo.duty;
+		String start = vo.startDate + " " + vo.startTime;
+		sch.startTime = CommonUtil.parse(start);
+		sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
+		sch.serviceNumber = vo.route;
+		
+		return sch;
+	}
+	
+	public static String createByJson(String models){
+		List<ScheduleVO> vos = CommonUtil.parseArray(models, ScheduleVO.class);
+		if (vos == null)
+			return models;
+		
+		for (ScheduleVO vo : vos){
+			vo.validate();
+			
+			Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
+			if (vehicle == null)
+				throw new RuntimeException("VehicleNumber is invalid!, ");
+			
+			Driver driver = Driver.find("byNumber", vo.driverNumber).first();
+			if (driver == null)
+				throw new RuntimeException("DriverNumber is invalid!, ");
+			
+			Schedule sch = new Schedule();
+			sch.driver = driver;
+			sch.vehicle = vehicle;
+			sch.dutyId = vo.duty;
+			sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
+			sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
+			sch.serviceNumber = vo.route;
+			
+			sch.create();
+			
+			vo.id = String.valueOf(sch.id);
+		}
+		
+		String _models = CommonUtil.toJson(vos);
+		
+		return _models;
+	}
+	
+	public static boolean updateByJson(String models){
+		List<ScheduleVO> vos = CommonUtil.parseArray(models, ScheduleVO.class);
+		if (vos == null)
+			return false;
+		
+		for (ScheduleVO vo : vos){
+			vo.validate();
+			
+			Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
+			if (vo.vehicleNumber != null && vehicle == null)
+				throw new RuntimeException("VehicleNumber is invalid!, ");
+			
+			Driver driver = Driver.find("byNumber", vo.driverNumber).first();
+			if (vo.driverNumber != null && driver == null)
+				throw new RuntimeException("DriverNumber is invalid!, ");
+			
+			Schedule sch = Schedule.findById(Long.parseLong(vo.id));
+			if (sch == null)
+				continue ;
+			
+			sch.driver = driver;
+			sch.vehicle = vehicle;
+			sch.dutyId = vo.duty;
+			sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
+			sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
+			sch.serviceNumber = vo.route;
+			
+			sch.save();
+		}
+		
+		return true;
+	}
+	
+	public static boolean deleteByJson(String models){
+		List<ScheduleVO> vos = CommonUtil.parseArray(models, ScheduleVO.class);
+		if (vos == null)
+			return false;
+		
+		for (ScheduleVO vo : vos){
+			Schedule sch = Schedule.findById(Long.parseLong(vo.id));
+			if (sch == null)
+				continue ;
+			
+			sch.delete();
+		}
+		
+		return true;
+	}
+
+	public static List<Schedule> findByCondition(String driverNumber,String vehicleNumber, String route,String duty, String startTime, String endTime) {
+		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		if (driverNumber != null && driverNumber.length() > 0) {
+			sqlSB.append("driver = ?");
+			params.add(Driver.findByNumber(driverNumber));
+		}
+
+		if (vehicleNumber != null && vehicleNumber.length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("vehicle = ?");
+			params.add(Vehicle.findByNumber(vehicleNumber));
+		}
+		
+		if (route != null && route.length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("serviceNumber like ?");
+			params.add("%s"+route+"%");
+		}
+		
+		if (duty != null && duty.length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("duty like ?");
+			params.add("%s"+duty+"%");
+		}
+
+		if (startTime != null && startTime.length() > 0) {
+			Date _endTime = new Date();
+			if (endTime != null && endTime.length() > 0) 
+				_endTime = CommonUtil.parse(endTime);
+
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+
+			sqlSB.append("startTime >= ? and endTime < ?");
+			params.add(CommonUtil.parse(startTime));
+			params.add(_endTime);
+		}
+		List<Schedule> schedules = null;
+		if (sqlSB.length() > 0)
+			schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch();
+		else
+			schedules = Schedule.findAll();
+		
+		return schedules;
+	}
+
+	public static List<ComboVO> assemRouteComboVO() {
+		List<ComboVO> result = new ArrayList<ComboVO>();
+		List<String> lines = getAllServiceNumber();
+		if (lines != null)
+    		for (String l : lines){
+    			result.add(new ComboVO(l,l));
+    		}
+		
+		return result;
+	}
+
+	public static Map search(String driverNumber, String vehicleNumber, String route, String duty, String startTime, String endTime) {
+		List<Schedule> schedules = Schedule.findByCondition(driverNumber, vehicleNumber, route, duty, startTime, endTime);
+		List<ScheduleVO> vos = Schedule.assemScheduleVO(schedules);
+		Map data = CommonUtil.assemGridData(vos, "id");
+		return data;
+	}
+
+	@Override
+	public String toString() {
+		return "Schedule [driver=" + driver + ", vehicle=" + vehicle
+				+ ", startTime=" + startTime + ", endTime=" + endTime
+				+ ", serviceNumber=" + serviceNumber + ", dutyId=" + dutyId
+				+ "]";
+	}
+	
+	public static void parseAndCreateByCSV(File file) throws IOException{
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		String line = reader.readLine();
+		while ((line = reader.readLine()) != null){
+			String[] array = line.split(",");
+			if (array.length < 6)
+				continue;
+			
+			try{
+				ScheduleVO vo = new ScheduleVO();
+				vo.driverNumber = array[0];
+				vo.vehicleNumber = array[1];
+				vo.startDate = CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.resoveDate(array[2].split(" ")[0]));
+				vo.startTime = CommonUtil.resoveTime(array[2].split(" ")[1]);
+				vo.endDate = CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.resoveDate(array[3].split(" ")[0]));
+				vo.endTime = CommonUtil.resoveTime(array[3].split(" ")[1]);
+				vo.route = array[4];
+				vo.duty = array[5];
+				Schedule sch = Schedule.parseByVO(vo);
+				sch.create();
+				
+			} catch(Throwable e){
+				continue;
+			}
+		}
+		
+		reader.close();
+	}
 }

@@ -116,6 +116,7 @@ input {
 .search-button{background: url(/public/images/go_search.png) no-repeat 50% 50% !important;}
 .save-button{background: url(/public/images/ok.png) no-repeat 50% 50% !important;}
 .export-excel-button{background: url(/public/images/export-excel.png) no-repeat 50% 50% !important;}
+.upload-button{background: url(/public/images/upload.png) no-repeat 50% 50% !important;}
 .print-button{background: url(/public/images/print.png) no-repeat 50% 50% !important;}
 
 .label1 {

@@ -139,4 +139,12 @@ public class Excels extends Controller{
 		
 		renderExcel(data);
 	}
+    
+    public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startTime, String endTime){
+    	Map data = Schedule.search(driverNumber, vehicleNumber, route, duty, startTime, endTime);
+		if (data == null)
+			return ;
+		
+		renderExcel(data);
+    }
 }

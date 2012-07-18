@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.ChartSerie;
+import vo.ComboVO;
 import vo.DriverPerformanceVO;
 import vo.DriverVO;
 import vo.EventReportVO;
@@ -252,5 +253,25 @@ public class Driver extends Model{
 		}
 		
 		return true;
+	}
+
+	public static List<ComboVO> assemComboVO() {
+		return assemComboVO(null);
+	}
+	public static List<ComboVO> assemComboVO(List<Driver> driverList) {
+		List<ComboVO> result = new ArrayList<ComboVO>();
+		if (driverList == null)
+			driverList = findAll();
+		
+		if (driverList != null)
+    		for (Driver d : driverList){
+    			result.add(new ComboVO(d.number, d.number));
+    		}
+		
+		return result;
+	}
+
+	public static Driver findByNumber(String driverNumber) {
+		return Driver.find("byNumber", driverNumber).first();
 	}
 }

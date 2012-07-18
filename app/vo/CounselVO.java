@@ -29,10 +29,10 @@ public class CounselVO {
 		if (c.driver != null)
 			this.driverName = c.driver.name;
 		
-		this.startDate = c.startTime.toString().split(" ")[0];
-		this.startTime = c.startTime.toString().split(" ")[1];
-		this.endDate =  c.endTime.toString().split(" ")[0];
-		this.endTime = c.endTime.toString().split(" ")[1];
+		this.startDate = CommonUtil.formatTime(c.startTime).split(" ")[0];
+		this.startTime = CommonUtil.formatTime(c.startTime).split(" ")[1];
+		this.endDate = CommonUtil.formatTime(c.endTime).split(" ")[0];
+		this.endTime = CommonUtil.formatTime(c.endTime).split(" ")[1];
 		this.remark = c.remark;
 		return this;
 	}

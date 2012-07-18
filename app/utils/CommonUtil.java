@@ -1,7 +1,9 @@
 package utils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,9 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import models.DriverReport;
-
-import vo.DriverVO;
-import vo.VehicleVO;
+import models.Schedule;
+import vo.ScheduleVO;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.ExclusionStrategy;
@@ -24,8 +25,59 @@ import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
 	
-	public static void main(String[] args){
-		System.out.println(isValidTime("45:21:3d0"));
+	public static String resoveTime(final String time){
+		String[] array = time.split(":");
+		StringBuilder sb = new StringBuilder();
+		for (String a : array){
+			if (sb.length() > 0)
+				sb.append(":");
+			
+			if (a.length() == 1)
+				a = new StringBuilder("0").append(a).toString();
+			
+			sb.append(a);
+		}
+		
+		return sb.toString()+":00";
+	}
+	
+	public static Date resoveDate(final String date) throws Exception{
+		Date d = null;
+		try{
+			d = CommonUtil.parse("yyyy-MM-dd", date);
+		}catch(Throwable e1){
+			try{
+				d = CommonUtil.parse("yyyy-M-dd", date);
+			}catch(Throwable e2){
+				try{
+					d = CommonUtil.parse("yyyy-MM-d", date);
+				}catch(Throwable e3){
+					try{
+						d = CommonUtil.parse("yyyy-M-d", date);
+					}catch(Throwable e4){
+						try{
+							d = CommonUtil.parse("MM/dd/yyyy", date);
+						}catch(Throwable e5){
+							try{
+								d = CommonUtil.parse("MM/d/yyyy", date);
+							}catch(Throwable e6){
+								try{
+									d = CommonUtil.parse("M/dd/yyyy", date);
+								}catch(Throwable e7){
+									try{
+										d = CommonUtil.parse("M/d/yyyy", date);
+									}catch(Throwable e8){
+										throw new Exception(e8);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return d ;
 	}
 	
 	public static boolean isValidTime(String str){

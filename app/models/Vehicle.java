@@ -391,4 +391,24 @@ public class Vehicle extends Model {
 		
 		return true;
 	}
+
+	public static List<ComboVO> assemComboVO() {
+		return assemComboVO(null);
+	}
+	public static List<ComboVO> assemComboVO(List<Vehicle> vehicleList) {
+		List<ComboVO> result = new ArrayList<ComboVO>();
+		if (vehicleList == null)
+			vehicleList = findAll();
+		
+		if (vehicleList != null)
+    		for (Vehicle v : vehicleList){
+    			result.add(new ComboVO(v.number, v.number));
+    		}
+		
+		return result;
+	}
+
+	public static Vehicle findByNumber(String vehicleNumber) {
+		return Vehicle.find("byNumber", vehicleNumber).first();
+	}
 }

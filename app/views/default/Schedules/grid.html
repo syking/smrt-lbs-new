@@ -1,0 +1,309 @@
+<form id="schedule_form_${grid.tabId}" action="/schedules/search" method="post" class="k-content" onsubmit="return scheduleSearchValidate(this)" style="padding:10px 0;">
+	<label for="${grid.tabId}_driver">Driver No:</label>
+	<input name="driverNumber" id="${grid.tabId}_driver"/> 
+	
+	<label for="${grid.tabId}_vehicle">Vehicle No:</label>
+	<input name="vehicleNumber" id="${grid.tabId}_vehicle"/> 
+	
+	<div style="height:3px"></div>
+	
+	<label for="${grid.tabId}_route">Route:</label>
+	<input name="route" id="${grid.tabId}_route"/>
+	
+	<label for="${grid.tabId}_duty">Duty:</label>
+	<input name="duty" id="${grid.tabId}_duty" class="k-input k-textbox"/>
+	
+	<div style="height:3px"></div>
+	
+	<label for="${grid.tabId}_start_date">Start Date:</label>
+	<input name="startDate" id="${grid.tabId}_start_date"/>
+	
+	<label for="${grid.tabId}_start_time">Start Time:</label>
+	<input name="startTime" id="${grid.tabId}_start_time"/>
+	
+	<div style="height:3px"></div>
+	
+	<label for="${grid.tabId}_end_date">End Date:</label>
+	<input name="endDate" id="${grid.tabId}_end_date"/>
+	
+	<label for="${grid.tabId}_end_time" >End Time:</label>
+	<input name="endTime" id="${grid.tabId}_end_time"/>
+	
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="button" url="/excels/schedules" formId="schedule_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" class="k-button upload-button" style="width:50px" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
+	</div>
+</form>
+<div id="${grid.tabId}_upload_div" style="display:none; padding:10px;">
+	<input id="${grid.tabId}_file" type="file" name="file" />
+</div>
+<div id="grid_${grid.tabId}"></div>
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    $(document).ready(function () {
+    	loadSchedules("/Schedules/read");
+                    
+    	$("#${grid.tabId}_driver").kendoComboBox({
+	    	dataTextField: "text",
+	        dataValueField: "value",
+	        dataSource: #{verbatim} ${drivers} #{/verbatim}
+	    });
+	    
+	    $("#${grid.tabId}_vehicle").kendoComboBox({
+	    	dataTextField: "text",
+	        dataValueField: "value",
+	        dataSource: #{verbatim} ${vehicles} #{/verbatim}
+	    });
+    	
+    	$("#${grid.tabId}_route").kendoComboBox({
+	        dataTextField: "text",
+	        dataValueField: "value",
+	        dataSource: #{verbatim} ${routes} #{/verbatim}
+	    });
+	    
+	    $("#${grid.tabId}_start_date, #${grid.tabId}_end_date").kendoDatePicker({
+        	format: "yyyy-MM-dd"		
+        });
+        
+        $("#${grid.tabId}_start_time, #${grid.tabId}_end_time").kendoTimePicker({
+        	format: "HH:mm:ss"		
+        });
+        var wnd ;
+        $(".upload-button").click(function(e){
+        	wnd = $("#${grid.tabId}_upload_div")
+	    	.kendoWindow({
+	    		actions: ["Refresh", "Minimize", "Maximize", "Close"],
+	            modal: true,
+	            visible: false,
+	            resizable: true,
+	            width: 300,
+	            height: 120
+	         }).data("kendoWindow");
+	         
+	         wnd.title("Upload Schedule CSV File").center().open();
+        });
+        
+        $("#${grid.tabId}_file").kendoUpload({
+            async: {
+                saveUrl: "/schedules/upload",
+                autoUpload: false
+            },
+            complete: function(e){
+            	loadSchedules("/Schedules/read");
+            	wnd.close();
+            },
+            error: function(e){
+            },
+            success: function(e){
+            },
+            upload: function(e){
+            	//alert("upload->");
+            }
+        });
+    });
+    
+    function scheduleUploadValidate(form) {
+    	var $form = $(form);
+		$form.submit();		
+		return false;
+    }
+    
+    function scheduleSearchValidate(form) {
+		var $form = $(form);
+		loadSchedules($form.attr("action"), $form.serializeArray());
+		
+		return false;
+	}
+    
+    function loadSchedules(url, params){
+    	$("#grid_${grid.tabId}").empty();
+    	var dataSource = new kendo.data.DataSource({
+    		error: function(e) {
+	        	alert(e.responseText);
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back 
+		    },
+            transport: {
+                read:  { 
+                    url: url
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("update success");
+                    }
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    dataType: "json",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("delete success");
+                    }
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("create success");
+                    }
+                },
+                parameterMap: function(data, operation) {
+                    if (operation !== "read" && data.models) {
+                    	$.each(data.models, function(i, v){
+                    		var model = data.models[i];
+	                    	/**
+	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
+	                    	 */
+	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
+	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
+	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
+	                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
+                    	});
+                    	
+                        return {models: kendo.stringify(data.models)};
+                    }
+                    
+                    return params;
+                }
+            },
+            batch: true,
+            pageSize: 16,
+            schema: {
+            	parse: function(data){
+            		$.each(data, function(i, val){
+            			val.startTime = new Date(val.startDate + " " + val.startTime);
+						val.startDate = new Date(val.startDate);
+						val.endTime = new Date(val.endDate + " " + val.endTime);
+						val.endDate = new Date(val.endDate);
+					});
+					
+            		return data;
+            	},
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        driverNumber: { validation: { required: true } },
+                        vehicleNumber: { validation: { required: true } },
+                        startDate: { validation: {required:true}, type: "date"},
+                        startTime: { validation: { required: true } },
+                        endDate: {validation: {required:true}, type: "date"},
+                        endTime: { validation: { required: true } },
+                        duty: {validation:{required:true}},
+                        route: {
+                        	validation: {
+                        		required: true,
+	                            custom: function(input) {
+	                            	var name = input.attr("name");
+	                            	return validate_empty(input);
+	                            	
+	                            	return true;
+	                            }
+                        	}
+                        },
+                    }
+                }
+            }
+        });
+        
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command: ["edit", "destroy"], title: "Action", width: "200px" };
+		
+		/**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+			if ('driverNumber' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="driverNumber" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${drivers} #{/verbatim}
+				    });
+				};
+				
+				return ;
+			}
+			
+			if ('vehicleNumber' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="vehicleNumber" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${vehicles} #{/verbatim}
+				    });
+				};
+				
+				return ;
+			}
+			
+			if ('route' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="route" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${routes} #{/verbatim}
+				    });
+				};
+				
+				return ;
+			}
+			
+			if ('startDate' === _field){
+				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
+			}
+			
+			if ('startTime' === _field){
+				columnsJson[i].template = '#= kendo.toString(startTime,"HH:mm:ss") #';
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="startTime" />').appendTo(container).kendoTimePicker({
+			        	format: "HH:mm:ss"
+				    });
+				};
+			}
+			
+			if ('endDate' === _field){
+				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
+			}
+			
+			if ('endTime' === _field){
+				columnsJson[i].template = '#= kendo.toString(endTime,"HH:mm:ss") #';
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="endTime" />').appendTo(container).kendoTimePicker({
+			        	format: "HH:mm:ss"
+				    });
+				};
+			}
+		});
+		
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            selectable: true,
+            toolbar: [
+            	"create",
+            	{ template: "<a class='k-button k-button-icontext k-grid-clear' href='javascript:void(0)' class>Clear All Data</a>" }
+         	], 
+            columns: columnsJson,
+            editable: "popup",
+            navigatable: true
+        });
+        
+        $(".k-grid-clear").click(function(e){
+        	if (confirm("Are You Sure to Clear All Data ?")){
+	        	$.getJSON("/schedules/clear", function(data){
+	        		if (data.success)
+	        			loadSchedules("/Schedules/read");
+	        		else
+	        			alert("Can not clear!");
+	        	});
+        	}
+        });
+}
+</script>
