@@ -24,7 +24,7 @@ public class MyMailer extends Mailer {
 		
 		setContentType("text/html");
 		addRecipient(driver.email);
-		setFrom("l.weiwei@163.com");
+		setFrom(Play.configuration.get("mail.smtp.user"));
 		Map report = driver.generatePerformanceReport(timeType, time);
 		DriverPerformanceVO per = (DriverPerformanceVO) report.get("performance");
 		
