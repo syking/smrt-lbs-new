@@ -29,8 +29,7 @@ $(document).ready(function(){
         }).data("kendoGrid");
 	    
 	}).error(function(e){
-		if ((e.status && 403 == e.status))
-			alert(e.responseText);
+		alert(e.responseText);
 	});
     $("#live_bus_grid").delegate("td", "click", function(e) {
 		if ($(this).text() == "View On MapRoute Path")

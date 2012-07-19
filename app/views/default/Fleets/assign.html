@@ -90,15 +90,14 @@
 		var _fleetName = fleetTreeView.text(e.node);
 		$("#${tabid}_form").find('input[name="fleetName"]').attr("value", _fleetName);
 		
-		$.getJSON("/fleets/drivers", {fleetName:_fleetName}, function(drivers){
+		$.getJSON("/fleets/leaders", {fleetName:_fleetName}, function(drivers){
 			$(driverTreeId).find('input').attr("checked", false);
 			$.each(drivers, function(i, u){
 				var _i = $(driverTreeId).find('input[name='+ u.id +']');
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
 		
 		$.getJSON("/fleets/vehicles", {fleetName:_fleetName}, function(vehicles){
@@ -108,8 +107,7 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
 	}
 	
@@ -149,8 +147,7 @@
 				alert("assign fail !");
 			}
 		}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
 		
 		return false;

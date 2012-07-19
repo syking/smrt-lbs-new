@@ -192,8 +192,7 @@
                 columns: eventJson.columns
             });
     	}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
     }
     

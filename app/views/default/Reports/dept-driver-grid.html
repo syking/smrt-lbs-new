@@ -223,8 +223,7 @@ function loadReportDeptDrivers(url, params){
 	        $("#report-driver-result").attr("url", url);
 		});
 	}).error(function(e){
-		if (e.status && 403 == e.status)
-     			alert(e.responseText);
+     	alert(e.responseText);
 	});
 }
 

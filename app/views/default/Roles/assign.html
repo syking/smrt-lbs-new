@@ -97,8 +97,7 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
 		
 		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
@@ -108,8 +107,7 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
 	}
 	
@@ -149,8 +147,7 @@
 				alert("assign fail !");
 			}
 		}).error(function(e){
-			if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     	alert(e.responseText);
 		});
 		
 		return false;

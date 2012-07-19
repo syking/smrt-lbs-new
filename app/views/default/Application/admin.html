@@ -61,9 +61,7 @@ $(document).ready(function() {
 					tabStrip.select($(tabStrip.tabGroup.children("li:last")));
 				});
 	     	}).error(function(e){
-	     		//alert(kendo.stringify(e));
-	     		if (e.status && 403 == e.status)
-	     			alert(e.responseText);
+	     		alert(e.responseText);
 	     	});
      	}
 	});
