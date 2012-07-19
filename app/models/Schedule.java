@@ -290,21 +290,27 @@ public class Schedule extends Model {
 		return true;
 	}
 
-	public static List<Schedule> findByCondition(String driverNumber,String vehicleNumber, String route,String duty, String startTime, String endTime) {
+	public static List<Schedule> findByCondition(String driverNumber,String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
 		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
 		if (driverNumber != null && driverNumber.length() > 0) {
-			sqlSB.append("driver = ?");
-			params.add(Driver.findByNumber(driverNumber));
+			Driver driver = Driver.findByNumber(driverNumber);
+			if (driver != null){
+				sqlSB.append("driver = ?");
+				params.add(driver);
+			}
 		}
 
 		if (vehicleNumber != null && vehicleNumber.length() > 0) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
-			sqlSB.append("vehicle = ?");
-			params.add(Vehicle.findByNumber(vehicleNumber));
+			Vehicle vehicle = Vehicle.findByNumber(vehicleNumber);
+			if (vehicle != null){
+				sqlSB.append("vehicle = ?");
+				params.add(vehicle);
+			}
 		}
 		
 		if (route != null && route.length() > 0) {
@@ -312,31 +318,49 @@ public class Schedule extends Model {
 				sqlSB.append(" and ");
 			
 			sqlSB.append("serviceNumber like ?");
-			params.add("%s"+route+"%");
+			params.add("%"+route+"%");
 		}
 		
 		if (duty != null && duty.length() > 0) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
-			sqlSB.append("duty like ?");
-			params.add("%s"+duty+"%");
+			sqlSB.append("dutyId like ?");
+			params.add("%"+duty+"%");
 		}
 
-		if (startTime != null && startTime.length() > 0) {
-			Date _endTime = new Date();
-			if (endTime != null && endTime.length() > 0) 
-				_endTime = CommonUtil.parse(endTime);
-
+		if (startDate != null && !startDate.isEmpty()){
+			if (startTime != null && !startTime.isEmpty())
+				startTime = startDate + " " + startTime;
+			else 
+				startTime = startDate + " 00:00:00";
+			
+			Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime);
+			params.add(start);
+			
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
-
-			sqlSB.append("startTime >= ? and endTime < ?");
-			params.add(CommonUtil.parse(startTime));
-			params.add(_endTime);
+			
+			sqlSB.append("start_time >= ?");
 		}
+		
+		if (endDate != null && !endDate.isEmpty()){
+			if (endTime != null && !endTime.isEmpty())
+				endTime = endDate + " " + endTime;
+			else 
+				endTime = endDate + " 00:00:00";
+			
+			Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime);
+			params.add(end);
+			
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("end_time < ?");
+		}
+		
 		List<Schedule> schedules = null;
-		if (sqlSB.length() > 0)
+		if (sqlSB.length() > 0 && !params.isEmpty())
 			schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch();
 		else
 			schedules = Schedule.findAll();
@@ -355,8 +379,8 @@ public class Schedule extends Model {
 		return result;
 	}
 
-	public static Map search(String driverNumber, String vehicleNumber, String route, String duty, String startTime, String endTime) {
-		List<Schedule> schedules = Schedule.findByCondition(driverNumber, vehicleNumber, route, duty, startTime, endTime);
+	public static Map search(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
+		List<Schedule> schedules = Schedule.findByCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		List<ScheduleVO> vos = Schedule.assemScheduleVO(schedules);
 		Map data = CommonUtil.assemGridData(vos, "id");
 		return data;

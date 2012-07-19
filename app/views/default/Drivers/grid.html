@@ -1,4 +1,4 @@
-<form action="/drivers/search" method="post" class="k-content" onsubmit="return driverSearchValidate(this)" style="padding:10px 0;">
+<form id="driver_form_${grid.tabId}" action="/drivers/search" method="post" class="k-content" onsubmit="return driverSearchValidate(this)" style="padding:10px 0;">
 
     <label for="${grid.tabId}_number">Number:</label>
     <input name="number" id="${grid.tabId}_number" class="k-input k-textbox"/>
@@ -6,17 +6,22 @@
     <label for="${grid.tabId}_name">Name:</label>
     <input name="name" id="${grid.tabId}_name" class="k-input k-textbox"/>
 
+	<div style="height:8px"></div>
+
     <label for="${grid.tabId}_description">Description:</label>
     <input name="description" id="${grid.tabId}_description" class="k-input k-textbox"/>
 
     <div style="float:right; padding-right:20px;">
         <input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value=""/>
+        <input type="button" url="/excels/drivers" formId="driver_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+        <input type="button" class="k-button print-button" style="width:50px" value="" />
     </div>
 
 </form>
 
 <div id="grid_${grid.tabId}"></div>
 <script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var sessionfor = "";
     

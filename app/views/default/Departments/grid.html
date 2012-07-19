@@ -5,11 +5,13 @@
 	<input name="parent" id="${grid.tabId}_parent"/>
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 </form>
 
 <div id="grid_${grid.tabId}"></div>
 <script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
+<script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
     $(document).ready(function () {
         loadDepartments("/departments/read");
@@ -76,7 +78,7 @@
                 }
             },
             batch: true,
-            pageSize: 18,
+            pageSize: 15,
             schema: {
                 model: {
                     id: "id",

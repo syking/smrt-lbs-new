@@ -5,7 +5,7 @@
 	<label for="${grid.tabId}_vehicle">Vehicle No:</label>
 	<input name="vehicleNumber" id="${grid.tabId}_vehicle"/> 
 	
-	<div style="height:3px"></div>
+	<div style="height:8px"></div>
 	
 	<label for="${grid.tabId}_route">Route:</label>
 	<input name="route" id="${grid.tabId}_route"/>
@@ -13,7 +13,7 @@
 	<label for="${grid.tabId}_duty">Duty:</label>
 	<input name="duty" id="${grid.tabId}_duty" class="k-input k-textbox"/>
 	
-	<div style="height:3px"></div>
+	<div style="height:8px"></div>
 	
 	<label for="${grid.tabId}_start_date">Start Date:</label>
 	<input name="startDate" id="${grid.tabId}_start_date"/>
@@ -21,7 +21,7 @@
 	<label for="${grid.tabId}_start_time">Start Time:</label>
 	<input name="startTime" id="${grid.tabId}_start_time"/>
 	
-	<div style="height:3px"></div>
+	<div style="height:8px"></div>
 	
 	<label for="${grid.tabId}_end_date">End Date:</label>
 	<input name="endDate" id="${grid.tabId}_end_date"/>
@@ -172,7 +172,7 @@
                 }
             },
             batch: true,
-            pageSize: 16,
+            pageSize: 15,
             schema: {
             	parse: function(data){
             		$.each(data, function(i, val){

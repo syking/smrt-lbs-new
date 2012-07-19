@@ -3,8 +3,6 @@
 	<label for="${grid.tabId}_name">Action:</label>
 	<input name="permAction" id="${grid.tabId}_name"/>
 	
-	<div style="height:3px"></div>
-	
 	<label for="${grid.tabId}_desc">Description:</label>
 	<input name="desc" id="${grid.tabId}_desc" class="k-input k-textbox"/>
 	
@@ -70,7 +68,7 @@
                 }
             },
             batch: true,
-            pageSize: 20,
+            pageSize: 15,
             schema: {
             	parse: function(data){
 					
@@ -114,8 +112,6 @@
 				        autoBind: false,
 				        dataSource: {
                             type: "json",
-                            serverPaging: true,
-                            pageSize: 20,
                             transport: {
                                 read: "/permissions/actions"
                             }

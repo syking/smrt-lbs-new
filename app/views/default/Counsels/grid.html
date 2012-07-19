@@ -6,7 +6,7 @@
 	<label for="${grid.tabId}_driver_name">Driver Name:</label>
 	<input name="driverName" id="${grid.tabId}_driver_name"/>
 	
-	<div style="height:3px"></div>
+	<div style="height:8px"></div>
 	
 	<label for="${grid.tabId}_start_date">Start Date:</label>
 	<input name="startDate" id="${grid.tabId}_start_date"/>
@@ -14,7 +14,7 @@
 	<label for="${grid.tabId}_start_time">Start Time:</label>
 	<input name="startTime" id="${grid.tabId}_start_time"/>
 	
-	<div style="height:3px"></div>
+	<div style="height:8px"></div>
 	
 	<label for="${grid.tabId}_end_date">End Date:</label>
 	<input name="endDate" id="${grid.tabId}_end_date"/>
@@ -108,7 +108,7 @@
                 }
             },
             batch: true,
-            pageSize: 20,
+            pageSize: 15,
             schema: {
             	parse: function(data){
             		$.each(data, function(i, val){

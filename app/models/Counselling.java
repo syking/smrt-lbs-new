@@ -184,7 +184,6 @@ public class Counselling extends Model{
 			sb.append("end_time < ?");
 		}
 		
-		System.out.println(sb.toString() + "|" + params.toString());
 		List<Counselling> counsellings = Counselling.find(sb.toString(), params.toArray()).fetch();
 		
 		return counsellings;

@@ -9,6 +9,8 @@
 	<label for="serviceNo" >Service No:</label>
 	<input name="serviceNo" id="${grid.tabId}_serviceNo"/>
 	
+	<div style="height:8px"></div>
+	
 	<label for="type" >Type:</label>
 	<input name="type" id="${grid.tabId}_type"/>
 	
@@ -97,7 +99,7 @@ function loadEvents(url, params){
 		var grid = $("#grid_${grid.tabId}").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
-	    		pageSize:18
+	    		pageSize:15
 	    	},
 	    	columns: json.columns, 
 	   	 	sortable: true,

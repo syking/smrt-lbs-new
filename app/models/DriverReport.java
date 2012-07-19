@@ -396,8 +396,8 @@ public class DriverReport extends Model {
 		List<EventTypeReportVO> result = new ArrayList<EventTypeReportVO>(types.size());
 		
 		Date[] dates = CommonUtil.getStartAndEndDate(timeType, time);
-		String start = CommonUtil.formatTime(dates[0]);
-		String end = CommonUtil.formatTime(dates[1]);
+		String start = CommonUtil.formatTime("yyyy-MM-dd",dates[0]);
+		String end = CommonUtil.formatTime("yyyy-MM-dd", dates[1]);
 		List<DriverReport> drs = DriverReport.findByDriver(driver, timeType, time);
 		
 		Map<String, Long> rules = EventType.getPointRule();

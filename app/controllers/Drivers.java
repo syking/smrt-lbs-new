@@ -27,35 +27,15 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Drivers extends Controller {
 	
-	public static void search(String number, String name) {
-		List<String> criteria = new ArrayList<String>(9);
-		List<Object> params = new ArrayList<Object>(9);
-
-		if (null != number && !number.isEmpty()) {
-			criteria.add("number LIKE ?");
-			params.add("%" + number + "%");
-		}
-
-		if (null != name && !name.isEmpty()) {
-			criteria.add("name LIKE ?");
-			params.add("%" + name + "%");
-		}
-
-		List<Driver> driverList = Driver.filter(criteria, params);
-		List<DriverVO> driverVOList = new ArrayList<DriverVO>();
-		for (Driver driver : driverList) 
-			driverVOList.add(new DriverVO().init(driver));
-
-		renderJSON(driverVOList);
+	public static void search(String number, String name, String description) {
+		List<Driver> drivers = Driver.findByCondition(number, name, description);
+		List<DriverVO> vos = Driver.assemDriverVO(drivers);
+		renderJSON(vos);
 	}
 
 	public static void listJson() {
 		List<Driver> drivers = Driver.findAll();
-		if (drivers == null)
-			renderJSON("");
-		List<DriverVO> driverVOList = new ArrayList<DriverVO>();
-		for (Driver d : drivers) 
-			driverVOList.add(new DriverVO().init(d));
+		List<DriverVO> driverVOList = Driver.assemDriverVO(drivers);
 		Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
 
 		renderJSON(data);

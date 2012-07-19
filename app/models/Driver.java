@@ -26,6 +26,7 @@ import vo.ComboVO;
 import vo.DriverPerformanceVO;
 import vo.DriverVO;
 import vo.EventReportVO;
+import vo.ScheduleVO;
 import vo.TreeView;
 import vo.VehicleVO;
 
@@ -273,5 +274,59 @@ public class Driver extends Model{
 
 	public static Driver findByNumber(String driverNumber) {
 		return Driver.find("byNumber", driverNumber).first();
+	}
+
+	public static Map search(String number, String name, String description) {
+		List<Driver> drivers = Driver.findByCondition(number, name, description);
+		List<DriverVO> vos = Driver.assemDriverVO(drivers);
+		Map data = CommonUtil.assemGridData(vos, "id");
+		return data;
+	}
+
+	public static List<DriverVO> assemDriverVO(List<Driver> drivers) {
+		if (drivers == null)
+			return null;
+		
+		List<DriverVO> vos = new ArrayList<DriverVO>(drivers.size());
+		for (Driver d : drivers){
+			DriverVO vo = new DriverVO().init(d);
+			vos.add(vo);
+		}
+		
+		return vos;
+	}
+
+	public static List<Driver> findByCondition(String number, String name, String description) {
+		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		if (number != null && number.length() > 0) {
+			sqlSB.append("number like ?");
+			params.add("%" + number + "%");
+		}
+
+		if (name != null && name.length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("name like ?");
+			params.add("%" + name + "%");
+		}
+		
+		if (description != null && description.length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
+			sqlSB.append("description like ?");
+			params.add("%" + description + "%");
+		}
+
+		List<Driver> drivers = null;
+		if (sqlSB.length() > 0 && !params.isEmpty())
+			drivers = Driver.find(sqlSB.toString(), params.toArray()).fetch();
+		else
+			drivers = Driver.findAll();
+		
+		return drivers;
 	}
 }

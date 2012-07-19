@@ -16,8 +16,8 @@ public class DriverPerformanceVO {
 	public String driverNo;
 	public String drivingTime;
 	public String reportType;
-	public String startTime;
-	public String endTime;
+	public String start;
+	public String end;
 	public long highest;
 	public long lowest;
 	public long performanceIndex;
@@ -46,9 +46,11 @@ public class DriverPerformanceVO {
 		}
 		
 		if (start != null)
-			this.startTime = CommonUtil.formatTime("yyyy-MM-dd HH:mm:ss", start);
+			this.start = CommonUtil.formatTime("yyyy-MM-dd", start);
+		
 		if (end != null)
-			this.endTime = CommonUtil.formatTime("yyyy-MM-dd HH:mm:ss", end);
+			this.end = CommonUtil.formatTime("yyyy-MM-dd", end);
+		
 		if (timeType != null && timeType.length() > 1)
 			this.reportType = timeType.toUpperCase().substring(0, 1) + timeType.substring(1);
 		

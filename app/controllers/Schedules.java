@@ -103,8 +103,8 @@ public class Schedules extends Controller {
 	/**
 	 * 检索排班信息，返回 JSON
 	 */
-	public static void search(String driverName, String vehicleName, String route, String duty, String startTime, String endTime) {
-		List<Schedule> schedules = Schedule.findByCondition(driverName, vehicleName, route, duty, startTime, endTime);
+	public static void search(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
+		List<Schedule> schedules = Schedule.findByCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		List<ScheduleVO> scheduleVOList = Schedule.assemScheduleVO(schedules);
 
 		renderJSON(scheduleVOList);

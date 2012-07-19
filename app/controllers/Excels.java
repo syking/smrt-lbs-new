@@ -37,8 +37,8 @@ public class Excels extends Controller{
     public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
 		Map map = Driver.queryReport(driverId, timeType, startTime, endTime);
-		
-    	renderExcel(map);
+		if (map != null)
+			renderExcel(map);
 	}
     
     public static void reportDepartment(Long parentId, String timeType, String time){
@@ -50,7 +50,8 @@ public class Excels extends Controller{
     		return ;
     	
     	Map map = Department.assemReport(departments, timeType, time);
-    	renderExcel(map);
+    	if (map != null)
+    		renderExcel(map);
     }
     
     public static void reportRoute(String line, String timeType, String time){
@@ -62,7 +63,8 @@ public class Excels extends Controller{
     		return ;
     	
     	Map map = Schedule.assemReportByLine(lineList, timeType, time);
-    	renderExcel(map);
+    	if (map != null)
+    		renderExcel(map);
     }
     
     public static void reportDriverByDept(Long departmentId, String timeType, String time){
@@ -76,8 +78,8 @@ public class Excels extends Controller{
 			drivers = Driver.find("select d from Driver d where d.department.id = ?", departmentId).fetch();
 		
 		Map map = Driver.assemReport(drivers, timeType, time);
-		
-    	renderExcel(map);
+		if (map != null)
+			renderExcel(map);
     }
     
     public static void reportDriver(long driverId, String timeType, String time){
@@ -128,23 +130,25 @@ public class Excels extends Controller{
 			drivers.add(s.driver);
 		
 		Map map = Driver.assemReport(drivers, timeType, time);
-		
-    	renderExcel(map);
+		if (map != null)
+			renderExcel(map);
     }
     
     public static void reportEvent(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
 		Map data = Event.search(driver, serviceNo, type, startTime, endTime);
-		if (data == null)
-			return ;
-		
-		renderExcel(data);
+		if (data != null)
+			renderExcel(data);
 	}
     
-    public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startTime, String endTime){
-    	Map data = Schedule.search(driverNumber, vehicleNumber, route, duty, startTime, endTime);
-		if (data == null)
-			return ;
-		
-		renderExcel(data);
+    public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime){
+    	Map data = Schedule.search(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+		if (data != null)
+			renderExcel(data);
+    }
+    
+    public static void drivers(String number, String name, String description){
+    	Map data = Driver.search(number, name, description);
+    	if (data != null)
+    		renderExcel(data);
     }
 }
