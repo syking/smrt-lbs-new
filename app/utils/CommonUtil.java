@@ -1,8 +1,5 @@
 package utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,10 +9,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import models.DriverReport;
-import models.Schedule;
-import vo.ScheduleVO;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.ExclusionStrategy;
@@ -599,5 +596,13 @@ public class CommonUtil {
 	
 	public static String formatStr(String format, Object... args){
 		return String.format(format, args);
+	}
+
+	public static boolean isValidEmail(String mail) {
+		String regex = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(mail);  
+	    
+		return m.find();
 	}
 }

@@ -90,22 +90,7 @@ public class Excels extends Controller{
 		if (driver == null)
 			return;
 		
-		Date[] dates = CommonUtil.getStartAndEndDate(timeType, time);
-		Date start = dates[0];
-		Date end = dates[1];
-		
-		List<DriverReport> drs = DriverReport.findByDriver(driver, timeType, time);
-		DriverPerformanceVO performance = new DriverPerformanceVO(driver, timeType, start, end, drs);
-		Map map = new HashMap();
-		map.put("performance", performance);
-		map.put("columns", CommonUtil.assemColumns(DriverPerformanceVO.class, "id"));
-		
-		List<EventTypeReportVO> etrVOs = DriverReport.generateDriverEventPerformance(driver, timeType, time);
-		Map events = new HashMap();
-		events.put("data", etrVOs);
-		events.put("columns", CommonUtil.assemColumns(EventTypeReportVO.class, "id"));
-		
-		map.put("events", events);
+		Map map = driver.generatePerformanceReport(timeType, time);
 		
 		request.format = "xls";
     	renderArgs.put(RenderExcel.RA_FILENAME, driver.name + "_"+driver.number + "_performance_"+CommonUtil.formatTime("yyyyMMddHHmmss", new Date())+".xls");

@@ -2,6 +2,8 @@ package controllers;
 
 import static models.User.Constant.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Set;
 
@@ -53,43 +55,52 @@ public class Interceptor extends Controller {
 		checkPermission();
 	}
 	
-	static void checkPermission(){
+	static void checkPermission() {
 		Permission currentPerm = null;
 		final String action = request.action;
 		List<Permission> permDefinitions = Permission.findAll();
 		if (permDefinitions == null || permDefinitions.isEmpty())
 			return ;
 		
+		boolean flag = false;
+		
 		User loginUser = Cache.get(session.getId()+"_"+LOGIN_USER_ATTR, User.class);
 		if (loginUser.superPower == 1)
-			return ;
-		
-		boolean flag = false;
-		for (Permission def : permDefinitions){
-			if (def.action.equalsIgnoreCase(action)){
-				currentPerm = def;
-				break;
-			}
-		}
-		
-		//if current URI is not defined as a permission, just let it go...
-		if (currentPerm == null)
 			flag = true ;
 		
 		if (!flag){
-			Set<Role> roles = loginUser.roles;
-			if (roles != null && !roles.isEmpty()){
-				for (Role r : roles){
-					if (r.hasPermissions(currentPerm)){
-						flag = true ;
-						break;
+			for (Permission def : permDefinitions){
+				if (def.action.equalsIgnoreCase(action)){
+					currentPerm = def;
+					break;
+				}
+			}
+			
+			//if current URI is not defined as a permission, just let it go...
+			if (currentPerm == null)
+				flag = true ;
+			
+			if (!flag){
+				Set<Role> roles = loginUser.roles;
+				if (roles != null && !roles.isEmpty()){
+					for (Role r : roles){
+						if (r.hasPermissions(currentPerm)){
+							flag = true ;
+							break;
+						}
 					}
 				}
 			}
 		}
 		
 		final String ip = request.remoteAddress;
-		final String content = request.url;
+		String content = "";
+		try {
+			content = URLDecoder.decode(request.url, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			content = e.toString();
+		}
+		
 		new Log(action, content, loginUser, ip, flag).create();
 		
 		if (!flag)

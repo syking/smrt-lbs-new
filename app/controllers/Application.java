@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import notifiers.MyMailer;
+
+import models.Driver;
+import models.DriverReport;
 import models.Fleet;
+import models.User;
 
 import play.cache.Cache;
 import play.mvc.Controller;
@@ -25,7 +30,7 @@ import com.google.gson.Gson;
  */
 @With({Interceptor.class})
 public class Application extends Controller {
-
+	
 	/**
 	 * Home page
 	 */

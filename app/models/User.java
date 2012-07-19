@@ -31,6 +31,8 @@ public class User extends Model {
 
 	public String password;
 
+	public String email;
+	
 	@Column(unique = true)
 	public String name;
 

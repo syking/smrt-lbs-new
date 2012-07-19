@@ -16,6 +16,7 @@ public class DriverVO
         this.id = String.valueOf(driver.id);
         this.number = driver.number;
         this.name = driver.name;
+        this.email = driver.email;
         this.description = driver.description;
 
         return this;
@@ -24,6 +25,7 @@ public class DriverVO
     public String id;
     public String number;
     public String name;
+    public String email;
     public String description;
     
     public void validate(){
@@ -34,6 +36,9 @@ public class DriverVO
 		
 		if (CommonUtil.isEmptyString(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
+		
+		if (!CommonUtil.isValidEmail(email))
+			builder.append(CommonUtil.formatStr(" %s is invalid email format, ", "Email"));
 		
 		final String result = builder.toString();
 		if (result.trim().length() > 0)

@@ -22,7 +22,7 @@ public class LogVO{
         this.userName = log.userName;
         this.dateTime = CommonUtil.formatTime(log.dateTime);
         this.ip = log.ip;
-        this.result = log.isSuccess ? "ok" : "denied";
+        this.access = log.isSuccess ? "ok" : "denied";
         return this;
 
     }
@@ -34,6 +34,6 @@ public class LogVO{
     public String content;
     public String userName;
     public String ip;
-    public String result;
+    public String access;
     public String dateTime;
 }

@@ -26,6 +26,7 @@ import vo.ComboVO;
 import vo.DriverPerformanceVO;
 import vo.DriverVO;
 import vo.EventReportVO;
+import vo.EventTypeReportVO;
 import vo.ScheduleVO;
 import vo.TreeView;
 import vo.VehicleVO;
@@ -52,6 +53,7 @@ public class Driver extends Model{
 	@Column(unique = true)
 	public String number;
 	public String name;
+	public String email;
 	public String description;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -224,6 +226,7 @@ public class Driver extends Model{
 			obj.number = vo.number;
 			obj.name = vo.name;
 			obj.description = vo.description;
+			obj.email = vo.email;
 			obj.create();
 			vo.id = String.valueOf(obj.id);
 		}
@@ -250,6 +253,8 @@ public class Driver extends Model{
 			obj.number = vo.number;
 			obj.name = vo.name;
 			obj.description = vo.description;
+			obj.email = vo.email;
+			
 			obj.save();
 		}
 		
@@ -328,5 +333,30 @@ public class Driver extends Model{
 			drivers = Driver.findAll();
 		
 		return drivers;
+	}
+	
+	public Map generatePerformanceReport(String timeType, String time){
+		Date[] dates = CommonUtil.getStartAndEndDate(timeType, time);
+		Date start = dates[0];
+		Date end = dates[1];
+		
+		List<DriverReport> drs = DriverReport.findByDriver(this, timeType, time);
+		DriverPerformanceVO performance = new DriverPerformanceVO(this, timeType, start, end, drs);
+		Map map = new HashMap();
+		map.put("performance", performance);
+		map.put("columns", CommonUtil.assemColumns(DriverPerformanceVO.class, "id"));
+		
+		List<EventTypeReportVO> etrVOs = DriverReport.generateDriverEventPerformance(this, timeType, time);
+		Map events = new HashMap();
+		events.put("data", etrVOs);
+		events.put("columns", CommonUtil.assemColumns(EventTypeReportVO.class, "id"));
+		
+		map.put("events", events);
+		
+		return map;
+	}
+
+	public static Driver findByName(String name) {
+		return Driver.find("byName", name).first();
 	}
 }
