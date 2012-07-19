@@ -30,7 +30,7 @@ public class MyMailer extends Mailer {
 		
 		setSubject("%s %s, %s report of %s", timeType, per.start,per.end, driver.name);
 		
-		send(report);
+		sendAndWait(report);
 	}
 
 }
