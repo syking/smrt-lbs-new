@@ -14,6 +14,7 @@ public class DriverPerformanceVO {
 	public String id;
 	public String driverName;
 	public String driverNo;
+	public String email = "smrtlbs@163.com";
 	public String drivingTime;
 	public String reportType;
 	public String start;
@@ -26,6 +27,8 @@ public class DriverPerformanceVO {
 		this.id = String.valueOf(driver.id);
 		this.driverName = driver.name;
 		this.driverNo = driver.number;
+		if (driver.email != null)
+			this.email = driver.email;
 		long reduceTotal = 0;
 		long totalTimes = 0;
 		List<Long> scores = new ArrayList<Long>();

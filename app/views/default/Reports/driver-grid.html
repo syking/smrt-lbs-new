@@ -22,6 +22,7 @@
 		<input type="button" url="/excels/reportDriver" formId="report_driver_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
 		<input type="button" url="/mails/driver" formId="report_driver_search_form_${tabId}" class="k-button send-email-button" style="width:50px" value="" />
 		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="button" class="k-button view-on-map-button" id="view_on_map_button" style="width:50px" value="" />
 	</div>
 </form>
 
@@ -42,6 +43,30 @@
 	var timeType = "${timeType}";
 	var time = "${time}";
     $(document).ready(function () {
+    	
+    	$("#view_on_map_button").click(function(e) {
+    		if (!driverId || driverId <= 0)
+    			return false;
+    			
+	        var w_title = "View Driver("+driverId+") Events On Map "
+	        var wnd = $("#driver_result_view-on-map-window")
+	    	.kendoWindow({
+	    		actions: ["Custom", "Minimize", "Maximize", "Close"],
+	    		content: "http://"+ window.location.host + "/Maps/driverEvents?driverId="+driverId,
+	    		iframe: true,
+	            modal: true,
+	            visible: false,
+	            resizable: true,
+	            width: 800,
+	            height: 500,
+	            resize:function(e){
+	            	$("#view-on-map-splitter").data("kendoSplitter").size("#map-view", "100%");
+	            }
+	         }).data("kendoWindow");
+	        
+	        wnd.title(w_title).center().open();
+	    });
+    	
     	var driverCombo = #{verbatim} ${drivers} #{/verbatim} ;
     	var _index = 0;
 		$.each( driverCombo, function(i, v){

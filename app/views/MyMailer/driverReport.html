@@ -266,6 +266,7 @@ td
    <tr height="31" style='height:23.25pt;'>
     <td class="xl24" height="31" width="255" style='height:23.25pt;width:191.25pt;' x:str>Driver Name</td>
     <td class="xl24" width="255" style='width:191.25pt;' x:str>Driver No</td>
+    <td class="xl24" width="255" style='width:191.25pt;' x:str>Email</td>
     <td class="xl24" width="255" style='width:191.25pt;' x:str>Driving Time</td>
     <td class="xl24" width="255" style='width:191.25pt;' x:str>Report Type</td>
     <td class="xl24" width="255" style='width:191.25pt;' x:str>Start</td>
@@ -278,6 +279,7 @@ td
    <tr height="94" style='height:70.50pt;mso-height-source:userset;'>
     <td class="xl25" height="94" style='height:70.50pt;' x:str>${report.performance.driverName}</td>
     <td class="xl25" x:str>${report.performance.driverNo}</td>
+    <td class="xl25" x:str>${report.performance.email}</td>
     <td class="xl25" x:str>${report.performance.drivingTime}<span style='mso-spacerun:yes;'>&nbsp;</span></td>
     <td class="xl25" x:str>${report.performance.reportType}</td>
     <td class="xl25" x:str>${report.performance.start}</td>
@@ -296,7 +298,6 @@ td
     <td class="xl26" x:str>Times</td>
     <td class="xl26" x:str>Total Reduce</td>
     <td class="xl26" x:str>Percent</td>
-    <td/>
    </tr>
 	
    #{list items:report.events.data, as:'e'}
@@ -309,7 +310,6 @@ td
     <td class="xl23" x:num>${e.times}</td>
     <td class="xl23" x:num>${e.totalReduce}</td>
     <td class="xl23" x:str>${e.percent}</td>
-    <td/>
    </tr>
    #{/list}
 

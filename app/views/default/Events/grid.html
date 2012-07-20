@@ -94,7 +94,7 @@ $(document).ready(function(){
 function loadEvents(url, params){
 	$.getJSON(url, params, function(json){
 		$("#grid_${grid.tabId}").empty();
-		json.columns[json.columns.length] = { title: "Action", width: "110px", command: { text: "View On Map", className: "view-on-map-button" } };
+		json.columns[json.columns.length] = { title: "Action", width: "110px", command: { text: "&nbsp;", className: "view-on-map-button" } };
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
 		var grid = $("#grid_${grid.tabId}").kendoGrid({
 	    	dataSource: {
