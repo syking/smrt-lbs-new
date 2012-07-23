@@ -106,6 +106,12 @@ function loadDataQuery(url, params){
 		
 		$("#data-query-grid-${tabId}").empty();
 		
+		$.each(json.columns, function(i, v){
+        	if (v.field == 'startTime' || v.field == 'endTime'){
+        		v.width = "10%";
+        	}
+		});
+		
 		var grid = $("#data-query-grid-${tabId}").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
