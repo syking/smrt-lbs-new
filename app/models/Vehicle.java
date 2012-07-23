@@ -1,8 +1,10 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,8 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.alibaba.fastjson.JSON;
 
 import play.db.jpa.Model;
 import utils.CommonUtil;
@@ -90,13 +90,13 @@ public class Vehicle extends Model {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static List<Vehicle> findByCondition(List<String> criteria, List<Object> params) {
+	public static long countByCondition(List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		
 		String query = StringUtils.join(criteria, " AND ");
-		List<Vehicle> vehicles = Vehicle.find(query, p).fetch();
+		long count = Vehicle.count(query, p);
 		
-		return vehicles;
+		return count;
 	}
 	
 	public static List<ComboVO> getCombo() {
@@ -410,5 +410,73 @@ public class Vehicle extends Model {
 
 	public static Vehicle findByNumber(String vehicleNumber) {
 		return Vehicle.find("byNumber", vehicleNumber).first();
+	}
+	
+	public static Map search(int page, int pageSize, String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type){
+		List<String> criteria = new ArrayList<String>(9);
+		List<Object> params = new ArrayList<Object>(9);
+		parseCondition(number, license, fleetName, deviceName, description,cctvIp, type, criteria, params);
+		
+		Map map = new HashMap();
+		
+		Object[] p = params.toArray();
+		
+		String query = StringUtils.join(criteria, " AND ");
+		List<Vehicle> vehicles = null;
+		if (page < 0 || pageSize < 0)
+			vehicles = Vehicle.find(query, p).fetch();
+		else
+			vehicles = Vehicle.find(query, p).fetch(page, pageSize);
+	
+		
+		List<VehicleVO> vehicleVOList = new ArrayList<VehicleVO>();
+		for (Vehicle vehicle : vehicles) 
+			vehicleVOList.add(new VehicleVO().init(vehicle));
+		
+		map.put("data", vehicleVOList);
+		map.put("total", Vehicle.countByCondition(criteria, params));
+		
+		return map;
+	}
+
+	private static void parseCondition(String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type, List<String> criteria, List<Object> params) {
+		if (null != number && !number.isEmpty()) {
+			criteria.add("number LIKE ?");
+			params.add("%" + number + "%");
+		}
+
+		if (null != license && !license.isEmpty()) {
+			criteria.add("license LIKE ?");
+			params.add("%" + license + "%");
+		}
+		
+		Fleet fleet = Fleet.findByName(fleetName);
+		if (fleet != null) {
+			long fleet_id = fleet.id;
+			criteria.add("fleet_id = ?");
+			params.add(fleet_id);
+		}
+
+		Device device = Device.findByName(deviceName);
+		if (device != null) {
+			long device_id = device.id;
+			criteria.add("device_id = ?");
+			params.add(device_id);
+		}
+
+		if (null != description && !description.isEmpty()) {
+			criteria.add("description LIKE ?");
+			params.add("%" + description + "%");
+		}
+
+		if (null != type && !type.isEmpty()) {
+			criteria.add("type LIKE ?");
+			params.add("%" + type + "%");
+		}
+
+		if (null != cctvIp && !cctvIp.isEmpty()) {
+			criteria.add("cctvIp LIKE ?");
+			params.add("%" + cctvIp + "%");
+		}
 	}
 }

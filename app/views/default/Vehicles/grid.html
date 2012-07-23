@@ -64,11 +64,31 @@
     });
 
     function loadVehicles(url, params) {
+    	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+		                return {models:kendo.stringify(data.models)};
+		            }
+		            
+		    		$.each(params, function(i,v){
+						data[v.name] = v.value;
+		    		});
+		    		
+		    		return data;
+		    	}
+		    }
+		    
+			_grid.dataSource.read();
+			return ;
+		}
+	
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 		        alert(e.responseText);
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+	        	$("#grid_${grid.tabId}").data("kendoGrid").cancelChanges();//roll back 
 		    },
             transport:{
                 read:{
@@ -99,12 +119,16 @@
                     if (operation !== "read" && data.models) {
                         return {models:kendo.stringify(data.models)};
                     }
-                    return params;
+                    
+                    return data;
                 }
             },
             batch:true,
             pageSize:15,
+            serverPaging: true,
             schema:{
+            	data: "data",
+            	total: "total",
                 model:{
                     id:"id",
                     fields:{
@@ -131,9 +155,8 @@
                 }
             }
         });
-        $("#grid_${grid.tabId}").empty();
         //columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-        columnsJson = [
+        var columnsJson = [
             {
                 field:"number",
                 title:"Number"
@@ -184,7 +207,6 @@
             selectable:true,
             editable:"popup"
         }).data("kendoGrid");
-
 
     }
 

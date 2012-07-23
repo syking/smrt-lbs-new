@@ -34,16 +34,15 @@
 
 <script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
-var vehicleNo ;
 
 $(document).ready(function(){
 	
-	loadEvents("/events/listJson");
+	loadEvents("/events/search");
     
     $("#grid_${grid.tabId}").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
-        eventId = $(this).parent().parent().find("td:last").html();
-        var w_title = "View Vehicle("+vehicleNo+") Events On Map "
+        var eventId = $(this).parent().parent().find("td:first").html();
+        var w_title = "View Event("+eventId+") On Map "
         var wnd = $("#view-on-map-window")
     	.kendoWindow({
     		actions: ["Custom", "Minimize", "Maximize", "Close"],
@@ -92,24 +91,82 @@ $(document).ready(function(){
 });
 
 function loadEvents(url, params){
-	$.getJSON(url, params, function(json){
-		$("#grid_${grid.tabId}").empty();
-		json.columns[json.columns.length] = { title: "Action", width: "110px", command: { text: "&nbsp;", className: "view-on-map-button" } };
-		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
-		var grid = $("#grid_${grid.tabId}").kendoGrid({
-	    	dataSource: {
-	    		data: json.data,
-	    		pageSize:15
-	    	},
-	    	columns: json.columns, 
-	   	 	sortable: true,
-	   	 	pageable: true,
-	   	 	selectable: true
-	   	 	
-        }).data("kendoGrid");
-	}).error(function(e){
-     	alert(e.responseText);
+	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	if (_grid){
+		_grid.dataSource.transport.options.read.url = url;	
+		if (params){
+			_grid.dataSource.transport.parameterMap = function(data, operation){
+				if (operation !== "read" && data.models) {
+	                return {models:kendo.stringify(data.models)};
+	            }
+	            
+	    		$.each(params, function(i,v){
+					data[v.name] = v.value;
+	    		});
+	    		
+	    		return data;
+	    	}
+	    }
+	    
+		_grid.dataSource.read();
+		return ;
+	}
+	
+	var dataSource = new kendo.data.DataSource({
+		error: function(e) {
+			alert(e.responseText);
+	    	$("#grid_${grid.tabId}").data("kendoGrid").cancelChanges();//roll back 
+	    },
+	    transport:{
+	        read:{
+	            url:url,
+	            dataType:"json"
+	        },
+	        parameterMap:function (data, operation) {
+	            if (operation !== "read" && data.models) {
+	                return {models:kendo.stringify(data.models)};
+	            }
+	            
+	            return data;
+	        }
+	    },
+	    batch:true,
+	    pageSize:15,
+	    serverPaging: true,
+	    schema:{
+	    	data: "data",
+	    	total: "total",
+	        model:{
+	            id:"id",
+	            fields:{
+	            	id:{ editable:false, nullable:true },
+					driver:{ validation:{ required:true } },
+					vehicle:{ validation:{ required:true } },
+					department:{ validation:{ required:true } },
+					fleet:{ validation:{ required:true } },
+					serviceNo:{ validation:{ required:true } },
+					time:{ validation:{ required:true } },
+					type:{ validation:{ required:true } },
+					lat:{ validation:{ required:true } },
+					lng:{ validation:{ required:true } }
+	            }
+	        }
+	    }
 	});
+	
+	var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+	columnsJson[columnsJson.length] = { title: "Action", width: "110px", command: { text: "&nbsp;", className: "view-on-map-button" } };
+	columnsJson[0].width = "1px" ;
+	
+	var grid = $("#grid_${grid.tabId}").kendoGrid({
+		dataSource: dataSource,
+		columns: columnsJson, 
+	 	scrollable: true,
+	 	sortable: true,
+	 	pageable: true,
+	 	selectable: true
+	}).data("kendoGrid");
+	
 }
 
 function eventSearchValidate(form) {

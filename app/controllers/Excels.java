@@ -34,9 +34,9 @@ public class Excels extends Controller{
         renderTemplate(renderArgs.get(THEME) + "/Excels/data-records.xls", map);
 	}
 	
-    public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
+    public static void queryData(int page, int pageSize, Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
-		Map map = Driver.queryReport(driverId, timeType, startTime, endTime);
+		Map map = Driver.queryReport(page, pageSize, driverId, timeType, startTime, endTime);
 		if (map != null)
 			renderExcel(map);
 	}
@@ -120,13 +120,13 @@ public class Excels extends Controller{
     }
     
     public static void reportEvent(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
-		Map data = Event.search(driver, serviceNo, type, startTime, endTime);
+		Map data = Event.search(-1, -1, driver, serviceNo, type, startTime, endTime);
 		if (data != null)
 			renderExcel(data);
 	}
     
     public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime){
-    	Map data = Schedule.search(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+    	Map data = Schedule.search(-1, -1, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		if (data != null)
 			renderExcel(data);
     }

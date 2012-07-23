@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -130,10 +131,43 @@ public class Event extends Model{
 		return Event.count("select count(e) from Event e left join e.eventRecord er where er.type.techName = ? and e.driver.id = ? " + _sql, _params.toArray());
 	}
 	
-	public static Map search(Long driver, String serviceNo, Long type, Date startTime, Date endTime){
+	/**
+	 * 
+	 * @param page <0 表示fetch all
+	 * @param pageSize <0 表示fetch all
+	 * @return
+	 */
+	public static Map search(int page, int pageSize, Long driver, String serviceNo, Long type, Date startTime, Date endTime){
 		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
+		parseCondition(driver, serviceNo, type, startTime, endTime, sqlSB, params);
+
+		if (sqlSB.length() > 0 && !params.isEmpty())
+			sqlSB.insert(0, "left join e.eventRecord er where ");
+
+		List<Event> events = null;
+		if (page > 0 && pageSize > 0) 
+			events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch(page, pageSize);
+		else 
+			events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch();
+		
+		List<EventVO> eventVOList = new ArrayList<EventVO>();
+		if (events != null)
+			for (Event e : events) 
+				eventVOList.add(new EventVO().init(e));
+
+		Map map = new HashMap();
+		map.put("data", eventVOList);
+		map.put("columns", CommonUtil.assemColumns(EventVO.class));
+		
+		long count = Event.count("select count(e.id) from Event e " + sqlSB.toString(), params.toArray());
+		map.put("total", count);
+		
+		return map;
+	}
+
+	private static void parseCondition(Long driver, String serviceNo, Long type, Date startTime, Date endTime, StringBuilder sqlSB, List<Object> params) {
 		if (driver != null && driver > 0) {
 			sqlSB.append("e.driver.id = ?");
 			params.add(driver);
@@ -167,21 +201,6 @@ public class Event extends Model{
 			params.add(startTime);
 			params.add(_endTime);
 		}
-
-		if (sqlSB.length() > 0)
-			sqlSB.insert(0, "left join e.eventRecord er where ");
-
-		List<Event> events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch();
-		if (events == null)
-			return null;
-
-		List<EventVO> eventVOList = new ArrayList<EventVO>();
-
-		for (Event e : events) 
-			eventVOList.add(new EventVO().init(e));
-
-		Map data = CommonUtil.assemGridData(eventVOList, "id");
-		return data;
 	}
 	
 }

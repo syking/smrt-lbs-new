@@ -290,10 +290,44 @@ public class Schedule extends Model {
 		return true;
 	}
 
-	public static List<Schedule> findByCondition(String driverNumber,String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
+	public static List<Schedule> findByCondition(int page, int pageSize, String driverNumber,String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
 		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
+		parseCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime, sqlSB, params);
+		
+		List<Schedule> schedules = null;
+		if (sqlSB.length() > 0 && !params.isEmpty()){
+			if (page < 0 || pageSize < 0)
+				schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch();
+			else
+				schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch(page, pageSize);
+		} else {
+			if (page < 0 || pageSize < 0)
+				schedules = Schedule.all().fetch(page, pageSize);
+			else
+				schedules = Schedule.findAll();
+		}
+		
+		return schedules;
+	}
+	
+	public static long countByCondition(String driverNumber,String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
+		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime, sqlSB, params);
+		
+		if (sqlSB.length() > 0 && !params.isEmpty())
+			return Schedule.count(sqlSB.toString(), params.toArray());
+		else
+			return Schedule.count();
+	}
+
+	private static void parseCondition(String driverNumber,
+			String vehicleNumber, String route, String duty, String startDate,
+			String startTime, String endDate, String endTime,
+			StringBuilder sqlSB, List<Object> params) {
 		if (driverNumber != null && driverNumber.length() > 0) {
 			Driver driver = Driver.findByNumber(driverNumber);
 			if (driver != null){
@@ -358,14 +392,6 @@ public class Schedule extends Model {
 			
 			sqlSB.append("end_time < ?");
 		}
-		
-		List<Schedule> schedules = null;
-		if (sqlSB.length() > 0 && !params.isEmpty())
-			schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch();
-		else
-			schedules = Schedule.findAll();
-		
-		return schedules;
 	}
 
 	public static List<ComboVO> assemRouteComboVO() {
@@ -379,10 +405,15 @@ public class Schedule extends Model {
 		return result;
 	}
 
-	public static Map search(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
-		List<Schedule> schedules = Schedule.findByCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+	public static Map search(int page, int pageSize, String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
+		List<Schedule> schedules = Schedule.findByCondition(page, pageSize, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		List<ScheduleVO> vos = Schedule.assemScheduleVO(schedules);
-		Map data = CommonUtil.assemGridData(vos, "id");
+		Map data = new HashMap();
+		data.put("data", vos);
+		data.put("columns", CommonUtil.assemColumns(ScheduleVO.class, "id"));
+		long count = Schedule.countByCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+		data.put("total", count);
+		
 		return data;
 	}
 

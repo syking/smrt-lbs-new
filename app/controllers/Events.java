@@ -1,18 +1,27 @@
 package controllers;
 
-import models.*;
+import static models.User.Constant.THEME;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import models.Driver;
+import models.Event;
+import models.EventRecord;
+import models.EventType;
+import models.Schedule;
+import models.Vehicle;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
-import utils.Splitter;
 import vo.ComboVO;
 import vo.EventGPS;
 import vo.EventVO;
-
-import java.util.*;
-
-import static models.User.Constant.THEME;
+import vo.Grid;
 
 @With(Interceptor.class)
 public class Events extends Controller {
@@ -102,37 +111,8 @@ public class Events extends Controller {
 	}
 
 	@annotations.Permission
-	public static void listJson() {
-		List<Event> events = Event.findAll();
-		if (events == null)
-			renderJSON("");
-
-		List<EventVO> eventVOList = new ArrayList<EventVO>();
-
-		for (Event e : events) 
-			eventVOList.add(new EventVO().init(e));
-
-		Map data = CommonUtil.assemGridData(eventVOList, "id");
-
-		renderJSON(data);
-	}
-
-	@annotations.Permission
-	public static void destroy(String models) {
-		renderJSON(models);
-	}
-
-	@annotations.Permission
-	public static void update(String models) {
-		renderJSON(models);
-	}
-
-	@annotations.Permission
-	public static void search(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
-		Map data = Event.search(driver, serviceNo, type, startTime, endTime);
-		if (data == null)
-			return ;
-		
+	public static void search(int page, int pageSize, Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
+		Map data = Event.search(page, pageSize, driver, serviceNo, type, startTime, endTime);
 		renderJSON(data);
 	}
 
@@ -161,9 +141,10 @@ public class Events extends Controller {
 		map.put("drivers", CommonUtil.getGson().toJson(drivers));
 		map.put("lines", CommonUtil.getGson().toJson(lines));
 		map.put("types", CommonUtil.getGson().toJson(types));
-		Map _map = new HashMap();
-		_map.put("tagId", id);
-		map.put("grid", _map);
+		Grid grid = new Grid();
+		grid.tabId = id;
+		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(EventVO.class));
+		map.put("grid", grid);
 		
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Events/grid.html")).render(map));
 	}

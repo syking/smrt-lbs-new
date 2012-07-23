@@ -119,7 +119,38 @@
 	}
     
     function loadSchedules(url, params){
-    	$("#grid_${grid.tabId}").empty();
+    	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+                    	$.each(data.models, function(i, v){
+                    		var model = data.models[i];
+	                    	/**
+	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
+	                    	 */
+	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
+	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
+	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
+	                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
+                    	});
+                    	
+                        return {models: kendo.stringify(data.models)};
+                    }
+		            
+		    		$.each(params, function(i,v){
+						data[v.name] = v.value;
+		    		});
+		    		
+		    		return data;
+		    	}
+		    }
+		    
+			_grid.dataSource.read();
+			return ;
+		}
+		
     	var dataSource = new kendo.data.DataSource({
     		error: function(e) {
 	        	alert(e.responseText);
@@ -168,12 +199,15 @@
                         return {models: kendo.stringify(data.models)};
                     }
                     
-                    return params;
+                    return data;
                 }
             },
             batch: true,
             pageSize: 15,
+            serverPaging: true,
             schema: {
+            	data: "data",
+            	total: "total",
             	parse: function(data){
             		$.each(data, function(i, val){
             			val.startTime = new Date(val.startDate + " " + val.startTime);

@@ -141,57 +141,9 @@ public class Vehicles extends Controller {
 	/**
 	 * 车辆管理：检索车辆信息
 	 */
-	public static void search(String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type) {
-
-		List<String> criteria = new ArrayList<String>(9);
-		List<Object> params = new ArrayList<Object>(9);
-
-		if (null != number && !number.isEmpty()) {
-			criteria.add("number LIKE ?");
-			params.add("%" + number + "%");
-		}
-
-		if (null != license && !license.isEmpty()) {
-			criteria.add("license LIKE ?");
-			params.add("%" + license + "%");
-		}
-		
-		Fleet fleet = Fleet.findByName(fleetName);
-		if (fleet != null) {
-			long fleet_id = fleet.id;
-			criteria.add("fleet_id = ?");
-			params.add(fleet_id);
-		}
-
-		Device device = Device.findByName(deviceName);
-		if (device != null) {
-			long device_id = device.id;
-			criteria.add("device_id = ?");
-			params.add(device_id);
-		}
-
-		if (null != description && !description.isEmpty()) {
-			criteria.add("description LIKE ?");
-			params.add("%" + description + "%");
-		}
-
-		if (null != type && !type.isEmpty()) {
-			criteria.add("type LIKE ?");
-			params.add("%" + type + "%");
-		}
-
-		if (null != cctvIp && !cctvIp.isEmpty()) {
-			criteria.add("cctvIp LIKE ?");
-			params.add("%" + cctvIp + "%");
-		}
-
-		List<Vehicle> vehicleList = Vehicle.findByCondition(criteria, params);
-
-		List<VehicleVO> vehicleVOList = new ArrayList<VehicleVO>();
-		for (Vehicle vehicle : vehicleList) 
-			vehicleVOList.add(new VehicleVO().init(vehicle));
-		
-		renderJSON(vehicleVOList);
+	public static void search(int page, int pageSize, String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type) {
+		Map map = Vehicle.search(page, pageSize, number, license, fleetName, deviceName, description, cctvIp, type);
+		renderJSON(map);
 	}
 
 	/**
@@ -205,16 +157,19 @@ public class Vehicles extends Controller {
 	/**
 	 * 获取所有车辆信息
 	 */
-	public static void read() {
+	public static void read(int page, int pageSize) {
 		List<VehicleVO> result = new ArrayList<VehicleVO>();
 
-		List<Vehicle> vehicleList = Vehicle.find("order by id desc").fetch();
+		List<Vehicle> vehicleList = Vehicle.find("order by id desc").fetch(page, pageSize);
 		for (Vehicle vehicle : vehicleList) {
 			VehicleVO vehicleVO = new VehicleVO().init(vehicle);
 			result.add(vehicleVO);
 		}
 		
-		renderJSON(result);
+		Map map = new HashMap();
+		map.put("data", result);
+		map.put("total", Vehicle.count());
+		renderJSON(map);
 	}
 
 	/**

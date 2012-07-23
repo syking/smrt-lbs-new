@@ -58,19 +58,23 @@ public class Logs extends Controller {
 		renderJSON(models);
 	}
 
-	public static void read() {
+	public static void read(int page, int pageSize) {
 		List<LogVO> result = new ArrayList<LogVO>();
 
-		List<Log> logList = Log.findAllOrderByIdDesc();
+		List<Log> logList = Log.find("order by id desc").fetch(page, pageSize);
 		for (Log log : logList) {
 			LogVO lv = new LogVO().init(log);
 			result.add(lv);
 		}
 
-		renderJSON(result);
+		Map map = new HashMap();
+		map.put("data", result);
+		map.put("total", Log.count());
+		
+		renderJSON(map);
 	}
 
-	public static void search(String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip) {
+	public static void search(int page, int pageSize, String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip) {
 
 		List<String> criteria = new ArrayList<String>(9);
 		List<Object> params = new ArrayList<Object>(9);
@@ -134,21 +138,32 @@ public class Logs extends Controller {
 			params.add(endDateTime);
 		}
 
-		List<Log> logList = filter(criteria, params);
+		List<Log> logList = filter(page, pageSize, criteria, params);
 
 		List<LogVO> logVOList = new ArrayList<LogVO>();
 		for (Log log : logList) {
 			logVOList.add(new LogVO().init(log));
 		}
-		renderJSON(logVOList);
+		
+		Map map = new HashMap();
+		map.put("data", logVOList);
+		map.put("total", filterCount(criteria, params));
+		
+		renderJSON(map);
 
 	}
 
-	private static List<Log> filter(List<String> criteria, List<Object> params) {
+	private static List<Log> filter(int page, int pageSize, List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		String query = StringUtils.join(criteria, " AND ");
-		List<Log> vehicles = Log.find(query, p).fetch();
+		List<Log> vehicles = Log.find(query, p).fetch(page, pageSize);
 		return vehicles;
+	}
+	
+	private static long filterCount(List<String> criteria, List<Object> params) {
+		Object[] p = params.toArray();
+		String query = StringUtils.join(criteria, " AND ");
+		return Log.count(query, p);
 	}
 
 }

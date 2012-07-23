@@ -24,7 +24,9 @@ import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
 import vo.DriverPerformanceVO;
+import vo.EventReportVO;
 import vo.EventTypeReportVO;
+import vo.Grid;
 
 /**
  * 报表，主要是对Event的报表分析。
@@ -369,14 +371,17 @@ public class Reports extends Controller {
     	
     	Map map = new HashMap();
     	map.put("drivers", CommonUtil.getGson().toJson(drivers));
-    	map.put("tabId", id);
+    	Grid grid = new Grid();
+    	grid.tabId = id;
+    	grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(EventReportVO.class, "department","fleet","route", "id"));
     	
+    	map.put("grid", grid);
     	renderHtml(TemplateLoader.load(template(renderArgs.get(THEME)+"/Reports/data-query.html")).render(map));
 	}
 
-	public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
+	public static void queryData(int page, int pageSize, Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
-		Map map = Driver.queryReport(driverId, timeType, startTime, endTime);
+		Map map = Driver.queryReport(page, pageSize, driverId, timeType, startTime, endTime);
     	renderJSON(map);
 	}
 }

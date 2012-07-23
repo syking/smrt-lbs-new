@@ -158,10 +158,36 @@ public class DriverReport extends Model {
 		return false;
 	}
 	
-	public static List<DriverReport> findByDriver(Driver driver, String timeType, String startTime, String endTime) {
+	public static List<DriverReport> findByDriver(int page, int pageSize, Driver driver, String timeType, String startTime, String endTime) {
 		List<DriverReport> drs = new ArrayList<DriverReport>();
 		StringBuilder sql = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
+		parseCondition(driver, timeType, startTime, endTime, sql, params);
+		
+		List<DriverReport> _drs = null;
+		if (sql.length() > 0 && !params.isEmpty())
+			_drs = DriverReport.find(sql.toString(), params.toArray()).fetch(page, pageSize);
+		else
+			_drs = DriverReport.all().fetch(page, pageSize);
+		
+		if (_drs != null && !_drs.isEmpty())
+			drs.addAll(_drs);
+		
+		return drs;
+	}
+
+	public static long countByCondition(Driver driver, String timeType, String startTime, String endTime){
+		StringBuilder sql = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseCondition(driver, timeType, startTime, endTime, sql, params);
+		
+		if (sql.length() > 0 && !params.isEmpty())
+			return DriverReport.count(sql.toString(), params.toArray());
+		
+		return DriverReport.count();
+	}
+	
+	private static void parseCondition(Driver driver, String timeType, String startTime, String endTime, StringBuilder sql, List<Object> params) {
 		if (driver != null){
 			sql.append("driver = ?");
 			params.add(driver);
@@ -184,17 +210,6 @@ public class DriverReport extends Model {
 				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, endTime));
 			}
 		}
-		
-		List<DriverReport> _drs = null;
-		if (sql.length() > 0)
-			_drs = DriverReport.find(sql.toString(), params.toArray()).fetch();
-		else
-			_drs = DriverReport.findAll();
-		
-		if (_drs != null && !_drs.isEmpty())
-			drs.addAll(_drs);
-		
-		return drs;
 	}
 	
 	public static List<DriverReport> findByDrivers(Collection<Driver> drivers, String timeType, String time) {

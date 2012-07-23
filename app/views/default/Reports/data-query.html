@@ -1,4 +1,4 @@
-<form  id="data-query-form-${tabId}" action="" method="post" class="k-content" onsubmit="return dataQueryValidate(this)" style="padding:10px 0;">
+<form  id="data-query-form-${grid.tabId}" action="" method="post" class="k-content" onsubmit="return dataQueryValidate(this)" style="padding:10px 0;">
 	<label for="data-query-drivers">Driver:</label>
 	<input name="driverId" id="data-query-drivers" />
 	
@@ -19,12 +19,12 @@
 	
 	<div style="float:right; padding-right:20px;">
 		<input type="submit" id="data-query-search-button" class="k-button search-button" style="width:50px" value="" />
-		<input type="button" url="/excels/queryData" formId="data-query-form-${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
+		<input type="button" url="/excels/queryData" formId="data-query-form-${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
 		<input type="button" class="k-button print-button" style="width:50px" value="" />
 	</div>
 	
 </form>
-<div id="data-query-grid-${tabId}"></div>
+<div id="data-query-grid-${grid.tabId}"></div>
 
 <script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
@@ -33,7 +33,7 @@ var timeType ;
 var startTime ;
 var endTime ;
 $(document).ready(function(){
-	var form = $("#data-query-form-${tabId}");
+	var form = $("#data-query-form-${grid.tabId}");
 	
 	dataQueryValidate(form);
 	var driverCombo = #{verbatim} ${drivers} #{/verbatim};
@@ -99,34 +99,94 @@ function assemDateTime(name, value){
 }
 
 function loadDataQuery(url, params){
-	$.getJSON(url, params, function(json){
-		if (!json){
-			return ;
-		}
-		
-		$("#data-query-grid-${tabId}").empty();
-		
-		$.each(json.columns, function(i, v){
-        	if (v.field == 'startTime' || v.field == 'endTime'){
-        		v.width = "10%";
-        	}
-		});
-		
-		var grid = $("#data-query-grid-${tabId}").kendoGrid({
-	    	dataSource: {
-	    		data: json.data,
-	    		pageSize:15
-	    	},
-	    	columns: json.columns, 
-	   	 	scrollable: true,
-	   	 	sortable: true,
-	   	 	pageable: true,
-	   	 	selectable: true
-        }).data("kendoGrid");
+	var _grid = $("#data-query-grid-${grid.tabId}").data("kendoGrid");
+	if (_grid){
+		_grid.dataSource.transport.options.read.url = url;	
+		if (params){
+			_grid.dataSource.transport.parameterMap = function(data, operation){
+				if (operation !== "read" && data.models) {
+	                return {models:kendo.stringify(data.models)};
+	            }
+	            
+	    		$.each(params, function(i,v){
+					data[v.name] = v.value;
+	    		});
+	    		
+	    		return data;
+	    	}
+	    }
 	    
-	}).error(function(e){
-     	alert(e.responseText);
+		_grid.dataSource.read();
+		return ;
+	}
+	
+	var dataSource = new kendo.data.DataSource({
+		error: function(e) {
+	        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
+	        	alert(e.responseText);
+	        else{
+	        	alert("Oops! 500 error!");
+	        }
+	        
+	    	$("#data-query-grid-${grid.tabId}").data("kendoGrid").cancelChanges();//roll back 
+	    },
+	    transport:{
+	        read:{
+	            url:url,
+	            dataType:"json"
+	        },
+	        parameterMap:function (data, operation) {
+	            if (operation !== "read" && data.models) {
+	                return {models:kendo.stringify(data.models)};
+	            }
+	            
+	            return data;
+	        }
+	    },
+	    batch:true,
+	    pageSize:15,
+	    serverPaging: true,
+	    schema:{
+	    	data: "data",
+	    	total: "total",
+	        model:{
+	            id:"id",
+	            fields:{
+	                id:{ editable:false, nullable:true },
+					driver:{ validation:{ required:true } },
+					driverNo:{ validation:{ required:true } },
+					drivingTime:{ validation:{ required:true } },
+					reportType:{ validation:{ required:true } },
+					startTime:{ validation:{ required:true } },
+					endTime:{ validation:{ required:true } },
+					speeding:{ validation:{ required:true } },
+					suddenAcceleration:{ validation:{ required:true } },
+					suddenBrake:{ validation:{ required:true } },
+					suddenLTurn:{ validation:{ required:true } },
+					suddenRTurn:{ validation:{ required:true } },
+					idling:{ validation:{ required:true } },
+					total:{ validation:{ required:true } },
+					performanceIndex:{ validation:{ required:true } }
+	            }
+	        }
+	    }
 	});
+	
+	var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+	$.each(columnsJson, function(i, v){
+		if (v.field == 'startTime' || v.field == 'endTime'){
+			v.width = "10%";
+		}
+	});
+	
+	var grid = $("#data-query-grid-${grid.tabId}").kendoGrid({
+		dataSource: dataSource,
+		columns: columnsJson, 
+	 	scrollable: true,
+	 	sortable: true,
+	 	pageable: true,
+	 	selectable: true
+	}).data("kendoGrid");
 }
 
 function dataQueryValidate(form) {

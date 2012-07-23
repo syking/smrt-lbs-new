@@ -30,7 +30,6 @@ public class Log extends Model {
 	public Log(String type, String action, String content, User user, String ip, boolean isSuccess){
 		this.type = type == null ? "normal" : type;
 		this.dateTime = new Date();
-		this.type = "normal";
 		this.content = content;
 		this.action = action;
 		this.userName = user == null ? "-" : user.name;

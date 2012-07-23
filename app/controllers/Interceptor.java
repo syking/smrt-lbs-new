@@ -109,6 +109,8 @@ public class Interceptor extends Controller {
 	
 	@Catch(Throwable.class)
     public static void logIllegalState(Throwable e) {
+		e.printStackTrace();
+		new Log("System", "-", e.toString(), null, "-", false).create();
 		error(e.getMessage());
     }
 }

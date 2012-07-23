@@ -91,7 +91,7 @@ public class Driver extends Model{
 		return Driver.find(query, p).fetch();
 	}
     
-    public static Map queryReport(Long driverId, String timeType, String startTime, String endTime){
+    public static Map queryReport(int page, int pageSize, Long driverId, String timeType, String startTime, String endTime){
     	List<EventReportVO> datas = new ArrayList<EventReportVO>();
     	
     	List<Driver> drivers = null;
@@ -101,7 +101,7 @@ public class Driver extends Model{
     		drivers.add(driver);
     	}
     	
-		List<DriverReport> drs = DriverReport.findByDriver(driver, timeType, startTime, endTime);
+		List<DriverReport> drs = DriverReport.findByDriver(page, pageSize, driver, timeType, startTime, endTime);
 		if (drs != null && !drs.isEmpty()){
 			for (DriverReport dr : drs){
 				EventReportVO drVO = new EventReportVO(dr);
@@ -112,6 +112,7 @@ public class Driver extends Model{
     	Map map = new HashMap();
 		map.put("data", datas);
 		map.put("columns", CommonUtil.assemColumns(EventReportVO.class, "department","fleet","route", "id"));
+		map.put("total", DriverReport.countByCondition(driver, timeType, startTime, endTime));
 		
     	return map;
     }

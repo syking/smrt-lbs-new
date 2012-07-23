@@ -69,6 +69,28 @@
     });
 
     function loadLogs(url, params) {
+    	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+    	if (_grid){
+    		_grid.dataSource.transport.options.read.url = url;	
+    		if (params){
+    			_grid.dataSource.transport.parameterMap = function(data, operation){
+    				if (operation !== "read" && data.models) {
+                        return {models:kendo.stringify(data.models)};
+                    }
+                    
+            		$.each(params, function(i,v){
+						data[v.name] = v.value;
+            		});
+            		
+            		return data;
+            	}
+            }
+            
+    		_grid.dataSource.read();
+    		
+    		return ;
+    	}
+    	
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
@@ -109,16 +131,20 @@
                     		alert("create success");
                     }
                 },
-                parameterMap:function (options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models:kendo.stringify(options.models)};
+                parameterMap:function (data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models:kendo.stringify(data.models)};
                     }
-                    return params;
+                    
+                    return data;
                 }
             },
             batch:true,
             pageSize:10,
+            serverPaging: true,
             schema:{
+            	data: "data",
+            	total: "total",
                 model:{
                     id:"id",
                     fields:{
@@ -136,23 +162,25 @@
         });
 
         var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
-        $("#grid_${grid.tabId}").empty();
         columnsJson[columnsJson.length] = { command:["destroy"], title:"Action", width:"100px" };
         $.each(columnsJson, function(i, v){
         	if (v.field == 'content'){
-        		v.width = "55%";
+        		v.width = "50%";
         	}else if (v.field == 'action'){
-        		v.width = "13%";
+        		v.width = "10%";
         	}else if (v.field == 'dateTime'){
         		v.width = "10%";
+        	}else if (v.field == 'userName'){
+        		v.width = "5%";
         	}
         });
+        
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
             pageable:true,
             selectable:true,
             columns:columnsJson,
-            editable:"${grid.editable}"
+            editable: "${grid.editable}"
         }).data("kendoGrid");
     }
 
