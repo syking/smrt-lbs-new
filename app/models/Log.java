@@ -27,7 +27,8 @@ public class Log extends Model {
 	public Date dateTime;// when ?
 	public boolean isSuccess;// the result of this action
 
-	public Log(String action, String content, User user, String ip, boolean isSuccess){
+	public Log(String type, String action, String content, User user, String ip, boolean isSuccess){
+		this.type = type == null ? "normal" : type;
 		this.dateTime = new Date();
 		this.type = "normal";
 		this.content = content;

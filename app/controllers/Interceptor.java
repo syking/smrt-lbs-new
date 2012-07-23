@@ -101,7 +101,7 @@ public class Interceptor extends Controller {
 			content = e.toString();
 		}
 		
-		new Log(action, content, loginUser, ip, flag).create();
+		new Log("HTTP Access", action, content, loginUser, ip, flag).create();
 		
 		if (!flag)
 			forbidden("Access denied");

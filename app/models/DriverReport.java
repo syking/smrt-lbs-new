@@ -241,48 +241,54 @@ public class DriverReport extends Model {
 		List<Driver> drivers = Driver.findAll();
 		if (drivers == null || drivers.isEmpty()){
 			System.out.println(CommonUtil.getNowTime() + "------------- drivers is null");
+			new Log("System", "DriverReport.doStaticstics", "Driver not found.", null, "-", false).create();
 			return;
 		}
 		
 		List<EventType> eventTypes = EventType.findAll();
 		if (eventTypes == null || eventTypes.isEmpty()){
 			System.out.println(CommonUtil.getNowTime() + "------------- eventTypes is null");
+			new Log("System", "DriverReport.doStaticstics", "EventType not found.", null, "-", false).create();
 			return ;
 		}
 		
 		// 日报表 ->
-		Date start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(currentTime, -1)) + " 00:00:00");
-		Date end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start, 1)) + " 00:00:00");
-		end = CommonUtil.addSecond(end, -1);
-		String timeType = TIME_TYPE.DAILY;
-		List<DriverReport> db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
-		if (db_dr == null || db_dr.isEmpty()){
-			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
-		}
+		Date end = dailyReport(currentTime, drivers, eventTypes);
 			
 		// 周报表 -> 
-		int day = CommonUtil.getDayOfWeek(end);
-		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(end, -day+2))+" 00:00:00");
-		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, 7)) + " 00:00:00");
-		end = CommonUtil.addSecond(end, -1);
-		timeType = TIME_TYPE.WEEKLY;
-		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
-		if (db_dr == null || db_dr.isEmpty()){
-			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
-		}
+		end = weeklyReport(drivers, eventTypes, end);
 		
 		// 月报表 -> 
-		int lastDay = CommonUtil.getLastDayOfMonth(end)-1;
-		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", CommonUtil.addMonth(end, -1))+"-01 00:00:00");
-		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
-		end = CommonUtil.addSecond(end, -1);
-		timeType = TIME_TYPE.MONTHLY;
-		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
-		if (db_dr == null || db_dr.isEmpty()){
-			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
-		}
+		end = monthlyReport(drivers, eventTypes, end);
 		
 		// 年报表 -> 
+		Date firtDayOfYear = yearlyReport(drivers, eventTypes, end);
+		
+		// Rebuild the Incomplete Report
+		System.out.println(CommonUtil.formatTime(firtDayOfYear));
+		while (firtDayOfYear.before(currentTime)){
+			firtDayOfYear = CommonUtil.addDate(firtDayOfYear, 1);
+			// daily
+			Date _end = dailyReport(firtDayOfYear, drivers, eventTypes);
+			
+			// weekly
+			_end = weeklyReport(drivers, eventTypes, _end);
+			
+			// monthly
+			_end = monthlyReport(drivers, eventTypes, _end);
+			
+			// yearly
+			yearlyReport(drivers, eventTypes, _end);
+			
+			System.out.println(CommonUtil.formatTime(firtDayOfYear));
+		}
+	}
+
+	private static Date yearlyReport(List<Driver> drivers, List<EventType> eventTypes, Date end) {
+		Date start;
+		String timeType;
+		List<DriverReport> db_dr;
+		int lastDay;
 		lastDay = CommonUtil.getLastDayOfYear(end)-1;
 		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", CommonUtil.addYear(end, -1))+"-01-01 00:00:00");
 		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) + " 00:00:00");
@@ -291,9 +297,74 @@ public class DriverReport extends Model {
 		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
 		if (db_dr == null || db_dr.isEmpty()){
 			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		} else {
+			System.out.println("yearly no report");
 		}
+		
+		return start;
+	}
+
+	private static Date monthlyReport(List<Driver> drivers, List<EventType> eventTypes, Date end) {
+		Date start;
+		String timeType;
+		List<DriverReport> db_dr;
+		int lastDay = CommonUtil.getLastDayOfMonth(end)-1;
+		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", CommonUtil.addMonth(end, -1))+"-01 00:00:00");
+		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
+		timeType = TIME_TYPE.MONTHLY;
+		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		} else {
+			System.out.println("monthly no report");
+		}
+		
+		return end;
+	}
+
+	private static Date weeklyReport(List<Driver> drivers, List<EventType> eventTypes, Date end) {
+		Date start;
+		String timeType;
+		List<DriverReport> db_dr;
+		int day = CommonUtil.getDayOfWeek(end);
+		start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(end, -day+2))+" 00:00:00");
+		end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, 7)) + " 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
+		timeType = TIME_TYPE.WEEKLY;
+		db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		} else {
+			System.out.println("weekly no report");
+		}
+		
+		return end;
+	}
+
+	private static Date dailyReport(final Date currentTime, List<Driver> drivers, List<EventType> eventTypes) {
+		Date start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(currentTime, -1)) + " 00:00:00");
+		Date end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start, 1)) + " 00:00:00");
+		end = CommonUtil.addSecond(end, -1);
+		String timeType = TIME_TYPE.DAILY;
+		List<DriverReport> db_dr = DriverReport.find("startTime = ? and endTime = ? and timeType = ?", start, end, timeType).fetch();
+		if (db_dr == null || db_dr.isEmpty()){
+			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
+		} else {
+			System.out.println("daily no report");
+		}
+		
+		return end;
 	}
 	
+	/**
+	 *Create the Report and Save it to DataBase
+	 * @param drivers
+	 * @param timeType
+	 * @param start
+	 * @param end
+	 * @param eventTypes
+	 */
 	public static void saveToDb(List<Driver> drivers, String timeType, Date start, Date end, List<EventType> eventTypes){
 		for (Driver d : drivers){
 			DriverReport dr = new DriverReport();
@@ -372,6 +443,8 @@ public class DriverReport extends Model {
 			
 			dr.create();
 		}
+		
+		new Log("System", "DriverReport.saveToDB", String.format("%s Report between %s and %s .", timeType, start, end), null, "-", false).create();
 	}
 	
 	/**

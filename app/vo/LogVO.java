@@ -15,7 +15,7 @@ import utils.CommonUtil;
 public class LogVO{
     public LogVO init(Log log) {
         this.id  = log.id;
-        //this.type = log.type;
+        this.type = log.type;
         //this.name = log.name;
         this.content = log.content;
         this.action = log.action;
@@ -28,7 +28,7 @@ public class LogVO{
     }
 
     public long id;
-    //public String type;
+    public String type;
     //public String name;
     public String action;
     public String content;

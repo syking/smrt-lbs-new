@@ -118,6 +118,7 @@ public class Maps extends Controller {
     
     public static void lineEventsGPS(String line){
     	List<Event> events = Event.find("service_number = ?", line).fetch();
+    	System.out.println("event--->"+events);
     	Map result = viewOnMap("line_" + line, events, "id", "vehicle", "department", "driver", "fleet");
     	
     	renderText(result.get("eventGPS"));

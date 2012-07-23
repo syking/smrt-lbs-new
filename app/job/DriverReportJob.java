@@ -3,6 +3,7 @@ package job;
 import java.util.Date;
 
 import models.DriverReport;
+import models.Log;
 import play.jobs.Every;
 import play.jobs.Job;
 import play.jobs.On;
@@ -13,7 +14,7 @@ import utils.CommonUtil;
  * @author weiwei
  *
  */
-@Every("1min")
+@Every("1h")
 public class DriverReportJob extends Job{
 
 	public void doJob(){
@@ -21,7 +22,7 @@ public class DriverReportJob extends Job{
 			//System.out.println(CommonUtil.getNowTime() + "----------- start DriverRecord Job -------------------");
 			DriverReport.doStatistics(new Date());
 		}catch(Throwable e){
-			e.printStackTrace();
+			new Log("System", "DriverReportJob", e.toString(), null, "-", false).create();
 		}
 	}
 	
