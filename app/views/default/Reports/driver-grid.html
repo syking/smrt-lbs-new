@@ -3,14 +3,14 @@
 	<div id="driver_result_view-on-map-window"></div>
 </div>
 
-<form id="report_driver_search_form_${tabId}" action="/reports/driverListJson" method="post" class="k-content" onsubmit="return reportDriverSearchValidate(this)" style="padding:10px 0;">
+<form id="report_driver_search_form_${tabId}" action="/reports/driverListJson" method="post" class="k-content" style="padding:10px 0;">
 	
 	<label for="${tabId}_driverId">Driver Name:</label>
 	<input name="driverId" id="${tabId}_driverId" required />
 	
 	<div style="height:8px"></div>
 	
-	<label for="${tabId}_reportType" >Time Type:</label>
+	<label for="${tabId}_reportType" >Report Type:</label>
 	<input name="timeType" id="${tabId}_reportType" required />
 	
 	<label for="${tabId}_date" id="date_label">Day:</label>
@@ -18,21 +18,18 @@
 		<input name="time" id="${tabId}_date" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
-		<input type="button" url="/excels/reportDriver" formId="report_driver_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" url="/mails/driver" formId="report_driver_search_form_${tabId}" class="k-button send-email-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
-		<input type="button" class="k-button view-on-map-button" id="view_on_map_button" style="width:50px" value="" />
+		<input type="submit" id="${tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+		<input type="button" url="/excels/reportDriver" formId="report_driver_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" url="/mails/driver" formId="report_driver_search_form_${tabId}" class="k-button send-email-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button view-on-map-button" id="view_on_map_button" style="width:50px" value="&nbsp;" />
 	</div>
 </form>
 
 <div id="grid_${tabId}"></div>
-
-<div id="chart_bg">
-	<div class="chart-wrapper">
-    	<div id="pie_chart">
-    	</div>
-    </div>
+<div style="height:5px"></div>
+<div class="chart-wrap">
+	<div id="pie_chart"></div>
 </div>
 
 <div id="event_grid_${tabId}"></div>
@@ -153,8 +150,13 @@
             }
         });
         
-        $("#report_driver_search_form_${tabId}").kendoValidator();
-        reportDriverSearchValidate($("#report_driver_search_form_${tabId}"));
+        var form = $("#report_driver_search_form_${tabId}");
+		form.kendoValidator();
+		reportDriverSearchValidate(form);
+		$(":submit[id=${tabId}_search-button]").click(function(check){ 
+			reportDriverSearchValidate(form);
+		    check.preventDefault();//此处阻止提交表单  
+		});
     });
     
     function loadReportDrivers(url, params){
@@ -169,12 +171,12 @@
     	//---------- driver performance report -------------
     	$.getJSON(url, params, function(json){
     		$("#grid_${tabId}").empty();
-    		// json.columns[json.columns.length] = { title: "id", width: "0px", field: "id" };
             $("#grid_${tabId}").kendoGrid({
                 dataSource: json.data,
                 pageable: false,
     	   	 	sortable: false,
-    	   	 	scrollable: false,
+    	   	 	scrollable: true,
+    	   	 	resizable: true,
                 columns: json.columns
             });
             
@@ -209,14 +211,20 @@
 	        });
 	        
 	        //--------- driver event grid report ---------------
+	        $.each(eventJson.columns, function(i, v){
+	        	if (v.field == 'eventType'){
+	        		v.width = "200px";
+	        	}
+	        });
 	        $("#event_grid_${tabId}").kendoGrid({
                 dataSource: {
                 	data: eventJson.data,
-                	pageSize:8
+                	pageSize:3
                 },
                 pageable: true,
     	   	 	sortable: true,
     	   	 	scrollable: true,
+    	   	 	resizable: true,
                 columns: eventJson.columns
             });
     	}).error(function(e){

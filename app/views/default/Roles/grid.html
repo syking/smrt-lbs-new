@@ -8,7 +8,7 @@
 	<input name="desc" id="${grid.tabId}_desc" class="k-input k-textbox"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp" />
 	</div>
 	
 </form>
@@ -61,7 +61,7 @@
                 }
             },
             batch: true,
-            pageSize: 15,
+            pageSize: 10,
             schema: {
             	parse: function(data){
 					
@@ -109,6 +109,7 @@
             dataSource:dataSource,
             pageable:true,
             scrollable:true,
+            resizable:true,
             sortable:true,
             selectable:true,
             toolbar:["create"],

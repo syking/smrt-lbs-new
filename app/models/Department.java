@@ -112,11 +112,30 @@ public class Department extends Model{
 		return true;
 	}
 	
-	public static List<Department> findByCondition(final String name, final String parentName){
+	public static List<Department> findByCondition(int page, int pageSize, final String name, final String parentName){
 		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
 		final StringBuilder sqlSB = new StringBuilder();
 		final List<Object> params = new ArrayList<Object>();
+		parseCondition(name, parentName, sqlSB, params);
+
+		List<Department> departments = null;
+		if (page <= 0 || pageSize <= 0)
+			departments = Department.find(sqlSB.toString(), params.toArray()).fetch();
+		else
+			departments = Department.find(sqlSB.toString(), params.toArray()).fetch(page, pageSize);
 		
+		return departments;
+	}
+	
+	public static long countByCondition(final String name, final String parentName){
+		final StringBuilder sqlSB = new StringBuilder();
+		final List<Object> params = new ArrayList<Object>();
+		parseCondition(name, parentName, sqlSB, params);
+		
+		return Department.count(sqlSB.toString(), params.toArray());
+	}
+
+	private static void parseCondition(final String name, final String parentName, final StringBuilder sqlSB, final List<Object> params) {
 		Department parent = Department.findByName(parentName);
 		if (parent != null) {
 			sqlSB.append("parent = ?");
@@ -130,10 +149,6 @@ public class Department extends Model{
 			sqlSB.append("name like ?");
 			params.add("%" + name + "%");
 		}
-
-		List<Department> departments = Department.find(sqlSB.toString(), params.toArray()).fetch();
-		
-		return departments;
 	}
 	
 	public static List<DepartmentVO> assemDepartmentVO(List<Department> departments){

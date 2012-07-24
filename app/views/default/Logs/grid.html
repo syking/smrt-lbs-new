@@ -40,7 +40,7 @@
 
 
     <div style="float:right; padding-right:20px;">
-        <input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value=""/>
+        <input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;"/>
     </div>
 
 </form>
@@ -165,13 +165,9 @@
         columnsJson[columnsJson.length] = { command:["destroy"], title:"Action", width:"100px" };
         $.each(columnsJson, function(i, v){
         	if (v.field == 'content'){
-        		v.width = "50%";
-        	}else if (v.field == 'action'){
-        		v.width = "10%";
-        	}else if (v.field == 'dateTime'){
-        		v.width = "10%";
-        	}else if (v.field == 'userName'){
-        		v.width = "5%";
+        		v.width = "400px";
+        	}else if (v.field == 'dateTime' || v.field == 'type'){
+        		v.width = "135px";
         	}
         });
         
@@ -179,6 +175,8 @@
             dataSource:dataSource,
             pageable:true,
             selectable:true,
+            scrollable:true,
+            resizable:true,
             columns:columnsJson,
             editable: "${grid.editable}"
         }).data("kendoGrid");

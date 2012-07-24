@@ -1,15 +1,15 @@
 <style type="text/css" media="screen">
-	#${tabid}_toolbar{height:5% !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
-	#${tabid}_fleets{float:left !important; width:19% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_drivers{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_vehicles{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_fleet_tree{padding:5px 10px; height:79%;}
+	#${tabid}_toolbar{height:40px !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
+	#${tabid}_fleets{overflow:auto; float:left !important; width:20% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_drivers{overflow:auto; float:right !important; width:39% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_vehicles{overflow:auto; float:right !important; width:40% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_fleet_tree{padding:5px 10px 10px 10px;}
 	#${tabid}_fleet_filter{padding:15px; padding-bottom:13px; background:#f5f5f5;}
 	#${tabid}_fleet_form{margin:10px auto; width:auto;}
 	#${tabid}_fleet_form input{width:auto !important;}
-	#${tabid}_driver_tree{padding:5px 0 0 15px;}
+	#${tabid}_driver_tree{padding:5px 0 10px 15px;}
 	#${tabid}_driver_tree input{width:auto;}
-	#${tabid}_vehicle_tree{padding:5px 0 0 15px;}
+	#${tabid}_vehicle_tree{padding:5px 0 10px 15px;}
 	#${tabid}_vehicle_tree input{width:auto;}
 	h1{margin:15px; padding:5px; background:#f5f5f5;}
 </style>
@@ -19,7 +19,7 @@
 		<input type="hidden" name="fleetName" />
 		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
 		<div style="float:right;padding:8px 20px 0 0;">
-			<input type="submit" value="" style="width:50px;" class="k-button save-button"/>
+			<input type="submit" value="&nbsp;" style="width:50px;" class="k-button save-button"/>
 		</div>
 	</form>
 </div>
@@ -27,13 +27,13 @@
 <div id="${tabid}_fleets" class="k-content">
 	<h1>Fleets</h1>
 	<div id="${tabid}_fleet_tree" class="input_tree"></div>
-	<div id="${tabid}_fleet_filter">
+	<!--div id="${tabid}_fleet_filter">
 		<h2>Filter</h2>
 		<form id="${tabid}_fleet_form" method="post" action="fleets/filter" onsubmit="return filter_fleet_submit(this);">
 			<input name="fleetName" class="k-input k-textbox" style="width:70% !important;" />
-			<input type="submit" class="k-button search-button" value="" style="width:25% !important;" />
+			<input type="submit" class="k-button search-button" value="&nbsp;" style="width:25% !important;" />
 		</form>
-	</div>
+	</div-->
 </div>
 
 <div id="${tabid}_drivers" class="k-content">

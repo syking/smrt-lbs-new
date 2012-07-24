@@ -124,7 +124,7 @@ public class Vehicles extends Controller {
 	 * 获取车辆信息 JSON 格式
 	 */
 	public static void listJson() {
-		List<Vehicle> vehicleList = Vehicle.all().fetch();
+		List<Vehicle> vehicleList = Vehicle.find("order by id desc").fetch();
 
 		// 指定类的字段显示
 		Map<Class<?>, String> pojos = new HashMap<Class<?>, String>();

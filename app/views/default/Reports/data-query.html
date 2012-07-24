@@ -18,9 +18,9 @@
 	</div>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="data-query-search-button" class="k-button search-button" style="width:50px" value="" />
-		<input type="button" url="/excels/queryData" formId="data-query-form-${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="submit" id="data-query-search-button" class="k-button search-button" style="width:50px" value="&nbsp;" />
+		<input type="button" url="/excels/queryData" formId="data-query-form-${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
 	</div>
 	
 </form>
@@ -144,7 +144,7 @@ function loadDataQuery(url, params){
 	        }
 	    },
 	    batch:true,
-	    pageSize:15,
+	    pageSize:10,
 	    serverPaging: true,
 	    schema:{
 	    	data: "data",
@@ -174,8 +174,8 @@ function loadDataQuery(url, params){
 	
 	var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 	$.each(columnsJson, function(i, v){
-		if (v.field == 'startTime' || v.field == 'endTime'){
-			v.width = "10%";
+		if (v.field == 'startTime' || v.field == 'endTime' || 'drivingTime' == v.field){
+			v.width = "135px";
 		}
 	});
 	
@@ -185,7 +185,8 @@ function loadDataQuery(url, params){
 	 	scrollable: true,
 	 	sortable: true,
 	 	pageable: true,
-	 	selectable: true
+	 	selectable: true,
+	 	resizable: true
 	}).data("kendoGrid");
 }
 

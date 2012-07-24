@@ -6,12 +6,13 @@
 	<input name="number" id="tree_number" class="k-input k-textbox"/>
 	
 	<div style="float:right; padding-right:20px;">
-	    <input type="submit" id="tree_search-button" style="width:50px;" class="k-button search-button" value=""/>
+	    <input type="submit" id="tree_search-button" style="width:50px;" class="k-button search-button" value="&nbsp;"/>
 	</div>
 </div>
 <div style="height:8px"></div>
-<div id="treeView"></div>
-
+<div style="padding:5px !important; height:85% !important; overflow:auto;">
+	<div id="treeView"></div>
+</div>
 <script type="text/javascript">
     function loadTree(data) {
         $("#treeView").kendoTreeView({

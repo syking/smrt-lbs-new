@@ -30,10 +30,10 @@
 	<input name="endTime" id="${grid.tabId}_end_time"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
-		<input type="button" url="/excels/schedules" formId="schedule_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" class="k-button upload-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+		<input type="button" url="/excels/schedules" formId="schedule_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button upload-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
 	</div>
 </form>
 <div id="${grid.tabId}_upload_div" style="display:none; padding:10px;">
@@ -73,6 +73,7 @@
         });
         var wnd ;
         $(".upload-button").click(function(e){
+        	e.preventDefault();//此处阻止冒泡事件
         	wnd = $("#${grid.tabId}_upload_div")
 	    	.kendoWindow({
 	    		actions: ["Refresh", "Minimize", "Maximize", "Close"],
@@ -80,27 +81,34 @@
 	            visible: false,
 	            resizable: true,
 	            width: 300,
-	            height: 120
+	            height: 200
 	         }).data("kendoWindow");
 	         
 	         wnd.title("Upload Schedule CSV File").center().open();
         });
         
         $("#${grid.tabId}_file").kendoUpload({
+        	multiple: false,
             async: {
                 saveUrl: "/schedules/upload",
                 autoUpload: false
             },
             complete: function(e){
-            	loadSchedules("/Schedules/read");
-            	wnd.close();
             },
             error: function(e){
+            	alert(e.XMLHttpRequest.responseText);
             },
             success: function(e){
+            	alert("upload success!");
+            	wnd.close();
+            	loadSchedules("/Schedules/read");
             },
             upload: function(e){
-            	//alert("upload->");
+            	var _ext = e.files[0].extension;
+            	if (".csv" != _ext){
+            		alert("file type must be csv");
+            		e.preventDefault();//stop the upload event
+            	}
             }
         });
     });
@@ -127,9 +135,6 @@
 					if (operation !== "read" && data.models) {
                     	$.each(data.models, function(i, v){
                     		var model = data.models[i];
-	                    	/**
-	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
-	                    	 */
 	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
 	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
 	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
@@ -187,9 +192,6 @@
                     if (operation !== "read" && data.models) {
                     	$.each(data.models, function(i, v){
                     		var model = data.models[i];
-	                    	/**
-	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
-	                    	 */
 	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
 	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
 	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
@@ -203,18 +205,18 @@
                 }
             },
             batch: true,
-            pageSize: 15,
+            pageSize: 8,
             serverPaging: true,
             schema: {
             	data: "data",
             	total: "total",
             	parse: function(data){
-            		$.each(data, function(i, val){
-            			val.startTime = new Date(val.startDate + " " + val.startTime);
-						val.startDate = new Date(val.startDate);
-						val.endTime = new Date(val.endDate + " " + val.endTime);
-						val.endDate = new Date(val.endDate);
-					});
+            		// $.each(data, function(i, val){
+            			// val.startTime = new Date(val.startDate + " " + val.startTime);
+						// val.startDate = new Date(val.startDate);
+						// val.endTime = new Date(val.endDate + " " + val.endTime);
+						// val.endDate = new Date(val.endDate);
+					// });
 					
             		return data;
             	},
@@ -322,7 +324,7 @@
             selectable: true,
             toolbar: [
             	"create",
-            	{ template: "<a class='k-button k-button-icontext k-grid-clear' href='javascript:void(0)' class>Clear All Data</a>" }
+            	{ template: "<a class='k-button k-button-icontext k-grid-clear' href='javascript:void(0)'>Clear All Data</a>" }
          	], 
             columns: columnsJson,
             editable: "popup",

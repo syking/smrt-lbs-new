@@ -17,9 +17,9 @@
 		<input name="time" id="line_time" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="line_search-button" class="k-button search-button" style="width:50px;" value="" />
-		<input type="button" url="/excels/reportRoute" formId="report_line_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="submit" id="line_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+		<input type="button" url="/excels/reportRoute" formId="report_line_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
 	</div>
 	
 </form>
@@ -118,7 +118,13 @@ $(document).ready(function(){
     
     $("#line_time-wrap").hide();
     $("#line_time-label").hide();
-	$("#report_line_search_form_${tabId}").kendoValidator();
+    
+	var form = $("#report_line_search_form_${tabId}");
+	form.kendoValidator();
+	$(":submit[id=line_search-button]").click(function(check){ 
+		reportLineSearchValidate(form);
+	    check.preventDefault();//此处阻止提交表单  
+	});
 });
 
 function loadReportLines(url, params){
@@ -134,16 +140,23 @@ function loadReportLines(url, params){
 		};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
+		$.each(json.columns, function(i, v){
+			if (v['field'] === 'startTime' || v['field'] === 'endTime'){
+				v['width'] = '135px';
+				return ;
+			}
+		});
 		var grid = $("#report_line_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
-	    		pageSize:5
+	    		pageSize:3
 	    	},
 	    	columns: json.columns, 
 	   	 	scrollable: true,
 	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	selectable: true
+	   	 	selectable: true,
+	   	 	resizable: true
 	   	 	
         }).data("kendoGrid");
 	    

@@ -28,7 +28,7 @@
     <input name="deviceName" id="${grid.tabId}_device_id" />
 
     <div style="float:right; padding-right:20px;">
-        <input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px" value=""/>
+        <input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px" value="&nbsp;"/>
     </div>
 
 </form>
@@ -124,7 +124,7 @@
                 }
             },
             batch:true,
-            pageSize:15,
+            pageSize:10,
             serverPaging: true,
             schema:{
             	data: "data",
@@ -173,7 +173,8 @@
             {
                 field:"deviceName",
                 title:"Device Name",
-                editor:deviceDropDownEditor
+                editor:deviceDropDownEditor,
+                width: "200px"
             },
             {
                 field:"description",
@@ -196,12 +197,13 @@
                 }
             }
         ];
-        columnsJson[columnsJson.length] = { command:["edit","destroy"], title:"Action", width:"200" };
+        columnsJson[columnsJson.length] = { command:["edit","destroy"], title:"Action", width:"200px" };
         var grid = $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
             columns:columnsJson,
             toolbar:["create"],
             scrollable:true,
+            resizable:true,
             sortable:true,
             pageable:true,
             selectable:true,

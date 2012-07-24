@@ -14,7 +14,7 @@ function exportButtonClick(button){
 	var $form = $("#"+_formId);
 	var params = $form.serialize();
 	var url = $(button).attr("url") + "?"+params;
-	var win = window.open().location = url;
+	window.location = url;
 }
 
 $(document).ready(function(){

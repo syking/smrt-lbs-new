@@ -23,9 +23,9 @@
 	<input name="endTime" id="${grid.tabId}_endTime"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
-		<input type="button" url="/excels/reportEvent" formId="event_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+		<input type="button" url="/excels/reportEvent" formId="event_form_${grid.tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
 	</div>
 	
 </form>
@@ -131,7 +131,7 @@ function loadEvents(url, params){
 	        }
 	    },
 	    batch:true,
-	    pageSize:15,
+	    pageSize:10,
 	    serverPaging: true,
 	    schema:{
 	    	data: "data",
@@ -157,14 +157,21 @@ function loadEvents(url, params){
 	var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 	columnsJson[columnsJson.length] = { title: "Action", width: "110px", command: { text: "&nbsp;", className: "view-on-map-button" } };
 	columnsJson[0].width = "1px" ;
-	
+	$.each(columnsJson, function(i, v){
+		var _field = columnsJson[i]['field'];
+		if ('time' === _field || 'type' === _field){
+			columnsJson[i].width = "135px";
+		} 
+	});
+		
 	var grid = $("#grid_${grid.tabId}").kendoGrid({
 		dataSource: dataSource,
 		columns: columnsJson, 
 	 	scrollable: true,
 	 	sortable: true,
 	 	pageable: true,
-	 	selectable: true
+	 	selectable: true,
+	 	resizable: true
 	}).data("kendoGrid");
 	
 }

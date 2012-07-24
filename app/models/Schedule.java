@@ -298,15 +298,15 @@ public class Schedule extends Model {
 		
 		List<Schedule> schedules = null;
 		if (sqlSB.length() > 0 && !params.isEmpty()){
-			if (page < 0 || pageSize < 0)
+			if (page <= 0 || pageSize <= 0)
 				schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch();
 			else
 				schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch(page, pageSize);
 		} else {
-			if (page < 0 || pageSize < 0)
-				schedules = Schedule.all().fetch(page, pageSize);
-			else
+			if (page <= 0 || pageSize <= 0)
 				schedules = Schedule.findAll();
+			else
+				schedules = Schedule.all().fetch(page, pageSize);
 		}
 		
 		return schedules;
@@ -426,6 +426,15 @@ public class Schedule extends Model {
 	}
 	
 	public static void parseAndCreateByCSV(File file) throws IOException{
+		if (file == null)
+			throw new IOException("file is invalid");
+		
+		String fullFileName = file.getName();
+		int index = fullFileName.lastIndexOf('.');
+		String ext = fullFileName.substring(index+1);
+		if (!"csv".equals(ext))
+			throw new IOException("file type must be csv !");
+		
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = reader.readLine();
 		while ((line = reader.readLine()) != null){

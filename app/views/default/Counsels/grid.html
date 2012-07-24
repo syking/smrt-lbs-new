@@ -23,7 +23,7 @@
 	<input name="endTime" id="${grid.tabId}_end_time"/>
 	
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="" />
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
 	</div>
 	
 </form>
@@ -56,6 +56,36 @@
     });
     
     function loadCounsels(url, params){
+    	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+    	if (_grid){
+    		_grid.dataSource.transport.options.read.url = url;	
+    		if (params){
+    			_grid.dataSource.transport.parameterMap = function(data, operation){
+    				if (operation !== "read" && data.models) {
+                    	$.each(data.models, function(i, v){
+                    		var model = data.models[i];
+	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
+	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
+	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
+	                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
+                    	});
+                    	
+                        return {models: kendo.stringify(data.models)};
+                    }
+                    
+            		$.each(params, function(i,v){
+						data[v.name] = v.value;
+            		});
+            		
+            		return data;
+            	}
+            }
+            
+    		_grid.dataSource.read();
+    		
+    		return ;
+    	}
+    	
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 		        alert(e.responseText);
@@ -104,18 +134,18 @@
                         return {models: kendo.stringify(data.models)};
                     }
                     
-                    return params;
+                    return data;
                 }
             },
             batch: true,
-            pageSize: 15,
+            pageSize: 10,
             schema: {
             	parse: function(data){
             		$.each(data, function(i, val){
-            			val.startTime = new Date(val.startDate + " " + val.startTime);
-						val.startDate = new Date(val.startDate);
-						val.endTime = new Date(val.endDate + " " + val.endTime);
-						val.endDate = new Date(val.endDate);
+            			//val.startTime = new Date(val.startDate + " " + val.startTime);
+						//val.startDate = new Date(val.startDate);
+						//val.endTime = new Date(val.endDate + " " + val.endTime);
+						//val.endDate = new Date(val.endDate);
 					});
 					
             		return data;
@@ -127,9 +157,9 @@
                         userName: { validation: { required: true } },
                         driverName: { validation: { required: true } },
                         startDate: { validation: {required:true}, type: "date"},
-                        startTime: { validation: { required: true } },
-                        endDate: {validation: {required:true}, type: "date"},
-                        endTime: { validation: { required: true } },
+                        startTime: { validation: { required: true }, type: "time" },
+                        endDate: { validation: {required:true}, type: "date"},
+                        endTime: { validation: { required: true }, type: "time" },
                         remark: {
                         	validation:{
                         		required: true,
@@ -213,7 +243,8 @@
             toolbar:["create"],
             columns:columnsJson,
             editable:"popup",
-            navigatable: true
+            navigatable: true,
+            resizable:true
         });
     }
     

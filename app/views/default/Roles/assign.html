@@ -1,15 +1,15 @@
 <style type="text/css" media="screen">
-	#${tabid}_toolbar{height:5% !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
-	#${tabid}_roles{float:left !important; width:19% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_users{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_perms{float:right !important; width:40% !important; height:93% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_role_tree{padding:5px 10px; height:79%;}
+	#${tabid}_toolbar{height:40px !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
+	#${tabid}_roles{overflow:auto; float:left !important; width:20% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_users{overflow:auto; float:right !important; width:40% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_perms{overflow:auto; float:right !important; width:39% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_role_tree{padding:5px 10px 10px 10px;}
 	#${tabid}_role_filter{padding:15px; padding-bottom:13px; background:#f5f5f5;}
 	#${tabid}_role_form{margin:10px auto; width:auto;}
 	#${tabid}_role_form input{width:auto !important;}
-	#${tabid}_user_tree{padding:5px 0 0 15px;}
+	#${tabid}_user_tree{padding:5px 0 10px 15px;}
 	#${tabid}_user_tree input{width:auto;}
-	#${tabid}_perm_tree{padding:5px 0 0 15px;}
+	#${tabid}_perm_tree{padding:5px 0 10px 15px;}
 	#${tabid}_perm_tree input{width:auto;}
 	h1{margin:15px; padding:5px; background:#f5f5f5;}
 </style>
@@ -19,7 +19,7 @@
 		<input type="hidden" name="roleName" />
 		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
 		<div style="float:right;padding:8px 20px 0 0;">
-			<input type="submit" value="" style="width:50px;" class="k-button save-button"/>
+			<input type="submit" value="&nbsp;" style="width:50px;" class="k-button save-button"/>
 		</div>
 	</form>
 </div>
@@ -27,13 +27,13 @@
 <div id="${tabid}_roles" class="k-content">
 	<h1>Roles</h1>
 	<div id="${tabid}_role_tree" class="input_tree"></div>
-	<div id="${tabid}_role_filter">
+	<!--div id="${tabid}_role_filter">
 		<h2>Filter</h2>
 		<form id="${tabid}_role_form" method="post" action="roles/filter" onsubmit="return filter_role_submit(this);">
 			<input name="roleName" class="k-input k-textbox" style="width:70% !important;" />
-			<input type="submit" class="k-button search-button" value="" style="width:25% !important;" />
+			<input type="submit" class="k-button search-button" value="&nbsp;" style="width:25% !important;" />
 		</form>
-	</div>
+	</div-->
 </div>
 
 <div id="${tabid}_users" class="k-content">

@@ -3,7 +3,7 @@
 <div id="line_driver_view-on-map-wrap">
 	<div id="line_driver_view-on-map-window"></div>
 </div>
-<form id="route_driver_search_form_${tabId}" action="/reports/driverListJsonByline" method="post" class="k-content" onsubmit="return reportLineDriverSearchValidate(this)" style="padding:10px 0;">
+<form id="route_driver_search_form_${tabId}" action="/reports/driverListJsonByline" method="post" class="k-content" style="padding:10px 0;">
 	<label for="driver-lines">line:</label>
 	<input name="line" id="driver-lines" required/>
 	
@@ -17,9 +17,9 @@
 		<input name="time" id="line_driver-time" required/>
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="line_driver-search-button" class="k-button search-button" style="width:50px;" value="" />
-		<input type="button" url="/excels/reportDriverByRoute" formId="route_driver_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="submit" id="line_driver-search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+		<input type="button" url="/excels/reportDriverByRoute" formId="route_driver_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
 	</div>
 	
 </form>
@@ -128,9 +128,13 @@ $(document).ready(function(){
     // $("#line_driver-time-wrap").hide();
     // $("#line_driver-time-label").hide();
     
-    $("#route_driver_search_form_${tabId}").kendoValidator();
-    reportLineDriverSearchValidate($("#route_driver_search_form_${tabId}"));
-
+	var form = $("#route_driver_search_form_${tabId}");
+	form.kendoValidator();
+	reportLineDriverSearchValidate(form);
+	$(":submit[id=line_driver-search-button]").click(function(check){ 
+		reportLineDriverSearchValidate(form);
+	    check.preventDefault();//此处阻止提交表单  
+	});
 });
 
 function loadReportLineDrivers(url, params){
@@ -146,17 +150,25 @@ function loadReportLineDrivers(url, params){
 		};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
+		$.each(json.columns, function(i, v){
+			var _field = json.columns[i]['field'];
+			if ('startTime' === _field || 'endTime' === _field){
+				json.columns[i].width = "135px";
+			} else if ('drivingTime' === _field){
+				json.columns[i].width = "100px";
+			}
+		});
 		var grid = $("#line_report_driver_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
-	    		pageSize:5
+	    		pageSize:3
 	    	},
 	    	columns: json.columns, 
 	   	 	scrollable: true,
 	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	selectable: true
-	   	 	
+	   	 	selectable: true,
+	   	 	resizable: true
         }).data("kendoGrid");
 	    
 	    $("#line_report_driver_bar_chart").empty();

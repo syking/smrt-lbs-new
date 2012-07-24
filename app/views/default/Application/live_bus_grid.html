@@ -8,7 +8,7 @@ var vehicleNo ;
 $(document).ready(function(){
 	
 	$.getJSON("/vehicles/events",{},function(json){
-		json.columns[json.columns.length] = { title: "Action", width: "160px", command: [
+		json.columns[json.columns.length] = { title: "Action", width: "200px", command: [
 			{ text: "&nbsp;", className: "view-on-map-button" },
 			{ text: "&nbsp;", className: "route-path-button" }  
 		]};

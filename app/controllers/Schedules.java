@@ -74,10 +74,8 @@ public class Schedules extends Controller {
 			Schedule.parseAndCreateByCSV(file);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("Can't read the file !");
+			renderText(e.getMessage());
 		}
-		
-		renderJSON(CommonUtil.map("message", "ok"));
 	}
 	
 	/**

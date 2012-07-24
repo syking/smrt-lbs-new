@@ -21,7 +21,7 @@ public class DriverPerformanceVO {
 	public String end;
 	public long highest;
 	public long lowest;
-	public long performanceIndex;
+	public long performance;
 	
 	public DriverPerformanceVO(Driver driver,String timeType, Date start, Date end, List<DriverReport> drs){
 		this.id = String.valueOf(driver.id);
@@ -40,7 +40,7 @@ public class DriverPerformanceVO {
 			drivingTimeTotal += dr.drivingTime;
 		}
 		
-		this.performanceIndex = 100-reduceTotal;
+		this.performance = 100-reduceTotal;
 		
 		if (!scores.isEmpty()){
 			Collections.sort(scores);

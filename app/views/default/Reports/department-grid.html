@@ -2,7 +2,7 @@
 <div id="dept_view-on-map-wrap">
 	<div id="dept_view-on-map-window"></div>
 </div>
-<form id="dept_search_form_${tabId}" action="/reports/departmentListJson" method="post" class="k-content" onsubmit="return reportDepartmentSearchValidate(this)" style="padding:10px 0;">
+<form id="dept_search_form_${tabId}" action="/reports/departmentListJson" method="post" class="k-content" style="padding:10px 0;">
 	
 	<label for="dept_departments">Superior:</label>
 	<input name="parentId" id="dept_departments"/>
@@ -17,16 +17,15 @@
 		<input name="time" id="dept_time" required />
 	</div>
 	<div style="float:right; padding-right:20px;">
-		<input type="submit" id="dept_search-button" class="k-button search-button" style="width:50px;" value="" />
-		<input type="button" url="/excels/reportDepartment" formId="dept_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="" />
-		<input type="button" class="k-button print-button" style="width:50px" value="" />
+		<input type="submit" id="dept_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+		<input type="button" url="/excels/reportDepartment" formId="dept_search_form_${tabId}" class="k-button export-excel-button" style="width:50px" value="&nbsp;" />
+		<input type="button" class="k-button print-button" style="width:50px" value="&nbsp;" />
 	</div>
 	
 </form>
 
 <div id="dept_report_dept_grid"></div>
 <div id="dept_report_dept_bar_chart"></div>
-
 <script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
 var departId;
@@ -34,8 +33,6 @@ var timeType;
 var time;
 
 $(document).ready(function(){
-	var form = $("#dept_search_form_${tabId}");
-	
     $("#dept_report_dept_grid").delegate(".view-on-map-button", "click", function(e) {
         e.preventDefault();
         departId = $(this).parent().parent().find("td:last").html();
@@ -122,8 +119,13 @@ $(document).ready(function(){
     
     $("#dept_time-wrap").hide();
     $("#dept_time-label").hide();
-    $("#dept_search_form_${tabId}").kendoValidator();
-
+    
+    var form = $("#dept_search_form_${tabId}");
+    form.kendoValidator();
+	$(":submit[id=dept_search-button]").click(function(check){ 
+		reportDepartmentSearchValidate(form);
+	    check.preventDefault();//此处阻止提交表单  
+	});  
 });
 
 function loadReportDepartments(url, params){
@@ -143,17 +145,24 @@ function loadReportDepartments(url, params){
 		};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
+		$.each(json.columns, function(i, v){
+			var _field = json.columns[i]['field'];
+			if ('startTime' === _field || 'endTime' === _field){
+				json.columns[i].width = "135px";
+			}
+		});
+		
 		var grid = $("#dept_report_dept_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
-	    		pageSize:5
+	    		pageSize:3
 	    	},
 	    	columns: json.columns, 
 	   	 	scrollable: true,
 	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	selectable: true
-	   	 	
+	   	 	selectable: true,
+	   	 	resizable: true
         }).data("kendoGrid");
 	    
 	    $("#dept_report_dept_bar_chart").empty();
@@ -185,6 +194,7 @@ function loadReportDepartments(url, params){
 	            format: "{0}"
 	        }
 	    });
+	    
 	}).error(function(e){
      	alert(e.responseText);
 	});

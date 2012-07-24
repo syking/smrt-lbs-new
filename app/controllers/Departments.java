@@ -76,11 +76,14 @@ public class Departments extends Controller {
 	/**
 	 * 获取部门 JSON 信息
 	 */
-	public static void read() {
-		List<Department> departments = Department.findAndOrderByIdDesc();
+	public static void read(int page, int pageSize) {
+		List<Department> departments = Department.find("order by id desc").fetch(page, pageSize);
 		List<DepartmentVO> result = Department.assemDepartmentVO(departments);
+		Map map = new HashMap();
+		map.put("data", result);
+		map.put("total", Department.count());
 		
-		renderJSON(result);
+		renderJSON(map);
 	}
 
 	/**
@@ -109,11 +112,15 @@ public class Departments extends Controller {
 	/**
 	 * 检索部门信息，返回 JSON
 	 */
-	public static void search(String name, String parent) {
-		List<Department> departments = Department.findByCondition(name, parent);
+	public static void search(int page, int pageSize, String name, String parent) {
+		List<Department> departments = Department.findByCondition(page, pageSize, name, parent);
 		List<DepartmentVO> departmentVOList = Department.assemDepartmentVO(departments);
-
-		renderJSON(departmentVOList);
+		
+		Map map = new HashMap();
+		map.put("data", departmentVOList);
+		map.put("total", Department.countByCondition(name, parent));
+		
+		renderJSON(map);
 	}
 	
 	/**
@@ -156,7 +163,7 @@ public class Departments extends Controller {
 		if (departmentName == null || departmentName.isEmpty())
 			renderJSON(Department.assemDepartmentTree());
 		else
-			renderJSON(Department.assemDepartmentTree(Department.findByCondition(departmentName, null), false));
+			renderJSON(Department.assemDepartmentTree(Department.findByCondition(-1,-1, departmentName, null), false));
 	}
 
 }
