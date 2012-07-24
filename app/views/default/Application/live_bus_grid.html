@@ -14,6 +14,15 @@ $(document).ready(function(){
 		]};
 		
 		json.columns[json.columns.length] = { title: "id", width: "1px", field: "id" };
+		$.each(json.columns, function(i, v){
+			var _field = v['field'];
+			if ('device' === _field){
+				v.width = "200px";
+			} else if ('vehicleNo' === _field){
+				v.width = "135px";
+			}
+		});
+		
 		var grid = $("#live_bus_grid").kendoGrid({
 	    	dataSource: {
 	    		data: json.data,
@@ -21,6 +30,7 @@ $(document).ready(function(){
 	    	},
 	    	columns: json.columns, 
 	   	 	scrollable: true,
+	   	 	resizable:true,
 	   	 	sortable: true,
 	   	 	pageable: true,
 	   	 	height: 248,//248
