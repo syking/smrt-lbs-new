@@ -1,0 +1,170 @@
+<form action="/devices/search" method="post" class="k-content" onsubmit="return deviceSearchValidate(this)" style="padding:10px 0;">
+	
+	<label for="${grid.tabId}_key">Key:</label>
+	<input name="key" id="${grid.tabId}_key" class="k-input k-textbox"/>
+	
+	<label for="${grid.tabId}_name">Name:</label>
+	<input name="name" id="${grid.tabId}_name" class="k-input k-textbox"/>
+	
+	<div style="height:8px"></div>
+	
+	<label for="${grid.tabId}_host">Host:</label>
+	<input name="host" id="${grid.tabId}_host" class="k-input k-textbox"/>
+	
+	<div style="float:right; padding-right:20px;">
+		<input type="submit" id="${grid.tabId}_search-button" class="k-button search-button" style="width:50px;" value="&nbsp;" />
+	</div>
+	
+</form>
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
+<div id="grid_${grid.tabId}"></div>
+<script>
+    $(document).ready(function(){
+    	loadDevices("${grid.readUrl}");
+    });
+    
+    function loadDevices(url, params){
+		var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+		                return {models:kendo.stringify(data.models)};
+		            }
+		            
+		    		$.each(params, function(i,v){
+						data[v.name] = v.value;
+		    		});
+		    		
+		    		return data;
+		    	}
+		    }
+		    
+			_grid.dataSource.read();
+			return ;
+		}
+		
+        var dataSource = new kendo.data.DataSource({
+        	error: function(e) {
+	        	alert("server error " + e.responseText);
+		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
+	        	grid.cancelChanges();//roll back 
+		    },
+            transport: {
+                read:  {
+                    url: url
+                },
+                update: {
+                    url: "${grid.updateUrl}",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("update success");
+                    }
+                },
+                destroy: {
+                    url: "${grid.destroyUrl}",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    		alert("delete success");
+                    }
+                },
+                create: {
+                    url: "${grid.createUrl}",
+                    complete: function(jqXHR, textStatus){
+                    	if (jqXHR && jqXHR.status && (200 == jqXHR.status))
+                    		alert("create success");
+                    }
+                },
+                parameterMap:function (data, operation) {
+                    if (operation !== "read" && data.models) {
+                        return {models: kendo.stringify(data.models)};
+                    }
+                    
+                    return data;
+                }
+            },
+            batch: true,
+            pageSize: 10,
+            serverPaging:true,
+            schema: {
+            	data: "data",
+            	total: "total",
+            	parse: function(data){
+					
+            		return data;
+            	},
+                model: {
+                    id: "id",
+                    fields: {
+                        id: { editable: false, nullable: true },
+                        key: { validation: { required: true } },
+                        name: { validation: { required: true } },
+                        alive: { type:"boolean" },
+                        serverUrls: { validation: { required: true } },
+                        action: { validation: { required: true } },
+                        misc: { validation: { required: true } },
+                        status: { validation: { required: true } },
+                        host: {
+                        	validation: {
+	                            custom: function(input) {
+	                            	var name = input.attr("name");
+	                            	if ('status' === name){
+	                            		return validate_enum(input, ['online','offline']);	
+	                            	}else if ('status_input' != name){
+	                            		return validate_empty(input);
+	                            	}
+	                            	
+	                            	return true;
+	                            }
+                        	}
+                        }
+                    }
+                }
+            }
+        });
+        
+		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
+		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Action", width:"200px" };
+        /**
+		 * 循环遍历columns，找到某个field，给其添加自定义的 editor
+		 */
+		$.each(columnsJson, function(i, v){
+			var _field = v['field'];
+			if ('name' === _field){
+				v.width = "400px";
+			}
+			if ('status' === _field){
+				v.editor = function(c,o){
+					$('<input name="status" id="${grid.tabId}_status"/>')
+		            .appendTo(c).kendoComboBox({
+			            dataTextField:"text",
+			            dataValueField:"value",
+			            dataSource: [{text:"online", value:"online"},{text:"offline", value:"offline"}]
+		        	});
+		        }
+			}
+		});
+		
+        $("#grid_${grid.tabId}").kendoGrid({
+            dataSource:dataSource,
+            pageable:true,
+            scrollable:true,
+            resizable:true,
+            sortable:true,
+            selectable:true,
+            toolbar:["create"],
+            columns:columnsJson,
+            editable:"popup",
+            navigatable:true
+        });
+    }
+    
+    function deviceSearchValidate(form) {
+    	var $form = $(form);
+    	loadDevices($form.attr("action"), $form.serializeArray());
+    	
+    	return false;
+    }
+
+</script>
