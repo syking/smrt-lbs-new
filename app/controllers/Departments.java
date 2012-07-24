@@ -135,16 +135,16 @@ public class Departments extends Controller {
 		// 部门列表
 		map.put("departments", gson.toJson(Department.assemDepartmentTree()));
 		
-		// 司机列表
+		// 司机列表 同时也是 领导 列表
 		map.put("drivers", gson.toJson(Driver.assemTreeView()));
 		
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Departments/assign.html")).render(map));
 	}
 	
-	public static void assignDriver(String departmentName, List<Long> drivers){
+	public static void assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders){
 		Map map = new HashMap();
 		try{
-			boolean flag = Department.assignDriver(departmentName, drivers);
+			boolean flag = Department.assignDriverAndLeader(departmentName, drivers, leaders);
 			map.put("success", flag);
 		}catch(Exception e){
 			map.put("success", false);
@@ -157,6 +157,11 @@ public class Departments extends Controller {
 	public static void drivers(String departmentName){
 		Department department = Department.findByName(departmentName);
 		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(department.drivers));
+	}
+	
+	public static void leaders(String departmentName){
+		Department department = Department.findByName(departmentName);
+		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(department.leaders));
 	}
 	
 	public static void filter(String departmentName){

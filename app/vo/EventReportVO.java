@@ -28,7 +28,7 @@ public class EventReportVO {
 	public long suddenRTurn;
 	public long idling;
 	public long total;
-	public long performanceIndex;
+	public long performance;
 	
 	public EventReportVO(){}
 	
@@ -90,7 +90,7 @@ public class EventReportVO {
 		this.suddenRTurn = dr.suddenRightTurnTotal;
 		this.idling = dr.idling;
 		this.total = this.speeding+this.suddenAcceleration+this.suddenBrake+this.suddenLTurn+this.suddenRTurn+this.idling;
-		this.performanceIndex = dr.performanceIndex;
+		this.performance = dr.performanceIndex;
 	}
 	
 	public void init(Collection<DriverReport> drs, Department dept, Fleet fleet, String route) {
@@ -123,7 +123,7 @@ public class EventReportVO {
 			i++;
 		}
 		
-		this.performanceIndex = 100 - reduceTotal;
+		this.performance = 100 - reduceTotal;
 		
 		this.total = this.speeding+this.suddenAcceleration+this.suddenBrake+this.suddenLTurn+this.suddenRTurn+this.idling;
 	}

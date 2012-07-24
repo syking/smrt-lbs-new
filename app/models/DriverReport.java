@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import notifiers.MyMailer;
+
 import play.db.jpa.Model;
 import play.db.jpa.Transactional;
 import utils.CommonUtil;

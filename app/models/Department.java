@@ -12,10 +12,15 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import notifiers.MyMailer;
 
 import com.alibaba.fastjson.JSON;
 
@@ -49,6 +54,10 @@ public class Department extends Model{
 	
 	@OneToMany(mappedBy = "department", fetch = FetchType.EAGER)
 	public Set<Driver> drivers = new HashSet<Driver>(); 
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "t_dept_leader", joinColumns=@JoinColumn(name = "dept_id"), inverseJoinColumns=@JoinColumn(name="leader_id"))
+	public Set<Driver> leaders = new HashSet<Driver>();
 	
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
@@ -198,7 +207,7 @@ public class Department extends Model{
 	}
 	
 	@Transactional
-	public static boolean assignDriver(String departmentName, List<Long> drivers) {
+	public static boolean assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders) {
 		Department department = Department.findByName(departmentName);
 		if (department == null)
 			throw new RuntimeException("Department required !");
@@ -212,9 +221,23 @@ public class Department extends Model{
 				d.department = department;
 				d.save();
 			}
-			
-			return true;
 		}
+		
+		if (leaders != null){
+			department.leaders = new HashSet<Driver>(leaders.size());
+			for (Long id : leaders){
+				Driver d = Driver.findById(id);
+				if (d == null)
+					continue;
+				
+				department.leaders.add(d);
+			}
+			
+			department.save();
+		}
+		
+		if (drivers != null || leaders != null)
+			return true;
 		
 		return false;
 	}
@@ -287,5 +310,32 @@ public class Department extends Model{
 		
 		return map;
     }
+	
+	public static void sendEmail(long departmentId, String timeType, String time){
+		Department dept = Department.findById(departmentId);
+		if (dept == null)
+			throw new RuntimeException("Department not found!");
+		if (dept.leaders == null || dept.leaders.isEmpty())
+			throw new RuntimeException("Department leader not found!");
+		if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+			throw new RuntimeException("timeType or time is invalid!");
+		if (dept == null || dept.leaders == null || dept.leaders.isEmpty() || dept.drivers == null || dept.drivers.isEmpty())
+			throw new RuntimeException("Department or Leaders or Drivers not found !");
+		
+		Map report = Driver.assemReport(dept.drivers, timeType, time);
+		for (Driver leader : dept.leaders){
+			if (leader.email == null){
+				new Log("email", "driver report", "send email to "+leader.name + " fail cause the leader has no email", null, "-", true).create();
+				continue;
+			}
+			
+			try{
+				MyMailer.leaderMail(dept.name, report, timeType, time, leader);
+			}catch(Throwable e){
+				new Log("email", "driver report", "send email to "+leader.name + " fail->"+e.toString(), null, "-", false).create();
+				continue;
+			}
+		}
+	}
 
 }

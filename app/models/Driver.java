@@ -360,4 +360,5 @@ public class Driver extends Model{
 	public static Driver findByName(String name) {
 		return Driver.find("byName", name).first();
 	}
+	
 }

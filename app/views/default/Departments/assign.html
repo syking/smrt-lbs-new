@@ -1,18 +1,21 @@
 <style type="text/css" media="screen">
 	#${tabid}_toolbar{height:40px !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
-	#${tabid}_departments{overflow:auto; float:left !important; width:24% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_drivers{overflow:auto; float:right !important; width:75% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_departments{overflow:auto; float:left !important; width:20% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_drivers{overflow:auto; float:right !important; width:39% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_leaders{overflow:auto; float:right !important; width:40% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
 	#${tabid}_department_tree{padding:5px 10px 10px 10px;}
 	#${tabid}_department_filter{padding:15px; padding-bottom:13px; background:#f5f5f5;}
 	#${tabid}_department_form{margin:10px auto; width:auto;}
 	#${tabid}_department_form input{width:auto !important;}
 	#${tabid}_driver_tree{padding:5px 0 10px 15px;}
 	#${tabid}_driver_tree input{width:auto;}
+	#${tabid}_leader_tree{padding:5px 0 10px 15px;}
+	#${tabid}_leader_tree input{width:auto;}
 	h1{margin:15px; padding:5px; background:#f5f5f5;}
 </style>
 
 <div id="${tabid}_toolbar" class="k-content">
-	<form id="${tabid}_form" action="departments/assignDriver" method="post" onsubmit="return assign_department_submit(this);" accept-charset="utf-8">
+	<form id="${tabid}_form" action="departments/assignDriverAndLeader" method="post" onsubmit="return assign_department_submit(this);" accept-charset="utf-8">
 		<input type="hidden" name="departmentName" />
 		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
 		<div style="float:right;padding:8px 20px 0 0;">
@@ -33,6 +36,11 @@
 	</div-->
 </div>
 
+<div id="${tabid}_leaders" class="k-content">
+	<h1>Leaders</h1>
+	<div id="${tabid}_leader_tree" class="input_tree"></div>
+</div>
+
 <div id="${tabid}_drivers" class="k-content">
 	<h1>Drivers</h1>
 	<div id="${tabid}_driver_tree" class="input_tree"></div>
@@ -48,8 +56,10 @@
 <script type="text/javascript" charset="utf-8">
 	var departmentTreeId = "#${tabid}_department_tree" ;
 	var driverTreeId = "#${tabid}_driver_tree" ;
+	var leaderTreeId = "#${tabid}_leader_tree" ;
 	var departmentTreeView ;
 	var driverTreeView ;
+	var leaderTreeView ;
 	
 	$(document).ready(function(){
 		var departmentsJson = #{verbatim} ${departments} #{/verbatim};
@@ -64,6 +74,13 @@
 	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
 	        dataSource: #{verbatim} ${drivers} #{/verbatim},
 	        select: onDriverSelect
+		}).data("kendoTreeView");
+		
+		leaderTreeView = $(leaderTreeId).kendoTreeView({
+			checkChildren:true,
+	        checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()),
+	        dataSource: #{verbatim} ${drivers} #{/verbatim},
+	        select: onLeaderSelect
 		}).data("kendoTreeView");
 		
 		$(".input_tree input").click(tree_click);
@@ -83,9 +100,22 @@
 	     	alert(e.responseText);
 		});
 		
+		$.getJSON("/departments/leaders", {departmentName:_departmentName}, function(leaders){
+			$(leaderTreeId).find('input').attr("checked", false);
+			$.each(leaders, function(i, u){
+				var _i = $(leaderTreeId).find('input[name='+ u.id +']');
+				_i.attr("checked", true);
+			});
+		}).error(function(e){
+	     	alert(e.responseText);
+		});
+		
 	}
 	
 	function onDriverSelect(e){
+	}
+	
+	function onLeaderSelect(e){
 	}
 	
 	function assign_department_submit(form){
@@ -96,9 +126,17 @@
 		var drivers = getInputData(driverTreeId);
 		if (!drivers || drivers.length == 0)
 			drivers = "0";
+			
+		var leaders = getInputData(leaderTreeId);
+		if (!leaders || leaders.length == 0)
+			leaders = "0";
 		
 		$.each(drivers.split(","), function(i, v){
 			$("#${tabid}_form_input_wrap").append('<input name="drivers" value='+ v +' />');
+		});
+		
+		$.each(leaders.split(","), function(i, v){
+			$("#${tabid}_form_input_wrap").append('<input name="leaders" value='+ v +' />');
 		});
 		
 		$.getJSON($form.attr("action"), $form.serializeArray(), function(json){

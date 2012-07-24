@@ -1,6 +1,12 @@
 package controllers;
 
+import java.util.List;
+import java.util.Map;
+
+import models.Department;
 import models.Driver;
+import models.DriverReport;
+import models.Log;
 import notifiers.MyMailer;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -23,4 +29,13 @@ public class Mails extends Controller{
 		renderJSON(CommonUtil.map("success", true));
 	}
 	
+	public static void driverByDept(long departmentId, String timeType, String time){
+		try{
+			Department.sendEmail(departmentId, timeType, time);
+		}catch(Throwable e){
+			renderJSON(CommonUtil.map("message", e.toString()));
+		}
+		
+		renderJSON(CommonUtil.map("success", true));
+    }
 }
