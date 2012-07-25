@@ -102,9 +102,17 @@
 		
 		$.getJSON("/fleets/vehicles", {fleetName:_fleetName}, function(vehicles){
 			$(vehicleTreeId).find('input').attr("checked", false);
-			$.each(vehicles, function(i, p){
-				var _i = $(vehicleTreeId).find('input[name='+ p.id +']');
+			$(vehicleTreeId).find('input:[name != ""]').attr("disabled", true);
+			
+			$.each(eval(vehicles['vehicles']), function(i, v){
+				var _i = $(vehicleTreeId).find('input[name='+ v.id +']');
 				_i.attr("checked", true);
+				_i.attr("disabled", false);
+			});
+			
+			$.each(eval(vehicles['valids']), function(i, v){
+				var _i = $(vehicleTreeId).find('input[name='+ v.id +']');
+				_i.attr("disabled", false);
 			});
 		}).error(function(e){
 	     	alert(e.responseText);
@@ -180,10 +188,10 @@
 	function tree_click(){
 		if($(this).attr("checked")=="checked"){
 	    	var li = $(this).parents('li:first'); 
-	    	li.find("input").attr("checked", true);
+	    	li.find("input:not(:disabled)").attr("checked", true);
 	    }else{
 	        var li = $(this).parents('li:first'); 
-	        li.find("input").attr("checked", false);
+	        li.find("input:not(:disabled)").attr("checked", false);
 	    }
 	}
 </script>

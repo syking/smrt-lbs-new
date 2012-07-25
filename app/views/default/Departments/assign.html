@@ -92,10 +92,19 @@
 		
 		$.getJSON("/departments/drivers", {departmentName:_departmentName}, function(drivers){
 			$(driverTreeId).find('input').attr("checked", false);
-			$.each(drivers, function(i, u){
-				var _i = $(driverTreeId).find('input[name='+ u.id +']');
+			$(driverTreeId).find('input[name != ""]').attr("disabled", true);
+			
+			$.each(eval(drivers['drivers']), function(i, v){
+				var _i = $(driverTreeId).find('input[name='+ v.id +']');
 				_i.attr("checked", true);
+				_i.attr("disabled", false);
 			});
+			
+			$.each(eval(drivers['valids']), function(i, v){
+				var _i = $(driverTreeId).find('input[name='+ v.id +']');
+				_i.attr("disabled", false);
+			});
+			
 		}).error(function(e){
 	     	alert(e.responseText);
 		});
@@ -180,10 +189,10 @@
 	function tree_click(){
 		if($(this).attr("checked")=="checked"){
 	    	var li = $(this).parents('li:first'); 
-	    	li.find("input").attr("checked", true);
+	    	li.find("input:not(:disabled)").attr("checked", true);
 	    }else{
 	        var li = $(this).parents('li:first'); 
-	        li.find("input").attr("checked", false);
+	        li.find("input:not(:disabled)").attr("checked", false);
 	    }
 	}
 </script>

@@ -156,12 +156,19 @@ public class Departments extends Controller {
 	
 	public static void drivers(String departmentName){
 		Department department = Department.findByName(departmentName);
-		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(department.drivers));
+		Map map = new HashMap();
+		List<Driver> validList = Driver.find("department is null").fetch();
+		final String drivers = CommonUtil.getGson("number", "email", "description", "name", "department", "fleet", "iconUrl").toJson(department.drivers);
+		final String valids = CommonUtil.getGson("number", "email", "description", "name", "department", "fleet", "iconUrl").toJson(validList);
+		map.put("drivers", drivers);
+		map.put("valids", valids);
+		
+		renderJSON(map);
 	}
 	
 	public static void leaders(String departmentName){
 		Department department = Department.findByName(departmentName);
-		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(department.leaders));
+		renderJSON(CommonUtil.getGson("number", "email", "description", "name", "department", "fleet", "iconUrl").toJson(department.leaders));
 	}
 	
 	public static void filter(String departmentName){

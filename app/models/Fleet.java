@@ -212,23 +212,28 @@ public class Fleet extends Model{
 	}
 	
 	@Transactional
-	public static boolean assignDriverAndVehicle(String fleetName, List<Long> drivers, List<Long> vehicles) {
+	public static boolean assignDriverAndVehicle(String fleetName, List<Long> leaders, List<Long> vehicles) {
 		Fleet fleet = Fleet.findByName(fleetName);
 		if (fleet == null)
 			throw new RuntimeException("Fleet required !");
 		
-		if (drivers != null){
-			for (Long id : drivers){
+		if (leaders != null){
+			fleet.leaders = new HashSet<Driver>();
+			for (Long id : leaders){
 				Driver d = Driver.findById(id);
 				if (d == null)
 					continue;
-				
-				d.fleet = fleet;
-				d.save();
+				fleet.leaders.add(d);
 			}
+			fleet.save();
 		}
 		
 		if (vehicles != null){
+			for (Vehicle v : fleet.vehicles){
+				v.fleet = null;
+				v.save();
+			}
+			
 			for (Long id : vehicles){
 				Vehicle v = Vehicle.findById(id);
 				if (v == null)
@@ -239,7 +244,7 @@ public class Fleet extends Model{
 			}
 		}
 		
-		if (drivers != null || vehicles != null){
+		if (leaders != null || vehicles != null){
 			return true;
 		}
 		

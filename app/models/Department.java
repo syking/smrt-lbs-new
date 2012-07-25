@@ -213,6 +213,11 @@ public class Department extends Model{
 			throw new RuntimeException("Department required !");
 		
 		if (drivers != null){
+			for (Driver d : department.drivers){
+				d.department = null;
+				d.save();
+			}
+			
 			for (Long id : drivers){
 				Driver d = Driver.findById(id);
 				if (d == null)
@@ -311,30 +316,46 @@ public class Department extends Model{
 		return map;
     }
 	
-	public static void sendEmail(long departmentId, String timeType, String time){
+	public static void sendEmail(long departmentId, String timeType, String day){
 		Department dept = Department.findById(departmentId);
 		if (dept == null)
 			throw new RuntimeException("Department not found!");
 		if (dept.leaders == null || dept.leaders.isEmpty())
 			throw new RuntimeException("Department leader not found!");
-		if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+		if (!DriverReport.isValidTimeType(timeType) || day == null || day.isEmpty())
 			throw new RuntimeException("timeType or time is invalid!");
 		if (dept == null || dept.leaders == null || dept.leaders.isEmpty() || dept.drivers == null || dept.drivers.isEmpty())
 			throw new RuntimeException("Department or Leaders or Drivers not found !");
 		
-		Map report = Driver.assemReport(dept.drivers, timeType, time);
+		Map report = Driver.assemReport(dept.drivers, timeType, day);
 		for (Driver leader : dept.leaders){
+			EmailFlag flag = EmailFlag.findOne(timeType, day, leader.id, departmentId);
+			if (flag == null){
+				flag = new EmailFlag(timeType, day, leader, dept, false);
+				flag.create();
+			}
+			
+			if (flag.isEmail){
+				System.out.println(dept.name+"."+leader.name+" "+timeType+" "+day+" has finished email");
+				continue;
+			}
+			
 			if (leader.email == null){
+				flag.isEmail = false;
 				new Log("email", "driver report", "send email to "+leader.name + " fail cause the leader has no email", null, "-", true).create();
 				continue;
 			}
 			
 			try{
-				MyMailer.leaderMail(dept.name, report, timeType, time, leader);
+				MyMailer.leaderMail(dept.name, report, timeType, leader);
+				flag.isEmail = true;
 			}catch(Throwable e){
+				flag.isEmail = false;
 				new Log("email", "driver report", "send email to "+leader.name + " fail->"+e.toString(), null, "-", false).create();
 				continue;
 			}
+			
+			flag.save();
 		}
 	}
 

@@ -12,17 +12,15 @@ import play.jobs.Every;
 import play.jobs.Job;
 import utils.CommonUtil;
 
-@Every("2h")
+@Every("30s")
 public class EmailJob extends Job{
 
-	public static Map<Long, Boolean> isEmail = new Hashtable<Long, Boolean>();
-	
 	public void doJob(){
 		List<Department> departments = Department.findAll();
 		if (departments == null || departments.isEmpty())
 			return ;
 		Date currentTime = new Date();
-		Date three = CommonUtil.parse(CommonUtil.formatTime("yyyy-MM-dd", new Date()) + " 00:03:00");
+		Date three = CommonUtil.parse(CommonUtil.formatTime("yyyy-MM-dd", new Date()) + " 03:00:00");
 		// 凌晨3点之前不发邮件
 		if (currentTime.before(three)){
 			return ;
@@ -40,25 +38,12 @@ public class EmailJob extends Job{
 		Date yestoday = CommonUtil.addDate(currentTime, -1);
 		
 		for (Department d : departments){
-			Boolean value = false;
-			if (!isEmail.containsKey(d.id))
-				isEmail.put(d.id, value);
-			
-			value = isEmail.get(d.id);
 			try{
-				if (value){
-					System.out.println(d.name + " has finished email.");
-					continue;
-				}
-				
 				Department.sendEmail(d.id, DriverReport.TIME_TYPE.DAILY, CommonUtil.formatTime("yyyy/MM/dd", yestoday));
-				value = true;
 			} catch (Throwable e){
-				value = false;
 				System.out.println(d.name + " | e->" + e.toString());
+				continue;
 			}
-			
-			isEmail.put(d.id, value);
 		}
 	}
 

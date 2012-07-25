@@ -157,7 +157,13 @@ public class Fleets extends Controller {
 	
 	public static void vehicles(String fleetName){
 		Fleet fleet = Fleet.findByName(fleetName);
-		renderJSON(CommonUtil.getGson("number", "license", "name", "fleet", "device", "cctvIp", "DIRECTIONS", "description", "type", "iconUrl").toJson(fleet.vehicles));
+		List<Vehicle> validList = Vehicle.find("fleet is null").fetch();
+		final String valids = CommonUtil.getGson("number", "license", "name", "fleet", "device", "cctvIp", "DIRECTIONS", "description", "type", "iconUrl").toJson(validList);
+		final String vehicles = CommonUtil.getGson("number", "license", "name", "fleet", "device", "cctvIp", "DIRECTIONS", "description", "type", "iconUrl").toJson(fleet.vehicles);
+		Map map = new HashMap();
+		map.put("vehicles", vehicles);
+		map.put("valids", valids);
+		renderJSON(map);
 	}
 	
 	public static void filter(String fleetName){

@@ -32,7 +32,7 @@ public class MyMailer extends Mailer {
 		sendAndWait(report);
 	}
 	
-	public static void leaderMail(String dept,Map report, String timeType, String time, Driver leader) {
+	public static void leaderMail(String dept,Map report, String timeType, Driver leader) {
 		setContentType("text/html");
 		addRecipient(leader.email);
 		setFrom(Play.configuration.get("mail.smtp.user"));
