@@ -111,6 +111,6 @@ public class Interceptor extends Controller {
     public static void logIllegalState(Throwable e) {
 		e.printStackTrace();
 		new Log("System", "-", e.toString(), null, "-", false).create();
-		error(e.getMessage());
+		forbidden("data error -> " + e.getMessage());
     }
 }

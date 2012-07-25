@@ -31,26 +31,42 @@ import static models.User.Constant.THEME;
 public class Drivers extends Controller {
 	
 	public static void search(String number, String name, String description) {
-		List<Driver> drivers = Driver.findByCondition(number, name, description);
-		List<DriverVO> vos = Driver.assemDriverVO(drivers);
-		renderJSON(vos);
+		try{
+			List<Driver> drivers = Driver.findByCondition(number, name, description);
+			List<DriverVO> vos = Driver.assemDriverVO(drivers);
+			renderJSON(vos);
+		}catch(Throwable e){
+			throw new RuntimeException("Driver Search Error");
+		}
 	}
 	
 	public static void listJson() {
-		List<Driver> drivers = Driver.findAll();
-		List<DriverVO> driverVOList = Driver.assemDriverVO(drivers);
-		Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
-
-		renderJSON(data);
+		try{
+			List<Driver> drivers = Driver.findAll();
+			List<DriverVO> driverVOList = Driver.assemDriverVO(drivers);
+			Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
+	
+			renderJSON(data);
+		}catch(Throwable e){
+			throw new RuntimeException("Driver ListJson Error");
+		}
 	}
 
 	public static void add(String models) {
-		renderJSON(Driver.createByJson(models));
+		try{
+			renderJSON(Driver.createByJson(models));
+		}catch(Throwable e){
+			throw new RuntimeException("Driver Create Error -> " + e.getMessage());
+		}
 	}
 
 	public static void destroy(String models) {
-		if (Driver.deleteByJson(models))
-			renderJSON(models);
+		try{
+			if (Driver.deleteByJson(models))
+				renderJSON(models);
+		}catch(Throwable e){
+			throw new RuntimeException("Driver Destroy Error");
+		}
 	}
 
 	public static void update(String models) {

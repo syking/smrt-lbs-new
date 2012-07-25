@@ -12,7 +12,7 @@ import play.jobs.Every;
 import play.jobs.Job;
 import utils.CommonUtil;
 
-@Every("30s")
+@Every("2h")
 public class EmailJob extends Job{
 
 	public void doJob(){
