@@ -42,7 +42,7 @@ import utils.CommonUtil;
  *         </ol>
  *         </p>
  */
-@Every("5s")
+@Every("30s")
 public class EventStatusJob extends Job {
 
 	public void doJob() {
