@@ -436,24 +436,26 @@ public class DriverReport extends Model {
 			dr.total = dr.total();
 			
 			Driver _d = Driver.findById(dr.driver.id);
+			
+			/* 计算部门最高最低分 */
 			Department dept = _d.department;
 			if (dept != null){
 				dept = Department.findById(dept.id);
-				Set<Driver> fleetDrivers = dept.drivers;
-				if (fleetDrivers != null && !fleetDrivers.isEmpty()){
-					List<Long> fleetDriverScores = new ArrayList(fleetDrivers.size());
-					for (Driver fleetDriver : fleetDrivers){
-						List<DriverReport> drs = DriverReport.findByDriver(fleetDriver, timeType, null);
+				Set<Driver> deptDrivers = dept.drivers;
+				if (deptDrivers != null && !deptDrivers.isEmpty()){
+					List<Long> deptDriverScores = new ArrayList(deptDrivers.size());
+					for (Driver deptDriver : deptDrivers){
+						List<DriverReport> drs = DriverReport.findByDriver(deptDriver, timeType, null);
 						if (drs == null || drs.isEmpty())
 							continue;
 						
-						fleetDriverScores.add(fleetDriver.calculateScore(drs));
+						deptDriverScores.add(deptDriver.calculateScore(drs));
 					}
 					
-					if (!fleetDriverScores.isEmpty()){
-						Collections.sort(fleetDriverScores);
-						dr.highestPerformanceIndex = fleetDriverScores.get(fleetDriverScores.size()-1);
-						dr.lowestPerformanceIndex = fleetDriverScores.get(0);
+					if (!deptDriverScores.isEmpty()){
+						Collections.sort(deptDriverScores);
+						dr.highestPerformanceIndex = deptDriverScores.get(deptDriverScores.size()-1);
+						dr.lowestPerformanceIndex = deptDriverScores.get(0);
 					}
 				}
 			}

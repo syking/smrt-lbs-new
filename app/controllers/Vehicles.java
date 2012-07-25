@@ -176,8 +176,12 @@ public class Vehicles extends Controller {
 	 * 车辆管理：删除车辆信息
 	 */
 	public static void destroy(String models) {
-		if (Vehicle.deleteByJson(models))
-			renderJSON(models);
+		try {
+			if (Vehicle.deleteByJson(models))
+				renderJSON(models);
+		} catch (Throwable e) {
+			throw new RuntimeException("Vehicle Destroy Error -> " + e.getMessage());
+		}
 	}
 
 	/**

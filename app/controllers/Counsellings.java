@@ -47,31 +47,47 @@ public class Counsellings extends Controller {
 	}	
 	
 	@Permission
-	public static void search(String userName, String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException {
-		List<Counselling> counsellings = Counselling.findByCondition(userName, driverName, startDate, startTime, endDate, endTime);
-		List<CounselVO> result = new ArrayList<CounselVO>();
-	
-		for (Counselling counselling : counsellings)
-			result.add(new CounselVO().init(counselling));
+	public static void search(String userName, String driverName, String startDate, String startTime, String endDate, String endTime){
+		try{
+			List<Counselling> counsellings = Counselling.findByCondition(userName, driverName, startDate, startTime, endDate, endTime);
+			List<CounselVO> result = new ArrayList<CounselVO>();
 		
-		renderJSON(result);
+			for (Counselling counselling : counsellings)
+				result.add(new CounselVO().init(counselling));
+			
+			renderJSON(result);
+		} catch (Throwable e) {
+			throw new RuntimeException("Counsel Search Error -> " + e.getMessage());
+		}
 	}
 
 	@Permission
-	public static void createCounselling(String models) throws ParseException {
-		renderJSON(Counselling.createByJson(models, null));
+	public static void createCounselling(String models) {
+		try {
+			renderJSON(Counselling.createByJson(models, null));
+		} catch (Throwable e) {
+			throw new RuntimeException("Counsel Create Error -> " + e.getMessage());
+		}
 	}
 
 	@Permission
 	public static void deleteCounsel(String models) {
-		if (Counselling.deleteByJson(models))
-			renderJSON(models);
+		try {
+			if (Counselling.deleteByJson(models))
+				renderJSON(models);
+		} catch (Throwable e) {
+			throw new RuntimeException("Counsel Delete Error -> " + e.getMessage());
+		}
 	}
 
 	@Permission
-	public static void updateCounsel(String models) throws ParseException {
-		if (Counselling.updateByJson(models, null))
-			renderJSON(models);
+	public static void updateCounsel(String models) {
+		try {
+			if (Counselling.updateByJson(models, null))
+				renderJSON(models);
+		} catch (Throwable e) {
+			throw new RuntimeException("Counsel Update Error -> " + e.getMessage());
+		}
 	}
 
 	@Permission

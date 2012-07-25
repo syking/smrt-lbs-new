@@ -46,7 +46,7 @@ public class Counselling extends Model{
 	public static String createByJson(String models, String userName){
 		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
 		if (vos == null)
-			return models;
+			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (CounselVO vo : vos){
 			if (userName != null)
@@ -78,7 +78,7 @@ public class Counselling extends Model{
 	public static boolean updateByJson(String models, String userName){
 		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
 		if (vos == null)
-			return false;
+			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (CounselVO vo : vos){
 			if (vo.id == null)
@@ -119,7 +119,7 @@ public class Counselling extends Model{
 	public static boolean deleteByJson(String models){
 		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
 		if (vos == null)
-			return false;
+			throw new RuntimeException("Could not Parse the Json Content!");;
 		
 		for (CounselVO vo : vos){
 			if (vo.id == null)

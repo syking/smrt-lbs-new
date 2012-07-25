@@ -199,7 +199,7 @@ public class Driver extends Model{
 	public static boolean deleteByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
-			return false;
+			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (DriverVO vo : vos){
 			if (vo.id == null)
@@ -208,8 +208,11 @@ public class Driver extends Model{
 			Driver obj = Driver.findById(Long.parseLong(vo.id));
 			if (obj == null)
 				continue;
-			
-			obj.delete();
+			try {
+				obj.delete();
+			} catch (Throwable e) {
+				throw new RuntimeException("Could not Delete This Driver Cause It is Assigned to Other Model!");
+			}
 		}
 		
 		return true;
@@ -218,7 +221,7 @@ public class Driver extends Model{
 	public static String createByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
-			return models;
+			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (DriverVO vo : vos){
 			vo.validate();
@@ -239,7 +242,7 @@ public class Driver extends Model{
 	public static boolean updateByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
-			return false;
+			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (DriverVO vo : vos){
 			vo.validate();

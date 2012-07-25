@@ -312,7 +312,11 @@ public class Vehicle extends Model {
 			if (v == null)
 				continue;
 			
-			v.delete();
+			try {
+				v.delete();
+			} catch (Throwable e) {
+				throw new RuntimeException("Could not Delete This Vehicle Cause It is Assigned to Other Model!");
+			}
 		}
 		
 		return true;

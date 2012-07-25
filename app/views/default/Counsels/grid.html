@@ -56,36 +56,36 @@
     });
     
     function loadCounsels(url, params){
-    	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
-    	if (_grid){
-    		_grid.dataSource.transport.options.read.url = url;	
-    		if (params){
-    			_grid.dataSource.transport.parameterMap = function(data, operation){
-    				if (operation !== "read" && data.models) {
-                    	$.each(data.models, function(i, v){
-                    		var model = data.models[i];
+		var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+	                	$.each(data.models, function(i, v){
+	                		var model = data.models[i];
 	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
 	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
 	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
 	                    	model.endTime = kendo.toString(model.endTime, "HH:mm:ss");
-                    	});
-                    	
-                        return {models: kendo.stringify(data.models)};
-                    }
-                    
-            		$.each(params, function(i,v){
+	                	});
+	                	
+	                    return {models: kendo.stringify(data.models)};
+	                }
+	                
+	        		$.each(params, function(i,v){
 						data[v.name] = v.value;
-            		});
-            		
-            		return data;
-            	}
-            }
-            
-    		_grid.dataSource.read();
-    		
-    		return ;
-    	}
-    	
+	        		});
+	        		
+	        		return data;
+	        	}
+	        }
+	        
+			_grid.dataSource.read();
+			
+			return ;
+		}
+		
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 		        alert(e.responseText);
@@ -122,9 +122,6 @@
                     if (operation !== "read" && data.models) {
                     	$.each(data.models, function(i, v){
                     		var model = data.models[i];
-	                    	/**
-	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
-	                    	 */
 	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
 	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
 	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
@@ -142,10 +139,10 @@
             schema: {
             	parse: function(data){
             		$.each(data, function(i, val){
-            			//val.startTime = new Date(val.startDate + " " + val.startTime);
-						//val.startDate = new Date(val.startDate);
-						//val.endTime = new Date(val.endDate + " " + val.endTime);
-						//val.endDate = new Date(val.endDate);
+            			// val.startTime = new Date(val.startDate + " " + val.startTime);
+						// val.startDate = new Date(val.startDate);
+						// val.endTime = new Date(val.endDate + " " + val.endTime);
+						// val.endDate = new Date(val.endDate);
 					});
 					
             		return data;
@@ -157,12 +154,12 @@
                         userName: { validation: { required: true } },
                         driverName: { validation: { required: true } },
                         startDate: { validation: {required:true}, type: "date"},
-                        startTime: { validation: { required: true }, type: "time" },
-                        endDate: { validation: {required:true}, type: "date"},
-                        endTime: { validation: { required: true }, type: "time" },
+                        startTime: { validation: { required: true } },
+                        endDate: {validation: {required:true}, type: "date"},
+                        endTime: { validation: { required: true } },
                         remark: {
                         	validation:{
-                        		required: true,
+                        		required: false,
 	                            custom: function(input) {
 	                            	var name = input.attr("name");
 	                            	if (name != "remark")
@@ -208,33 +205,33 @@
 			}
 			
 			if ('startDate' === _field){
-				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
 				columnsJson[i].width = "100px";
+				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
 			}
 			
 			if ('startTime' === _field){
+				columnsJson[i].width = "100px";
 				columnsJson[i].template = '#= kendo.toString(startTime,"HH:mm:ss") #';
 				columnsJson[i].editor = function(container, options){
 			        $('<input name="startTime" />').appendTo(container).kendoTimePicker({
 			        	format: "HH:mm:ss"
 				    });
 				};
-				columnsJson[i].width = "100px";
 			}
 			
 			if ('endDate' === _field){
-				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
 				columnsJson[i].width = "100px";
+				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
 			}
 			
 			if ('endTime' === _field){
+				columnsJson[i].width = "100px";
 				columnsJson[i].template = '#= kendo.toString(endTime,"HH:mm:ss") #';
 				columnsJson[i].editor = function(container, options){
 			        $('<input name="endTime" />').appendTo(container).kendoTimePicker({
 			        	format: "HH:mm:ss"
 				    });
 				};
-				columnsJson[i].width = "100px";
 			}
 		});
 		

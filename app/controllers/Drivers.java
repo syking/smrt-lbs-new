@@ -31,52 +31,60 @@ import static models.User.Constant.THEME;
 public class Drivers extends Controller {
 	
 	public static void search(String number, String name, String description) {
-		try{
+		try {
 			List<Driver> drivers = Driver.findByCondition(number, name, description);
 			List<DriverVO> vos = Driver.assemDriverVO(drivers);
 			renderJSON(vos);
-		}catch(Throwable e){
-			throw new RuntimeException("Driver Search Error");
+		} catch (Throwable e) {
+			throw new RuntimeException("Driver Search Error -> " + e.getMessage());
 		}
 	}
 	
 	public static void listJson() {
-		try{
+		try {
 			List<Driver> drivers = Driver.findAll();
 			List<DriverVO> driverVOList = Driver.assemDriverVO(drivers);
 			Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
 	
 			renderJSON(data);
-		}catch(Throwable e){
-			throw new RuntimeException("Driver ListJson Error");
+		}catch (Throwable e) {
+			throw new RuntimeException("Driver ListJson Error -> " + e.getMessage());
 		}
 	}
 
 	public static void add(String models) {
-		try{
+		try {
 			renderJSON(Driver.createByJson(models));
-		}catch(Throwable e){
+		} catch(Throwable e) {
 			throw new RuntimeException("Driver Create Error -> " + e.getMessage());
 		}
 	}
 
 	public static void destroy(String models) {
-		try{
+		try {
 			if (Driver.deleteByJson(models))
 				renderJSON(models);
-		}catch(Throwable e){
-			throw new RuntimeException("Driver Destroy Error");
+		} catch (Throwable e) {
+			throw new RuntimeException("Driver Destroy Error -> " + e.getMessage());
 		}
 	}
 
 	public static void update(String models) {
-		if (Driver.updateByJson(models))
-			renderJSON(models);
+		try {
+			if (Driver.updateByJson(models))
+				renderJSON(models);
+		} catch (Throwable e) {
+			throw new RuntimeException("Driver Update Error -> " + e.getMessage());
+		}
 	}
 
 	public static void read() {
-		List<Driver> driverList = Driver.find("order by id desc").fetch();
-		renderJSON(CommonUtil.getGson("fleet", "department").toJson(driverList));
+		try {
+			List<Driver> driverList = Driver.find("order by id desc").fetch();
+			renderJSON(CommonUtil.getGson("fleet", "department").toJson(driverList));
+		} catch (Throwable e) {
+			throw new RuntimeException("Driver Read Error -> " + e.getMessage());
+		}
 	}
 
 	public static void grid(String id) {
