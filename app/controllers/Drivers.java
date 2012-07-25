@@ -1,6 +1,8 @@
 package controllers;
 
 import com.google.gson.Gson;
+
+import models.Department;
 import models.Driver;
 import models.DriverReport;
 import models.User;
@@ -30,9 +32,9 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Drivers extends Controller {
 	
-	public static void search(String number, String name, String description) {
+	public static void search(String department, String number, String name, String description) {
 		try {
-			List<Driver> drivers = Driver.findByCondition(number, name, description);
+			List<Driver> drivers = Driver.findByCondition(department, number, name, description);
 			List<DriverVO> vos = Driver.assemDriverVO(drivers);
 			renderJSON(vos);
 		} catch (Throwable e) {
@@ -44,7 +46,7 @@ public class Drivers extends Controller {
 		try {
 			List<Driver> drivers = Driver.findAll();
 			List<DriverVO> driverVOList = Driver.assemDriverVO(drivers);
-			Map data = CommonUtil.assemGridData(driverVOList, "id", "fleet");
+			Map data = CommonUtil.assemGridData(driverVOList, "id");
 	
 			renderJSON(data);
 		}catch (Throwable e) {
@@ -78,10 +80,11 @@ public class Drivers extends Controller {
 		}
 	}
 
-	public static void read() {
+	public static void read(int page, int pageSize) {
 		try {
 			List<Driver> driverList = Driver.find("order by id desc").fetch();
-			renderJSON(CommonUtil.getGson("fleet", "department").toJson(driverList));
+			List<DriverVO> vos = Driver.assemDriverVO(driverList);
+			renderJSON(vos);
 		} catch (Throwable e) {
 			throw new RuntimeException("Driver Read Error -> " + e.getMessage());
 		}
@@ -99,13 +102,13 @@ public class Drivers extends Controller {
 		grid.editable = "popup";
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(DriverVO.class, "id"));
 
-		List<User> userList = User.findAll();
-		List<ComboVO> users = new ArrayList<ComboVO>();
-		if (userList != null)
-			for (User user : userList) 
-				users.add(new ComboVO(user.name, user.id));
+		List<Department> deptList = Department.findAll();
+		List<ComboVO> depts = new ArrayList<ComboVO>();
+		if (deptList != null)
+			for (Department dept : deptList) 
+				depts.add(new ComboVO(dept.name, dept.name));
 			
-		map.put("users", CommonUtil.getGson().toJson(users));
+		map.put("departments", CommonUtil.getGson().toJson(depts));
 		map.put("grid", grid);
 		
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Drivers/grid.html")).render(map));

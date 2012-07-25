@@ -12,6 +12,9 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -53,7 +56,8 @@ public class Fleet extends Model{
 	@OneToMany(mappedBy = "fleet", fetch = FetchType.EAGER)
 	public Set<Vehicle> vehicles = new HashSet<Vehicle>();
 
-	@OneToMany(mappedBy = "fleet", fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "t_fleet_leader", joinColumns=@JoinColumn(name = "fleet_id"), inverseJoinColumns=@JoinColumn(name="leader_id"))
 	public Set<Driver> leaders = new HashSet<Driver>();
 	
 	@Transient
@@ -78,7 +82,7 @@ public class Fleet extends Model{
 			fleet.description = vo.description;
 			fleet.placeNumber = vo.placeNumber;
 			fleet.parent = Fleet.findByName(vo.parentName);
-			if (vo.parentName != null && fleet.parent == null)
+			if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
 			
 			fleet.create();
@@ -106,7 +110,7 @@ public class Fleet extends Model{
 			fleet.description = vo.description;
 			fleet.placeNumber = vo.placeNumber;
 			fleet.parent = Fleet.findByName(vo.parentName);
-			if (vo.parentName != null && fleet.parent == null)
+			if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
 			
 			fleet.save();
@@ -126,7 +130,14 @@ public class Fleet extends Model{
 			if (fleet == null)
 				continue ;
 			
-			fleet.delete();
+			if ((fleet.leaders != null && !fleet.leaders.isEmpty()) || (fleet.vehicles != null && !fleet.vehicles.isEmpty()))
+				throw new RuntimeException("Could Not Delete This Fleet Cause It is Assigned to Drivers or Vehicles!");
+			
+			try {
+				fleet.delete();
+			} catch (Throwable e) {
+				throw new RuntimeException("Could Not Delete This Fleet Cause It is A Parent Fleet of Other Fleet!");
+			}
 		}
 		
 		return true;
@@ -223,8 +234,10 @@ public class Fleet extends Model{
 				Driver d = Driver.findById(id);
 				if (d == null)
 					continue;
+				
 				fleet.leaders.add(d);
 			}
+			
 			fleet.save();
 		}
 		

@@ -73,7 +73,7 @@ public class Department extends Model{
 			Department dept = new Department();
 			dept.name = vo.name;
 			dept.parent = Department.findByName(vo.parentName);
-			if (vo.parentName != null && dept.parent == null)
+			if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
 			
 			dept.create();
@@ -97,6 +97,8 @@ public class Department extends Model{
 			
 			department.name = vo.name;
 			department.parent = Department.findByName(vo.parentName);
+			if (vo.parentName != null && !vo.parentName.isEmpty() && department.parent == null)
+				throw new RuntimeException("ParentName is invalid!");
 			
 			department.save();
 		}
@@ -115,7 +117,14 @@ public class Department extends Model{
 			if (department == null)
 				continue ;
 		
-			department.delete();
+			if ((department.leaders != null && !department.leaders.isEmpty()) || (department.drivers != null && !department.drivers.isEmpty()))
+				throw new RuntimeException("Could Not Delete This Department Cause It is Assigned to Drivers!");
+			
+			try {
+				department.delete();
+			} catch (Throwable e) {
+				throw new RuntimeException("Could Not Delete This Department Cause It is A Parent Department of Other Department!");
+			}
 		}
 		
 		return true;

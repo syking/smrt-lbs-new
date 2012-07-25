@@ -315,7 +315,7 @@ public class Vehicle extends Model {
 			try {
 				v.delete();
 			} catch (Throwable e) {
-				throw new RuntimeException("Could not Delete This Vehicle Cause It is Assigned to Other Model!");
+				throw new RuntimeException("Could not Delete This Vehicle Cause It is Assigned to Fleet!");
 			}
 		}
 		
@@ -336,8 +336,9 @@ public class Vehicle extends Model {
 	
 			
 			Fleet fleet = Fleet.find("byName", vo.fleetName).first();
-			if (vo.fleetName != null && fleet == null)
-					throw new RuntimeException("FleetName is invalid!");
+			if (vo.fleetName != null && !vo.fleetName.isEmpty() && fleet == null)
+				throw new RuntimeException("FleetName is invalid!");
+			
 			v.fleet = fleet;
 	
 			Device device = Device.find("byName", vo.deviceName).first();
@@ -377,7 +378,7 @@ public class Vehicle extends Model {
 			v.license = vehicleVO.license;
 	
 			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
-			if (vehicleVO.fleetName != null && fleet == null)
+			if (vehicleVO.fleetName != null && !vehicleVO.fleetName.isEmpty() && fleet == null)
 				throw new RuntimeException("FleetName is invalid!");
 			
 			v.fleet = fleet;
@@ -385,11 +386,13 @@ public class Vehicle extends Model {
 			Device device = Device.find("byName", vehicleVO.deviceName).first();
 			if (device == null)
 				throw new RuntimeException("DeviceName is invalid!");
+			
 			v.device = device;
 	
 			v.cctvIp = vehicleVO.cctvIp;
 			v.description = vehicleVO.description;
 			v.type = vehicleVO.type;
+			
 			v.save();
 		}
 		

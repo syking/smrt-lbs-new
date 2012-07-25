@@ -80,8 +80,11 @@ public class Permission extends Model{
 			Permission permission = Permission.findById(Long.parseLong(vo.id));
 			if (permission == null)
 				continue ;
-			
-			permission.delete();
+			try {
+				permission.delete();
+			} catch (Throwable e) {
+				throw new RuntimeException("Could Not Delete This Permission Cause It is Assigned to Roles !");
+			}
 		}
 		
 		return true;

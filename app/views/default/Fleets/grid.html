@@ -91,7 +91,7 @@
                         		required: true,
 	                            custom: function(input) {
 	                            	var name = input.attr("name");
-	                            	if (name != "parentName" && name != "description")
+	                            	if (name != "parentName" && name != "description" && name != "parentName_input")
 	                            		return validate_empty(input);
 	                            	
 	                            	return true;

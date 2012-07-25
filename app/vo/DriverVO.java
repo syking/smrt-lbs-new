@@ -18,6 +18,8 @@ public class DriverVO
         this.name = driver.name;
         this.email = driver.email;
         this.description = driver.description;
+        if (driver.department != null)
+        	this.department = driver.department.name;
 
         return this;
     }
@@ -26,6 +28,7 @@ public class DriverVO
     public String number;
     public String name;
     public String email;
+    public String department = "-";
     public String description;
     
     public void validate(){

@@ -131,8 +131,8 @@ public class Excels extends Controller{
 			renderExcel(data);
     }
     
-    public static void drivers(String number, String name, String description){
-    	Map data = Driver.search(number, name, description);
+    public static void drivers(String department, String number, String name, String description){
+    	Map data = Driver.search(department, number, name, description);
     	if (data != null)
     		renderExcel(data);
     }

@@ -59,9 +59,6 @@ public class Driver extends Model{
 	@ManyToOne(fetch = FetchType.EAGER)
 	public Department department;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	public Fleet fleet;// 车队
-	
 	@Transient
 	public final static String iconUrl = "../../public/images/wheel.png";
 
@@ -211,7 +208,7 @@ public class Driver extends Model{
 			try {
 				obj.delete();
 			} catch (Throwable e) {
-				throw new RuntimeException("Could not Delete This Driver Cause It is Assigned to Other Model!");
+				throw new RuntimeException("Could not Delete This Driver Cause It is Assigned to Department or Fleet !");
 			}
 		}
 		
@@ -231,6 +228,11 @@ public class Driver extends Model{
 			obj.name = vo.name;
 			obj.description = vo.description;
 			obj.email = vo.email;
+			
+			obj.department = Department.findByName(vo.department);
+			if (vo.department != null && !vo.department.isEmpty() && obj.department == null)
+				throw new RuntimeException("Department Name is invalid");
+			
 			obj.create();
 			vo.id = String.valueOf(obj.id);
 		}
@@ -259,6 +261,10 @@ public class Driver extends Model{
 			obj.description = vo.description;
 			obj.email = vo.email;
 			
+			obj.department = Department.findByName(vo.department);
+			if (vo.department != null && !vo.department.isEmpty() && obj.department == null)
+				throw new RuntimeException("Department Name is invalid");
+			
 			obj.save();
 		}
 		
@@ -285,8 +291,8 @@ public class Driver extends Model{
 		return Driver.find("byNumber", driverNumber).first();
 	}
 
-	public static Map search(String number, String name, String description) {
-		List<Driver> drivers = Driver.findByCondition(number, name, description);
+	public static Map search(String departmentName, String number, String name, String description) {
+		List<Driver> drivers = Driver.findByCondition(departmentName, number, name, description);
 		List<DriverVO> vos = Driver.assemDriverVO(drivers);
 		Map data = CommonUtil.assemGridData(vos, "id");
 		return data;
@@ -305,11 +311,23 @@ public class Driver extends Model{
 		return vos;
 	}
 
-	public static List<Driver> findByCondition(String number, String name, String description) {
+	public static List<Driver> findByCondition(String departmentName, String number, String name, String description) {
 		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
+		
+		if (departmentName != null && !departmentName.isEmpty()){
+			Department dept = Department.findByName(departmentName);
+			if (dept != null) {
+				sqlSB.append("department = ?");
+				params.add(dept);
+			}
+		}
+		
 		if (number != null && number.length() > 0) {
+			if (sqlSB.length() > 0)
+				sqlSB.append(" and ");
+			
 			sqlSB.append("number like ?");
 			params.add("%" + number + "%");
 		}

@@ -44,14 +44,6 @@ public class Device extends Model {
 	
 	public String status;
 
-	@Override
-	public String toString() {
-		return "Device [name=" + name + ", host=" + host + ", key=" + key
-				+ ", alive=" + alive + ", serverUrls=" + serverUrls
-				+ ", action=" + action + ", misc=" + misc + ", status="
-				+ status + "]";
-	}
-
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
 		final String msg = "%s Can't be empty, ";
@@ -103,8 +95,11 @@ public class Device extends Model {
 			Device device = Device.findById(vo.id);
 			if (device == null)
 				continue ;
-			
-			device.delete();
+			try {
+				device.delete();
+			} catch (Throwable e) {
+				throw new RuntimeException("Could Not Delete This Device Cause It is Assigned to Vehicles !");
+			}
 		}
 		
 		return true;
@@ -162,6 +157,7 @@ public class Device extends Model {
 	
 	private static void parseCondition(String name, String key, String host,
 			final List<Object> params, final StringBuilder sb) {
+		
 		if (name != null && !name.isEmpty()){
 			sb.append("name like ?");
 			params.add(new StringBuilder("%").append(name).append("%").toString());

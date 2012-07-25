@@ -1,12 +1,15 @@
 <form id="driver_form_${grid.tabId}" action="/drivers/search" method="post" class="k-content" onsubmit="return driverSearchValidate(this)" style="padding:10px 0;">
 
+	<label for="${grid.tabId}_department">Department:</label>
+    <input name="department" id="${grid.tabId}_department" />
+    
     <label for="${grid.tabId}_number">Number:</label>
     <input name="number" id="${grid.tabId}_number" class="k-input k-textbox"/>
 
+	<div style="height:8px"></div>
+
     <label for="${grid.tabId}_name">Name:</label>
     <input name="name" id="${grid.tabId}_name" class="k-input k-textbox"/>
-
-	<div style="height:8px"></div>
 
     <label for="${grid.tabId}_description">Description:</label>
     <input name="description" id="${grid.tabId}_description" class="k-input k-textbox"/>
@@ -26,10 +29,38 @@
     var sessionfor = "";
     
     $(document).ready(function () {
+		$("#${grid.tabId}_department").kendoComboBox({
+	        dataTextField: "text",
+	        dataValueField: "value",
+	        dataSource: #{verbatim} ${departments} #{/verbatim}
+	    });
+        
     	loadDrivers("drivers/read");
     });
 
     function loadDrivers(url, params) {
+		var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+	                    return {models: kendo.stringify(data.models)};
+	                }
+	                
+	        		$.each(params, function(i,v){
+						data[v.name] = v.value;
+	        		});
+	        		
+	        		return data;
+	        	}
+	        }
+	        
+			_grid.dataSource.read();
+			
+			return ;
+		}
+		
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 		        alert(e.responseText);
@@ -66,11 +97,11 @@
                         return {models:kendo.stringify(data.models)};
                     }
                     
-                    return params;
+                    return data;
                 }
             },
             batch:true,
-            pageSize:10,
+            pageSize:8,
             schema:{
                 model:{
                     id:"id",
@@ -91,12 +122,17 @@
                         		required: true
                         	}
                         },
+                        department:{
+                        	validation:{
+                        		required: false
+                        	}
+                        },
                         number:{ 
                         	validation:{
                         		required: true,
 	                            custom: function(input) {
 	                            	var name = input.attr("name");
-	                            	if (name != "description")
+	                            	if (name != "description" && name != "department" && name != "department_input")
 	                            		return validate_empty(input);
 	                            	
 	                            	return true;
@@ -108,17 +144,30 @@
             }
         });
         
-        $("#grid_${grid.tabId}").empty();
-        
         var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
         columnsJson[columnsJson.length] = { command:["edit","destroy"], title:"Action", width:"200px" };
+        $.each(columnsJson, function(i, v){
+			var _field = columnsJson[i]['field'];
+			
+			if ('department' === _field){
+				columnsJson[i].editor = function(container, options){
+			        $('<input name="department" />').appendTo(container).kendoComboBox({
+				        dataTextField: "text",
+				        dataValueField: "value",
+				        dataSource: #{verbatim} ${departments} #{/verbatim}
+				    });
+				};
+			}
+		});
+		
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
             toolbar: ["create"], // specify toolbar commands
             pageable:true,
             sortable:true,
             selectable:true,
-            scrollable:false,
+            scrollable:true,
+            resizable:true,
             columns:columnsJson,
             editable:"popup",
             navigatable: true

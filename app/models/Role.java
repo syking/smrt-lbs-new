@@ -90,6 +90,9 @@ public class Role extends Model{
 			if (role == null)
 				continue ;
 			
+			if ((role.users != null && !role.users.isEmpty()) || (role.permissions != null && !role.permissions.isEmpty()))
+				throw new RuntimeException("Could Not Delete This Role Cause It is Assigned to Users or Permissions!");
+			
 			role.delete();
 		}
 		

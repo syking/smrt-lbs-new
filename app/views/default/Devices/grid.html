@@ -47,7 +47,7 @@
 		
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-	        	alert("server error " + e.responseText);
+	        	alert(e.responseText);
 		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
 	        	grid.cancelChanges();//roll back 
 		    },
@@ -85,13 +85,18 @@
                 }
             },
             batch: true,
-            pageSize: 10,
+            pageSize: 8,
             serverPaging:true,
             schema: {
             	data: "data",
             	total: "total",
             	parse: function(data){
-					
+            		$.each(data.data, function(i,v){
+            			if (!v.serverUrls || v.serverUrls == '')
+            				v.serverUrls = '-';
+            			if (!v.action || v.action == '')
+            				v.action = '-';
+            		});
             		return data;
             	},
                 model: {
