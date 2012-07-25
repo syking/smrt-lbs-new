@@ -130,7 +130,7 @@
                 }
             },
             batch: true,
-            pageSize: 10,
+            pageSize: 8,
             schema: {
             	parse: function(data){
             		// $.each(data, function(i, val){
@@ -190,6 +190,7 @@
 			
 			if ('startDate' === _field){
 				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
+				columnsJson[i].width = "100px";
 			}
 			
 			if ('startTime' === _field){
@@ -199,10 +200,12 @@
 			        	format: "HH:mm:ss"
 				    });
 				};
+				columnsJson[i].width = "100px";
 			}
 			
 			if ('endDate' === _field){
 				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
+				columnsJson[i].width = "100px";
 			}
 			
 			if ('endTime' === _field){
@@ -212,6 +215,7 @@
 			        	format: "HH:mm:ss"
 				    });
 				};
+				columnsJson[i].width = "100px";
 			}
 		});
 		

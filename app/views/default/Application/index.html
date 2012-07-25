@@ -1,10 +1,17 @@
 #{set 'title'}&{'application-title-long'} - &{'live-location'}#{/set}
 #{set voucher_mode:false /}
 #{set 'moreScripts'}
+
 <script src="/public/js/esri.ux.layers.ClusterLayer-debug.js" type="text/javascript"></script>
+
 <script>
 	var map = "";
      $(document).ready(function() {
+     	 var h1 = $("body").css("height").replace("px", "");
+	     var h2 = $("#header").css("height").replace("px", "");
+	     var h3 = h1-h2; 
+	     $("#map_content").css("height", h3+"px"); 
+	     
          $("#vertical").kendoSplitter({
              orientation: "vertical",
              panes: [
@@ -41,21 +48,19 @@
 #{/set}
 #{extends theme+'/main_head.html' /}
         <div id="header" class="header background-image">
-            <div class="header-wrap">
-                <div class="logo background-image"></div>
-                <div class="header-topright">
-                    <div class="header-toolbar background-image">
-                        <div class="header-toolbar-wrap">
-                        	<a class="copy-text-white" href="/">Home</a>
-                            <span class="copy-text-white">&nbsp;|&nbsp;</span>
-                            <a class="copy-text-white" href="/admin">Admin</a>
-                            <span class="copy-text-white">&nbsp;|&nbsp;</span>
-                            <a class="copy-text-white" href="javascript:void(0)" onclick="logout()">&{'log-out'}</a>
-                        </div>
+            <div class="logo background-image"></div>
+            <div class="header-topright">
+                <div class="header-toolbar background-image">
+                    <div class="header-toolbar-wrap">
+                    	<a class="copy-text-white" href="/">Home</a>
+                        <span class="copy-text-white">&nbsp;|&nbsp;</span>
+                        <a class="copy-text-white" href="/admin">Admin</a>
+                        <span class="copy-text-white">&nbsp;|&nbsp;</span>
+                        <a class="copy-text-white" href="javascript:void(0)" onclick="logout()">&{'log-out'}</a>
                     </div>
-                    <div class="afterlogin-welcome-wrap">
-                        <span>&{'welcome'} ${user}!</span>
-                    </div>
+                </div>
+                <div class="afterlogin-welcome-wrap">
+                    <span>&{'welcome'} ${user}!</span>
                 </div>
             </div>
         </div>
@@ -65,7 +70,7 @@
 			     <div id="top-pane">
 			         <div id="horizontal">
 			             <div id="map" region="center" class="pane-content">
-			             		<div id="change-level-btn" style="display:none;cursor:pointer;position:absolute; top:220px; padding:2px; left:1px; z-index:99999999;">
+			             		<div id="change-level-btn" style="display:none;cursor:pointer;position:absolute; bottom:10px; padding:2px; left:1px; z-index:99999999;">
 									<img src="/public/images/target.png" />	
 								</div>
 			                 	#{include './map.html' /}

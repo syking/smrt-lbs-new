@@ -87,27 +87,38 @@
 	         wnd.title("Upload Schedule CSV File").center().open();
         });
         
+        var $downloading ;
         $("#${grid.tabId}_file").kendoUpload({
+        	//showFileList:false,
         	multiple: false,
             async: {
                 saveUrl: "/schedules/upload",
                 autoUpload: false
             },
             complete: function(e){
+            	if ($downloading)
+            		$downloading.remove();
             },
             error: function(e){
             	alert(e.XMLHttpRequest.responseText);
+            	if ($downloading)
+            		$downloading.remove();
             },
             success: function(e){
             	alert("upload success!");
             	wnd.close();
             	loadSchedules("/Schedules/read");
+            	
+            	if ($downloading)
+            		$downloading.remove();
             },
             upload: function(e){
             	var _ext = e.files[0].extension;
             	if (".csv" != _ext){
             		alert("file type must be csv");
             		e.preventDefault();//stop the upload event
+            	}else{
+            		//$downloading = $("<img id='__dwonloading' style='z-index:99999999; position:absolute; top:40%; left:40%;' src='/public/images/downloading.gif' />").insertAfter("head");
             	}
             }
         });

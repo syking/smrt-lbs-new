@@ -3,7 +3,7 @@
 #{/set}
 #{set 'moreScripts'}
 #{/set}
-<div id="tabStrip" style="height:99%; border:none;">
+<div id="tabStrip" style="height:100%; border:none; clear:both;">
 </div>
 <script>
 $(document).ready(function() {
@@ -11,7 +11,7 @@ $(document).ready(function() {
     var tabStrip = $("#tabStrip").kendoTabStrip({
         select: function(e){
         	var _h = $("#tabStrip").css("height");
-        	var _height = _h.replace("px", "") - 32;
+        	var _height = _h.replace("px", "") - 50;
         	$(e.contentElement).css("height", _height);
         },
         animation: {
