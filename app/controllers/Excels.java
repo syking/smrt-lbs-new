@@ -34,9 +34,9 @@ public class Excels extends Controller{
         renderTemplate(renderArgs.get(THEME) + "/Excels/data-records.xls", map);
 	}
 	
-    public static void queryData(int page, int pageSize, Long driverId, String timeType, String startTime, String endTime) {
+    public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
-		Map map = Driver.queryReport(page, pageSize, driverId, timeType, startTime, endTime);
+		Map map = Driver.queryReport(-1, -1, driverId, timeType, startTime, endTime);
 		if (map != null)
 			renderExcel(map);
 	}

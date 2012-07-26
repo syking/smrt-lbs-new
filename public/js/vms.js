@@ -20,7 +20,7 @@ function exportButtonClick(button){
 	var $form = $("#"+_formId);
 	var params = $form.serialize();
 	var url = $(button).attr("url") + "?"+params;
-	window.location = url;
+	window.open(url, 'export');
 }
 
 $(document).ready(function(){
@@ -31,6 +31,11 @@ $(document).ready(function(){
 	
 	$(".export-excel-button").unbind("click");
 	$(".export-excel-button").click(function(){
+		exportButtonClick(this);
+	});
+	
+	$(".export-pdf-button").unbind("click");
+	$(".export-pdf-button").click(function(){
 		exportButtonClick(this);
 	});
 

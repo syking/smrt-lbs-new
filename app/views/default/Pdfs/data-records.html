@@ -2,25 +2,25 @@
 
 <html>
     <head>
-        <title>${title}</title>
+        <title>PDF Report</title>
         <style>
         	body{font-size:12px; padding:0; margin:0;}
         </style>
     </head>
     <body>
         <div id="content">
-            <table border=1 cellpadding=0 cellspacing=0 style='border-collapse:collapse;'>
+            <table border=1 cellpadding=0 cellspacing=0 style='width:100%;border-collapse:collapse;'>
 				<!-- header -->
 				<tr style="background:#99CC00">
-					#{list items:report.columns, as:'col'}
+					#{list items:map.columns, as:'col'}
 					<td style="text-align: center; padding:5px 0; font-weight:bold;">${col.title}</td>
 					#{/list}
 				</tr>
 				
 				<!-- data -->
-				#{list items:report.data, as:'record'}
+				#{list items:map.data, as:'record'}
 				<tr>
-					#{list items:report.columns, as:'c'}
+					#{list items:map.columns, as:'c'}
 					<td style="text-align: center;">${record[c.field]}</td>
 					#{/list}
 				</tr>

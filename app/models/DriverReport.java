@@ -168,9 +168,15 @@ public class DriverReport extends Model {
 		
 		List<DriverReport> _drs = null;
 		if (sql.length() > 0 && !params.isEmpty())
-			_drs = DriverReport.find(sql.toString(), params.toArray()).fetch(page, pageSize);
+			if (page <= 0 || pageSize <= 0)
+				_drs = DriverReport.find(sql.toString(), params.toArray()).fetch();
+			else
+				_drs = DriverReport.find(sql.toString(), params.toArray()).fetch(page, pageSize);
 		else
-			_drs = DriverReport.all().fetch(page, pageSize);
+			if (page <= 0 || pageSize <= 0)
+				_drs = DriverReport.all().fetch();
+			else
+				_drs = DriverReport.all().fetch(page, pageSize);
 		
 		if (_drs != null && !_drs.isEmpty())
 			drs.addAll(_drs);

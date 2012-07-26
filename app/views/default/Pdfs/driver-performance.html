@@ -24,21 +24,21 @@
 			   	</tr>
 			
 			   	<tr style="background:yellow;">
-				    <td style="text-align: center;">${report.performance.driverName}</td>
-				    <td style="text-align: center;">${report.performance.driverNo}</td>
-				    <td style="text-align: center;">${report.performance.email}</td>
-				    <td style="text-align: center;">${report.performance.drivingTime}</td>
-				    <td style="text-align: center;">${report.performance.reportType}</td>
-				    <td style="text-align: center;">${report.performance.start}</td>
-				    <td style="text-align: center;">${report.performance.end}</td>
-				    <td style="text-align: center;">${report.performance.highest}</td>
-				    <td style="text-align: center;">${report.performance.lowest}</td>
-				    <td style="text-align: center;">${report.performance.performance}</td>
+				    <td style="text-align: center;">${map.performance.driverName}</td>
+				    <td style="text-align: center;">${map.performance.driverNo}</td>
+				    <td style="text-align: center;">${map.performance.email}</td>
+				    <td style="text-align: center;">${map.performance.drivingTime}</td>
+				    <td style="text-align: center;">${map.performance.reportType}</td>
+				    <td style="text-align: center;">${map.performance.start}</td>
+				    <td style="text-align: center;">${map.performance.end}</td>
+				    <td style="text-align: center;">${map.performance.highest}</td>
+				    <td style="text-align: center;">${map.performance.lowest}</td>
+				    <td style="text-align: center;">${map.performance.performance}</td>
 			   	</tr>
 			   	
 				<!-- header -->
 				<tr style="background:#99CC00">
-					#{list items:report.events.columns, as:'col'}
+					#{list items:map.events.columns, as:'col'}
 					<td style="text-align: center; padding:5px 0; font-weight:bold;">${col.title}</td>
 					#{/list}
 					<td style="text-align: center; padding:5px 0; font-weight:bold;">&nbsp;</td>
@@ -46,9 +46,9 @@
 				</tr>
 				
 				<!-- data -->
-				#{list items:report.events.data, as:'record'}
+				#{list items:map.events.data, as:'record'}
 				<tr>
-					#{list items:report.events.columns, as:'c'}
+					#{list items:map.events.columns, as:'c'}
 					<td style="text-align: center;">${record[c.field]}</td>
 					#{/list}
 					<td style="text-align: center;">&nbsp;</td>
