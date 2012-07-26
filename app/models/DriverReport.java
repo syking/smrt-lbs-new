@@ -297,7 +297,7 @@ public class DriverReport extends Model {
 			// yearly
 			yearlyReport(drivers, eventTypes, _end);
 			
-			System.out.println(CommonUtil.formatTime(firtDayOfYear));
+//			System.out.println(CommonUtil.formatTime(firtDayOfYear));
 		}
 	}
 
@@ -315,7 +315,7 @@ public class DriverReport extends Model {
 		if (db_dr == null || db_dr.isEmpty()){
 			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
 		} else {
-			System.out.println("yearly no report");
+//			System.out.println("yearly no report");
 		}
 		
 		return start;
@@ -334,7 +334,7 @@ public class DriverReport extends Model {
 		if (db_dr == null || db_dr.isEmpty()){
 			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
 		} else {
-			System.out.println("monthly no report");
+//			System.out.println("monthly no report");
 		}
 		
 		return end;
@@ -353,7 +353,7 @@ public class DriverReport extends Model {
 		if (db_dr == null || db_dr.isEmpty()){
 			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
 		} else {
-			System.out.println("weekly no report");
+//			System.out.println("weekly no report");
 		}
 		
 		return end;
@@ -368,7 +368,7 @@ public class DriverReport extends Model {
 		if (db_dr == null || db_dr.isEmpty()){
 			DriverReport.saveToDb(drivers, timeType, start, end, eventTypes);
 		} else {
-			System.out.println("daily no report");
+//			System.out.println("daily no report");
 		}
 		
 		return end;
