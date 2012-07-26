@@ -41,7 +41,7 @@ public class Pdfs extends Controller{
 	
 	public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
-		Map map = Driver.queryReport(-1, -1, driverId, timeType, startTime, endTime);
+		Map map = Driver.queryReport(1, 500, driverId, timeType, startTime, endTime);
 		if (map == null)
 			return ;
 		
@@ -137,7 +137,7 @@ public class Pdfs extends Controller{
     }
     
     public static void reportEvent(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
-		Map data = Event.search(-1, -1, driver, serviceNo, type, startTime, endTime);
+		Map data = Event.search(1, 500, driver, serviceNo, type, startTime, endTime);
 		if (data == null)
 			return ;
 		
@@ -145,7 +145,7 @@ public class Pdfs extends Controller{
 	}
     
     public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime){
-    	Map data = Schedule.search(-1, -1, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+    	Map data = Schedule.search(1, 500, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		if (data == null)
 			return ;
 		
