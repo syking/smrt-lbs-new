@@ -4,19 +4,19 @@
 #{extends theme+'/main_head.html' /}
 <div id="path-view-on-map-splitter" style="width:99%; height:99%;">
 	<form action="/vehicles/searchPath" method="post" onsubmit="return pathSearchValidate(this)">
-		<input id="path_schedule_id" type="hidden" name="scheduleId" value="-1" />
-		<br />
+		<div style="height:8px;"></div>
 		<label for="path-vehicles"  style="width:80px;">Vehicle:</label>
-		<input name="vehicleId" id="path-vehicles"/>
-		<label id="path-schedules-label" for="path-schedules" style="width:75px;"  >Schedule:</label>
-		<input style="width:250px" name="scheduleId" id="path-schedules"/>
-		<div style="height:5px;"></div>
+		<input name="vehicleNo" id="path-vehicles"/>
+		<label id="path-schedules-label" for="path-schedules" style="width:75px;">Schedule:</label>
+		<input style="width:250px" id="path-schedules"/>
+		
+		<div style="height:8px;"></div>
 		<label for="path-start-date"  style="width:80px;">StartDate:</label>
 		<input name="startDate" id="path-start-date" class="date" />
 		<label for="path-start-time"  style="width:80px;">StartTime:</label>
 		<input name="startTime" id="path-start-time" style="width:99px;" />
 		
-		<div style="height:5px;"></div>
+		<div style="height:8px;"></div>
 		<label for="path-end-date"  style="width:80px;">EndDate:</label>
 		<input name="endDate" id="path-end-date" class="date" />
 		<label for="path-end-time"  style="width:80px;">EndTime:</label>
@@ -28,7 +28,6 @@
 	</form>
 	
 	<div id="path-map-view" region="center" style=" position:relative;"></div>
-	
 </div>
 
 <script>
@@ -84,10 +83,6 @@ $(document).ready(function(){
         change: function() {
             var value = this.value();
             var text = this.text();
-        	$("#path-schedules-wrap").empty();
-        	$("#path-schedules-wrap").html("<input name='scheduleId' id='path-schedules' style='width:300px'/>");
-     		$("#path-schedules-label").html("Schedule");
-		    
 		    $.getJSON("/vehicles/schedules", {vehicleNo:value}, function(schedules){
 		    	createScheduleComboBox(schedules);
 		    });
@@ -114,16 +109,9 @@ $(document).ready(function(){
 
 
 function loadPath(url, params){
-	var sch = $("#path_schedule_id");
 	$.getJSON(url, params, function(points){
 		map.graphics.clear();
 		initRouteTask(points);
-		sch.attr("value", params["scheduleId"]);
-		
-		$("#path-start-date").data("kendoDatePicker").value(params["startDate"]);
-		$("#path-start-time").data("kendoTimePicker").value(params["startTime"]);
-		$("#path-end-date").data("kendoDatePicker").value(params["endDate"]);
-		$("#path-end-time").data("kendoTimePicker").value(params["endTime"]);
 	}).error(function(e){
      	alert(e.responseText);
 	});
@@ -131,11 +119,6 @@ function loadPath(url, params){
 
 function pathSearchValidate(form) {
     var $form = $(form);
-    
-	var scheduleId = $("#path_schedule_id").attr("value");
-    if (!scheduleId || scheduleId < 1){
-    	return false;
-    }
     
     var startTimePicker = $("#path-start-time").data("kendoTimePicker");
     if (startTimePicker.value() == null) {
@@ -153,6 +136,7 @@ function pathSearchValidate(form) {
 }
 
 function createScheduleComboBox(schedules){
+	$("#path-schedules").attr("value", "");
 	$("#path-schedules").kendoComboBox({
    		dataTextField: "text",
     	dataValueField: "value",
@@ -170,7 +154,11 @@ function createScheduleComboBox(schedules){
 			var endDate = end.split(" ")[0];
 			var endTime = end.split(" ")[1];
 			
-    		loadPath("/vehicles/routes", {scheduleId:value, startDate:startDate, startTime:startTime, endDate:endDate, endTime:endTime});
+			$("#path-start-date").data("kendoDatePicker").value(startDate);
+			$("#path-start-time").data("kendoTimePicker").value(startTime);
+			$("#path-end-date").data("kendoDatePicker").value(endDate);
+			$("#path-end-time").data("kendoTimePicker").value(endTime);
+    		//loadPath("/vehicles/routes", {scheduleId:value, startDate:startDate, startTime:startTime, endDate:endDate, endTime:endTime});
     	}
 	});
 }

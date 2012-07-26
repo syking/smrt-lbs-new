@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import models.Device;
-import models.GPSData;
+import models.LiveGPSData;
 import models.Vehicle;
 import play.jobs.Every;
 import play.jobs.Job;
@@ -49,12 +49,12 @@ public class GPS extends Job {
         else 
             newCurrentData = generateCurrentBusData(count);
         
-        long allCount = GPSData.count();
-        if (allCount >= 800)
-        	GPSData.deleteAll();
+        long allCount = LiveGPSData.count();
+        if (allCount >= 10000)
+        	LiveGPSData.deleteAll();
         
         for (CurrentBusData c : newCurrentData){
-        	GPSData gps = new GPSData();
+        	LiveGPSData gps = new LiveGPSData();
         	
         	Vehicle v = Vehicle.find("number = ?", c.busPlateNumber).first();
         	if (v == null)

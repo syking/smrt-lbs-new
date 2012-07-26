@@ -14,7 +14,7 @@ import models.Device;
 import models.EventRecord;
 import models.EventType;
 import models.Fleet;
-import models.GPSData;
+import models.LiveGPSData;
 import models.Schedule;
 import models.Vehicle;
 
@@ -291,17 +291,18 @@ public class Vehicles extends Controller {
 	/**
 	 * 处理某一特定Schedul下的车的行驶路径
 	 */
+	@Deprecated
 	public static void routes(Long scheduleId) {
 		List<String[]> points = new ArrayList<String[]>();
 		Schedule s = Schedule.findById(scheduleId);
 		if (s == null)
 			return;
 
-		List<GPSData> gps = GPSData.find("device_key = ? and time >= ? and time < ?", s.vehicle.device.key, s.startTime, s.endTime).fetch();
+		List<LiveGPSData> gps = LiveGPSData.find("device_key = ? and time >= ? and time < ?", s.vehicle.device.key, s.startTime, s.endTime).fetch();
 		if (gps == null)
 			return;
 		
-		for (GPSData g : gps)
+		for (LiveGPSData g : gps)
 			points.add(new String[] { g.longitude, g.latitude });
 
 		renderJSON(points);
@@ -310,20 +311,21 @@ public class Vehicles extends Controller {
 	/**
 	 * 查询车辆的行驶路径
 	 */
-	public static void searchPath(Long scheduleId, String startDate, String startTime, String endDate, String endTime) {
+	public static void searchPath(String vehicleNo, String startDate, String startTime, String endDate, String endTime) {
+		Vehicle vehicle = Vehicle.findByNumber(vehicleNo);
+		if (vehicle == null)
+			return ;
+		
 		List<String[]> points = new ArrayList<String[]>();
-		Schedule s = Schedule.findById(scheduleId);
-		if (s == null)
-			return;
-
+		
 		Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm", startDate + " " + startTime);
 		Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endDate + " " + endTime);
 		
-		List<GPSData> gps = GPSData.find("device_key = ? and time >= ? and time < ?", s.vehicle.device.key, start, end).fetch();
+		List<LiveGPSData> gps = LiveGPSData.find("device_key = ? and time >= ? and time < ?", vehicle.device.key, start, end).fetch();
 		if (gps == null)
 			return;
 		
-		for (GPSData g : gps)
+		for (LiveGPSData g : gps)
 			points.add(new String[] { g.longitude, g.latitude });
 
 		renderJSON(points);

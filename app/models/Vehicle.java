@@ -150,7 +150,7 @@ public class Vehicle extends Model {
 			if (v.device == null)
 				continue;
 			
-			GPSData gps = GPSData.find("device_key = ? order by id desc limit 1", v.device.key).first();
+			LiveGPSData gps = LiveGPSData.find("device_key = ? order by id desc limit 1", v.device.key).first();
 			if (gps == null)
 				continue;
 

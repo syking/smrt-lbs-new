@@ -13,8 +13,8 @@ import javax.persistence.Table;
 import play.db.jpa.Model;
 
 @Entity
-@Table(name="t_gps_data")
-public class GPSData extends Model {
+@Table(name="t_live_gps_data")
+public class LiveGPSData extends Model {
     /**
      * Assumed to be in 6 decimal space.
      * Hence, 103.546762 becomes 103546762
