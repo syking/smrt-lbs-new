@@ -49,10 +49,6 @@ public class GPS extends Job {
         else 
             newCurrentData = generateCurrentBusData(count);
         
-        long allCount = LiveGPSData.count();
-        if (allCount >= 10000)
-        	LiveGPSData.deleteAll();
-        
         for (CurrentBusData c : newCurrentData){
         	LiveGPSData gps = new LiveGPSData();
         	

@@ -14,6 +14,7 @@ import models.Device;
 import models.EventRecord;
 import models.EventType;
 import models.Fleet;
+import models.GPSDataRecord;
 import models.LiveGPSData;
 import models.Schedule;
 import models.Vehicle;
@@ -321,11 +322,11 @@ public class Vehicles extends Controller {
 		Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm", startDate + " " + startTime);
 		Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endDate + " " + endTime);
 		
-		List<LiveGPSData> gps = LiveGPSData.find("device_key = ? and time >= ? and time < ?", vehicle.device.key, start, end).fetch();
+		List<GPSDataRecord> gps = GPSDataRecord.find("device_key = ? and time >= ? and time < ?", vehicle.device.key, start, end).fetch();
 		if (gps == null)
 			return;
 		
-		for (LiveGPSData g : gps)
+		for (GPSDataRecord g : gps)
 			points.add(new String[] { g.longitude, g.latitude });
 
 		renderJSON(points);

@@ -1,25 +1,28 @@
 package models;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import play.*;
+import play.db.jpa.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityTransaction;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import play.db.jpa.GenericModel;
-import play.db.jpa.Model;
-import play.db.jpa.Transactional;
+import java.util.*;
 
 @Entity
-@Table(name="t_live_gps_data")
-public class LiveGPSData extends Model {
-    /**
+@Table(name="t_gps_data_record")
+public class GPSDataRecord extends Model {
+	public GPSDataRecord(){}
+	
+	public GPSDataRecord(LiveGPSData live){
+		this.latitude = live.latitude;
+		this.longitude = live.longitude;
+		this.speed = live.speed;
+		this.direction = live.direction;
+		this.time = live.time;
+		this.device = live.device;
+		this.fixed = live.fixed;
+		this.created_at = live.created_at;
+	}
+	/**
      * Assumed to be in 6 decimal space.
      * Hence, 103.546762 becomes 103546762
      * While, 103.546 becomes 103546000
@@ -70,5 +73,4 @@ public class LiveGPSData extends Model {
      * System generated. Do not modify unless have a good reason.
      */
     public Date created_at = Calendar.getInstance().getTime();
-
 }

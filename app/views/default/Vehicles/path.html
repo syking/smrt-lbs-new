@@ -111,6 +111,11 @@ $(document).ready(function(){
 function loadPath(url, params){
 	$.getJSON(url, params, function(points){
 		map.graphics.clear();
+		if (!points || points.length == 0){
+			alert("no data");
+			return ;
+		}
+		
 		initRouteTask(points);
 	}).error(function(e){
      	alert(e.responseText);

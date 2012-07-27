@@ -61,7 +61,7 @@ public class EventStatusJob extends Job {
 				trans = GenericModel.em().getTransaction();
 				if (!trans.isActive())
 					continue;
-
+				
 				er.status = 1;// 处理中...
 				er.save();
 
@@ -75,9 +75,7 @@ public class EventStatusJob extends Job {
 				}
 
 				Date et = er.time;
-				Schedule schedule = Schedule
-						.find("vehicle_number = ? and start_time <= ? and end_time >= ? ",
-								v.number, et, et).first();
+				Schedule schedule = Schedule.find("vehicle_number = ? and start_time <= ? and end_time >= ? ",v.number, et, et).first();
 
 				if (schedule == null) {
 					trans.rollback();
@@ -114,8 +112,7 @@ public class EventStatusJob extends Job {
 				er.save();
 
 				trans.commit();
-				System.out.println(CommonUtil.getNowTime()
-						+ " success -> commit");
+				System.out.println(CommonUtil.getNowTime() + " success -> commit");
 			}
 		} catch (Error e) {
 			if (trans != null)
