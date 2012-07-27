@@ -31,6 +31,7 @@ public class Excels extends Controller{
 	private static void renderExcel(Map map){
 		request.format = "xls";
     	renderArgs.put(RenderExcel.RA_FILENAME, "records_"+CommonUtil.formatTime("yyyyMMddHHmmss", new Date())+".xls");
+    	renderArgs.put(RenderExcel.RA_ASYNC, true);
         renderTemplate(renderArgs.get(THEME) + "/Excels/data-records.xls", map);
 	}
 	
@@ -93,6 +94,7 @@ public class Excels extends Controller{
 		Map map = driver.generatePerformanceReport(timeType, time);
 		
 		request.format = "xls";
+		renderArgs.put(RenderExcel.RA_ASYNC, true);
     	renderArgs.put(RenderExcel.RA_FILENAME, driver.name + "_"+driver.number + "_performance_"+CommonUtil.formatTime("yyyyMMddHHmmss", new Date())+".xls");
         renderTemplate(renderArgs.get(THEME) + "/Excels/driver-performance.xls", map);
 	}

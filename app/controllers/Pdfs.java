@@ -1,7 +1,8 @@
 package controllers;
 import static models.User.Constant.THEME;
-import static play.modules.pdf.PDF.*;
+import static play.modules.pdf.PDF.renderPDF;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -13,15 +14,10 @@ import models.Driver;
 import models.DriverReport;
 import models.Event;
 import models.Schedule;
-
-import play.modules.excel.RenderExcel;
 import play.modules.pdf.PDF.Options;
 import play.mvc.Controller;
 import play.mvc.With;
-import play.templates.Template;
-import play.templates.TemplateLoader;
 import utils.CommonUtil;
-import vo.EventReportVO;
 
 @With(Interceptor.class)
 public class Pdfs extends Controller{
@@ -35,13 +31,21 @@ public class Pdfs extends Controller{
 	}
 	
 	private static void pdf(final Map map){
-		Options options = options("records_");
-		renderPDF(renderArgs.get(THEME) + "/Pdfs/data-records.html", options, map);
+		map.put("options", options("records_"));
+		
+		renderPDF(renderArgs.get(THEME) + "/Pdfs/data-records.html", map);
+	}
+	
+	public static void hello(){
+		System.out.println("hello");
+	}
+	public static void main(String[] args) throws Exception{
+		Pdfs.class.getMethod("hello").invoke(Pdfs.class);
 	}
 	
 	public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
-		Map map = Driver.queryReport(1, 500, driverId, timeType, startTime, endTime);
+		Map map = Driver.queryReport(1, 200, driverId, timeType, startTime, endTime);
 		if (map == null)
 			return ;
 		
@@ -137,7 +141,7 @@ public class Pdfs extends Controller{
     }
     
     public static void reportEvent(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
-		Map data = Event.search(1, 500, driver, serviceNo, type, startTime, endTime);
+		Map data = Event.search(1, 200, driver, serviceNo, type, startTime, endTime);
 		if (data == null)
 			return ;
 		
@@ -145,7 +149,7 @@ public class Pdfs extends Controller{
 	}
     
     public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime){
-    	Map data = Schedule.search(1, 500, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+    	Map data = Schedule.search(1, 200, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		if (data == null)
 			return ;
 		

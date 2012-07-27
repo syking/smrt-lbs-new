@@ -18,6 +18,7 @@ import play.mvc.Before;
 import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
+import play.mvc.results.Result;
 
 public class Interceptor extends Controller {
 
