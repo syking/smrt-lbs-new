@@ -36,13 +36,6 @@ public class Pdfs extends Controller{
 		renderPDF(renderArgs.get(THEME) + "/Pdfs/data-records.html", map);
 	}
 	
-	public static void hello(){
-		System.out.println("hello");
-	}
-	public static void main(String[] args) throws Exception{
-		Pdfs.class.getMethod("hello").invoke(Pdfs.class);
-	}
-	
 	public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
 		Map map = Driver.queryReport(1, 200, driverId, timeType, startTime, endTime);
