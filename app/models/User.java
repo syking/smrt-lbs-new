@@ -87,6 +87,15 @@ public class User extends Model {
 			vo.validate();
 			
 			User user = new User(vo.account, "123456", vo.name, vo.desc);
+			
+			User db_user = User.findByName(vo.name);
+			if (db_user != null)
+				throw new RuntimeException("UserName duplicate!");
+			
+			User db_user2 = User.findByAccount(vo.account);
+			if (db_user2 != null)
+				throw new RuntimeException("UserAccount duplicate!");
+			
 			user.create();
 			vo.id = String.valueOf(user.id);
 		}
@@ -94,6 +103,10 @@ public class User extends Model {
 		final String _models = CommonUtil.toJson(vos);
 		
 		return _models;
+	}
+
+	private static User findByAccount(String account) {
+		return User.find("byAccount", account).first();
 	}
 
 	public static boolean deleteByJson(String models) {
@@ -126,6 +139,15 @@ public class User extends Model {
 			user.account = vo.account;
 			user.name = vo.name;
 			user.desc = vo.desc;
+			
+			User db_user = User.findByName(vo.name);
+			if (db_user != null && db_user.id != user.id)
+				throw new RuntimeException("UserName duplicate!");
+			
+			User db_user2 = User.findByAccount(vo.account);
+			if (db_user2 != null && db_user2.id != user.id)
+				throw new RuntimeException("UserAccount duplicate!");
+			
 			user.save();
 		}
 		

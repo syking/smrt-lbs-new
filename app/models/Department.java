@@ -72,6 +72,11 @@ public class Department extends Model{
 			
 			Department dept = new Department();
 			dept.name = vo.name;
+			
+			Department db_dept = Department.findByName(dept.name);
+			if (db_dept != null)
+				throw new RuntimeException("DepartmentName duplicate!");
+			
 			dept.parent = Department.findByName(vo.parentName);
 			if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
@@ -91,16 +96,21 @@ public class Department extends Model{
 		
 		for (DepartmentVO vo : vos){
 			Long id = Long.parseLong(vo.id);
-			Department department = Department.findById(id);
-			if (department == null)
+			Department dept = Department.findById(id);
+			if (dept == null)
 				continue ;
 			
-			department.name = vo.name;
-			department.parent = Department.findByName(vo.parentName);
-			if (vo.parentName != null && !vo.parentName.isEmpty() && department.parent == null)
+			dept.name = vo.name;
+			
+			Department db_dept = Department.findByName(dept.name);
+			if (db_dept != null && db_dept.id != dept.id)
+				throw new RuntimeException("DepartmentName duplicate!");
+			
+			dept.parent = Department.findByName(vo.parentName);
+			if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
 			
-			department.save();
+			dept.save();
 		}
 		
 		return true;

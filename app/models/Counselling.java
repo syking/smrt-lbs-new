@@ -23,6 +23,7 @@ import vo.DriverVO;
 @Entity
 @Table(name="t_counsel")
 public class Counselling extends Model{
+	
     @ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="users_id")
 	public User user;
@@ -66,6 +67,10 @@ public class Counselling extends Model{
 				throw new RuntimeException("DriverName is invalid!, ");
 			
 			Counselling c = new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), vo.remark, driver);
+			
+			if (c.startTime.after(c.endTime))
+				throw new RuntimeException("EndTime must after the StartTime!");
+			
 			c.create();
 			vo.id = String.valueOf(c.id);
 		}
@@ -109,6 +114,9 @@ public class Counselling extends Model{
 			c.endTime = CommonUtil.parse(vo.endTime); 
 			c.startTime = CommonUtil.parse(vo.startTime);
 			c.remark = vo.remark;
+			
+			if (c.startTime.after(c.endTime))
+				throw new RuntimeException("EndTime must after the StartTime!");
 			
 			c.save();
 		}
@@ -189,8 +197,7 @@ public class Counselling extends Model{
 		return counsellings;
 	}
 	
-	public Counselling(User user, Date startTime,
-			Date endTime, String remark, Driver driver) {
+	public Counselling(User user, Date startTime, Date endTime, String remark, Driver driver) {
 		super();
 		this.user = user;
 		this.startTime = startTime;

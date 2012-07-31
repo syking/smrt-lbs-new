@@ -63,12 +63,20 @@ public class Permission extends Model{
 		for (PermVO vo : vos){
 			vo.validate();
 			Permission p = new Permission(vo.action, vo.desc);
+			Permission db_p = Permission.findByAction(p.action);
+			if (db_p != null)
+				throw new RuntimeException("PermissionName duplicate!");
+			
 			p.create();
 			vo.id = String.valueOf(p.id);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		return _models;
+	}
+
+	private static Permission findByAction(String action) {
+		return Permission.find("byAction", action).first();
 	}
 
 	public static boolean deleteByJson(String models) {
@@ -97,13 +105,17 @@ public class Permission extends Model{
 		
 		for (PermVO vo : vos){
 			vo.validate();
-			Permission permission = Permission.findById(Long.parseLong(vo.id));
-			if (permission == null)
+			Permission p = Permission.findById(Long.parseLong(vo.id));
+			if (p == null)
 				continue ;
-			permission.action = vo.action;
-			permission.desc = vo.desc;
+			p.action = vo.action;
+			p.desc = vo.desc;
 			
-			permission.save();
+			Permission db_p = Permission.findByAction(p.action);
+			if (db_p != null && db_p.id != p.id)
+				throw new RuntimeException("PermissionName duplicate!");
+			
+			p.save();
 		}
 		
 		return true;

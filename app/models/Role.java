@@ -71,6 +71,10 @@ public class Role extends Model{
 		for (RoleVO vo : vos){
 			vo.validate();
 			Role role = new Role(vo.name, vo.desc);
+			Role db_role = Role.findByName(role.name);
+			if (db_role != null)
+				throw new RuntimeException("RoleName duplicate!");
+			
 			role.create();
 			vo.id = String.valueOf(role.id);
 		}
@@ -111,6 +115,10 @@ public class Role extends Model{
 				continue ;
 			role.name = vo.name;
 			role.desc = vo.desc;
+			
+			Role db_role = Role.findByName(role.name);
+			if (db_role != null && db_role.id != role.id)
+				throw new RuntimeException("RoleName duplicate!");
 			
 			role.save();
 		}

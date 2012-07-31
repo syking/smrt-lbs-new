@@ -2,18 +2,19 @@ package models;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.alibaba.fastjson.JSON;
-
 import play.db.jpa.Model;
 import utils.CommonUtil;
-import vo.DriverVO;
+
+import com.alibaba.fastjson.JSON;
 
 @Entity
 @Table(name = "t_systemconfig")
 public class SystemConfig extends Model {
+	@Column(unique = true)
 	public String name;
 	public String value;
 	public String displayName;
@@ -71,11 +72,20 @@ public class SystemConfig extends Model {
 		
 		for (SystemConfig vo : vos){
 			vo.validate();
+			
+			SystemConfig db_sc = SystemConfig.findByName(vo.name);
+			if (db_sc != null)
+				throw new RuntimeException("SystemConfigName duplicate!");
+				
 			vo.create();
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		return _models;
+	}
+
+	private static SystemConfig findByName(String name) {
+		return SystemConfig.find("byName", name).first();
 	}
 
 	public static boolean updateByJson(String models) {
@@ -96,6 +106,11 @@ public class SystemConfig extends Model {
 			obj.name = vo.name;
 			obj.value = vo.value;
 			obj.displayName = vo.displayName;
+			
+			SystemConfig db_sc = SystemConfig.findByName(vo.name);
+			if (db_sc != null && db_sc.id != obj.id)
+				throw new RuntimeException("SystemConfigName duplicate!");
+			
 			obj.save();
 		}
 		

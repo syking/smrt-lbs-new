@@ -87,7 +87,6 @@ public class Vehicle extends Model {
 
 	
 	public Vehicle() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static long countByCondition(List<String> criteria, List<Object> params) {
@@ -351,12 +350,24 @@ public class Vehicle extends Model {
 			v.description = vo.description;
 			v.type = vo.type;
 			
+			Vehicle db_v = Vehicle.findByNumber(v.number);
+			if (db_v != null)
+				throw new RuntimeException("VehicleNumber duplicate!");
+			
+			Vehicle db_v2 = Vehicle.findbyLicense(v.license);
+			if (db_v2 != null)
+				throw new RuntimeException("VehicleLicense duplicate!");
+			
 			v.create();
 			vo.id = String.valueOf(v.id);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		return _models;
+	}
+
+	private static Vehicle findbyLicense(String license) {
+		return Vehicle.find("byLicense", license).first();
 	}
 
 	public static boolean updateByJson(String models) {
@@ -392,6 +403,14 @@ public class Vehicle extends Model {
 			v.cctvIp = vehicleVO.cctvIp;
 			v.description = vehicleVO.description;
 			v.type = vehicleVO.type;
+			
+			Vehicle db_v = Vehicle.findByNumber(v.number);
+			if (db_v != null && db_v.id != v.id)
+				throw new RuntimeException("VehicleNumber duplicate!");
+			
+			Vehicle db_v2 = Vehicle.findbyLicense(v.license);
+			if (db_v2 != null && db_v2.id != v.id)
+				throw new RuntimeException("VehicleLicense duplicate!");
 			
 			v.save();
 		}

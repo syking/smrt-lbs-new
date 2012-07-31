@@ -120,7 +120,8 @@
                         email:{
                         	type: "string",
                         	validation:{
-                        		required: true
+                        		required: true,
+                        		email:true
                         	}
                         },
                         department:{
@@ -135,7 +136,6 @@
 	                            	var name = input.attr("name");
 	                            	if (name != "description" && name != "department" && name != "department_input")
 	                            		return validate_empty(input);
-	                            	
 	                            	return true;
 	                            }
                         	}

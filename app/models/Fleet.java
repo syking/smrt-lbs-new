@@ -85,6 +85,10 @@ public class Fleet extends Model{
 			if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
 			
+			Fleet db_fleet = Fleet.findByName(fleet.name);
+			if (db_fleet != null)
+				throw new RuntimeException("FleetName duplicate!");
+			
 			fleet.create();
 			vo.id = String.valueOf(fleet.id);
 		}
@@ -112,6 +116,10 @@ public class Fleet extends Model{
 			fleet.parent = Fleet.findByName(vo.parentName);
 			if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
 				throw new RuntimeException("ParentName is invalid!");
+			
+			Fleet db_fleet = Fleet.findByName(fleet.name);
+			if (db_fleet != null && db_fleet.id != fleet.id)
+				throw new RuntimeException("FleetName duplicate!");
 			
 			fleet.save();
 		}

@@ -78,12 +78,24 @@ public class Device extends Model {
 		
 		for (Device vo : vos){
 			vo.validate();
+			Device db_device = Device.findByName(vo.name);
+			if (db_device != null)
+				throw new  RuntimeException("DeviceName duplicate!");
+			
+			Device db_device2 = Device.findByKey(vo.key);
+			if (db_device2 != null)
+				throw new  RuntimeException("DeviceKey duplicate!");
+			
 			vo.create();
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		
 		return _models;
+	}
+
+	private static Device findByKey(String key) {
+		return Device.find("byKey", key).first();
 	}
 
 	public static boolean deleteByJson(String models) {
@@ -125,6 +137,14 @@ public class Device extends Model {
 			device.misc = vo.misc;
 			device.serverUrls = vo.serverUrls;
 			device.status = vo.status;
+			
+			Device db_device = Device.findByName(device.name);
+			if (db_device != null && db_device.id != device.id)
+				throw new  RuntimeException("DeviceName duplicate!");
+			
+			Device db_device2 = Device.findByKey(vo.key);
+			if (db_device2 != null && db_device2.id != device.id)
+				throw new  RuntimeException("DeviceKey duplicate!");
 			
 			device.save();
 		}

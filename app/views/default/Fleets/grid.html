@@ -35,7 +35,28 @@
 	}
     
     function loadFleets(url, params){
-    	$("#grid_${grid.tabId}").empty();
+		var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+	                    return {models: kendo.stringify(data.models)};
+	                }
+	                
+	        		$.each(params, function(i,v){
+						data[v.name] = v.value;
+	        		});
+	        		
+	        		return data;
+	        	}
+	        }
+	        
+			_grid.dataSource.read();
+			
+			return ;
+		}
+		
     	var dataSource = new kendo.data.DataSource({
     		error: function(e) {
 	        	alert(e.responseText);
@@ -73,7 +94,7 @@
                         return {models: kendo.stringify(data.models)};
                     }
                     
-                    return params;
+                    return data;
                 }
             },
             batch: true,

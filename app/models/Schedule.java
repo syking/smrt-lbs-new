@@ -186,6 +186,8 @@ public class Schedule extends Model {
 			throw new RuntimeException("VehicleNumber is invalid!");
 		if (sch.driver == null)
 			throw new RuntimeException("DriverNumber is invalid!");
+		if (sch.startTime.after(sch.endTime))
+			throw new RuntimeException("EndTime must after the StartTime!");
 		
 		sch.create();
 	}
@@ -231,6 +233,9 @@ public class Schedule extends Model {
 			sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
 			sch.serviceNumber = vo.route;
 			
+			if (sch.startTime.after(sch.endTime))
+				throw new RuntimeException("EndTime must after the StartTime!");
+			
 			sch.create();
 			
 			vo.id = String.valueOf(sch.id);
@@ -267,6 +272,9 @@ public class Schedule extends Model {
 			sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
 			sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
 			sch.serviceNumber = vo.route;
+			
+			if (sch.startTime.after(sch.endTime))
+				throw new RuntimeException("EndTime must after the StartTime!");
 			
 			sch.save();
 		}

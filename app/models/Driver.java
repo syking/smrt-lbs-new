@@ -52,6 +52,7 @@ public class Driver extends Model{
     
 	@Column(unique = true)
 	public String number;
+	@Column(unique = true)
 	public String name;
 	public String email;
 	public String description;
@@ -233,6 +234,14 @@ public class Driver extends Model{
 			if (vo.department != null && !vo.department.isEmpty() && obj.department == null)
 				throw new RuntimeException("Department Name is invalid");
 			
+			Driver db_driver = Driver.findByName(obj.name);
+			if (db_driver != null)
+				throw new RuntimeException("DriverName duplicate!");
+			
+			Driver db_driver2 = Driver.findByNumber(obj.number);
+			if (db_driver2 != null)
+				throw new RuntimeException("DriverNumber duplicate!");
+			
 			obj.create();
 			vo.id = String.valueOf(obj.id);
 		}
@@ -264,6 +273,14 @@ public class Driver extends Model{
 			obj.department = Department.findByName(vo.department);
 			if (vo.department != null && !vo.department.isEmpty() && obj.department == null)
 				throw new RuntimeException("Department Name is invalid");
+			
+			Driver db_driver = Driver.findByName(obj.name);
+			if (db_driver != null && db_driver.id != obj.id)
+				throw new RuntimeException("DriverName duplicate!");
+			
+			Driver db_driver2 = Driver.findByNumber(obj.number);
+			if (db_driver2 != null && db_driver2.id != obj.id)
+				throw new RuntimeException("DriverNumber duplicate!");
 			
 			obj.save();
 		}
