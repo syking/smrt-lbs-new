@@ -5,7 +5,6 @@ import static models.User.Constant.LOGIN_USER_ATTR;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.CallBack;
 import models.User;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -19,146 +18,102 @@ import controllers.Interceptor;
  * @author weiwei
  *
  */
-@With(Interceptor.class)
+@With(APIInterceptor.class)
 public class Users extends Controller{
-	
-	/**
-	 * Verify the User info
-	 * @param user	Login User
-	 */
-	public static void authenticate(final User user){
-        final CallBack callback = new CallBack();
-        
-        try{
-	        User loginUser = user.authen();
-	        if (loginUser == null){
-	        	callback.setSuccess(false);
-	        	callback.setMessage(Messages.get("login-unsuccessful"));
-	        }else{
-		        /* TODO change the session keep strategy */
-		        Cache.set(LOGIN_USER_ATTR, loginUser);
-		        callback.setData("{\"redirectUrl\":\"/\"}");
-	        }
-        } catch (Throwable t){
-        	callback.setSuccess(false);
-        	callback.setData(t.getMessage());
-        }
-        
-        renderJSON(callback);
-    }
 	
 	/**
 	 * Get user info
 	 * @param id
 	 */
 	public static void show(Long id){
-		final CallBack callback = new CallBack();
-		
 		try{
 			User user = User.findById(id);
-			user.roles = null;
-			callback.setData(user);
+			renderJSON(APICallback.success(new UserVO(user)));
 		}catch(Throwable e){
-			callback.setSuccess(false);
-			callback.setMessage(e.getMessage());
+			renderJSON(APICallback.fail(APIError.ACCESS_DENIED, e.getMessage()));
 		}
-		
-		renderJSON(callback);
 	}
 	
 	/**
 	 * Create user info
 	 * @param models
 	 */
-	public static void create(final User user) {
-		final CallBack callback = new CallBack();
-		
+	public static void create(final UserVO user) {
 		if (user == null){
-			callback.setSuccess(false);
-			callback.setMessage("User info required !");
-		}else{
-			try{
-				boolean flag = user.create();
-				if (!flag){
-					callback.setSuccess(false);
-					callback.setMessage("Cannot create user info !");
-				}
-			} catch (Throwable e){
-				callback.setSuccess(false);
-				callback.setMessage(e.getMessage());
-			}
+			renderJSON(APICallback.user_info_required());
+			return ;
 		}
+		
+		try{
+			UserVO _user = User.createByVO(user);
+			if (_user == null || _user.id == null || _user.id.isEmpty()){
+				renderJSON(APICallback.fail(user, APIError.USER_CERATE_FAIL, "User create fail"));
+				return ;
+			}
 			
-		renderJSON(callback);
+			renderJSON(APICallback.success(_user));
+		} catch (Throwable e){
+			renderJSON(APICallback.fail(user, APIError.USER_CERATE_FAIL, e.getMessage()));
+		}
 	}
 	
 	/**
 	 * Update user info
 	 * @param user
 	 */
-	public static void update(final User user){
-		final CallBack callback = new CallBack();
-		
+	public static void update(final UserVO user){
 		if (user == null){
-			callback.setSuccess(false);
-			callback.setMessage("User info required !");
-		}else{
-			try{
-				user.save();
-			} catch (Throwable e){
-				callback.setSuccess(false);
-				callback.setMessage(e.getMessage());
-			}
+			renderJSON(APICallback.user_info_required());
+			return ;
 		}
-			
-		renderJSON(callback);
 		
+		try{
+			boolean flag = User.updateByVO(user);
+			if (!flag){
+				renderJSON(APICallback.fail(user, APIError.USER_CERATE_FAIL, "User update fail"));
+				return ;
+			}
+			
+			renderJSON(APICallback.success(user));
+		} catch (Throwable e){
+			renderJSON(APICallback.fail(APIError.USER_UPDATE_FAIL, e.getMessage()));
+		}
 	}
 
 	/**
 	 * Delete user info
 	 * @param id
 	 */
-	public static void delete(Long id) {
-		final CallBack callback = new CallBack();
-		
-		final User user = User.findById(id);
-		if (user == null){
-			callback.setSuccess(false);
-			callback.setMessage("User info is invalid !");
-		}else{
-			try{
-				user.delete();
-			} catch (Throwable e){
-				callback.setSuccess(false);
-				callback.setMessage(e.getMessage());
+	public static void destroy(Long id) {
+		try{
+			if (id == null){
+				renderJSON(APICallback.fail(APIError.USER_DESTROY_FAIL, "User id required"));
+				return ;
 			}
+			final User user = User.findById(id);
+			if (user == null){
+				renderJSON(APICallback.fail(APIError.USER_DESTROY_FAIL, "User id invalid"));
+				return ;
+			}
+		
+			user.delete();
+			renderJSON(APICallback.success(id));
+		} catch (Throwable e){
+			renderJSON(APICallback.fail(id, APIError.USER_DESTROY_FAIL, e.getMessage()));
 		}
-			
-		renderJSON(callback);
 	}
 	
 	/**
 	 * Fetch user's info
 	 * @param user
 	 */
-	public static void fetch(final String roleName, final User user){
-		final CallBack callback = new CallBack();
-		
+	public static void fetch(final String roleName, final String name, final String account, final String desc){
 		try{
-			List<UserVO> result = new ArrayList<UserVO>();
-			List<User> users = User.findByCondition(roleName, user.name, user.account, user.desc);
-			if (users != null){
-				for (User u : users){
-					result.add(new UserVO(u));
-				}
-			}
-			callback.setData(result);
+			List<User> users = User.findByCondition(roleName, name, account, desc);
+			List<UserVO> result = User.assemVO(users);
+			renderJSON(APICallback.success(result));
 		}catch(Throwable e){
-			callback.setSuccess(false);
-			callback.setMessage(e.getMessage());
+			renderJSON(APICallback.fail(APIError.USER_FETCH_FAIL, e.getMessage()));
 		}
-		
-		renderJSON(callback);
 	}
 }

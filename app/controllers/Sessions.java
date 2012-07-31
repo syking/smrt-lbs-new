@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import models.User;
-import play.cache.Cache;
 import play.data.validation.Required;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -24,7 +23,6 @@ public class Sessions extends Controller{
      * Logout
      */
 	public static void destroy() {
-		Cache.delete(session.getId()+"_"+LOGIN_USER_ATTR);
 		session.clear();
 		editNew();
 	}
@@ -37,18 +35,18 @@ public class Sessions extends Controller{
         if(validation.hasErrors()) 
            success = false;
         
-        User loginUser = new User(username, password, null, null).authen();
-        if (loginUser == null)
+        User loginUser = null;
+        try {
+        	loginUser = new User(username, password, null, null).authen();
+        } catch (Exception e){
         	success = false;
+        }
         
         Map map = new HashMap();
         if (!success)
         	 map.put("message", play.i18n.Messages.get("login-unsuccessful"));
         else{
         	session.put(LOGIN_USER_ATTR, loginUser.name);
-        	// keep the user roles and permissions info to the Cache !!
-        	Cache.set(session.getId()+"_"+LOGIN_USER_ATTR, loginUser);
-        	
         	map.put("redirectUrl", "/admin");
         }
        

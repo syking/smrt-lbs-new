@@ -83,11 +83,7 @@ public class Users extends Controller {
 		if (users == null || users.isEmpty()) 
 			return ;
 
-		List<UserVO> result = new ArrayList<UserVO>(users.size());
-		for (User u : users){
-			result.add(new UserVO(u));
-		}
-
+		List<UserVO> result = User.assemVO(users);
 		renderJSON(result);
 	}
 

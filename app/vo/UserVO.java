@@ -20,7 +20,7 @@ public class UserVO {
 	
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
+		final String msg = "%s Can not be empty, ";
 		if (CommonUtil.isEmptyString(account))
 			builder.append(CommonUtil.formatStr(msg, "Account"));
 		

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
+	
+	public static String uuid() {
+		return UUID.randomUUID().toString();
+	}
 	
 	public static String resoveTime(final String time){
 		String[] array = time.split(":");

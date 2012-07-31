@@ -69,35 +69,38 @@ public class User extends Model {
 
 	public User authen(){
 		User loginUser = find("byAccount", account).first();
-		if (loginUser == null)
-			return null;
-
-		if (!account.equals(loginUser.account) || !password.equals(loginUser.password))
-			return null;
+		if (loginUser == null || password == null || !password.equals(loginUser.password))
+			throw new RuntimeException("Account or Password is incorrect.");
 
 		return loginUser;
 	}
 
+	public static UserVO createByVO(UserVO vo) {
+		vo.validate();
+		
+		User user = new User(vo.account, "123456", vo.name, vo.desc);
+		
+		User db_user = User.findByName(vo.name);
+		if (db_user != null)
+			throw new RuntimeException("Name duplicate!");
+		
+		User db_user2 = User.findByAccount(vo.account);
+		if (db_user2 != null)
+			throw new RuntimeException("Account duplicate!");
+		
+		user.create();
+		vo.id = String.valueOf(user.id);
+		
+		return vo;
+	}
+	
 	public static String createByJson(String models) {
 		List<UserVO> vos = CommonUtil.parseArray(models, UserVO.class);
 		if (vos == null)
 			return models;
 		
 		for (UserVO vo : vos){
-			vo.validate();
-			
-			User user = new User(vo.account, "123456", vo.name, vo.desc);
-			
-			User db_user = User.findByName(vo.name);
-			if (db_user != null)
-				throw new RuntimeException("UserName duplicate!");
-			
-			User db_user2 = User.findByAccount(vo.account);
-			if (db_user2 != null)
-				throw new RuntimeException("UserAccount duplicate!");
-			
-			user.create();
-			vo.id = String.valueOf(user.id);
+			vo = createByVO(vo);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
@@ -109,46 +112,62 @@ public class User extends Model {
 		return User.find("byAccount", account).first();
 	}
 
+	public static boolean deleteByVO(UserVO vo) {
+		User user = User.findById(Long.parseLong(vo.id));
+		if (user == null)
+			throw new RuntimeException("User not found");
+		
+		try {
+			user.delete();
+		} catch (Throwable e){
+			throw new RuntimeException("Could not delete user");
+		}
+		
+		return true;
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<UserVO> vos = JSON.parseArray(models, UserVO.class);
 		if (vos == null)
 			return false;
 		
 		for (UserVO vo : vos){
-			User user = User.findById(Long.parseLong(vo.id));
-			if (user == null)
-				continue ;
-			
-			user.delete();
+			deleteByVO(vo);
 		}
+		
 		return true;
 	}
 
+	public static boolean updateByVO(UserVO vo) {
+		vo.validate();
+		User user = User.findById(Long.parseLong(vo.id));
+		if (user == null)
+			throw new RuntimeException("User not found") ;
+	
+		user.account = vo.account;
+		user.name = vo.name;
+		user.desc = vo.desc;
+		
+		User db_user = User.findByName(vo.name);
+		if (db_user != null && db_user.id != user.id)
+			throw new RuntimeException("Name duplicate!");
+		
+		User db_user2 = User.findByAccount(vo.account);
+		if (db_user2 != null && db_user2.id != user.id)
+			throw new RuntimeException("Account duplicate!");
+		
+		user.save();
+		
+		return true;
+	}
+	
 	public static boolean updateByJson(String models) {
 		List<UserVO> vos = JSON.parseArray(models, UserVO.class);
 		if (vos == null)
 			return false;
 		
 		for (UserVO vo : vos){
-			vo.validate();
-			
-			User user = User.findById(Long.parseLong(vo.id));
-			if (user == null)
-				continue ;
-		
-			user.account = vo.account;
-			user.name = vo.name;
-			user.desc = vo.desc;
-			
-			User db_user = User.findByName(vo.name);
-			if (db_user != null && db_user.id != user.id)
-				throw new RuntimeException("UserName duplicate!");
-			
-			User db_user2 = User.findByAccount(vo.account);
-			if (db_user2 != null && db_user2.id != user.id)
-				throw new RuntimeException("UserAccount duplicate!");
-			
-			user.save();
+			updateByVO(vo);
 		}
 		
 		return true;
@@ -230,5 +249,30 @@ public class User extends Model {
 
 	public static User findByName(String userName) {
 		return find("byName", userName).first();
+	}
+	
+	public boolean checkPerm(Permission currentPerm){
+		Set<Role> roles = this.roles;
+		if (roles == null || roles.isEmpty())
+			return false;
+		
+		for (Role r : roles){
+			if (r.hasPermissions(currentPerm)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public static List<UserVO> assemVO(List<User> users){
+		List<UserVO> result = new ArrayList<UserVO>(users.size());
+		if (users != null){
+			for (User u : users){
+				result.add(new UserVO(u));
+			}
+		}
+		
+		return result;
 	}
 }

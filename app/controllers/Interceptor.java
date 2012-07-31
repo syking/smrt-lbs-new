@@ -12,7 +12,6 @@ import models.Permission;
 import models.Role;
 import models.User;
 import play.Play;
-import play.cache.Cache;
 import play.i18n.Lang;
 import play.mvc.Before;
 import play.mvc.Catch;
@@ -34,22 +33,12 @@ public class Interceptor extends Controller {
 	}
 
 	@Before(priority = 1, unless = { "Sessions.create", "Sessions.editNew", "Sessions.destroy" })
-	static void checkAuthentification() {
+	static void checkAuthenticated() {
 		String userName = session.get(LOGIN_USER_ATTR);
-		if (userName == null) {
+		User loginUser = User.findByName(userName);
+		if (loginUser == null || userName == null || !session.contains(LOGIN_USER_ATTR)) {
 			flash.put("url", "GET".equals(request.method) ? request.url : "/"); 
 			Sessions.editNew();
-		}
-
-		User loginUser = Cache.get(session.getId()+"_"+LOGIN_USER_ATTR, User.class);
-		if (loginUser == null)
-			loginUser = User.findByName(userName);
-		
-		if (loginUser == null){
-			flash.put("url", "GET".equals(request.method) ? request.url : "/"); 
-			Sessions.editNew();
-		}else{
-			Cache.set(session.getId()+"_"+LOGIN_USER_ATTR, loginUser);
 		}
 		
 		renderArgs.put("user", session.get(LOGIN_USER_ATTR));
@@ -65,7 +54,8 @@ public class Interceptor extends Controller {
 		
 		boolean flag = false;
 		
-		User loginUser = Cache.get(session.getId()+"_"+LOGIN_USER_ATTR, User.class);
+		String userName = session.get(LOGIN_USER_ATTR);
+		User loginUser = User.findByName(userName);
 		if (loginUser.superPower == 1)
 			flag = true ;
 		
@@ -82,15 +72,7 @@ public class Interceptor extends Controller {
 				flag = true ;
 			
 			if (!flag){
-				Set<Role> roles = loginUser.roles;
-				if (roles != null && !roles.isEmpty()){
-					for (Role r : roles){
-						if (r.hasPermissions(currentPerm)){
-							flag = true ;
-							break;
-						}
-					}
-				}
+				flag = loginUser.checkPerm(currentPerm);
 			}
 		}
 		
@@ -112,6 +94,10 @@ public class Interceptor extends Controller {
     public static void logIllegalState(Throwable e) {
 		e.printStackTrace();
 		new Log("System", "-", e.toString(), null, "-", false).create();
-		forbidden("data error -> " + e.getMessage());
+		
+		String msg = e.getMessage();
+		if (msg == null || msg.isEmpty())
+			msg = "Server Error!";
+		error(msg);
     }
 }
