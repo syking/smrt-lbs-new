@@ -1,7 +1,7 @@
 <form action="/users/search" method="post" class="k-content" onsubmit="return userSearchValidate(this)" style="padding:10px 0;">
 	
-	<label for="${grid.tabId}_role_name">Role Name:</label>
-	<input name="roleName" id="${grid.tabId}_role_name"/>
+	<!--label for="${grid.tabId}_role_name">Role Name:</label>
+	<input name="roleName" id="${grid.tabId}_role_name"/-->
 	
 	<label for="${grid.tabId}_name">User Name:</label>
 	<input name="userName" id="${grid.tabId}_name" class="k-input k-textbox"/>
@@ -24,16 +24,37 @@
 <script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
 <script>
     $(document).ready(function(){
-        $("#${grid.tabId}_role_name").kendoComboBox({
-            dataTextField: "text",
-            dataValueField: "value",
-            dataSource: #{verbatim} ${roles} #{/verbatim}
-        });
+        // $("#${grid.tabId}_role_name").kendoComboBox({
+            // dataTextField: "text",
+            // dataValueField: "value",
+            // dataSource: #{verbatim} ${roles} #{/verbatim}
+        // });
         
     	loadUsers("${grid.readUrl}");
     });
     
     function loadUsers(url, params){
+    	var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+		                return {models:kendo.stringify(data.models)};
+		            }
+		            
+		    		$.each(params, function(i,v){
+						data[v.name] = v.value;
+		    		});
+		    		
+		    		return data;
+		    	}
+		    }
+		    
+			_grid.dataSource.read();
+			return ;
+		}
+		
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 	        	alert(e.responseText);
@@ -70,12 +91,15 @@
                         return {models: kendo.stringify(data.models)};
                     }
                     
-                    return params;
+                    return data;
                 }
             },
             batch: true,
             pageSize: 10,
+            serverPaging: true,
             schema: {
+            	data: "users",
+            	total: "total",
             	parse: function(data){
 					
             		return data;
@@ -96,15 +120,12 @@
 	                            	return true;
 	                            }
                         	}
-                        },
-                        roles: {editable: false}
+                        }
                     }
                 }
             }
         });
         
-		$("#grid_${grid.tabId}").empty();
-		
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 		columnsJson[columnsJson.length] = { command:["edit", "destroy"], title:"Action", width:"200px" };
         /**
@@ -112,12 +133,6 @@
 		 */
 		$.each(columnsJson, function(i, v){
 			var _field = columnsJson[i]['field'];
-			
-			if ('roles' === _field){
-				columnsJson[i].editor = function(container, options){};
-				
-				return ;
-			}
 		});
 		
         $("#grid_${grid.tabId}").kendoGrid({

@@ -1,6 +1,8 @@
 package models;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -115,5 +117,19 @@ public class SystemConfig extends Model {
 		}
 		
 		return true;
+	}
+	
+	public static Map search(int page, int pageSize){
+		Map map = new HashMap();
+		map.put("total", SystemConfig.count());
+		List<SystemConfig> scs = null;
+		if (page > 0 && pageSize > 0)
+			scs = SystemConfig.find("order by id desc").fetch(page, pageSize);
+		else 
+			scs = SystemConfig.find("order by id desc").fetch();
+		
+		map.put("systemConfigs", scs);
+		
+		return map;
 	}
 }

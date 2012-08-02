@@ -16,17 +16,17 @@ import utils.CommonUtil;
 import vo.ComboVO;
 import vo.Grid;
 import vo.UserVO;
-import annotations.Permission;
+import annotations.Perm;
 
 @With(Interceptor.class)
 public class Users extends Controller {
 
 	public static void grid(String id){
-		List<Role> roleList = Role.findAll();
-		List<ComboVO> roles = new ArrayList<ComboVO>();
-		if (roleList != null)
-    		for (Role role : roleList)
-    			roles.add(new ComboVO(role.name, role.name));
+//		List<Role> roleList = Role.findAll();
+//		List<ComboVO> roles = new ArrayList<ComboVO>();
+//		if (roleList != null)
+//    		for (Role role : roleList)
+//    			roles.add(new ComboVO(role.name, role.name));
     		
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -41,50 +41,36 @@ public class Users extends Controller {
 
 		grid.columnsJson = CommonUtil.getGson().toJson(CommonUtil.assemColumns(UserVO.class, "id"));
 		map.put("grid", grid);
-    	map.put("roles", CommonUtil.getGson().toJson(roles));
+    	//map.put("roles", CommonUtil.getGson().toJson(roles));
     	
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/grid.html")).render(map));
 	}
 
-	@Permission
-	public static void read(){
-		List<UserVO> result = new ArrayList<UserVO>();
-		List<User> users = User.find("order by id desc").fetch();
-		if (users == null)
-			return ;
-
-		for (User u : users)
-			result.add(new UserVO(u));
-
-		renderJSON(result);
+	@Perm
+	public static void read(int page, int pageSize){
+		renderJSON(User.search(page, pageSize, null, null, null));
 	}
 
-	@Permission
+	@Perm
 	public static void create(String models) {
 		renderJSON(User.createByJson(models));
 	}
 
-	@Permission
+	@Perm
 	public static void update(String models){
 		if (User.updateByJson(models))
 			renderJSON(models);
-
 	}
 
-	@Permission
+	@Perm
 	public static void destroy(String models) {
 		if (User.deleteByJson(models))
 			renderJSON(models);
 	}
 
-	@Permission
-	public static void search(String roleName, String userName, String account, String desc){
-		List<User> users = User.findByCondition(roleName, userName, account, desc);
-		if (users == null || users.isEmpty()) 
-			return ;
-
-		List<UserVO> result = User.assemVO(users);
-		renderJSON(result);
+	@Perm
+	public static void search(int page, int pageSize, String userName, String account, String desc){
+		renderJSON(User.search(page, pageSize, userName, account, desc));
 	}
 
 }

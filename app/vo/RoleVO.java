@@ -8,6 +8,9 @@ public class RoleVO {
 	public String id;
 	public String name;
 	public String desc;
+	
+	public RoleVO(){}
+	
 	public RoleVO(Role role) {
 		super();
 		this.id = String.valueOf(role.id);

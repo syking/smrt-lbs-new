@@ -116,7 +116,7 @@ function loadEvents(url, params){
 	var dataSource = new kendo.data.DataSource({
 		error: function(e) {
 			alert(e.responseText);
-	    	$("#grid_${grid.tabId}").data("kendoGrid").cancelChanges();//roll back 
+	    	_grid.cancelChanges();//roll back 
 	    },
 	    transport:{
 	        read:{
@@ -174,7 +174,6 @@ function loadEvents(url, params){
 	 	selectable: true,
 	 	resizable: true
 	}).data("kendoGrid");
-	
 }
 
 function eventSearchValidate(form) {

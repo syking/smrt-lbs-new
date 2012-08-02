@@ -77,13 +77,7 @@ public class Departments extends Controller {
 	 * 获取部门 JSON 信息
 	 */
 	public static void read(int page, int pageSize) {
-		List<Department> departments = Department.find("order by id desc").fetch(page, pageSize);
-		List<DepartmentVO> result = Department.assemDepartmentVO(departments);
-		Map map = new HashMap();
-		map.put("data", result);
-		map.put("total", Department.count());
-		
-		renderJSON(map);
+		renderJSON(Department.search(page, pageSize, null, null));
 	}
 
 	/**
@@ -113,14 +107,7 @@ public class Departments extends Controller {
 	 * 检索部门信息，返回 JSON
 	 */
 	public static void search(int page, int pageSize, String name, String parent) {
-		List<Department> departments = Department.findByCondition(page, pageSize, name, parent);
-		List<DepartmentVO> departmentVOList = Department.assemDepartmentVO(departments);
-		
-		Map map = new HashMap();
-		map.put("data", departmentVOList);
-		map.put("total", Department.countByCondition(name, parent));
-		
-		renderJSON(map);
+		renderJSON(Department.search(page, pageSize, name, parent));
 	}
 	
 	/**
@@ -144,8 +131,8 @@ public class Departments extends Controller {
 	public static void assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders){
 		Map map = new HashMap();
 		try{
-			boolean flag = Department.assignDriverAndLeader(departmentName, drivers, leaders);
-			map.put("success", flag);
+			Department.assignDriverAndLeader(departmentName, drivers, leaders);
+			map.put("success", true);
 		}catch(Exception e){
 			map.put("success", false);
 			map.put("msg", e.getMessage());

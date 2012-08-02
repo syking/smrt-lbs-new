@@ -92,8 +92,8 @@
 		
 		$.getJSON("/roles/users", {roleName:_roleName}, function(users){
 			$(userTreeId).find('input').attr("checked", false);
-			$.each(users, function(i, u){
-				var _i = $(userTreeId).find('input[name='+ u.id +']');
+			$.each(users, function(i, v){
+				var _i = $(userTreeId).find('input[name='+ v +']');
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
@@ -102,8 +102,8 @@
 		
 		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
 			$(permTreeId).find('input').attr("checked", false);
-			$.each(perms, function(i, p){
-				var _i = $(permTreeId).find('input[name='+ p.id +']');
+			$.each(perms, function(i, v){
+				var _i = $(permTreeId).find('input[name='+ v +']');
 				_i.attr("checked", true);
 			});
 		}).error(function(e){

@@ -76,11 +76,8 @@ public class Fleets extends Controller {
 	/**
 	 * 获取车队 JSON 信息
 	 */
-	public static void read() {
-		List<Fleet> fleets = Fleet.findAndOrderByIdDesc();
-		List<FleetVO> result = Fleet.assemFleetVO(fleets);
-		
-		renderJSON(result);
+	public static void read(int page, int pageSize) {
+		renderJSON(Fleet.search(page, pageSize, null, null));
 	}
 
 	/**
@@ -109,11 +106,8 @@ public class Fleets extends Controller {
 	/**
 	 * 检索车队信息，返回 JSON
 	 */
-	public static void search(String placeNumber, String name) {
-		List<Fleet> fleets = Fleet.findByCondition(placeNumber, name);
-		List<FleetVO> fleetVOList = Fleet.assemFleetVO(fleets);
-
-		renderJSON(fleetVOList);
+	public static void search(int page, int pageSize, String placeNumber, String name) {
+		renderJSON(Fleet.search(page, pageSize, placeNumber, name));
 	}
 	
 	/**
@@ -170,7 +164,7 @@ public class Fleets extends Controller {
 		if (fleetName == null || fleetName.isEmpty())
 			renderJSON(Fleet.assemFleetTree());
 		else
-			renderJSON(Fleet.assemFleetTree(Fleet.findByCondition(null, fleetName), false));
+			renderJSON(Fleet.assemFleetTree(Fleet.findByCondition(-1, -1, null, fleetName), false));
 	}
 
 }

@@ -62,31 +62,76 @@ public class Department extends Model{
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
 	
+	public static Department fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Department dept = Department.findById(id);
+		if (dept == null)
+			throw new RuntimeException("id invalid");
+		
+		return dept;
+	}
+	
+	public static DepartmentVO createByVO(DepartmentVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Department info required");
+		
+		vo.validate();
+		
+		Department dept = new Department();
+		dept.name = vo.name;
+		
+		Department db_dept = Department.findByName(dept.name);
+		if (db_dept != null)
+			throw new RuntimeException("Name duplicate!");
+		
+		dept.parent = Department.findByName(vo.parentName);
+		if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
+			throw new RuntimeException("Parent Name is invalid!");
+		
+		dept.create();
+		vo.id = String.valueOf(dept.id);
+		
+		return vo;
+	}
+	
 	public static String createByJson(String models) {
 		List<DepartmentVO> vos = JSON.parseArray(models, DepartmentVO.class);
 		if (vos == null)
 			return models;
 		
 		for (DepartmentVO vo : vos){
-			vo.validate();
-			
-			Department dept = new Department();
-			dept.name = vo.name;
-			
-			Department db_dept = Department.findByName(dept.name);
-			if (db_dept != null)
-				throw new RuntimeException("DepartmentName duplicate!");
-			
-			dept.parent = Department.findByName(vo.parentName);
-			if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
-				throw new RuntimeException("ParentName is invalid!");
-			
-			dept.create();
-			vo.id = String.valueOf(dept.id);
+			vo = Department.createByVO(vo);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		return _models;
+	}
+	
+	public static void updateByVO(DepartmentVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Department info required");
+		
+		if (vo.id == null)
+			throw new RuntimeException("id required");
+		
+		Long id = Long.parseLong(vo.id);
+		Department dept = Department.findById(id);
+		if (dept == null)
+			throw new RuntimeException("Department not found") ;
+		
+		dept.name = vo.name;
+		
+		Department db_dept = Department.findByName(dept.name);
+		if (db_dept != null && db_dept.id != dept.id)
+			throw new RuntimeException("DepartmentName duplicate!");
+		
+		dept.parent = Department.findByName(vo.parentName);
+		if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
+			throw new RuntimeException("ParentName is invalid!");
+		
+		dept.save();
 	}
 	
 	public static boolean updateByJson(String models) {
@@ -95,46 +140,47 @@ public class Department extends Model{
 			return false;
 		
 		for (DepartmentVO vo : vos){
-			Long id = Long.parseLong(vo.id);
-			Department dept = Department.findById(id);
-			if (dept == null)
-				continue ;
-			
-			dept.name = vo.name;
-			
-			Department db_dept = Department.findByName(dept.name);
-			if (db_dept != null && db_dept.id != dept.id)
-				throw new RuntimeException("DepartmentName duplicate!");
-			
-			dept.parent = Department.findByName(vo.parentName);
-			if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
-				throw new RuntimeException("ParentName is invalid!");
-			
-			dept.save();
+			Department.updateByVO(vo);
 		}
 		
 		return true;
 	}
 
+	public static void deleteById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Department department = Department.findById(id);
+		if (department == null)
+			throw new RuntimeException("id invalid") ;
+	
+		if ((department.leaders != null && !department.leaders.isEmpty()) || (department.drivers != null && !department.drivers.isEmpty()))
+			throw new RuntimeException("Could Not Delete This Department Cause It is Assigned to Drivers!");
+		
+		try {
+			department.delete();
+		} catch (Throwable e) {
+			throw new RuntimeException("Could Not Delete This Department Cause It is A Parent Department of Other Department!");
+		}
+	}
+	
+	public static void deleteByVO(DepartmentVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Department info required");
+		if (vo.id == null)
+			throw new RuntimeException("id required");
+		
+		Long id = Long.parseLong(vo.id);
+		Department.deleteById(id);
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<DepartmentVO> vos = JSON.parseArray(models, DepartmentVO.class);
 		if (vos == null)
 			return false;
 		
 		for (DepartmentVO vo : vos){
-			Long id = Long.parseLong(vo.id);
-			Department department = Department.findById(id);
-			if (department == null)
-				continue ;
-		
-			if ((department.leaders != null && !department.leaders.isEmpty()) || (department.drivers != null && !department.drivers.isEmpty()))
-				throw new RuntimeException("Could Not Delete This Department Cause It is Assigned to Drivers!");
-			
-			try {
-				department.delete();
-			} catch (Throwable e) {
-				throw new RuntimeException("Could Not Delete This Department Cause It is A Parent Department of Other Department!");
-			}
+			Department.deleteByVO(vo);
 		}
 		
 		return true;
@@ -148,11 +194,26 @@ public class Department extends Model{
 
 		List<Department> departments = null;
 		if (page <= 0 || pageSize <= 0)
-			departments = Department.find(sqlSB.toString(), params.toArray()).fetch();
+			departments = Department.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch();
 		else
-			departments = Department.find(sqlSB.toString(), params.toArray()).fetch(page, pageSize);
+			departments = Department.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
 		
 		return departments;
+	}
+	
+	public static Map search(int page, int pageSize, DepartmentVO dept){
+		if (dept == null)
+			return search(page, pageSize, null, null);
+		
+		return search(page, pageSize, dept.name, dept.parentName);
+	}
+	
+	public static Map search(int page, int pageSize, String name, String parentName) {
+		Map map = new HashMap();
+		map.put("total", Department.countByCondition(name, parentName));
+		map.put("departments", Department.assemDepartmentVO(Department.findByCondition(page, pageSize, name, parentName)));
+		
+		return map;
 	}
 	
 	public static long countByCondition(final String name, final String parentName){
@@ -184,7 +245,7 @@ public class Department extends Model{
 		if (departments != null && !departments.isEmpty()){
 			result = new ArrayList<DepartmentVO>();
 			for (Department department : departments)
-				result.add(new DepartmentVO().init(department));
+				result.add(new DepartmentVO(department));
 		}
 		
 		return result;
@@ -201,7 +262,6 @@ public class Department extends Model{
 	public static List<TreeView> assemDepartmentTree(Collection<Department> departments, boolean isRecursive){
 		if (departments == null){
 			departments = new HashSet<Department>();
-			// 查询顶级车队
 			List<Department> list = Department.find("parent is null").fetch();
 			if (list == null)
 				return null;
@@ -225,19 +285,22 @@ public class Department extends Model{
 		return result;
 	}
 	
-	@Transactional
-	public static boolean assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders) {
-		Department department = Department.findByName(departmentName);
+	public static void assign(Long id, List<Long> driver_ids, List<Long> leader_ids) {
+		Department department = Department.findById(id);
+		assign(department, driver_ids, leader_ids);
+	}
+	
+	public static void assign(Department department, List<Long> driver_ids, List<Long> leader_ids) {
 		if (department == null)
 			throw new RuntimeException("Department required !");
 		
-		if (drivers != null){
+		if (driver_ids != null){
 			for (Driver d : department.drivers){
 				d.department = null;
 				d.save();
 			}
 			
-			for (Long id : drivers){
+			for (Long id : driver_ids){
 				Driver d = Driver.findById(id);
 				if (d == null)
 					continue;
@@ -247,9 +310,9 @@ public class Department extends Model{
 			}
 		}
 		
-		if (leaders != null){
-			department.leaders = new HashSet<Driver>(leaders.size());
-			for (Long id : leaders){
+		if (leader_ids != null){
+			department.leaders = new HashSet<Driver>(leader_ids.size());
+			for (Long id : leader_ids){
 				Driver d = Driver.findById(id);
 				if (d == null)
 					continue;
@@ -259,11 +322,12 @@ public class Department extends Model{
 			
 			department.save();
 		}
-		
-		if (drivers != null || leaders != null)
-			return true;
-		
-		return false;
+	}
+	
+	@Transactional
+	public static void assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders) {
+		Department department = Department.findByName(departmentName);
+		assign(department, drivers, leaders);
 	}
 	
 	// 找出某个部门下的所有车队不包含自己
@@ -377,5 +441,4 @@ public class Department extends Model{
 			flag.save();
 		}
 	}
-
 }

@@ -22,7 +22,7 @@ public class Sessions extends Controller {
 		try {
 			User loginUser = new User(account, password, null, null).authen();
 			final String sid = CommonUtil.uuid();
-			Cache.set(sid, loginUser, "30mn");
+			Cache.set(sid, loginUser);
 			renderJSON(APICallback.success(CommonUtil.map("session_id", sid)));
 		} catch (Throwable e) {
 			renderJSON(APICallback.fail(APIError.USER_LOGIN_FAIL, e.getMessage()));

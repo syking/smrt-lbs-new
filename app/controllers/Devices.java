@@ -15,7 +15,7 @@ import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
 import vo.Grid;
-import annotations.Permission;
+import annotations.Perm;
 
 @With(Interceptor.class)
 public class Devices extends Controller {
@@ -38,42 +38,32 @@ public class Devices extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Devices/grid.html")).render(map));
 	}
 
-	@Permission
+	@Perm
 	public static void read(int page, int pageSize){
-		List<Device> devices = Device.find("order by id desc").fetch(page, pageSize);
-		Map map = new HashMap();
-		map.put("data", devices);
-		map.put("total", Device.count());
-		
-		renderJSON(map);
+		renderJSON(Device.search(page, pageSize, null, null, null));
 	}
 
-	@Permission
+	@Perm
 	public static void create(String models) {
 		renderJSON(Device.createByJson(models));
 	}
 
-	@Permission
+	@Perm
 	public static void update(String models){
 		if (Device.updateByJson(models))
 			renderJSON(models);
 
 	}
 
-	@Permission
+	@Perm
 	public static void destroy(String models) {
 		if (Device.deleteByJson(models))
 			renderJSON(models);
 	}
 
-	@Permission
+	@Perm
 	public static void search(int page, int pageSize, String name, String key, String host){
-		List<Device> devices = Device.findByCondition(page, pageSize, name, key, host);
-		Map map = new HashMap();
-		map.put("data", devices);
-		map.put("total", Device.countByCondition(name, key, host));
-		
-		renderJSON(map);
+		renderJSON(Device.search(page, pageSize, name, key, host));
 	}
 
 }

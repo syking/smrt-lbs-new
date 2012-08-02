@@ -56,9 +56,6 @@
 					if (operation !== "read" && data.models) {
 	                	$.each(data.models, function(i, v){
 	                		var model = data.models[i];
-	                    	/**
-	                    	 * 经过千辛万苦，终于把KendoUI关于Date，Time类型的增删改查解决了。
-	                    	 */
 	                    	model.startDate = kendo.toString(model.startDate, "yyyy-MM-dd");
 	                    	model.startTime = kendo.toString(model.startTime, "HH:mm:ss");
 	                    	model.endDate = kendo.toString(model.endDate, "yyyy-MM-dd");
@@ -84,8 +81,7 @@
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
 	        	alert(e.responseText);
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+	        	_grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  {
@@ -95,22 +91,28 @@
                 update: {
                     url: "${grid.updateUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 create: {
                     url: "${grid.createUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap:function (data, operation) {
@@ -126,12 +128,15 @@
                         return {models: kendo.stringify(data.models)};
                     }
                     
-                    return params;
+                    return data;
                 }
             },
             batch: true,
             pageSize: 8,
+            serverPaging: true,
             schema: {
+            	total: "total",
+            	data: "counsellings",
             	parse: function(data){
             		// $.each(data, function(i, val){
             			// val.startTime = new Date(val.startDate + " " + val.startTime);
@@ -168,8 +173,6 @@
             }
         });
         
-		$("#grid_${grid.tabId}").empty();
-		
 		var columnsJson = #{verbatim} ${grid.columnsJson} #{/verbatim};
 		columnsJson[columnsJson.length] = { command:["edit","destroy"], title:"Action", width:"200px" };
         /**
@@ -231,6 +234,8 @@
             editable:"popup",
             navigatable: true
         });
+        
+        _grid = $("#grid_${grid.tabId}").data("kendoGrid");
     }
     
     function mycounselSearchValidate(form) {

@@ -93,42 +93,22 @@
     	
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-		        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
-		        	alert(e.responseText);
-		        else{
-		        	alert("Oops! 500 error!");
-		        }
-		        
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+		        alert(e.responseText);
+	        	_grid.cancelChanges();//roll back 
 		    },
             transport:{
                 read:{
                     url:url,
                     dataType:"json"
                 },
-                update:{
-                    url:"${grid.updateUrl}",
-                    dataType:"json",
-                    complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
-                    		alert("update success");
-                    }
-                },
                 destroy:{
                     url:"${grid.destroyUrl}",
                     dataType:"json",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
-                    }
-                },
-                create:{
-                    url:"${grid.createUrl}",
-                    dataType:"json",
-                    complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
-                    		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap:function (data, operation) {
@@ -143,7 +123,7 @@
             pageSize:8,
             serverPaging: true,
             schema:{
-            	data: "data",
+            	data: "logs",
             	total: "total",
                 model:{
                     id:"id",
@@ -180,6 +160,8 @@
             columns:columnsJson,
             editable: "${grid.editable}"
         }).data("kendoGrid");
+        
+        _grid = $("#grid_${grid.tabId}").data("kendoGrid");
     }
 
     function logSearchValidate(form) {

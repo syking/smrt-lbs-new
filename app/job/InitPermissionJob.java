@@ -3,7 +3,7 @@ package job;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import annotations.Permission;
+import annotations.Perm;
 
 import play.Play;
 import play.jobs.Job;
@@ -22,7 +22,7 @@ public class InitPermissionJob extends Job{
 			
 			//System.out.println(CommonUtil.getNowTime()+"-->" + cls.getName());
 			for (Method m : methods){
-				if (!m.isAnnotationPresent(Permission.class))
+				if (!m.isAnnotationPresent(Perm.class))
 					continue;
 				
 				final String action = cls.getSimpleName()+"."+m.getName();

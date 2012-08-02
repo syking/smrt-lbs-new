@@ -9,6 +9,8 @@ public class PermVO {
 	public String action;
 	public String desc;
 	
+	public PermVO(){}
+	
 	public PermVO(Permission p) {
 		super();
 		this.id = String.valueOf(p.id);

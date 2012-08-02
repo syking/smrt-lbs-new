@@ -136,25 +136,53 @@ public class Fleet extends Model{
 			Long id = Long.parseLong(vo.id);
 			Fleet fleet = Fleet.findById(id);
 			if (fleet == null)
-				continue ;
+				throw new RuntimeException("fleet not found") ;
 			
 			if ((fleet.leaders != null && !fleet.leaders.isEmpty()) || (fleet.vehicles != null && !fleet.vehicles.isEmpty()))
-				throw new RuntimeException("Could Not Delete This Fleet Cause It is Assigned to Drivers or Vehicles!");
+				throw new RuntimeException("This Fleet is related to Drivers or Vehicles!");
 			
 			try {
 				fleet.delete();
 			} catch (Throwable e) {
-				throw new RuntimeException("Could Not Delete This Fleet Cause It is A Parent Fleet of Other Fleet!");
+				throw new RuntimeException("This Fleet is A Parent Fleet of Other Fleet!");
 			}
 		}
 		
 		return true;
 	}
 	
-	public static List<Fleet> findByCondition(final String placeNumber, final String name){
-		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+	public static List<Fleet> findByCondition(int page, int pageSize, final String placeNumber, final String name){
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
+		parseCondition(placeNumber, name, sqlSB, params);
+
+		List<Fleet> fleets = null;
+		if (page > 0 && pageSize > 0)
+			fleets = Fleet.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
+		else
+			fleets = Fleet.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch();
+		
+		return fleets;
+	}
+	
+	public static long countByCondition(final String placeNumber, final String name) {
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseCondition(placeNumber, name, sqlSB, params);
+		
+		return Fleet.count(sqlSB.toString(), params.toArray());
+	}
+	
+	public static Map search(int page, int pageSize, String placeNumber, String name) {
+		Map map  = new HashMap();
+		map.put("total", Fleet.countByCondition(placeNumber, name));
+		map.put("fleets", Fleet.assemFleetVO(Fleet.findByCondition(page, pageSize, placeNumber, name)));
+		
+		return map;
+	}
+
+	private static void parseCondition(final String placeNumber,
+			final String name, StringBuilder sqlSB, List<Object> params) {
 		if (placeNumber != null && placeNumber.trim().length() > 0) {
 			sqlSB.append("placeNumber like ?");
 			params.add("%" + placeNumber + "%");
@@ -167,10 +195,6 @@ public class Fleet extends Model{
 			sqlSB.append("name like ?");
 			params.add("%" + name + "%");
 		}
-
-		List<Fleet> fleets = Fleet.find(sqlSB.toString(), params.toArray()).fetch();
-		
-		return fleets;
 	}
 	
 	public boolean contains(Fleet fleet){

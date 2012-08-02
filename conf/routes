@@ -11,8 +11,12 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-# Catch all
-*       /{controller}/{action}                  {controller}.{action}
-*		/api/{controller}/{action}				api.{controller}.{action}
-
 # RESTful api
+GET		/api/{controller}						api.{controller}.index
+GET		/api/{controller}/{<[0-9]+>id}			api.{controller}.show
+*		/api/{controller}/{<[0-9]+>id}/destroy	api.{controller}.destroy
+*		/api/{controller}/{<[0-9]+>id}/assign	api.{controller}.assign
+GET		/api/{controller}/{<[0-9]+>id}/relations api.{controller}.relations
+# Catch all
+*		/api/{controller}/{action}				api.{controller}.{action}
+*       /{controller}/{action}                  {controller}.{action}

@@ -10,11 +10,21 @@ public class DepartmentVO {
 	public String name;
 	public String parentName;
 
-	public DepartmentVO init(Department dept) {
-		id = String.valueOf(dept.id);
-		name = dept.name;
-		parentName = dept.parent == null ? "" : dept.parent.name;
-		return this;
+	public DepartmentVO(String id, String name, String parentName) {
+		this.id = id;
+		this.name = name;
+		this.parentName = parentName;
+	}
+	
+	public DepartmentVO(String name, String parentName){
+		this.name = name;
+		this.parentName = parentName;
+	}
+	
+	public DepartmentVO(Department dept) {
+		this.id = String.valueOf(dept.id);
+		this.name = dept.name;
+		this.parentName = dept.parent == null ? "" : dept.parent.name;
 	}
 	
 	public void validate(){

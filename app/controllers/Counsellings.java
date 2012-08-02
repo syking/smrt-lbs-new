@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import annotations.Permission;
+import annotations.Perm;
 
 import static models.User.Constant.THEME;
 
@@ -33,64 +33,34 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Counsellings extends Controller {
 
-	@Permission
-	public static void read() throws ParseException {
-		List<CounselVO> result = new ArrayList<CounselVO>();
-		List<Counselling> counsellings = Counselling.find("order by id desc").fetch();
-		if (counsellings == null)
-			return ;
-		
-		for (Counselling c : counsellings)
-			result.add(new CounselVO().init(c));
-		
-		renderJSON(result);
+	@Perm
+	public static void read(int page, int pageSize) throws ParseException {
+		renderJSON(Counselling.search(page, pageSize, null, null, null, null, null, null));
 	}	
 	
-	@Permission
-	public static void search(String userName, String driverName, String startDate, String startTime, String endDate, String endTime){
-		try{
-			List<Counselling> counsellings = Counselling.findByCondition(userName, driverName, startDate, startTime, endDate, endTime);
-			List<CounselVO> result = new ArrayList<CounselVO>();
-		
-			for (Counselling counselling : counsellings)
-				result.add(new CounselVO().init(counselling));
-			
-			renderJSON(result);
-		} catch (Throwable e) {
-			throw new RuntimeException("Counsel Search Error -> " + e.getMessage());
-		}
+	@Perm
+	public static void search(int page, int pageSize, String userName, String driverName, String startDate, String startTime, String endDate, String endTime){
+		renderJSON(Counselling.search(page, pageSize, userName, driverName, startDate, startTime, endDate, endTime));
 	}
 
-	@Permission
+	@Perm
 	public static void createCounselling(String models) {
-		try {
-			renderJSON(Counselling.createByJson(models, null));
-		} catch (Throwable e) {
-			throw new RuntimeException("Counsel Create Error -> " + e.getMessage());
-		}
+		renderJSON(Counselling.createByJson(models, null));
 	}
 
-	@Permission
+	@Perm
 	public static void deleteCounsel(String models) {
-		try {
-			if (Counselling.deleteByJson(models))
-				renderJSON(models);
-		} catch (Throwable e) {
-			throw new RuntimeException("Counsel Delete Error -> " + e.getMessage());
-		}
+		if (Counselling.deleteByJson(models))
+			renderJSON(models);
 	}
 
-	@Permission
+	@Perm
 	public static void updateCounsel(String models) {
-		try {
-			if (Counselling.updateByJson(models, null))
-				renderJSON(models);
-		} catch (Throwable e) {
-			throw new RuntimeException("Counsel Update Error -> " + e.getMessage());
-		}
+		if (Counselling.updateByJson(models, null))
+			renderJSON(models);
 	}
 
-	@Permission
+	@Perm
 	public static void grid(String id) {
 		final String preUrl = "/Counsellings/";
 		List<User> userList = User.findAll();

@@ -40,50 +40,33 @@ public class Roles extends Controller{
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Roles/grid.html")).render(map));
 	}
 	
-	public static void read(){
-		List<RoleVO> result = new ArrayList<RoleVO>();
-		List<Role> Roles = Role.find("order by id desc").fetch();
-		if (Roles == null)
-			return ;
-		
-		for (Role u : Roles)
-			result.add(new RoleVO(u));
-		
-		renderJSON(result);
+	public static void read(int page, int pageSize){
+		renderJSON(Role.search(page, pageSize, null, null));
 	}
 	
-	@annotations.Permission
+	@annotations.Perm
 	public static void create(String models) {
 		renderJSON(Role.createByJson(models));
 	}
 	
-	@annotations.Permission
+	@annotations.Perm
 	public static void update(String models){
 		if (Role.updateByJson(models))
 			renderJSON(models);
 		
 	}
 
-	@annotations.Permission
+	@annotations.Perm
 	public static void destroy(String models) {
 		if (Role.deleteByJson(models))
 			renderJSON(models);
 	}
 	
-	public static void search(String roleName, String desc){
-		List<Role> Roles = Role.findByCondition(roleName, desc);
-		if (Roles == null || Roles.isEmpty())
-			return ;
-		
-		List<RoleVO> result = new ArrayList<RoleVO>(Roles.size());
-		for (Role u : Roles){
-			result.add(new RoleVO(u));
-		}
-		
-		renderJSON(result);
+	public static void search(int page, int pageSize, String roleName, String desc){
+		renderJSON(Role.search(page, pageSize, roleName, desc));
 	}
 	
-	@annotations.Permission
+	@annotations.Perm
 	public static void assign(String id){
 		Map map = new HashMap();
 		map.put("tabid", id);
@@ -95,12 +78,12 @@ public class Roles extends Controller{
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Roles/assign.html")).render(map));
 	}
 	
-	@annotations.Permission
+	@annotations.Perm
 	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms){
 		Map map = new HashMap();
 		try{
-			boolean flag = Role.assignUserAndPerm(roleName, users, perms);
-			map.put("success", flag);
+			Role.assignUserAndPerm(roleName, users, perms);
+			map.put("success", true);
 		}catch(Exception e){
 			map.put("success", false);
 			map.put("msg", e.getMessage());
@@ -111,15 +94,15 @@ public class Roles extends Controller{
 	
 	public static void users(String roleName){
 		Role role = Role.findByName(roleName);
-		renderJSON(CommonUtil.getGson("roles", "password", "account", "desc", "iconUrl").toJson(role.users));
+		renderJSON(User.toIds(role.users));
 	}
 	
 	public static void perms(String roleName){
 		Role role = Role.findByName(roleName);
-		renderJSON(CommonUtil.getGson("uri", "desc", "iconUrl").toJson(role.permissions));
+		renderJSON(Permission.toIds(role.permissions));
 	}
 	
 	public static void filter(String roleName){
-		renderJSON(Role.assemTreeView(Role.findByCondition(roleName, null)));
+		renderJSON(Role.assemTreeView(Role.findByCondition(-1, -1, roleName, null)));
 	}
 }

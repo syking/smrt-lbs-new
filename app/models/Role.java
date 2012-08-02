@@ -1,8 +1,10 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,13 +16,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.alibaba.fastjson.JSON;
-
 import play.db.jpa.Model;
-import utils.CommonUtil;
 import vo.RoleVO;
 import vo.TreeView;
-import vo.UserVO;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * The Role to Visit System of role.
@@ -63,73 +63,152 @@ public class Role extends Model{
 		this.desc = desc;
 	}
 	
+	public static Role fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Role role = Role.findById(id);
+		if (role == null)
+			throw new RuntimeException("id invalid");
+		
+		return role;
+	}
+	
+	public static RoleVO createByVO(RoleVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Role info required");
+		
+		vo.validate();
+		Role db_role = Role.findByName(vo.name);
+		if (db_role != null)
+			throw new RuntimeException("Name duplicate!");
+		
+		Role role = new Role(vo.name, vo.desc);
+		role.create();
+		
+		vo.id = String.valueOf(role.id);
+		
+		return vo;
+	}
+	
 	public static String createByJson(String models) {
 		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
 		if (vos == null)
 			return models;
 		
 		for (RoleVO vo : vos){
-			vo.validate();
-			Role role = new Role(vo.name, vo.desc);
-			Role db_role = Role.findByName(role.name);
-			if (db_role != null)
-				throw new RuntimeException("RoleName duplicate!");
-			
-			role.create();
-			vo.id = String.valueOf(role.id);
+			vo = Role.createByVO(vo);
 		}
 		
 		String _models = JSON.toJSONString(vos);
 		
 		return _models;
 	}
+	
+	public static void deleteById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Role role = Role.findById(id);
+		if (role == null)
+			throw new RuntimeException("Role not found") ;
+		
+		if ((role.users != null && !role.users.isEmpty()) || (role.permissions != null && !role.permissions.isEmpty()))
+			throw new RuntimeException("Could Not Delete This Role Cause It is Assigned to Users or Permissions!");
+		
+		role.delete();
+	}
 
+	public static void deleteByVO(RoleVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Role info required");
+		
+		if (vo.id == null)
+			throw new RuntimeException("id required");
+		
+		Long id = Long.parseLong(vo.id);
+		Role.deleteById(id);
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
 		if (vos == null)
 			return false;
 		
 		for (RoleVO vo : vos){
-			Role role = Role.findById(Long.parseLong(vo.id));
-			if (role == null)
-				continue ;
-			
-			if ((role.users != null && !role.users.isEmpty()) || (role.permissions != null && !role.permissions.isEmpty()))
-				throw new RuntimeException("Could Not Delete This Role Cause It is Assigned to Users or Permissions!");
-			
-			role.delete();
+			Role.deleteByVO(vo);
 		}
 		
 		return true;
 	}
 
+	public static void updateByVO(RoleVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Role info required");
+		
+		vo.validate();
+		Role role = Role.findById(Long.parseLong(vo.id));
+		if (role == null)
+			throw new RuntimeException("Role not found") ;
+	
+		role.name = vo.name;
+		role.desc = vo.desc;
+		
+		Role db_role = Role.findByName(vo.name);
+		if (db_role != null && db_role.id != role.id)
+			throw new RuntimeException("Name duplicate!");
+		
+		role.save();
+	}
+	
 	public static boolean updateByJson(String models) {
 		List<RoleVO> vos = JSON.parseArray(models, RoleVO.class);
 		if (vos == null)
 			return false;
 		
 		for (RoleVO vo : vos){
-			vo.validate();
-			Role role = Role.findById(Long.parseLong(vo.id));
-			if (role == null)
-				continue ;
-			role.name = vo.name;
-			role.desc = vo.desc;
-			
-			Role db_role = Role.findByName(role.name);
-			if (db_role != null && db_role.id != role.id)
-				throw new RuntimeException("RoleName duplicate!");
-			
-			role.save();
+			Role.updateByVO(vo);
 		}
 		
 		return true;
 	}
 	
-	public static List<Role> findByCondition(String roleName, String desc){
+	public static List<Role> findByCondition(int page, int pageSize, String roleName, String desc){
 		final List<Object> params = new ArrayList<Object>();
 		final StringBuilder sb = new StringBuilder();
+		parseCondition(roleName, desc, params, sb);
+		List<Role> roles = null;
+		if (page > 0 && pageSize > 0)
+			roles = Role.find(sb.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
+		else
+			roles = Role.find(sb.toString() + " order by id desc", params.toArray()).fetch() ;
 		
+		return roles;
+	}
+	
+	public static long countByCondition(String roleName, String desc) {
+		final List<Object> params = new ArrayList<Object>();
+		final StringBuilder sb = new StringBuilder();
+		parseCondition(roleName, desc, params, sb);
+		
+		return Role.count(sb.toString(), params.toArray());
+	}
+	
+	public static Map search(int page, int pageSize, String roleName, String desc) {
+		Map map = new HashMap();
+		map.put("total", Role.countByCondition(roleName, desc));
+		map.put("roles", Role.assemVO(Role.findByCondition(page, pageSize, roleName, desc)));
+		return map;
+	}
+	
+	public static Map search(int page, int pageSize, RoleVO role) {
+		if (role == null)
+			return search(page, pageSize, null, null);
+		
+		return search(page, pageSize, role.name, role.desc);
+	}
+
+	private static void parseCondition(String roleName, String desc, final List<Object> params, final StringBuilder sb) {
 		if (roleName != null && !roleName.isEmpty()){
 			if (sb.length() > 0)
 				sb.append(" and ");
@@ -145,10 +224,17 @@ public class Role extends Model{
 			sb.append("description like ?");
 			params.add(new StringBuilder("%").append(desc).append("%").toString());
 		}
+	}
+	
+	public static List<RoleVO> assemVO(List<Role> roles) {
+		List<RoleVO> result = null;
+		if (roles != null){
+			result = new ArrayList<RoleVO>(roles.size());
+			for (Role r : roles)
+				result.add(new RoleVO(r));
+		}
 		
-		List<Role> roles = Role.find(sb.toString(), params.toArray()).fetch() ;
-		
-		return roles;
+		return result;
 	}
 	
 	public static List<TreeView> assemTreeView(){
@@ -174,8 +260,17 @@ public class Role extends Model{
 		return Role.find("byName", roleName).first();
 	}
 
-	public static boolean assignUserAndPerm(String roleName, List<Long> users, List<Long> perms) {
+	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms) {
 		Role role = Role.findByName(roleName);
+		assign(role, users, perms);
+	}
+	
+	public static void assign(Long roleId, List<Long> userIds, List<Long> permIds) {
+		Role role = Role.findById(roleId);
+		assign(role, userIds, permIds);
+	}
+
+	private static void assign(Role role, List<Long> users, List<Long> perms) {
 		if (role == null)
 			throw new RuntimeException("Role required !");
 		
@@ -204,11 +299,7 @@ public class Role extends Model{
 		
 		if (users != null || perms != null){
 			role.save();
-			
-			return true;
 		}
-		
-		return false;
 	}
 	
 	public boolean hasPermissions(Permission perm){

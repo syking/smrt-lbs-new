@@ -60,8 +60,7 @@
     	var dataSource = new kendo.data.DataSource({
     		error: function(e) {
 	        	alert(e.responseText);
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+	        	_grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  { 
@@ -70,23 +69,29 @@
                 update: {
                     url: "${grid.updateUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
                     dataType: "json",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 create: {
                     url: "${grid.createUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap: function(data, operation) {
@@ -99,7 +104,10 @@
             },
             batch: true,
             pageSize: 10,
+            serverPaging: true,
             schema: {
+            	total: "total",
+            	data: "fleets",
                 model: {
                     id: "id",
                     fields: {
@@ -157,6 +165,8 @@
             editable: "popup",
             navigatable: true
         });
+        
+        _grid = $("#grid_${grid.tabId}").data("kendoGrid");
     }
     
 </script>

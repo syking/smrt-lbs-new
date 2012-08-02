@@ -171,8 +171,7 @@
     	var dataSource = new kendo.data.DataSource({
     		error: function(e) {
 	        	alert(e.responseText);
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+	        	_grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  { 
@@ -181,23 +180,29 @@
                 update: {
                     url: "${grid.updateUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
                     dataType: "json",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 create: {
                     url: "${grid.createUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap: function(data, operation) {
@@ -220,15 +225,9 @@
             pageSize: 7,
             serverPaging: true,
             schema: {
-            	data: "data",
+            	data: "schedules",
             	total: "total",
             	parse: function(data){
-            		// $.each(data, function(i, val){
-            			// val.startTime = new Date(val.startDate + " " + val.startTime);
-						// val.startDate = new Date(val.startDate);
-						// val.endTime = new Date(val.endDate + " " + val.endTime);
-						// val.endDate = new Date(val.endDate);
-					// });
 					
             		return data;
             	},
@@ -341,6 +340,8 @@
             editable: "popup",
             navigatable: true
         });
+        
+        _grid = $("#grid_${grid.tabId}").data("kendoGrid");
         
         $(".k-grid-clear").click(function(e){
         	if (confirm("Are You Sure to Clear All Data ?")){

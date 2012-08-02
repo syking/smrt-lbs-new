@@ -2,7 +2,9 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +16,6 @@ import javax.persistence.Table;
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.CounselVO;
-import vo.DriverVO;
 /**
  * 辅导安排信息
  * @author weiwei
@@ -143,10 +144,39 @@ public class Counselling extends Model{
 		return true;
 	}
 	
-	public static List<Counselling> findByCondition(String userName, String driverName, String startDate, String startTime, String endDate, String endTime){
+	public static List<Counselling> findByCondition(int page, int pageSize, String userName, String driverName, String startDate, String startTime, String endDate, String endTime){
 		List<Object> params = new ArrayList<Object>();
 		StringBuilder sb = new StringBuilder();
+		parseCondition(userName, driverName, startDate, startTime, endDate, endTime, params, sb);
 		
+		List<Counselling> counsellings = null;
+		if (page > 0 && pageSize > 0)
+			counsellings = Counselling.find(sb.toString() + "order by id desc", params.toArray()).fetch(page, pageSize);
+		else
+			counsellings = Counselling.find(sb.toString() + "order by id desc", params.toArray()).fetch();
+		
+		return counsellings;
+	}
+	
+	public static long countByCondition(String userName, String driverName, String startDate, String startTime, String endDate, String endTime){
+		List<Object> params = new ArrayList<Object>();
+		StringBuilder sb = new StringBuilder();
+		parseCondition(userName, driverName, startDate, startTime, endDate, endTime, params, sb);
+		
+		return Counselling.count(sb.toString(), params.toArray());
+	}
+	
+	public static Map search(int page, int pageSize, String userName, String driverName, String startDate, String startTime, String endDate, String endTime) {
+		Map map = new HashMap();
+		map.put("total", Counselling.countByCondition(userName, driverName, startDate, startTime, endDate, endTime));
+		map.put("counsellings", Counselling.assemVO(Counselling.findByCondition(page, pageSize, userName, driverName, startDate, startTime, endDate, endTime)));
+		
+		return map;
+	}
+	
+	private static void parseCondition(String userName, String driverName,
+			String startDate, String startTime, String endDate, String endTime,
+			List<Object> params, StringBuilder sb) {
 		User user = User.find("byName", userName).first();
 		if (user != null){
 			sb.append("user = ?");
@@ -191,10 +221,6 @@ public class Counselling extends Model{
 			
 			sb.append("end_time < ?");
 		}
-		
-		List<Counselling> counsellings = Counselling.find(sb.toString(), params.toArray()).fetch();
-		
-		return counsellings;
 	}
 	
 	public Counselling(User user, Date startTime, Date endTime, String remark, Driver driver) {
@@ -212,5 +238,16 @@ public class Counselling extends Model{
 	
 	public static long counselSize() {
 		return Counselling.findAll().size();
+	}
+	
+	public static List<CounselVO> assemVO(List<Counselling> cs){
+		if (cs == null)
+			return null;
+		
+		List<CounselVO> result = new ArrayList<CounselVO>(cs.size());
+		for (Counselling c : cs)
+			result.add(new CounselVO().init(c));
+		
+		return result;
 	}
 }

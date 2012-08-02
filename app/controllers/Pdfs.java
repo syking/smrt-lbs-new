@@ -142,7 +142,7 @@ public class Pdfs extends Controller{
 	}
     
     public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime){
-    	Map data = Schedule.search(1, 200, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+    	Map data = Schedule.export(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		if (data == null)
 			return ;
 		

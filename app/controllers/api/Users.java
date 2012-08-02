@@ -3,7 +3,9 @@ package controllers.api;
 import static models.User.Constant.LOGIN_USER_ATTR;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.User;
 import play.cache.Cache;
@@ -21,16 +23,36 @@ import controllers.Interceptor;
 @With(APIInterceptor.class)
 public class Users extends Controller{
 	
+	public static void index(final int page, final int pageSize){
+		try{
+			renderJSON(APICallback.success(User.search(page, pageSize, null)));
+		}catch(Throwable e){
+			renderJSON(APICallback.fail(APIError.USER_FETCH_FAIL, e.getMessage()));
+		}
+	}
+	
+	/**
+	 * Fetch user's info
+	 * @param user
+	 */
+	public static void search(final int page, final int pageSize, final UserVO user){
+		try{
+			renderJSON(APICallback.success(User.search(page, pageSize, user)));
+		}catch(Throwable e){
+			renderJSON(APICallback.fail(APIError.USER_FETCH_FAIL, e.getMessage()));
+		}
+	}
+	
 	/**
 	 * Get user info
 	 * @param id
 	 */
 	public static void show(Long id){
 		try{
-			User user = User.findById(id);
+			User user = User.fetchById(id);
 			renderJSON(APICallback.success(new UserVO(user)));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.ACCESS_DENIED, e.getMessage()));
+			renderJSON(APICallback.fail(APIError.USER_FETCH_FAIL, e.getMessage()));
 		}
 	}
 	
@@ -39,18 +61,9 @@ public class Users extends Controller{
 	 * @param models
 	 */
 	public static void create(final UserVO user) {
-		if (user == null){
-			renderJSON(APICallback.user_info_required());
-			return ;
-		}
 		
 		try{
 			UserVO _user = User.createByVO(user);
-			if (_user == null || _user.id == null || _user.id.isEmpty()){
-				renderJSON(APICallback.fail(user, APIError.USER_CERATE_FAIL, "User create fail"));
-				return ;
-			}
-			
 			renderJSON(APICallback.success(_user));
 		} catch (Throwable e){
 			renderJSON(APICallback.fail(user, APIError.USER_CERATE_FAIL, e.getMessage()));
@@ -62,18 +75,9 @@ public class Users extends Controller{
 	 * @param user
 	 */
 	public static void update(final UserVO user){
-		if (user == null){
-			renderJSON(APICallback.user_info_required());
-			return ;
-		}
 		
 		try{
-			boolean flag = User.updateByVO(user);
-			if (!flag){
-				renderJSON(APICallback.fail(user, APIError.USER_CERATE_FAIL, "User update fail"));
-				return ;
-			}
-			
+			User.updateByVO(user);
 			renderJSON(APICallback.success(user));
 		} catch (Throwable e){
 			renderJSON(APICallback.fail(APIError.USER_UPDATE_FAIL, e.getMessage()));
@@ -86,34 +90,10 @@ public class Users extends Controller{
 	 */
 	public static void destroy(Long id) {
 		try{
-			if (id == null){
-				renderJSON(APICallback.fail(APIError.USER_DESTROY_FAIL, "User id required"));
-				return ;
-			}
-			final User user = User.findById(id);
-			if (user == null){
-				renderJSON(APICallback.fail(APIError.USER_DESTROY_FAIL, "User id invalid"));
-				return ;
-			}
-		
-			user.delete();
+			User.deleteById(id);
 			renderJSON(APICallback.success(id));
 		} catch (Throwable e){
 			renderJSON(APICallback.fail(id, APIError.USER_DESTROY_FAIL, e.getMessage()));
-		}
-	}
-	
-	/**
-	 * Fetch user's info
-	 * @param user
-	 */
-	public static void fetch(final String roleName, final String name, final String account, final String desc){
-		try{
-			List<User> users = User.findByCondition(roleName, name, account, desc);
-			List<UserVO> result = User.assemVO(users);
-			renderJSON(APICallback.success(result));
-		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.USER_FETCH_FAIL, e.getMessage()));
 		}
 	}
 }

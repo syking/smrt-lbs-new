@@ -1,8 +1,10 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -76,6 +78,9 @@ public class User extends Model {
 	}
 
 	public static UserVO createByVO(UserVO vo) {
+		if (vo == null)
+			throw new RuntimeException("User info required");
+		
 		vo.validate();
 		
 		User user = new User(vo.account, "123456", vo.name, vo.desc);
@@ -112,8 +117,11 @@ public class User extends Model {
 		return User.find("byAccount", account).first();
 	}
 
-	public static boolean deleteByVO(UserVO vo) {
-		User user = User.findById(Long.parseLong(vo.id));
+	public static void deleteById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		User user = User.findById(id);
 		if (user == null)
 			throw new RuntimeException("User not found");
 		
@@ -122,8 +130,16 @@ public class User extends Model {
 		} catch (Throwable e){
 			throw new RuntimeException("Could not delete user");
 		}
+	}
+	
+	public static void deleteByVO(UserVO vo) {
+		if (vo == null)
+			throw new RuntimeException("User info required");
 		
-		return true;
+		if (vo.id == null)
+			throw new RuntimeException("id required");
+		
+		User.deleteById(Long.parseLong(vo.id));
 	}
 	
 	public static boolean deleteByJson(String models) {
@@ -137,8 +153,11 @@ public class User extends Model {
 		
 		return true;
 	}
-
-	public static boolean updateByVO(UserVO vo) {
+	
+	public static void updateByVO(UserVO vo) {
+		if (vo == null)
+			throw new RuntimeException("User info required");
+		
 		vo.validate();
 		User user = User.findById(Long.parseLong(vo.id));
 		if (user == null)
@@ -157,8 +176,6 @@ public class User extends Model {
 			throw new RuntimeException("Account duplicate!");
 		
 		user.save();
-		
-		return true;
 	}
 	
 	public static boolean updateByJson(String models) {
@@ -173,19 +190,56 @@ public class User extends Model {
 		return true;
 	}
 	
-	public static List<User> findByCondition(String roleName, String userName, String account, String desc){
+	public static List<User> findByCondition(int page, int pageSize, String userName, String account, String desc){
+//		boolean isRoleHasUsers = false;
+//		Role role = null;
+//		if (roleName != null && !roleName.isEmpty()){
+//			role = Role.findByName(roleName);
+//			if (role == null || role.users == null || role.users.isEmpty()) 
+//					return null ;
+//				
+//			isRoleHasUsers = true;
+//		}
+		
 		final List<Object> params = new ArrayList<Object>();
 		final StringBuilder sb = new StringBuilder();
-		boolean isRoleHasUsers = false;
-		Role role = null;
-		if (roleName != null && !roleName.isEmpty()){
-			role = Role.findByName(roleName);
-			if (role == null || role.users == null || role.users.isEmpty()) 
-					return null ;
-				
-			isRoleHasUsers = true;
-		}
 		
+		parseCondition(userName, account, desc, params, sb);
+		
+		List<User> users = null;
+		if (page > 0 && pageSize > 0)
+			users = User.find(sb.toString() + "order by id desc", params.toArray()).fetch(page, pageSize) ;
+		else 
+			users = User.find(sb.toString() + "order by id desc", params.toArray()).fetch();
+		
+//		if (isRoleHasUsers){
+//			List<User> result = new ArrayList(role.users.size());
+//			for (User u : role.users){
+//				for (User uu : users){
+//					if (uu.id != u.id)
+//						continue;
+//				
+//					result.add(u);
+//				}
+//			}
+//			
+//			return result;
+//		}
+		
+		return users;
+	}
+	
+	public static long countByCondition(String userName, String account, String desc) {
+		final List<Object> params = new ArrayList<Object>();
+		final StringBuilder sb = new StringBuilder();
+		
+		parseCondition(userName, account, desc, params, sb);
+		
+		return User.count(sb.toString(), params.toArray());
+	}
+
+	private static void parseCondition(String userName, String account,
+			String desc, final List<Object> params, final StringBuilder sb) {
 		if (userName != null && !userName.isEmpty()){
 			if (sb.length() > 0)
 				sb.append(" and ");
@@ -209,24 +263,6 @@ public class User extends Model {
 			sb.append("description like ?");
 			params.add(new StringBuilder("%").append(desc).append("%").toString());
 		}
-		
-		List<User> users = User.find(sb.toString(), params.toArray()).fetch() ;
-		
-		if (isRoleHasUsers){
-			List<User> result = new ArrayList(role.users.size());
-			for (User u : role.users){
-				for (User uu : users){
-					if (uu.id != u.id)
-						continue;
-				
-					result.add(u);
-				}
-			}
-			
-			return result;
-		}
-		
-		return users;
 	}
 	
 	public static List<TreeView> assemTreeView(){
@@ -266,8 +302,9 @@ public class User extends Model {
 	}
 	
 	public static List<UserVO> assemVO(List<User> users){
-		List<UserVO> result = new ArrayList<UserVO>(users.size());
+		List<UserVO> result = null;
 		if (users != null){
+			result = new ArrayList<UserVO>(users.size());
 			for (User u : users){
 				result.add(new UserVO(u));
 			}
@@ -275,4 +312,42 @@ public class User extends Model {
 		
 		return result;
 	}
+	
+	public static Map search(int page, int pageSize, String name, String account, String desc){
+		List<User> users = User.findByCondition(page, pageSize, name, account, desc);
+		List<UserVO> result = User.assemVO(users);
+		Map map = new HashMap();
+		map.put("total", User.countByCondition(name, account, desc));
+		map.put("users", result);
+		return map;
+	}
+	
+	public static Map search(int page, int pageSize, UserVO user) {
+		if (user == null)
+			return search(page, pageSize, null, null, null);
+		
+		return search(page, pageSize, user.name, user.account, user.desc);
+	}
+
+	public static List<Long> toIds(Set<User> users) {
+		List<Long> result = null;
+		if (users != null){
+			result = new ArrayList<Long>(users.size());
+			for (User u : users) {
+				result.add(u.id);
+			}
+		}
+		return result;
+	}
+	
+	public static User fetchById(Long id){
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		User user = User.findById(id);
+		if (user == null)
+			throw new RuntimeException("id invalid");
+		
+		return user;
+	} 
 }

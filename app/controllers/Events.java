@@ -92,7 +92,7 @@ public class Events extends Controller {
 		renderJSON(eGps);
 	}
 
-	@annotations.Permission
+	@annotations.Perm
 	public static void read() {
 		List<EventRecord> ers = EventRecord.findAll();
 		if (ers == null)
@@ -110,13 +110,13 @@ public class Events extends Controller {
 		renderJSON(result);
 	}
 
-	@annotations.Permission
+	@annotations.Perm
 	public static void search(int page, int pageSize, Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
 		Map data = Event.search(page, pageSize, driver, serviceNo, type, startTime, endTime);
 		renderJSON(data);
 	}
 
-	@annotations.Permission
+	@annotations.Perm
 	public static void grid(String id) {
 
 		List<Driver> drList = Driver.findAll();

@@ -40,10 +40,6 @@ public class APICallback implements Serializable {
 		return cb;
 	}
 	
-	public static APICallback user_info_required(){
-		return fail(APIError.USER_CERATE_FAIL, "User info required");
-	}
-	
 	public static APICallback fail(final String error, final String error_desc){
 		return fail(null, error, error_desc);
 	}

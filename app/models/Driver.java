@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -308,13 +309,46 @@ public class Driver extends Model{
 		return Driver.find("byNumber", driverNumber).first();
 	}
 
+	public static Map search(int page, int pageSize, String departmentName, String number, String name, String description) {
+		List<Driver> drivers = Driver.findByCondition(page, pageSize, departmentName, number, name, description);
+		List<DriverVO> vos = Driver.assemDriverVO(drivers);
+		long count = Driver.countByCondition(departmentName, number, name, description);
+		Map map = new HashMap();
+		map.put("total", count);
+		map.put("drivers", vos);
+		
+		return map;
+	}
+	
+	public static long countByCondition(String departmentName, String number, String name, String description){
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseCondition(departmentName, number, name, description, sqlSB, params);
+		
+		return Driver.count(sqlSB.toString(), params.toArray());
+	}
+	
 	public static Map search(String departmentName, String number, String name, String description) {
-		List<Driver> drivers = Driver.findByCondition(departmentName, number, name, description);
+		List<Driver> drivers = Driver.findByCondition(-1, -1, departmentName, number, name, description);
 		List<DriverVO> vos = Driver.assemDriverVO(drivers);
 		Map data = CommonUtil.assemGridData(vos, "id");
 		return data;
 	}
 
+	public static List<Driver> findByCondition(int page, int pageSize, String departmentName, String number, String name, String description) {
+		StringBuilder sqlSB = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseCondition(departmentName, number, name, description, sqlSB, params);
+
+		List<Driver> drivers = null;
+		if (page > 0 && pageSize > 0)
+			drivers = Driver.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
+		else
+			drivers = Driver.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch();
+		
+		return drivers;
+	}
+	
 	public static List<DriverVO> assemDriverVO(List<Driver> drivers) {
 		if (drivers == null)
 			return null;
@@ -328,11 +362,9 @@ public class Driver extends Model{
 		return vos;
 	}
 
-	public static List<Driver> findByCondition(String departmentName, String number, String name, String description) {
-		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
-		StringBuilder sqlSB = new StringBuilder();
-		List<Object> params = new ArrayList<Object>();
-		
+	private static void parseCondition(String departmentName, String number,
+			String name, String description, StringBuilder sqlSB,
+			List<Object> params) {
 		if (departmentName != null && !departmentName.isEmpty()){
 			Department dept = Department.findByName(departmentName);
 			if (dept != null) {
@@ -364,14 +396,6 @@ public class Driver extends Model{
 			sqlSB.append("description like ?");
 			params.add("%" + description + "%");
 		}
-
-		List<Driver> drivers = null;
-		if (sqlSB.length() > 0 && !params.isEmpty())
-			drivers = Driver.find(sqlSB.toString(), params.toArray()).fetch();
-		else
-			drivers = Driver.findAll();
-		
-		return drivers;
 	}
 	
 	public Map generatePerformanceReport(String timeType, String time){
@@ -397,6 +421,18 @@ public class Driver extends Model{
 
 	public static Driver findByName(String name) {
 		return Driver.find("byName", name).first();
+	}
+
+	public static List<Long> toIds(Set<Driver> drivers) {
+		if (drivers == null)
+			return null;
+		
+		List<Long> ids = new ArrayList<Long>(drivers.size());
+		for (Driver d : drivers) {
+			ids.add(d.id);
+		}
+		
+		return ids;
 	}
 	
 }

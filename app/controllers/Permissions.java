@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import annotations.Perm;
+
 import models.Permission;
 
 import play.Play;
@@ -23,7 +25,7 @@ import vo.PermVO;
 
 @With(Interceptor.class)
 public class Permissions extends Controller {
-	@annotations.Permission
+	@Perm
 	public static void grid(String id){
 		List<String> actionSet = Permission.actions;
 		List<ComboVO> permActions = new ArrayList<ComboVO>();
@@ -49,61 +51,37 @@ public class Permissions extends Controller {
     	
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Permissions/grid.html")).render(map));
 	}
-	@annotations.Permission
+	@Perm
 	public static void actions(){
-		List<String> actionSet = Permission.actions;
-		List<Permission> perms = Permission.findAll();
+		List<String> _actions = Permission.assemActions();
 		List<ComboVO> actions = new ArrayList<ComboVO>();
-		if (actionSet != null)
-    		actionLoop:for (String a : actionSet){
-    			for (Permission p : perms){
-    				if (p.action.equals(a))
-    					continue actionLoop;
-    			}
-    			
-    			actions.add(new ComboVO(a, a));
-    		}
+		for (String a : _actions){
+			actions.add(new ComboVO(a, a));
+		}
 		
 		renderJSON(actions);
 	}
-	@annotations.Permission
-	public static void read(){
-		List<PermVO> result = new ArrayList<PermVO>();
-		List<Permission> perms = Permission.find("order by action").fetch();
-		if (perms == null)
-			return ;
-		
-		for (Permission p : perms)
-			result.add(new PermVO(p));
-		
-		renderJSON(result);
+	@Perm
+	public static void read(int page, int pageSize){
+		renderJSON(Permission.search(page, pageSize, null, null));
 	}
-	@annotations.Permission
+	@Perm
 	public static void create(String models) {
 		renderJSON(Permission.createByJson(models));
 	}
-	@annotations.Permission
+	@Perm
 	public static void update(String models){
 		if (Permission.updateByJson(models))
 			renderJSON(models);
 		
 	}
-	@annotations.Permission
+	@Perm
 	public static void destroy(String models) {
 		if (Permission.deleteByJson(models))
 			renderJSON(models);
 	}
-	@annotations.Permission
-	public static void search(String permAction, String desc){
-		List<Permission> perms = Permission.findByCondition(permAction, desc);
-		if (perms == null || perms.isEmpty())
-			return ;
-		
-		List<PermVO> result = new ArrayList<PermVO>(perms.size());
-		for (Permission p : perms){
-			result.add(new PermVO(p));
-		}
-		
-		renderJSON(result);
+	@Perm
+	public static void search(int page, int pageSize, String permAction, String desc){
+		renderJSON(Permission.search(page, pageSize, permAction, desc));
 	}
 }

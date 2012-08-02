@@ -22,16 +22,9 @@ import vo.Grid;
 @With(Interceptor.class)
 public class SystemConfigs extends Controller{
 	
-	public static void read(){
-		List<SystemConfig> sysConfigs = SystemConfig.find("order by id desc").fetch();
-		renderJSON(sysConfigs);
+	public static void read(int page, int pageSize){
+		renderJSON(SystemConfig.search(page, pageSize));
 	}
-	
-	public static void listJson(){
-		List<SystemConfig> sysConfigs = SystemConfig.find("order by id desc").fetch();
-        Map data = CommonUtil.assemGridData(sysConfigs);
-        renderJSON(data);
-    }
 	
 	public static void create(String models){
 		renderJSON(SystemConfig.createByJson(models));

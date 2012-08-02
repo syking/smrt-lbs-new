@@ -305,17 +305,10 @@ public class Schedule extends Model {
 		parseCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime, sqlSB, params);
 		
 		List<Schedule> schedules = null;
-		if (sqlSB.length() > 0 && !params.isEmpty()){
-			if (page <= 0 || pageSize <= 0)
-				schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch();
-			else
-				schedules = Schedule.find(sqlSB.toString(), params.toArray()).fetch(page, pageSize);
-		} else {
-			if (page <= 0 || pageSize <= 0)
-				schedules = Schedule.findAll();
-			else
-				schedules = Schedule.all().fetch(page, pageSize);
-		}
+		if (page <= 0 || pageSize <= 0)
+			schedules = Schedule.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch();
+		else
+			schedules = Schedule.find(sqlSB.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
 		
 		return schedules;
 	}
@@ -332,10 +325,7 @@ public class Schedule extends Model {
 			return Schedule.count();
 	}
 
-	private static void parseCondition(String driverNumber,
-			String vehicleNumber, String route, String duty, String startDate,
-			String startTime, String endDate, String endTime,
-			StringBuilder sqlSB, List<Object> params) {
+	private static void parseCondition(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime, StringBuilder sqlSB, List<Object> params) {
 		if (driverNumber != null && driverNumber.length() > 0) {
 			Driver driver = Driver.findByNumber(driverNumber);
 			if (driver != null){
@@ -413,17 +403,22 @@ public class Schedule extends Model {
 		return result;
 	}
 
+	public static Map export(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
+		List<Schedule> schedules = Schedule.findByCondition(1, 200, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
+		List<ScheduleVO> vos = Schedule.assemScheduleVO(schedules);
+		Map data = CommonUtil.assemGridData(vos, "id");
+		return data;
+	}
 	public static Map search(int page, int pageSize, String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
 		List<Schedule> schedules = Schedule.findByCondition(page, pageSize, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		List<ScheduleVO> vos = Schedule.assemScheduleVO(schedules);
 		Map data = new HashMap();
-		data.put("data", vos);
-		data.put("columns", CommonUtil.assemColumns(ScheduleVO.class, "id"));
-		long count = Schedule.countByCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
-		data.put("total", count);
+		data.put("total", Schedule.countByCondition(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime));
+		data.put("schedules", vos);
 		
 		return data;
 	}
+	
 
 	@Override
 	public String toString() {
@@ -435,13 +430,13 @@ public class Schedule extends Model {
 	
 	public static void parseAndCreateByCSV(File file) throws IOException{
 		if (file == null)
-			throw new IOException("file is invalid");
+			throw new RuntimeException("file is invalid");
 		
 		String fullFileName = file.getName();
 		int index = fullFileName.lastIndexOf('.');
 		String ext = fullFileName.substring(index+1);
 		if (!"csv".equals(ext))
-			throw new IOException("file type must be csv !");
+			throw new RuntimeException("file type must be csv !");
 		
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = reader.readLine();

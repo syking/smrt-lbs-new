@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -159,9 +161,9 @@ public class Device extends Model {
 		List<Device> devices = null;
 		
 		if (page <= 0 || pageSize <= 0)
-			devices = Device.find(sb.toString(), params.toArray()).fetch() ;
+			devices = Device.find(sb.toString() + " order by id desc", params.toArray()).fetch() ;
 		else
-			devices = Device.find(sb.toString(), params.toArray()).fetch(page, pageSize) ;
+			devices = Device.find(sb.toString() + " order by id desc", params.toArray()).fetch(page, pageSize) ;
 		
 		return devices;
 	}
@@ -172,6 +174,14 @@ public class Device extends Model {
 		parseCondition(name, key, host, params, sb);
 		
 		return Device.count(sb.toString(), params.toArray());
+	}
+	
+	public static Map search(int page, int pageSize, String name, String key, String host) {
+		Map map = new HashMap();
+		map.put("total", Device.countByCondition(name, key, host));
+		map.put("devices", Device.findByCondition(page, pageSize, name, key, host));
+		
+		return map;
 	}
 	
 	

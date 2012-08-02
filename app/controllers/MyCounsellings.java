@@ -23,23 +23,14 @@ import vo.Grid;
 @With(Interceptor.class)
 public class MyCounsellings extends Controller{
 	
-	public static void read() throws ParseException{
-		List<CounselVO> result = new ArrayList<CounselVO>();
-		User user = User.findByName((String)renderArgs.get("user"));
-		List<Counselling> counsellings = Counselling.find("user = ? order by id desc", user).fetch();
-		if (counsellings == null)
-			renderJSON("");
-		
-		for (Counselling c : counsellings){
-			result.add(new CounselVO().init(c));
-		}
-		renderJSON(result);
-		
+	public static void read(int page, int pageSize) {
+		String userName = (String)renderArgs.get("user");
+		Counsellings.search(page, pageSize, userName, null, null, null, null, null);
 	}
 	
-	public static void mysearch(String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException{
+	public static void mysearch(int page, int pageSize, String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException{
 		String userName = (String)renderArgs.get("user");
-		Counsellings.search(userName, driverName, startDate, startTime, endDate, endTime);
+		Counsellings.search(page, pageSize, userName, driverName, startDate, startTime, endDate, endTime);
 	}
 	
 	public static void createMyCounsel(String models) throws ParseException{

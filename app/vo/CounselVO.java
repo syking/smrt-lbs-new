@@ -22,7 +22,7 @@ public class CounselVO {
 	public String endTime;
 	public String remark;
 	
-	public CounselVO init(Counselling c) throws ParseException{
+	public CounselVO init(Counselling c){
 		this.id = String.valueOf(c.id);
 		if (c.user != null)
 			this.userName = c.user.name;

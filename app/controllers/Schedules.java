@@ -54,13 +54,7 @@ public class Schedules extends Controller {
 	 * 获取排班 JSON 信息
 	 */
 	public static void read(int page, int pageSize) {
-		List<Schedule> schedules = Schedule.find("order by id desc").fetch(page, pageSize);
-		List<ScheduleVO> result = Schedule.assemScheduleVO(schedules);
-		Map map = new HashMap();
-		map.put("data", result);
-		map.put("total", Schedule.count());
-		
-		renderJSON(map);
+		renderJSON(Schedule.search(page, pageSize, null, null, null, null, null, null, null, null));
 	}
 	
 	public static void clear(){
@@ -73,8 +67,7 @@ public class Schedules extends Controller {
 		try {
 			Schedule.parseAndCreateByCSV(file);
 		} catch (IOException e) {
-			e.printStackTrace();
-			renderText(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -106,7 +99,6 @@ public class Schedules extends Controller {
 	 */
 	public static void search(int page, int pageSize, String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
 		Map map = Schedule.search(page, pageSize, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
-		
 		renderJSON(map);
 	}
 

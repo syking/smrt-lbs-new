@@ -32,62 +32,26 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Drivers extends Controller {
 	
-	public static void search(String department, String number, String name, String description) {
-		try {
-			List<Driver> drivers = Driver.findByCondition(department, number, name, description);
-			List<DriverVO> vos = Driver.assemDriverVO(drivers);
-			renderJSON(vos);
-		} catch (Throwable e) {
-			throw new RuntimeException("Driver Search Error -> " + e.getMessage());
-		}
+	public static void search(int page, int pageSize, String department, String number, String name, String description) {
+		renderJSON(Driver.search(page, pageSize, department, number, name, description));
 	}
 	
-	public static void listJson() {
-		try {
-			List<Driver> drivers = Driver.findAll();
-			List<DriverVO> driverVOList = Driver.assemDriverVO(drivers);
-			Map data = CommonUtil.assemGridData(driverVOList, "id");
-	
-			renderJSON(data);
-		}catch (Throwable e) {
-			throw new RuntimeException("Driver ListJson Error -> " + e.getMessage());
-		}
-	}
-
 	public static void add(String models) {
-		try {
-			renderJSON(Driver.createByJson(models));
-		} catch(Throwable e) {
-			throw new RuntimeException("Driver Create Error -> " + e.getMessage());
-		}
+		renderJSON(Driver.createByJson(models));
 	}
 
 	public static void destroy(String models) {
-		try {
-			if (Driver.deleteByJson(models))
-				renderJSON(models);
-		} catch (Throwable e) {
-			throw new RuntimeException("Driver Destroy Error -> " + e.getMessage());
-		}
+		if (Driver.deleteByJson(models))
+			renderJSON(models);
 	}
 
 	public static void update(String models) {
-		try {
-			if (Driver.updateByJson(models))
-				renderJSON(models);
-		} catch (Throwable e) {
-			throw new RuntimeException("Driver Update Error -> " + e.getMessage());
-		}
+		if (Driver.updateByJson(models))
+			renderJSON(models);
 	}
 
 	public static void read(int page, int pageSize) {
-		try {
-			List<Driver> driverList = Driver.find("order by id desc").fetch();
-			List<DriverVO> vos = Driver.assemDriverVO(driverList);
-			renderJSON(vos);
-		} catch (Throwable e) {
-			throw new RuntimeException("Driver Read Error -> " + e.getMessage());
-		}
+		renderJSON(Driver.search(page, pageSize, null, null, null, null));
 	}
 
 	public static void grid(String id) {

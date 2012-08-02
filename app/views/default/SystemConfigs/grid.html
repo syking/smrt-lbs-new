@@ -3,11 +3,31 @@
 <script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
 <script>
     $(document).ready(function () {
+		var _grid = $("#grid_${grid.tabId}").data("kendoGrid");
+		if (_grid){
+			_grid.dataSource.transport.options.read.url = url;	
+			if (params){
+				_grid.dataSource.transport.parameterMap = function(data, operation){
+					if (operation !== "read" && data.models) {
+		                return {models:kendo.stringify(data.models)};
+		            }
+		            
+		    		$.each(params, function(i,v){
+						data[v.name] = v.value;
+		    		});
+		    		
+		    		return data;
+		    	}
+		    }
+		    
+			_grid.dataSource.read();
+			return ;
+		}
+		
     	var dataSource = new kendo.data.DataSource({
     		error: function(e) {
 	        	alert(e.responseText);
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+	        	_grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  {
@@ -16,33 +36,44 @@
                 update: {
                     url: "${grid.updateUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 create: {
                     url: "${grid.createUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap: function(data, operation) {
                     if (operation !== "read" && data.models) {
                         return {models: kendo.stringify(data.models)};
                     }
+                    
+                    return data;
                 }
             },
             batch: true,
             pageSize: 12,
+            serverPaging: true,
             schema: {
+            	total: "total",
+            	data: "systemConfigs",
                 model: {
                     id: "id",
                     fields: {
@@ -78,6 +109,8 @@
             scrollable:true,
             resizable:true
         });
+        
+        _grid = $("#grid_${grid.tabId}").data("kendoGrid");
     });
 
 </script>
