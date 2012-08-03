@@ -179,8 +179,8 @@ h1{margin:5px 10px 15px 15px; padding:5px; background:#f5f5f5;}
 		    format: "0 mins"
 		});
 		
-		$(".remove-button").unbind("click");
-		$(".remove-button").bind("click", function(e){
+		$(".remove-button").die("click");
+		$(".remove-button").live("click", function(e){
 			if (!confirm("Are you sure to remove this data ?"))
 				return ;
 			var $this = $(this);
