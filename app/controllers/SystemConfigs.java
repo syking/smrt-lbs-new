@@ -74,11 +74,11 @@ public class SystemConfigs extends Controller{
 		List<SystemConfig> scs = SystemConfig.findAll();
 		for (SystemConfig sc : scs){
 			if (sc.name.equals("threshold-speeding")){
-				map.put("speeding", sc.value);
+				map.put("speeding", sc);
 			}else if (sc.name.equals("threshold-speeding-on-highway")){
-				map.put("speeding_on_highway", sc.value);
+				map.put("speeding_on_highway", sc);
 			}else if (sc.name.equals("threshold-idle")){
-				map.put("idle", sc.value);
+				map.put("idle", sc);
 			}else if (sc.name.matches("^threshold-sudden-braking-\\d+-\\d+$")){
 				String[] names = sc.name.split("-");
 				Map data = new HashMap();
@@ -250,13 +250,13 @@ public class SystemConfigs extends Controller{
 						_sc.name = sc.name;
 						_sc.value = sc.value;
 						_sc.displayName = sc.displayName;
-						_sc.save();
+						SystemConfig.updateByVO(_sc);
 						continue;
 					}
 				}
 				sc.id = null;
 				sc.displayName = sc.name;
-				sc.create();
+				SystemConfig.createByVO(sc);
 			}
 			
 			renderJSON(CommonUtil.map("success", true));

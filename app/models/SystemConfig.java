@@ -71,19 +71,25 @@ public class SystemConfig extends Model {
 		return true;
 	}
 
+	public static void createByVO(SystemConfig vo){
+		if (vo == null)
+			throw new RuntimeException("SystemConfig info required");
+		
+		vo.validate();
+		
+		SystemConfig db_sc = SystemConfig.findByName(vo.name);
+		if (db_sc != null)
+			throw new RuntimeException("SystemConfigName duplicate!");
+			
+		vo.create();
+	}
 	public static String createByJson(String models) {
 		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
 			return models;
 		
 		for (SystemConfig vo : vos){
-			vo.validate();
-			
-			SystemConfig db_sc = SystemConfig.findByName(vo.name);
-			if (db_sc != null)
-				throw new RuntimeException("SystemConfigName duplicate!");
-				
-			vo.create();
+			createByVO(vo);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
@@ -94,30 +100,36 @@ public class SystemConfig extends Model {
 		return SystemConfig.find("byName", name).first();
 	}
 
+	public static void updateByVO(SystemConfig vo){
+		if (vo == null)
+			throw new RuntimeException("SystemConfig info required");
+		if (vo.id == null)
+			throw new RuntimeException("id invalid");
+		
+		SystemConfig obj = SystemConfig.findById(vo.id);
+		if (obj == null)
+			throw new RuntimeException("SystemConfig not found");
+		
+		vo.validate();
+		
+		obj.name = vo.name;
+		obj.value = vo.value;
+		obj.displayName = vo.displayName;
+		
+		SystemConfig db_sc = SystemConfig.findByName(vo.name);
+		if (db_sc != null && db_sc.id != obj.id)
+			throw new RuntimeException("SystemConfigName duplicate!");
+		
+		obj.save();
+	}
+	
 	public static boolean updateByJson(String models) {
 		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
 			return false;
 		
 		for (SystemConfig vo : vos){
-			if (vo.id == null)
-				continue;
-			
-			SystemConfig obj = SystemConfig.findById(vo.id);
-			if (obj == null)
-				continue;
-			
-			vo.validate();
-			
-			obj.name = vo.name;
-			obj.value = vo.value;
-			obj.displayName = vo.displayName;
-			
-			SystemConfig db_sc = SystemConfig.findByName(vo.name);
-			if (db_sc != null && db_sc.id != obj.id)
-				throw new RuntimeException("SystemConfigName duplicate!");
-			
-			obj.save();
+			SystemConfig.updateByVO(vo);
 		}
 		
 		return true;
