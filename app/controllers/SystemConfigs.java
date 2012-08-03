@@ -71,7 +71,7 @@ public class SystemConfigs extends Controller{
 		List<Map> accelerations = new ArrayList<Map>();
 		List<Map> lefts = new ArrayList<Map>();
 		List<Map> rights = new ArrayList<Map>();
-		List<SystemConfig> scs = SystemConfig.findAll();
+		List<SystemConfig> scs = SystemConfig.find("order by id desc").fetch();
 		for (SystemConfig sc : scs){
 			if (sc.name.equals("threshold-speeding")){
 				map.put("speeding", sc);
