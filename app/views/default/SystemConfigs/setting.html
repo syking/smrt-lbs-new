@@ -181,9 +181,10 @@ h1{margin:5px 10px 15px 15px; padding:5px; background:#f5f5f5;}
 		
 		$(".remove-button").unbind("click");
 		$(".remove-button").bind("click", function(e){
+			if (!confirm("Are you sure to remove this data ?"))
+				return ;
 			var $this = $(this);
 			var id = $this.attr("data-id");
-			alert("remove->" + id);
 			if (id){
 				$.getJSON("/SystemConfigs/destroy_setting", {id: id}, function(json){
 					if (json.success) {
