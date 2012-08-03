@@ -115,6 +115,8 @@ input {
 
 .search-button{background: url(/public/images/go_search.png) no-repeat 50% 50% !important;}
 .save-button{background: url(/public/images/ok.png) no-repeat 50% 50% !important;}
+.remove-button{background: url(/public/images/remove.png) no-repeat 50% 50% !important;}
+.reset-button{background: url(/public/images/reset.png) no-repeat 50% 50% !important;}
 .export-excel-button{background: url(/public/images/export-excel.png) no-repeat 50% 50% !important;}
 .export-pdf-button{background: url(/public/images/export-pdf.png) no-repeat 50% 50% !important;}
 .upload-button{background: url(/public/images/upload.png) no-repeat 50% 50% !important;}

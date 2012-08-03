@@ -48,20 +48,24 @@ public class SystemConfig extends Model {
 		
 	}
 	
+	public static void deleteById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		SystemConfig obj = SystemConfig.findById(id);
+		if (obj == null)
+			throw new RuntimeException("id invalid");
+		
+		obj.delete();
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
 		if (vos == null)
 			return false;
 		
 		for (SystemConfig vo : vos){
-			if (vo.id == null)
-				continue;
-			
-			SystemConfig obj = SystemConfig.findById(vo.id);
-			if (obj == null)
-				continue;
-			
-			obj.delete();
+			deleteById(vo.id);
 		}
 		
 		return true;

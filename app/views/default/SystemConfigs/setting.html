@@ -1,0 +1,268 @@
+<style type="text/css" media="screen">
+h1{margin:5px 10px 15px 15px; padding:5px; background:#f5f5f5;}
+.sudden-wrap{}
+</style>
+<form id="${tabId}_setting_form" action="/SystemConfigs/update_setting" method="post" class="k-content" onsubmit="return update_setting_validation(this)" style="clear:both;width:auto; height:98%;">
+	<div style="height:8px"></div>
+	<div style="float:left; padding-left:20px;">
+		<h1>Threshold Settings</h1>
+	</div>
+	
+	<div style="float:right; padding-right:20px; padding-top:10px;">
+		<input type="submit" id="${tabId}_search-button" class="k-button save-button" style="width:50px;" value="&nbsp;" />
+		<input type="reset" class="k-button reset-button" style="width:50px;" value="&nbsp;" />
+	</div>
+	
+	<div style="clear:both;"></div>
+	
+	<div id="sudden-braking-wrap">
+		<div class="sudden-braking-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">Sudden braking G-force:</label>
+			<input name="sudden_braking_gforce" class="gforce" />
+			<label style="width:100px;">speed between:</label>
+			<input name="sudden_braking_min" class="between" />
+			<label style="width:30px;">and:</label>
+			<input name="sudden_braking_max" class="between" />
+			<input name="sudden_braking_id" value="0" type="hidden" />
+		</div>
+		#{list items:brakings, as:'b'}
+		<div class="sudden-braking-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">&nbsp;</label>
+			<input name="sudden_braking_gforce" class="gforce" value="${b.gforce}" />
+			<label style="width:100px;">&nbsp;</label>
+			<input name="sudden_braking_min" class="between" value="${b.min}" />
+			<label style="width:30px;">&nbsp;</label>
+			<input name="sudden_braking_max" class="between" value="${b.max}" />
+			<input name="sudden_braking_id" value="${b.id}" type="hidden" />
+			<input data-id="${b.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:3px;width:30px' />
+		</div>
+		#{/list}
+	</div>
+	
+	<div style="height:8px"></div>
+	
+	<label style="width:180px;">&nbsp;</label>
+	<input type="button" class="k-button sudden-braking-add-btn" style="width:50px;" value="Add" />
+	
+	<div style="height:8px"></div>
+	
+	<div id="sudden-acceleration-wrap">
+		<div class="sudden-acceleration-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">Sudden acceleration G-force:</label>
+			<input name="sudden_acceleration_gforce" class="gforce" />
+			<label style="width:100px;">speed between:</label>
+			<input name="sudden_acceleration_min" class="between" />
+			<label style="width:30px;">and:</label>
+			<input name="sudden_acceleration_max" class="between" />
+			<input name="sudden_acceleration_id" value="0" type="hidden" />
+		</div>
+		#{list items:accelerations, as:'a'}
+		<div class="sudden-braking-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">&nbsp;</label>
+			<input name="sudden_acceleration_gforce" class="gforce" value="${a.gforce}" />
+			<label style="width:100px;">&nbsp;</label>
+			<input name="sudden_acceleration_min" class="between" value="${a.min}" />
+			<label style="width:30px;">&nbsp;</label>
+			<input name="sudden_acceleration_max" class="between" value="${a.max}" />
+			<input name="sudden_acceleration_id" value="${a.id}" type="hidden" />
+			<input data-id="${a.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
+		</div>
+		#{/list}
+	</div>
+	
+	<div style="height:8px"></div>
+	<label style="width:180px;">&nbsp;</label>
+	<input type="button" class="k-button sudden-acceleration-add-btn" style="width:50px;" value="Add" />
+	
+	<div style="height:8px"></div>
+	
+	<div id="sudden-left-wrap">
+		<div class="sudden-left-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">Sudden left G-force:</label>
+			<input name="sudden_left_gforce" class="gforce" />
+			<label style="width:100px;">speed between:</label>
+			<input name="sudden_left_min" class="between" />
+			<label style="width:30px;">and:</label>
+			<input name="sudden_left_max" class="between" />
+			<input name="sudden_left_id" value="0" type="hidden" />
+		</div>
+		#{list items:lefts, as:'l'}
+		<div class="sudden-braking-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">&nbsp;</label>
+			<input name="sudden_left_gforce" class="gforce" value="${l.gforce}" />
+			<label style="width:100px;">&nbsp;</label>
+			<input name="sudden_left_min" class="between" value="${l.min}" />
+			<label style="width:30px;">&nbsp;</label>
+			<input name="sudden_left_max" class="between" value="${l.max}" />
+			<input name="sudden_left_id" value="${l.id}" type="hidden" />
+			<input data-id="${l.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
+		</div>
+		#{/list}
+	</div>
+	
+	<div style="height:8px"></div>
+	<label style="width:180px;">&nbsp;</label>
+	<input type="button" class="k-button sudden-left-add-btn" style="width:50px;" value="Add" />
+	
+	<div style="height:8px"></div>
+	
+	<div id="sudden-right-wrap">
+		<div class="sudden-right-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">Sudden right G-force:</label>
+			<input name="sudden_right_gforce" class="gforce" />
+			<label style="width:100px;">speed between:</label>
+			<input name="sudden_right_min" class="between" />
+			<label style="width:30px;">and:</label>
+			<input name="sudden_right_max" class="between" />
+			<input name="sudden_right_id" value="0" type="hidden" />
+		</div>
+		#{list items:rights, as:'r'}
+		<div class="sudden-braking-wrap">
+			<div style="height:8px"></div>
+			<label style="width:180px">&nbsp;</label>
+			<input name="sudden_right_gforce" class="gforce" value="${r.gforce}" />
+			<label style="width:100px;">&nbsp;</label>
+			<input name="sudden_right_min" class="between" value="${r.min}" />
+			<label style="width:30px;">&nbsp;</label>
+			<input name="sudden_right_max" class="between" value="${r.max}" />
+			<input name="sudden_right_id" value="${r.id}" type="hidden" />
+			<input data-id="${r.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
+		</div>
+		#{/list}
+	</div>
+	
+	<div style="height:8px"></div>
+	<label style="width:180px;">&nbsp;</label>
+	<input type="button" class="k-button sudden-right-add-btn" style="width:50px;" value="Add" />
+	
+	<div style="height:16px"></div>
+	
+	<label for="${tabId}_spedding" style="width:180px">Speeding:</label>
+	<input name="threshold_speeding" id="${tabId}_speeding" />
+	<input name="threshold_speeding_id" value="${speeding ? speeding.id : '0'}" type="hidden" />
+	
+	<div style="height:8px"></div>
+	
+	<label for="${tabId}_spedding_on_highway" style="width:180px">Speeding on Highway:</label>
+	<input name="threshold_speeding_on_highway" id="${tabId}_spedding_on_highway" />
+	<input name="threshold_speeding_on_highway_id" value="${speeding_on_highway ? speeding_on_highway.id : '0'}" type="hidden" />
+	
+	<div style="height:8px"></div>
+	
+	<label for="${tabId}_idle" style="width:180px">Idle:</label>
+	<input name="threshold_idle" id="${tabId}_idle" />
+	<input name="threshold_idle_id" value="${idle ? idle.id : '0'}" type="hidden" />
+	
+	<div style="height:8px"></div>
+</form>
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    $(document).ready(function () {
+    	$("#${tabId}_speeding, #${tabId}_spedding_on_highway").kendoNumericTextBox({
+		    min: 0,
+		    upArrowText: "More",
+		    downArrowText: "Less",
+		    format: "0 km/h"
+		});
+		
+		$("#${tabId}_idle").kendoNumericTextBox({
+		    min: 0,
+		    upArrowText: "More",
+		    downArrowText: "Less",
+		    format: "0 mins"
+		});
+		
+		$(".remove-button").unbind("click");
+		$(".remove-button").bind("click", function(e){
+			var $this = $(this);
+			var id = $this.attr("data-id");
+			alert("remove->" + id);
+			if (id){
+				$.getJSON("/SystemConfigs/destroy_setting", {id: id}, function(json){
+					if (json.success) {
+						$this.parent().remove();
+						return ;
+					}
+					
+					alert(json.message);
+				});	
+			}else{
+				$this.parent().remove();
+			}
+		});
+		var $form = $("#${tabId}_setting_form");
+    	$form.kendoValidator();
+		add_click_handler("sudden-braking-wrap", "sudden-braking-add-btn");
+		add_click_handler("sudden-acceleration-wrap", "sudden-acceleration-add-btn");
+		add_click_handler("sudden-left-wrap", "sudden-left-add-btn");
+		add_click_handler("sudden-right-wrap", "sudden-right-add-btn");
+    	
+    	gforce($(".gforce"));
+    	between($(".between"));
+    	
+    	var form = $("#dept_driver_search_form_${tabId}");
+    	form.kendoValidator();
+    });
+    
+    function update_setting_validation(form) {
+    	$form = $(form);
+    	
+    	$.getJSON($form.attr("action"), $form.serializeArray(), function(json){
+    		if (json.success){
+    			alert("update success");
+    			$("#sys_config_setting").find("span").click();
+    		}else {
+    			alert(json.message);
+    		}
+    	});
+    	
+    	return false;
+    }
+    
+    function add_click_handler(wrap, btn){
+    	var wrapObj = $("#"+wrap).find(" div:first").clone();
+		$("."+btn).unbind("click");
+    	$("."+btn).bind("click", function(e){
+    		$.each(wrapObj.find("label"), function(i,v){
+    			$(v).text("");
+    		});
+    		$("<div class='"+wrap+"'>"+wrapObj.html()+"</div>").appendTo($("#"+wrap));
+			
+			var rvBtn = $("<input type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />");
+			$("#"+wrap+" .gforce:last").parent().append(rvBtn);
+    		gforce($("#"+wrap+" .gforce:last"));
+    		var betweens = $("#"+wrap+" .between");
+    		$.each(betweens, function(i,v){
+    			if (i > betweens.length - 3){
+    				between($(v));
+    			}
+    		});
+    	});
+    }
+    
+    function between(obj){
+    	obj.kendoNumericTextBox({
+		    min: 0,
+		    upArrowText: "More",
+		    downArrowText: "Less",
+		    format: "0 km/h"
+		});
+    }
+    
+    function gforce(obj){
+    	obj.kendoNumericTextBox({
+		    min: 0.0,
+		    step: 0.1,
+		    upArrowText: "More",
+		    downArrowText: "Less",
+		    format: "0.0 g"
+		});
+    }
+</script>
