@@ -156,7 +156,7 @@ h1{margin:5px 10px 15px 15px; padding:5px; background:#f5f5f5;}
 	
 	<div style="height:8px"></div>
 	
-	<label for="${tabId}_idle" style="width:180px">Idle:</label>
+	<label for="${tabId}_idle" style="width:180px">Idle:${idle.value}</label>
 	<input name="threshold_idle" id="${tabId}_idle" value="${idle ? idle.value : ''}" />
 	<input name="threshold_idle_id" value="${idle ? idle.id : '0'}" type="hidden" />
 	

@@ -162,7 +162,7 @@ public class SystemConfigs extends Controller{
 		if ( threshold_idle != null && ! threshold_idle.isEmpty()){
 			SystemConfig sc = new SystemConfig();
 			sc.id = threshold_idle_id;
-			sc.name = " threshold-idle";
+			sc.name = "threshold-idle";
 			sc.value =  threshold_idle;
 			sc.displayName = sc.name;
 			scs.add(sc);
