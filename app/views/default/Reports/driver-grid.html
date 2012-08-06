@@ -26,14 +26,12 @@
 		<input type="button" class="k-button view-on-map-button" id="view_on_map_button" style="width:50px" value="&nbsp;" />
 	</div>
 </form>
-
-<div id="grid_${tabId}"></div>
-<div style="height:5px"></div>
-<div class="chart-wrap">
-	<div id="pie_chart"></div>
+<div style="padding:5px !important; height:80% !important;width:100% !important; overflow:auto;">
+	<div id="grid_${tabId}"></div>
+	<div style="height:5px"></div>
+	<div id="pie_chart" style="width:99%; overflow-x:hidden;"></div>
+	<div id="event_grid_${tabId}"></div>
 </div>
-
-<div id="event_grid_${tabId}"></div>
 
 <script src="/public/js/vms.js" type="text/javascript" charset="utf-8"></script>
 <script>
