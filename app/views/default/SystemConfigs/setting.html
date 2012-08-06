@@ -1,165 +1,166 @@
 <style type="text/css" media="screen">
-h1{margin:5px 10px 15px 15px; padding:5px; background:#f5f5f5;}
+h1{margin:10px 10px 5px 5px; padding:5px; background:#f5f5f5;}
 .sudden-wrap{}
 </style>
 <form id="${tabId}_setting_form" action="/SystemConfigs/update_setting" method="post" class="k-content" onsubmit="return update_setting_validation(this)" style="clear:both;width:auto; height:98%;">
 	<div style="height:8px"></div>
-	<div style="float:left; padding-left:20px;">
+	<div style="float:left;">
 		<h1>Threshold Settings</h1>
 	</div>
 	
-	<div style="float:right; padding-right:20px; padding-top:10px;">
+	<div style="float:right; padding:10px 20px 10px 0;">
 		<input type="submit" id="${tabId}_search-button" class="k-button save-button" style="width:50px;" value="&nbsp;" />
 		<input type="reset" class="k-button reset-button" style="width:50px;" value="&nbsp;" />
 	</div>
 	
-	<div style="clear:both;"></div>
+	<div style="clear:both; border-bottom:1px solid #c5c5c5;"></div>
 	
-	<div id="sudden-braking-wrap">
-		<div class="sudden-braking-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">Sudden braking G-force:</label>
-			<input name="sudden_braking_gforce" class="gforce" />
-			<label style="width:100px;">speed between:</label>
-			<input name="sudden_braking_min" class="between" />
-			<label style="width:30px;">and:</label>
-			<input name="sudden_braking_max" class="between" />
-			<input name="sudden_braking_id" value="0" type="hidden" />
+	<div style="padding:5px !important; height:85% !important; overflow:auto;">
+		<div id="sudden-braking-wrap">
+			<div class="sudden-braking-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">Sudden braking G-force:</label>
+				<input name="sudden_braking_gforce" class="gforce" />
+				<label style="width:100px;">speed between:</label>
+				<input name="sudden_braking_min" class="between" />
+				<label style="width:30px;">and:</label>
+				<input name="sudden_braking_max" class="between" />
+				<input name="sudden_braking_id" value="0" type="hidden" />
+			</div>
+			#{list items:brakings, as:'b'}
+			<div class="sudden-braking-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">&nbsp;</label>
+				<input name="sudden_braking_gforce" class="gforce" value="${b.gforce}" />
+				<label style="width:100px;">&nbsp;</label>
+				<input name="sudden_braking_min" class="between" value="${b.min}" />
+				<label style="width:30px;">&nbsp;</label>
+				<input name="sudden_braking_max" class="between" value="${b.max}" />
+				<input name="sudden_braking_id" value="${b.id}" type="hidden" />
+				<input data-id="${b.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:3px;width:30px' />
+			</div>
+			#{/list}
 		</div>
-		#{list items:brakings, as:'b'}
-		<div class="sudden-braking-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">&nbsp;</label>
-			<input name="sudden_braking_gforce" class="gforce" value="${b.gforce}" />
-			<label style="width:100px;">&nbsp;</label>
-			<input name="sudden_braking_min" class="between" value="${b.min}" />
-			<label style="width:30px;">&nbsp;</label>
-			<input name="sudden_braking_max" class="between" value="${b.max}" />
-			<input name="sudden_braking_id" value="${b.id}" type="hidden" />
-			<input data-id="${b.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:3px;width:30px' />
+		
+		<div style="height:8px"></div>
+		
+		<label style="width:180px;">&nbsp;</label>
+		<input type="button" class="k-button sudden-braking-add-btn" style="width:50px;" value="Add" />
+		
+		<div style="height:8px"></div>
+		
+		<div id="sudden-acceleration-wrap">
+			<div class="sudden-acceleration-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">Sudden acceleration G-force:</label>
+				<input name="sudden_acceleration_gforce" class="gforce" />
+				<label style="width:100px;">speed between:</label>
+				<input name="sudden_acceleration_min" class="between" />
+				<label style="width:30px;">and:</label>
+				<input name="sudden_acceleration_max" class="between" />
+				<input name="sudden_acceleration_id" value="0" type="hidden" />
+			</div>
+			#{list items:accelerations, as:'a'}
+			<div class="sudden-braking-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">&nbsp;</label>
+				<input name="sudden_acceleration_gforce" class="gforce" value="${a.gforce}" />
+				<label style="width:100px;">&nbsp;</label>
+				<input name="sudden_acceleration_min" class="between" value="${a.min}" />
+				<label style="width:30px;">&nbsp;</label>
+				<input name="sudden_acceleration_max" class="between" value="${a.max}" />
+				<input name="sudden_acceleration_id" value="${a.id}" type="hidden" />
+				<input data-id="${a.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
+			</div>
+			#{/list}
 		</div>
-		#{/list}
+		
+		<div style="height:8px"></div>
+		<label style="width:180px;">&nbsp;</label>
+		<input type="button" class="k-button sudden-acceleration-add-btn" style="width:50px;" value="Add" />
+		
+		<div style="height:8px"></div>
+		
+		<div id="sudden-left-wrap">
+			<div class="sudden-left-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">Sudden left G-force:</label>
+				<input name="sudden_left_gforce" class="gforce" />
+				<label style="width:100px;">speed between:</label>
+				<input name="sudden_left_min" class="between" />
+				<label style="width:30px;">and:</label>
+				<input name="sudden_left_max" class="between" />
+				<input name="sudden_left_id" value="0" type="hidden" />
+			</div>
+			#{list items:lefts, as:'l'}
+			<div class="sudden-braking-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">&nbsp;</label>
+				<input name="sudden_left_gforce" class="gforce" value="${l.gforce}" />
+				<label style="width:100px;">&nbsp;</label>
+				<input name="sudden_left_min" class="between" value="${l.min}" />
+				<label style="width:30px;">&nbsp;</label>
+				<input name="sudden_left_max" class="between" value="${l.max}" />
+				<input name="sudden_left_id" value="${l.id}" type="hidden" />
+				<input data-id="${l.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
+			</div>
+			#{/list}
+		</div>
+		
+		<div style="height:8px"></div>
+		<label style="width:180px;">&nbsp;</label>
+		<input type="button" class="k-button sudden-left-add-btn" style="width:50px;" value="Add" />
+		
+		<div style="height:8px"></div>
+		
+		<div id="sudden-right-wrap">
+			<div class="sudden-right-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">Sudden right G-force:</label>
+				<input name="sudden_right_gforce" class="gforce" />
+				<label style="width:100px;">speed between:</label>
+				<input name="sudden_right_min" class="between" />
+				<label style="width:30px;">and:</label>
+				<input name="sudden_right_max" class="between" />
+				<input name="sudden_right_id" value="0" type="hidden" />
+			</div>
+			#{list items:rights, as:'r'}
+			<div class="sudden-braking-wrap">
+				<div style="height:8px"></div>
+				<label style="width:180px">&nbsp;</label>
+				<input name="sudden_right_gforce" class="gforce" value="${r.gforce}" />
+				<label style="width:100px;">&nbsp;</label>
+				<input name="sudden_right_min" class="between" value="${r.min}" />
+				<label style="width:30px;">&nbsp;</label>
+				<input name="sudden_right_max" class="between" value="${r.max}" />
+				<input name="sudden_right_id" value="${r.id}" type="hidden" />
+				<input data-id="${r.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
+			</div>
+			#{/list}
+		</div>
+		
+		<div style="height:8px"></div>
+		<label style="width:180px;">&nbsp;</label>
+		<input type="button" class="k-button sudden-right-add-btn" style="width:50px;" value="Add" />
+		
+		<div style="height:16px"></div>
+		
+		<label for="${tabId}_spedding" style="width:180px">Speeding:</label>
+		<input name="threshold_speeding" id="${tabId}_speeding" value="${speeding ? speeding.value : ''}" />
+		<input name="threshold_speeding_id" value="${speeding ? speeding.id : '0'}" type="hidden" />
+		
+		<div style="height:8px"></div>
+		
+		<label for="${tabId}_spedding_on_highway" style="width:180px">Speeding on Highway:</label>
+		<input name="threshold_speeding_on_highway" id="${tabId}_spedding_on_highway" value="${speeding_on_highway ? speeding_on_highway.value : ''}" />
+		<input name="threshold_speeding_on_highway_id" value="${speeding_on_highway ? speeding_on_highway.id : '0'}" type="hidden" />
+		
+		<div style="height:8px"></div>
+		
+		<label for="${tabId}_idle" style="width:180px">Idle:${idle.value}</label>
+		<input name="threshold_idle" id="${tabId}_idle" value="${idle ? idle.value : ''}" />
+		<input name="threshold_idle_id" value="${idle ? idle.id : '0'}" type="hidden" />
 	</div>
-	
-	<div style="height:8px"></div>
-	
-	<label style="width:180px;">&nbsp;</label>
-	<input type="button" class="k-button sudden-braking-add-btn" style="width:50px;" value="Add" />
-	
-	<div style="height:8px"></div>
-	
-	<div id="sudden-acceleration-wrap">
-		<div class="sudden-acceleration-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">Sudden acceleration G-force:</label>
-			<input name="sudden_acceleration_gforce" class="gforce" />
-			<label style="width:100px;">speed between:</label>
-			<input name="sudden_acceleration_min" class="between" />
-			<label style="width:30px;">and:</label>
-			<input name="sudden_acceleration_max" class="between" />
-			<input name="sudden_acceleration_id" value="0" type="hidden" />
-		</div>
-		#{list items:accelerations, as:'a'}
-		<div class="sudden-braking-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">&nbsp;</label>
-			<input name="sudden_acceleration_gforce" class="gforce" value="${a.gforce}" />
-			<label style="width:100px;">&nbsp;</label>
-			<input name="sudden_acceleration_min" class="between" value="${a.min}" />
-			<label style="width:30px;">&nbsp;</label>
-			<input name="sudden_acceleration_max" class="between" value="${a.max}" />
-			<input name="sudden_acceleration_id" value="${a.id}" type="hidden" />
-			<input data-id="${a.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
-		</div>
-		#{/list}
-	</div>
-	
-	<div style="height:8px"></div>
-	<label style="width:180px;">&nbsp;</label>
-	<input type="button" class="k-button sudden-acceleration-add-btn" style="width:50px;" value="Add" />
-	
-	<div style="height:8px"></div>
-	
-	<div id="sudden-left-wrap">
-		<div class="sudden-left-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">Sudden left G-force:</label>
-			<input name="sudden_left_gforce" class="gforce" />
-			<label style="width:100px;">speed between:</label>
-			<input name="sudden_left_min" class="between" />
-			<label style="width:30px;">and:</label>
-			<input name="sudden_left_max" class="between" />
-			<input name="sudden_left_id" value="0" type="hidden" />
-		</div>
-		#{list items:lefts, as:'l'}
-		<div class="sudden-braking-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">&nbsp;</label>
-			<input name="sudden_left_gforce" class="gforce" value="${l.gforce}" />
-			<label style="width:100px;">&nbsp;</label>
-			<input name="sudden_left_min" class="between" value="${l.min}" />
-			<label style="width:30px;">&nbsp;</label>
-			<input name="sudden_left_max" class="between" value="${l.max}" />
-			<input name="sudden_left_id" value="${l.id}" type="hidden" />
-			<input data-id="${l.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
-		</div>
-		#{/list}
-	</div>
-	
-	<div style="height:8px"></div>
-	<label style="width:180px;">&nbsp;</label>
-	<input type="button" class="k-button sudden-left-add-btn" style="width:50px;" value="Add" />
-	
-	<div style="height:8px"></div>
-	
-	<div id="sudden-right-wrap">
-		<div class="sudden-right-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">Sudden right G-force:</label>
-			<input name="sudden_right_gforce" class="gforce" />
-			<label style="width:100px;">speed between:</label>
-			<input name="sudden_right_min" class="between" />
-			<label style="width:30px;">and:</label>
-			<input name="sudden_right_max" class="between" />
-			<input name="sudden_right_id" value="0" type="hidden" />
-		</div>
-		#{list items:rights, as:'r'}
-		<div class="sudden-braking-wrap">
-			<div style="height:8px"></div>
-			<label style="width:180px">&nbsp;</label>
-			<input name="sudden_right_gforce" class="gforce" value="${r.gforce}" />
-			<label style="width:100px;">&nbsp;</label>
-			<input name="sudden_right_min" class="between" value="${r.min}" />
-			<label style="width:30px;">&nbsp;</label>
-			<input name="sudden_right_max" class="between" value="${r.max}" />
-			<input name="sudden_right_id" value="${r.id}" type="hidden" />
-			<input data-id="${r.id}" type='button' value='&nbsp;' class='k-button remove-button' style='margin-left:5px;width:30px' />
-		</div>
-		#{/list}
-	</div>
-	
-	<div style="height:8px"></div>
-	<label style="width:180px;">&nbsp;</label>
-	<input type="button" class="k-button sudden-right-add-btn" style="width:50px;" value="Add" />
-	
-	<div style="height:16px"></div>
-	
-	<label for="${tabId}_spedding" style="width:180px">Speeding:</label>
-	<input name="threshold_speeding" id="${tabId}_speeding" value="${speeding ? speeding.value : ''}" />
-	<input name="threshold_speeding_id" value="${speeding ? speeding.id : '0'}" type="hidden" />
-	
-	<div style="height:8px"></div>
-	
-	<label for="${tabId}_spedding_on_highway" style="width:180px">Speeding on Highway:</label>
-	<input name="threshold_speeding_on_highway" id="${tabId}_spedding_on_highway" value="${speeding_on_highway ? speeding_on_highway.value : ''}" />
-	<input name="threshold_speeding_on_highway_id" value="${speeding_on_highway ? speeding_on_highway.id : '0'}" type="hidden" />
-	
-	<div style="height:8px"></div>
-	
-	<label for="${tabId}_idle" style="width:180px">Idle:${idle.value}</label>
-	<input name="threshold_idle" id="${tabId}_idle" value="${idle ? idle.value : ''}" />
-	<input name="threshold_idle_id" value="${idle ? idle.id : '0'}" type="hidden" />
-	
 	<div style="height:8px"></div>
 </form>
 <script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
