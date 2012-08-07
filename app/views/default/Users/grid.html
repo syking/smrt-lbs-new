@@ -57,9 +57,12 @@
 		
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-	        	alert(e.responseText);
-		        var grid = $("#grid_${grid.tabId}").data("kendoGrid");
-	        	grid.cancelChanges();//roll back 
+        		var err = e.responseText;
+        		if (!err || $.trim(err).length == 0)
+        			err = "server error or connection failed";
+        		alert(err);
+        		
+	        	_grid.cancelChanges();//roll back 
 		    },
             transport: {
                 read:  {
