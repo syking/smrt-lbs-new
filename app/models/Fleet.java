@@ -118,6 +118,10 @@ public class Fleet extends Model{
 		fleet.description = vo.description;
 		fleet.placeNumber = vo.placeNumber;
 		fleet.parent = Fleet.findByName(vo.parentName);
+		
+		if (!CommonUtil.isBlank(vo.parentName) && fleet.name.equals(vo.parentName))
+			throw new RuntimeException("Parent can not link itself");
+		
 		if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
 			throw new RuntimeException("ParentName is invalid!");
 		

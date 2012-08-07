@@ -71,7 +71,7 @@
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
-                    		_grid.dataSource.read();
+                    		$("#fleet-grid-menu").find("span").click();
                     	}
                     }
                 },
@@ -81,7 +81,7 @@
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
-                    		_grid.dataSource.read();
+                    		$("#fleet-grid-menu").find("span").click();
                     	}
                     }
                 },
@@ -90,7 +90,7 @@
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("create success");
-                    		_grid.dataSource.read();
+                    		$("#fleet-grid-menu").find("span").click();
                     	}
                     }
                 },

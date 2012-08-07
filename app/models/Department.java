@@ -126,6 +126,9 @@ public class Department extends Model{
 		if (db_dept != null && db_dept.id != dept.id)
 			throw new RuntimeException("DepartmentName duplicate!");
 		
+		if (!CommonUtil.isBlank(vo.parentName) && dept.name.equals(vo.parentName))
+			throw new RuntimeException("Parent can not link itself");
+		
 		dept.parent = Department.findByName(vo.parentName);
 		if (!CommonUtil.isBlank(vo.parentName) && dept.parent == null)
 			throw new RuntimeException("ParentName is invalid!");
