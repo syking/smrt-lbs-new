@@ -3,16 +3,17 @@
 #{/set}
 #{set 'moreScripts'}
 #{/set}
-<div id="tabStrip" style="height:100%; border:none; clear:both;">
+<div id="tabStrip" style="height:auto; border:none; clear:both;">
 </div>
 <script>
 $(document).ready(function() {
 	/* tab  */
     var tabStrip = $("#tabStrip").kendoTabStrip({
         select: function(e){
-        	var _h = $("#tabStrip").css("height");
-        	var _height = _h.replace("px", "") - 50;
-        	$(e.contentElement).css("height", _height);
+        	//alert("xxx");
+        	//var _h = $("#tabStrip").css("height");
+        	//var _height = _h.replace("px", "") - 50;
+        	//$(e.contentElement).css("height", _height);
         },
         animation: {
 	        // fade-out current tab over 1000 milliseconds

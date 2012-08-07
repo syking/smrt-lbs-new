@@ -1,8 +1,8 @@
 <style type="text/css" media="screen">
 	#${tabid}_toolbar{height:40px !important; margin:3px 0 5px 0 !important; clear:both !important; background:#fff !important; padding:0 !important;}
-	#${tabid}_departments{overflow:auto; float:left !important; width:20% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_drivers{overflow:auto; float:right !important; width:39% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
-	#${tabid}_leaders{overflow:auto; float:right !important; width:40% !important; height:90% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_departments{overflow:auto; float:left !important; width:20% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_drivers{overflow:auto; float:right !important; width:39% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
+	#${tabid}_leaders{overflow:auto; float:right !important; width:40% !important; background:#fff !important; position:inherit !important; margin:0 !important; padding:0 !important;}
 	#${tabid}_department_tree{padding:5px 10px 10px 10px;}
 	#${tabid}_department_filter{padding:15px; padding-bottom:13px; background:#f5f5f5;}
 	#${tabid}_department_form{margin:10px auto; width:auto;}
@@ -14,38 +14,41 @@
 	h1{margin:15px; padding:5px; background:#f5f5f5;}
 </style>
 
-<div id="${tabid}_toolbar" class="k-content">
-	<form id="${tabid}_form" action="departments/assignDriverAndLeader" method="post" onsubmit="return assign_department_submit(this);" accept-charset="utf-8">
-		<input type="hidden" name="departmentName" />
-		<div style="display:none;" id="${tabid}_form_input_wrap"></div>
-		<div style="float:right;padding:8px 20px 0 0;">
-			<input type="submit" value="&nbsp;" style="width:50px;" class="k-button save-button"/>
-		</div>
-	</form>
-</div>
-
-<div id="${tabid}_departments" class="k-content">
-	<h1>Departments</h1>
-	<div id="${tabid}_department_tree" class="input_tree"></div>
-	<!--div id="${tabid}_department_filter">
-		<h2>Filter</h2>
-		<form id="${tabid}_department_form" method="post" action="departments/filter" onsubmit="return filter_department_submit(this);">
-			<input name="departmentName" class="k-input k-textbox" style="width:70% !important;" />
-			<input type="submit" class="k-button search-button" value="&nbsp;" style="width:25% !important;" />
+<div class="assign_wrap" style="width:100%;">
+	<div id="${tabid}_toolbar" class="k-content">
+		<form id="${tabid}_form" action="departments/assignDriverAndLeader" method="post" onsubmit="return assign_department_submit(this);" accept-charset="utf-8">
+			<input type="hidden" name="departmentName" />
+			<div style="display:none;" id="${tabid}_form_input_wrap"></div>
+			<div style="float:right;padding:8px 20px 0 0;">
+				<input type="submit" value="&nbsp;" style="width:50px;" class="k-button save-button"/>
+			</div>
 		</form>
-	</div-->
+	</div>
+	
+	<div id="${tabid}_departments" class="k-content">
+		<h1>Departments</h1>
+		<div id="${tabid}_department_tree" class="input_tree"></div>
+		<!--div id="${tabid}_department_filter">
+			<h2>Filter</h2>
+			<form id="${tabid}_department_form" method="post" action="departments/filter" onsubmit="return filter_department_submit(this);">
+				<input name="departmentName" class="k-input k-textbox" style="width:70% !important;" />
+				<input type="submit" class="k-button search-button" value="&nbsp;" style="width:25% !important;" />
+			</form>
+		</div-->
+	</div>
+	
+	<div id="${tabid}_leaders" class="k-content">
+		<h1>Leaders</h1>
+		<div id="${tabid}_leader_tree" class="input_tree"></div>
+	</div>
+	
+	<div id="${tabid}_drivers" class="k-content">
+		<h1>Drivers</h1>
+		<div id="${tabid}_driver_tree" class="input_tree"></div>
+	</div>
+	
+	<div style="clear:both"></div>
 </div>
-
-<div id="${tabid}_leaders" class="k-content">
-	<h1>Leaders</h1>
-	<div id="${tabid}_leader_tree" class="input_tree"></div>
-</div>
-
-<div id="${tabid}_drivers" class="k-content">
-	<h1>Drivers</h1>
-	<div id="${tabid}_driver_tree" class="input_tree"></div>
-</div>
-
 <script id="treeview-checkbox-template" type="text/kendo-ui-template">
 	<!-- # var name = "checkedFiles[" + item.id + "]"; # -->
 	# var name = item.id; #
@@ -62,6 +65,14 @@
 	var leaderTreeView ;
 	
 	$(document).ready(function(){
+		var h1 = $("body").css("height").replace("px", "");
+	    var h2 = $("#header").css("height").replace("px", "");
+	    var _height = (h1-h2) - 60;
+		$(".assign_wrap").css("height", _height+"px");
+		$("#${tabid}_departments").css("height", _height-50+"px");
+		$("#${tabid}_leaders").css("height", _height-50+"px");
+		$("#${tabid}_drivers").css("height", _height-50+"px");
+		
 		var departmentsJson = #{verbatim} ${departments} #{/verbatim};
 		departmentTreeView = $(departmentTreeId).kendoTreeView({
 			checkChildren:true,
