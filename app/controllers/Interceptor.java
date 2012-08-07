@@ -18,6 +18,7 @@ import play.mvc.Catch;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.results.Result;
+import utils.CommonUtil;
 
 public class Interceptor extends Controller {
 
@@ -96,7 +97,7 @@ public class Interceptor extends Controller {
 		new Log("System", "-", e.toString(), null, "-", false).create();
 		
 		String msg = e.getMessage();
-		if (msg == null || msg.isEmpty())
+		if (CommonUtil.isBlank(msg))
 			msg = "Server Error!";
 		error(msg);
     }

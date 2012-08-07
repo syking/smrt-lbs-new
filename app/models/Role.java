@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import play.db.jpa.Model;
+import utils.CommonUtil;
 import vo.RoleVO;
 import vo.TreeView;
 
@@ -50,7 +51,7 @@ public class Role extends Model{
 
 	@Override
 	public String toString() {
-		return name;
+		return String.valueOf(id);
 	}
 
 	public Role() {
@@ -209,7 +210,7 @@ public class Role extends Model{
 	}
 
 	private static void parseCondition(String roleName, String desc, final List<Object> params, final StringBuilder sb) {
-		if (roleName != null && !roleName.isEmpty()){
+		if (!CommonUtil.isBlank(roleName)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -217,7 +218,7 @@ public class Role extends Model{
 			params.add(new StringBuilder("%").append(roleName).append("%").toString());
 		}
 		
-		if (desc != null && !desc.isEmpty()){
+		if (!CommonUtil.isBlank(desc)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -262,20 +263,27 @@ public class Role extends Model{
 
 	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms) {
 		Role role = Role.findByName(roleName);
-		assign(role, users, perms);
+		assign(role, users, perms, true);
 	}
 	
-	public static void assign(Long roleId, List<Long> userIds, List<Long> permIds) {
+	public static void assign(Long roleId, List<Long> userIds, List<Long> permIds, boolean isRemove) {
 		Role role = Role.findById(roleId);
-		assign(role, userIds, permIds);
+		assign(role, userIds, permIds, isRemove);
+	}
+	
+	public static void unassign(Long roleId, List<Long> userIds, List<Long> permIds) {
+		Role role = Role.findById(roleId);
+		unassign(role, userIds, permIds);
 	}
 
-	private static void assign(Role role, List<Long> users, List<Long> perms) {
+	private static void assign(Role role, List<Long> users, List<Long> perms, final boolean isRemove) {
 		if (role == null)
 			throw new RuntimeException("Role required !");
 		
-		role.users = new HashSet<User>();
-		role.permissions = new HashSet<Permission>();
+		if (isRemove){
+			role.users = new HashSet<User>();
+			role.permissions = new HashSet<Permission>();
+		}
 		
 		if (users != null){
 			for (Long uid : users){
@@ -294,6 +302,35 @@ public class Role extends Model{
 					continue;
 				
 				role.permissions.add(p);
+			}
+		}
+		
+		if (users != null || perms != null){
+			role.save();
+		}
+	}
+	
+	private static void unassign(Role role, List<Long> users, List<Long> perms) {
+		if (role == null)
+			throw new RuntimeException("Role required !");
+		
+		if (users != null){
+			for (Long uid : users){
+				User u = User.findById(uid);
+				if (u == null)
+					continue;
+				
+				role.users.remove(u);
+			}
+		}
+		
+		if (perms != null){
+			for (Long pid : perms){
+				Permission p = Permission.findById(pid);
+				if (p == null)
+					continue;
+				
+				role.permissions.remove(p);
 			}
 		}
 		

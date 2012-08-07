@@ -3,20 +3,22 @@
 # ~~~~
 
 # Home page
-GET     /                                       Application.index
-GET     /{action}                               Application.{action}
+GET     /                                       			Application.index
+GET     /{action}                               			Application.{action}
 # Ignore favicon requests
-GET     /favicon.ico                            404
+GET     /favicon.ico                            			404
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+GET     /public/                                			staticDir:public
 
 # RESTful api
-GET		/api/{controller}						api.{controller}.index
-GET		/api/{controller}/{<[0-9]+>id}			api.{controller}.show
-*		/api/{controller}/{<[0-9]+>id}/destroy	api.{controller}.destroy
-*		/api/{controller}/{<[0-9]+>id}/assign	api.{controller}.assign
-GET		/api/{controller}/{<[0-9]+>id}/relations api.{controller}.relations
+GET		/api/{controller}									api.{controller}.index
+GET		/api/{controller}/{<[0-9]+>id}						api.{controller}.show
+*		/api/{controller}/{<[0-9]+>id}/destroy				api.{controller}.destroy
+GET		/api/{controller}/{<[0-9]+>id}/relations 			api.{controller}.relations
+*		/api/{controller}/{<[0-9]+>id}/relations/create		api.{controller}.createRelations
+*		/api/{controller}/{<[0-9]+>id}/relations/destroy	api.{controller}.destroyRelations
+
 # Catch all
-*		/api/{controller}/{action}				api.{controller}.{action}
-*       /{controller}/{action}                  {controller}.{action}
+*		/api/{controller}/{action}							api.{controller}.{action}
+*       /{controller}/{action}                  			{controller}.{action}

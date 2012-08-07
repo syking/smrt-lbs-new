@@ -141,7 +141,7 @@ public class SystemConfigs extends Controller{
 			List<Long> sudden_left_id, List<String> sudden_left_gforce, List<String> sudden_left_min, List<String> sudden_left_max,
 			List<Long> sudden_right_id, List<String> sudden_right_gforce, List<String> sudden_right_min, List<String> sudden_right_max) {
 		List<SystemConfig> scs = new ArrayList<SystemConfig>();
-		if (threshold_speeding != null && !threshold_speeding.isEmpty()){
+		if (!CommonUtil.isBlank(threshold_speeding)){
 			SystemConfig sc = new SystemConfig();
 			sc.id = threshold_speeding_id;
 			sc.name = "threshold-speeding";
@@ -150,7 +150,7 @@ public class SystemConfigs extends Controller{
 			scs.add(sc);
 		}
 		
-		if (threshold_speeding_on_highway != null && !threshold_speeding_on_highway.isEmpty()){
+		if (!CommonUtil.isBlank(threshold_speeding_on_highway)){
 			SystemConfig sc = new SystemConfig();
 			sc.id = threshold_speeding_on_highway_id;
 			sc.name = "threshold-speeding-on-highway";
@@ -159,7 +159,7 @@ public class SystemConfigs extends Controller{
 			scs.add(sc);
 		}
 		
-		if ( threshold_idle != null && ! threshold_idle.isEmpty()){
+		if (!CommonUtil.isBlank(threshold_idle)){
 			SystemConfig sc = new SystemConfig();
 			sc.id = threshold_idle_id;
 			sc.name = "threshold-idle";
@@ -172,7 +172,7 @@ public class SystemConfigs extends Controller{
 			final String gforce = sudden_braking_gforce.get(i);
 			final String min = sudden_braking_min.get(i);
 			final String max = sudden_braking_max.get(i);
-			if (gforce == null || gforce.isEmpty() || min == null || min.isEmpty() || max == null || max.isEmpty())
+			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
 				continue;
 			
 			String name = String.format("threshold-sudden-braking-%s-%s", min, max);
@@ -191,7 +191,7 @@ public class SystemConfigs extends Controller{
 			final String gforce = sudden_acceleration_gforce.get(i);
 			final String min = sudden_acceleration_min.get(i);
 			final String max = sudden_acceleration_max.get(i);
-			if (gforce == null || gforce.isEmpty() || min == null || min.isEmpty() || max == null || max.isEmpty())
+			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
 				continue;
 			
 			String name = String.format("threshold-sudden-acceleration-%s-%s", min, max);
@@ -209,7 +209,7 @@ public class SystemConfigs extends Controller{
 			final String gforce = sudden_left_gforce.get(i);
 			final String min = sudden_left_min.get(i);
 			final String max = sudden_left_max.get(i);
-			if (gforce == null || gforce.isEmpty() || min == null || min.isEmpty() || max == null || max.isEmpty())
+			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
 				continue;
 			
 			String name = String.format("threshold-sudden-left-%s-%s", min, max);
@@ -227,7 +227,7 @@ public class SystemConfigs extends Controller{
 			final String gforce = sudden_right_gforce.get(i);
 			final String min = sudden_right_min.get(i);
 			final String max = sudden_right_max.get(i);
-			if (gforce == null || gforce.isEmpty() || min == null || min.isEmpty() || max == null || max.isEmpty())
+			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
 				continue;
 			
 			String name = String.format("threshold-sudden-right-%s-%s", min, max);
@@ -276,7 +276,7 @@ public class SystemConfigs extends Controller{
 		} catch(Throwable e){
 			e.printStackTrace();
 			String msg = e.getMessage();
-			if (msg == null || msg.isEmpty())
+			if (CommonUtil.isBlank(msg))
 				msg = "delete error -> " + e.toString();
 			Map map = new HashMap();
 			map.put("success", false);

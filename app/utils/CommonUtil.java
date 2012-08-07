@@ -23,6 +23,15 @@ import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
 	
+	public static boolean isBlank(final String str) {
+		if (null == str)
+			return true;
+		if (str.isEmpty())
+			return true;
+		
+		return str.trim().isEmpty();
+	}
+	
 	public static String uuid() {
 		return UUID.randomUUID().toString();
 	}
@@ -121,8 +130,8 @@ public class CommonUtil {
 		Date end = null;
 		
 		try{
-			if (timeType  != null && !timeType.isEmpty()){
-				if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()){
+			if (!CommonUtil.isBlank(timeType)){
+				if (!CommonUtil.isBlank(startTime)&& !CommonUtil.isBlank(endTime)){
 					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
 						start = new SimpleDateFormat("yyyy/MM/dd").parse(startTime);
     					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", start) + " 00:00:00");
@@ -168,8 +177,8 @@ public class CommonUtil {
 		
 		Date chooseDate = null;
 		try{
-			if (timeType  != null && !timeType.isEmpty()){
-				if (time != null && !time.isEmpty()){
+			if (!CommonUtil.isBlank(timeType)){
+				if (!CommonUtil.isBlank(time)){
 					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
 						chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", chooseDate) + " 00:00:00");
@@ -204,8 +213,8 @@ public class CommonUtil {
 		Date date = null;
 		Date chooseDate = null;
 		try{
-			if (timeType  != null && !timeType.isEmpty()){
-				if (time != null && !time.isEmpty()){
+			if (!CommonUtil.isBlank(timeType)){
+				if (!CommonUtil.isBlank(time)){
 					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
 						chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time);
     					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", chooseDate) + " 00:00:00");
@@ -595,10 +604,6 @@ public class CommonUtil {
 		}
 	}
 
-	public static boolean isEmptyString(String str) {
-		return null == str ? true : str.trim().length() == 0 ? true : false;
-	}
-	
 	public static String formatStr(String format, Object... args){
 		return String.format(format, args);
 	}

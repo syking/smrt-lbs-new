@@ -20,8 +20,8 @@ public class RoleVO {
 	
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
-		if (CommonUtil.isEmptyString(name))
+		final String msg = "%s Can not be empty, ";
+		if (CommonUtil.isBlank(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
 		
 		final String result = builder.toString();

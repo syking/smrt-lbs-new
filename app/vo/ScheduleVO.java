@@ -37,37 +37,37 @@ public class ScheduleVO {
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
 		final String msg = "%s Can't be empty, ";
-		if (CommonUtil.isEmptyString(driverNumber))
+		if (CommonUtil.isBlank(driverNumber))
 			builder.append(CommonUtil.formatStr(msg, "DriverNumber"));
 		
-		if (CommonUtil.isEmptyString(vehicleNumber))
+		if (CommonUtil.isBlank(vehicleNumber))
 			builder.append(CommonUtil.formatStr(msg, "VehicleNumber"));
 		
-		if (CommonUtil.isEmptyString(route))
+		if (CommonUtil.isBlank(route))
 			builder.append(CommonUtil.formatStr(msg, "Route"));
 		
-		if (CommonUtil.isEmptyString(duty))
+		if (CommonUtil.isBlank(duty))
 			builder.append(CommonUtil.formatStr(msg, "Duty"));
 		
-		if (CommonUtil.isEmptyString(startDate))
+		if (CommonUtil.isBlank(startDate))
 			builder.append(CommonUtil.formatStr(msg, "StartDate"));
 		
 		if (!CommonUtil.isValidDate(startDate))
 			builder.append("StartDate yyyy-MM-dd, ");
 		
-		if (CommonUtil.isEmptyString(startTime))
+		if (CommonUtil.isBlank(startTime))
 			builder.append(CommonUtil.formatStr(msg, "StartTime"));
 		
 		if (!CommonUtil.isValidTime(startTime))
 			builder.append("StartTime HH:mm:ss, ");
 		
-		if (CommonUtil.isEmptyString(endDate))
+		if (CommonUtil.isBlank(endDate))
 			builder.append(CommonUtil.formatStr(msg, "EndDate"));
 		
 		if (!CommonUtil.isValidDate(endDate))
 			builder.append("EndDate yyyy-MM-dd, ");
 		
-		if (CommonUtil.isEmptyString(endTime))
+		if (CommonUtil.isBlank(endTime))
 			builder.append(CommonUtil.formatStr(msg, "EndTime"));
 		
 		if (!CommonUtil.isValidTime(endTime))

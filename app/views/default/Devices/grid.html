@@ -115,17 +115,17 @@
                         key: { validation: { required: true } },
                         name: { validation: { required: true } },
                         alive: { type:"boolean" },
-                        serverUrls: { validation: { required: true } },
-                        action: { validation: { required: true } },
-                        misc: { validation: { required: true } },
-                        status: { validation: { required: true } },
+                        serverUrls: { },
+                        action: { },
+                        misc: { },
+                        status: { },
                         host: {
                         	validation: {
 	                            custom: function(input) {
 	                            	var name = input.attr("name");
 	                            	if ('status' === name){
 	                            		return validate_enum(input, ['online','offline']);	
-	                            	}else if ('status_input' != name){
+	                            	}else if ('key' === name || 'name' === name){
 	                            		return validate_empty(input);
 	                            	}
 	                            	

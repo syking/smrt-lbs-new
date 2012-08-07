@@ -87,11 +87,11 @@ public class Department extends Model{
 			throw new RuntimeException("Name duplicate!");
 		
 		dept.parent = Department.findByName(vo.parentName);
-		if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
+		if (!CommonUtil.isBlank(vo.parentName) && dept.parent == null)
 			throw new RuntimeException("Parent Name is invalid!");
 		
 		dept.create();
-		vo.id = String.valueOf(dept.id);
+		vo.id = dept.id;
 		
 		return vo;
 	}
@@ -116,8 +116,7 @@ public class Department extends Model{
 		if (vo.id == null)
 			throw new RuntimeException("id required");
 		
-		Long id = Long.parseLong(vo.id);
-		Department dept = Department.findById(id);
+		Department dept = Department.findById(vo.id);
 		if (dept == null)
 			throw new RuntimeException("Department not found") ;
 		
@@ -128,7 +127,7 @@ public class Department extends Model{
 			throw new RuntimeException("DepartmentName duplicate!");
 		
 		dept.parent = Department.findByName(vo.parentName);
-		if (vo.parentName != null && !vo.parentName.isEmpty() && dept.parent == null)
+		if (!CommonUtil.isBlank(vo.parentName) && dept.parent == null)
 			throw new RuntimeException("ParentName is invalid!");
 		
 		dept.save();
@@ -170,8 +169,7 @@ public class Department extends Model{
 		if (vo.id == null)
 			throw new RuntimeException("id required");
 		
-		Long id = Long.parseLong(vo.id);
-		Department.deleteById(id);
+		Department.deleteById(vo.id);
 	}
 	
 	public static boolean deleteByJson(String models) {
@@ -231,7 +229,7 @@ public class Department extends Model{
 			params.add(parent);
 		}
 
-		if (name != null && name.trim().length() > 0) {
+		if (!CommonUtil.isBlank(name)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -285,19 +283,21 @@ public class Department extends Model{
 		return result;
 	}
 	
-	public static void assign(Long id, List<Long> driver_ids, List<Long> leader_ids) {
+	public static void assign(Long id, List<Long> driver_ids, List<Long> leader_ids, boolean isRemove) {
 		Department department = Department.findById(id);
-		assign(department, driver_ids, leader_ids);
+		assign(department, driver_ids, leader_ids, isRemove);
 	}
 	
-	public static void assign(Department department, List<Long> driver_ids, List<Long> leader_ids) {
+	public static void assign(Department department, List<Long> driver_ids, List<Long> leader_ids, boolean isRemove) {
 		if (department == null)
 			throw new RuntimeException("Department required !");
 		
 		if (driver_ids != null){
-			for (Driver d : department.drivers){
-				d.department = null;
-				d.save();
+			if (isRemove){
+				for (Driver d : department.drivers){
+					d.department = null;
+					d.save();
+				}
 			}
 			
 			for (Long id : driver_ids){
@@ -311,7 +311,9 @@ public class Department extends Model{
 		}
 		
 		if (leader_ids != null){
-			department.leaders = new HashSet<Driver>(leader_ids.size());
+			if (isRemove)
+				department.leaders = new HashSet<Driver>(leader_ids.size());
+			
 			for (Long id : leader_ids){
 				Driver d = Driver.findById(id);
 				if (d == null)
@@ -323,11 +325,43 @@ public class Department extends Model{
 			department.save();
 		}
 	}
+	public static void unassign(Long id, List<Long> driver_ids, List<Long> leader_ids) {
+		Department department = Department.findById(id);
+		unassign(department, driver_ids, leader_ids);
+	}
+	
+	public static void unassign(Department department, List<Long> driver_ids, List<Long> leader_ids) {
+		if (department == null)
+			throw new RuntimeException("Department required !");
+		
+		if (driver_ids != null){
+			for (Long id : driver_ids){
+				Driver d = Driver.findById(id);
+				if (d == null)
+					continue;
+				
+				d.department = null;
+				d.save();
+			}
+		}
+		
+		if (leader_ids != null){
+			for (Long id : leader_ids){
+				Driver d = Driver.findById(id);
+				if (d == null)
+					continue;
+				
+				department.leaders.remove(d);
+			}
+			
+			department.save();
+		}
+	}
 	
 	@Transactional
 	public static void assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders) {
 		Department department = Department.findByName(departmentName);
-		assign(department, drivers, leaders);
+		assign(department, drivers, leaders, true);
 	}
 	
 	// 找出某个部门下的所有车队不包含自己
@@ -405,7 +439,7 @@ public class Department extends Model{
 			throw new RuntimeException("Department not found!");
 		if (dept.leaders == null || dept.leaders.isEmpty())
 			throw new RuntimeException("Department leader not found!");
-		if (!DriverReport.isValidTimeType(timeType) || day == null || day.isEmpty())
+		if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(day))
 			throw new RuntimeException("timeType or time is invalid!");
 		if (dept == null || dept.leaders == null || dept.leaders.isEmpty() || dept.drivers == null || dept.drivers.isEmpty())
 			throw new RuntimeException("Department or Leaders or Drivers not found !");

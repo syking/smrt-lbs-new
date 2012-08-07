@@ -21,20 +21,11 @@ import controllers.Interceptor;
  */
 @With(APIInterceptor.class)
 public class Permissions extends Controller{
-	
-	public static void index(final int page, final int pageSize){
-		try{
-			renderJSON(APICallback.success(Permission.search(page, pageSize, null)));
-		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage()));
-		}
-	}
-	
 	/**
 	 * Fetch perm's info
 	 * @param perm
 	 */
-	public static void search(final int page, final int pageSize, PermVO perm){
+	public static void index(final int page, final int pageSize, PermVO perm){
 		try{
 			renderJSON(APICallback.success(Permission.search(page, pageSize, perm)));
 		}catch(Throwable e){

@@ -20,9 +20,9 @@ public class PermVO {
 	
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
+		final String msg = "%s Can not be empty, ";
 		
-		if (CommonUtil.isEmptyString(action))
+		if (CommonUtil.isBlank(action))
 			builder.append(CommonUtil.formatStr(msg, "Action"));
 		
 		final String result = builder.toString();

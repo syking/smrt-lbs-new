@@ -9,13 +9,14 @@ import models.DriverReport;
 import models.Log;
 import play.Play;
 import play.mvc.Mailer;
+import utils.CommonUtil;
 import vo.DriverPerformanceVO;
 import vo.EventReportVO;
 
 public class MyMailer extends Mailer {
 
 	public static void driverReport(Driver driver, String timeType, String time) {
-		if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+		if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
 			throw new RuntimeException("timeType or time is invalid!");
 		
 		if (driver.email == null)

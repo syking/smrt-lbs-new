@@ -62,7 +62,4 @@ public class EventRecord extends Model {
 				+ ", duration=" + duration + ", detail=" + detail + ", gValue="
 				+ gValue + ", status=" + status + ", id=" + id + "]";
 	}
-	
-	
-	
 }

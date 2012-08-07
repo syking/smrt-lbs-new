@@ -46,17 +46,17 @@ public class VehicleVO
     
     public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
-		if (CommonUtil.isEmptyString(number))
+		final String msg = "%s Can not be empty, ";
+		if (CommonUtil.isBlank(number))
 			builder.append(CommonUtil.formatStr(msg, "Number"));
 		
-		if (CommonUtil.isEmptyString(license))
+		if (CommonUtil.isBlank(license))
 			builder.append(CommonUtil.formatStr(msg, "License"));
 		
-		if (CommonUtil.isEmptyString(deviceName))
+		if (CommonUtil.isBlank(deviceName))
 			builder.append(CommonUtil.formatStr(msg, "DeviceName"));
 		
-		if (CommonUtil.isEmptyString(type))
+		if (CommonUtil.isBlank(type))
 			builder.append(CommonUtil.formatStr(msg, "Type"));
 		
 		if (!"bus".equals(type) && !"car".equals(type))

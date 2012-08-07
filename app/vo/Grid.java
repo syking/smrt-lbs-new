@@ -17,5 +17,4 @@ public class Grid {
 	public String columnsJson = "";// 这个是 Grid 的头部字段，可以使用 CommonUtil.assemColumns(class, unless); 来生成
 	
 	public String schema = "";
-	
 }

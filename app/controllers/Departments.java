@@ -159,7 +159,7 @@ public class Departments extends Controller {
 	}
 	
 	public static void filter(String departmentName){
-		if (departmentName == null || departmentName.isEmpty())
+		if (CommonUtil.isBlank(departmentName))
 			renderJSON(Department.assemDepartmentTree());
 		else
 			renderJSON(Department.assemDepartmentTree(Department.findByCondition(-1,-1, departmentName, null), false));

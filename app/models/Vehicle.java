@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -335,7 +336,7 @@ public class Vehicle extends Model {
 	
 			
 			Fleet fleet = Fleet.find("byName", vo.fleetName).first();
-			if (vo.fleetName != null && !vo.fleetName.isEmpty() && fleet == null)
+			if (!CommonUtil.isBlank(vo.fleetName) && fleet == null)
 				throw new RuntimeException("FleetName is invalid!");
 			
 			v.fleet = fleet;
@@ -389,7 +390,7 @@ public class Vehicle extends Model {
 			v.license = vehicleVO.license;
 	
 			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
-			if (vehicleVO.fleetName != null && !vehicleVO.fleetName.isEmpty() && fleet == null)
+			if (!CommonUtil.isBlank(vehicleVO.fleetName) && fleet == null)
 				throw new RuntimeException("FleetName is invalid!");
 			
 			v.fleet = fleet;
@@ -450,9 +451,9 @@ public class Vehicle extends Model {
 		String query = StringUtils.join(criteria, " AND ");
 		List<Vehicle> vehicles = null;
 		if (page < 0 || pageSize < 0)
-			vehicles = Vehicle.find(query, p).fetch();
+			vehicles = Vehicle.find(query + " order by id desc", p).fetch();
 		else
-			vehicles = Vehicle.find(query, p).fetch(page, pageSize);
+			vehicles = Vehicle.find(query + " order by id desc", p).fetch(page, pageSize);
 	
 		
 		List<VehicleVO> vehicleVOList = new ArrayList<VehicleVO>();
@@ -466,12 +467,12 @@ public class Vehicle extends Model {
 	}
 
 	private static void parseCondition(String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type, List<String> criteria, List<Object> params) {
-		if (null != number && !number.isEmpty()) {
+		if (!CommonUtil.isBlank(number)) {
 			criteria.add("number LIKE ?");
 			params.add("%" + number + "%");
 		}
 
-		if (null != license && !license.isEmpty()) {
+		if (!CommonUtil.isBlank(license)) {
 			criteria.add("license LIKE ?");
 			params.add("%" + license + "%");
 		}
@@ -490,19 +491,35 @@ public class Vehicle extends Model {
 			params.add(device_id);
 		}
 
-		if (null != description && !description.isEmpty()) {
+		if (!CommonUtil.isBlank(description)) {
 			criteria.add("description LIKE ?");
 			params.add("%" + description + "%");
 		}
 
-		if (null != type && !type.isEmpty()) {
+		if (!CommonUtil.isBlank(type)) {
 			criteria.add("type LIKE ?");
 			params.add("%" + type + "%");
 		}
 
-		if (null != cctvIp && !cctvIp.isEmpty()) {
+		if (!CommonUtil.isBlank(cctvIp)) {
 			criteria.add("cctvIp LIKE ?");
 			params.add("%" + cctvIp + "%");
 		}
+	}
+	
+	public static List<Long> toIds(Collection<Vehicle> vehicles) {
+		if (vehicles == null)
+			return null;
+		
+		List<Long> ids = new ArrayList<Long>(vehicles.size());
+		for (Vehicle v : vehicles) {
+			ids.add(v.id);
+		}
+		
+		return ids;
+	}
+
+	public static List<Vehicle> assignables() {
+		return Vehicle.find("fleet is null order by id desc").fetch();
 	}
 }

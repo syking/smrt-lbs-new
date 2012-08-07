@@ -65,7 +65,7 @@ public class Reports extends Controller {
      * 分司机报表
      */
     public static void driverListJsonByDept(Long departmentId, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
     	
@@ -102,7 +102,7 @@ public class Reports extends Controller {
      * 分部门报表
      */
     public static void departmentListJson(Long parentId, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
     	
@@ -139,7 +139,7 @@ public class Reports extends Controller {
      */
     @Deprecated
     public static void driverListJsonByFleet(Long fleetId, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
     	
@@ -184,7 +184,7 @@ public class Reports extends Controller {
      */
     @Deprecated
     public static void fleetListJson(Long parentId, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
     	
@@ -228,12 +228,12 @@ public class Reports extends Controller {
      * @param time select a date time to get the report data
      */
     public static void driverListJsonByLine(String line, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
     	
 		List<Schedule> schs = null;
-		if (line == null || line.isEmpty())
+		if (CommonUtil.isBlank(line))
 			schs = Schedule.findAll();
 		else
 			schs = Schedule.find("line = ?", line).fetch();
@@ -276,7 +276,7 @@ public class Reports extends Controller {
      * @param time select a date to get the report
      */
     public static void lineListJson(String line, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
     	
@@ -321,7 +321,7 @@ public class Reports extends Controller {
      * @param time
      */
 	public static void driverListJson(long driverId, String timeType, String time){
-		if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty()){
+		if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
     	}
 		

@@ -21,10 +21,10 @@ public class UserVO {
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
 		final String msg = "%s Can not be empty, ";
-		if (CommonUtil.isEmptyString(account))
+		if (CommonUtil.isBlank(account))
 			builder.append(CommonUtil.formatStr(msg, "Account"));
 		
-		if (CommonUtil.isEmptyString(name))
+		if (CommonUtil.isBlank(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
 		
 		final String result = builder.toString();

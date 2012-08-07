@@ -46,7 +46,7 @@ public class Pdfs extends Controller{
 	}
 	
 	public static void reportDepartment(Long parentId, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return;
     	
     	List<Department> departments = Department.findByParent(parentId);
@@ -61,7 +61,7 @@ public class Pdfs extends Controller{
     }
     
     public static void reportRoute(String line, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return;
     	
     	List<String> lineList = Schedule.findLinesByLine(line);
@@ -76,7 +76,7 @@ public class Pdfs extends Controller{
     }
     
     public static void reportDriverByDept(Long departmentId, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return ;
     	
 		List<Driver> drivers = null;
@@ -93,7 +93,7 @@ public class Pdfs extends Controller{
     }
     
     public static void reportDriver(long driverId, String timeType, String time){
-		if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+		if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
 			return ;
 		
 		Driver driver = Driver.find("id = ?", driverId).first();
@@ -110,11 +110,11 @@ public class Pdfs extends Controller{
 	}
     
     public static void reportDriverByRoute(String line, String timeType, String time){
-    	if (!DriverReport.isValidTimeType(timeType) || time == null || time.isEmpty())
+    	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return ;
     	
 		List<Schedule> schs = null;
-		if (line == null || line.isEmpty())
+		if (CommonUtil.isBlank(line))
 			schs = Schedule.findAll();
 		else
 			schs = Schedule.find("line = ?", line).fetch();

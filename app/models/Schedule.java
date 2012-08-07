@@ -326,7 +326,7 @@ public class Schedule extends Model {
 	}
 
 	private static void parseCondition(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime, StringBuilder sqlSB, List<Object> params) {
-		if (driverNumber != null && driverNumber.length() > 0) {
+		if (!CommonUtil.isBlank(driverNumber)) {
 			Driver driver = Driver.findByNumber(driverNumber);
 			if (driver != null){
 				sqlSB.append("driver = ?");
@@ -334,7 +334,7 @@ public class Schedule extends Model {
 			}
 		}
 
-		if (vehicleNumber != null && vehicleNumber.length() > 0) {
+		if (!CommonUtil.isBlank(vehicleNumber)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -345,7 +345,7 @@ public class Schedule extends Model {
 			}
 		}
 		
-		if (route != null && route.length() > 0) {
+		if (!CommonUtil.isBlank(route)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -353,7 +353,7 @@ public class Schedule extends Model {
 			params.add("%"+route+"%");
 		}
 		
-		if (duty != null && duty.length() > 0) {
+		if (!CommonUtil.isBlank(duty)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -361,7 +361,7 @@ public class Schedule extends Model {
 			params.add("%"+duty+"%");
 		}
 
-		if (startDate != null && !startDate.isEmpty()){
+		if (!CommonUtil.isBlank(startDate)){
 			if (startTime != null && !startTime.isEmpty())
 				startTime = startDate + " " + startTime;
 			else 
@@ -376,7 +376,7 @@ public class Schedule extends Model {
 			sqlSB.append("start_time >= ?");
 		}
 		
-		if (endDate != null && !endDate.isEmpty()){
+		if (!CommonUtil.isBlank(endDate)){
 			if (endTime != null && !endTime.isEmpty())
 				endTime = endDate + " " + endTime;
 			else 

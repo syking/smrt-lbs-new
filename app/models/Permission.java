@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -191,7 +192,7 @@ public class Permission extends Model{
 	
 	private static void parseCondition(String action, String desc,
 			final List<Object> params, final StringBuilder sb) {
-		if (action != null && !action.isEmpty()){
+		if (!CommonUtil.isBlank(action)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -199,7 +200,7 @@ public class Permission extends Model{
 			params.add(new StringBuilder("%").append(action).append("%").toString());
 		}
 		
-		if (desc != null && !desc.isEmpty()){
+		if (!CommonUtil.isBlank(desc)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -245,7 +246,7 @@ public class Permission extends Model{
 		return result;
 	}
 
-	public static List<Long> toIds(Set<Permission> permissions) {
+	public static List<Long> toIds(Collection<Permission> permissions) {
 		List<Long> result = null;
 		if (permissions != null){
 			result = new ArrayList<Long>(permissions.size());
@@ -282,5 +283,24 @@ public class Permission extends Model{
 			throw new RuntimeException("id invalid");
 		
 		return perm;
-	} 
+	}
+	
+	public static void main(String[] args){
+		Set<User> roles = new HashSet<User>();
+		User role = new User();
+		role.id = 1L;
+		role.name = "name_1";
+		roles.add(role);
+		User role2 = new User();
+		role2.id = 2L;
+		role2.name = "name_2";
+		roles.add(role2);
+		
+		System.out.println(roles);
+		
+		User role3 = new User();
+		role3.id = 3L;
+		roles.remove(role3);
+		System.out.println(roles);
+	}
 }

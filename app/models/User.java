@@ -193,7 +193,7 @@ public class User extends Model {
 	public static List<User> findByCondition(int page, int pageSize, String userName, String account, String desc){
 //		boolean isRoleHasUsers = false;
 //		Role role = null;
-//		if (roleName != null && !roleName.isEmpty()){
+//		if (!CommonUtil.isBlank(roleName)){
 //			role = Role.findByName(roleName);
 //			if (role == null || role.users == null || role.users.isEmpty()) 
 //					return null ;
@@ -208,9 +208,9 @@ public class User extends Model {
 		
 		List<User> users = null;
 		if (page > 0 && pageSize > 0)
-			users = User.find(sb.toString() + "order by id desc", params.toArray()).fetch(page, pageSize) ;
+			users = User.find(sb.toString() + " order by id desc", params.toArray()).fetch(page, pageSize) ;
 		else 
-			users = User.find(sb.toString() + "order by id desc", params.toArray()).fetch();
+			users = User.find(sb.toString() + " order by id desc", params.toArray()).fetch();
 		
 //		if (isRoleHasUsers){
 //			List<User> result = new ArrayList(role.users.size());
@@ -240,7 +240,7 @@ public class User extends Model {
 
 	private static void parseCondition(String userName, String account,
 			String desc, final List<Object> params, final StringBuilder sb) {
-		if (userName != null && !userName.isEmpty()){
+		if (!CommonUtil.isBlank(userName)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -248,7 +248,7 @@ public class User extends Model {
 			params.add(new StringBuilder("%").append(userName).append("%").toString());
 		}
 		
-		if (account != null && !account.isEmpty()){
+		if (!CommonUtil.isBlank(account)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -256,7 +256,7 @@ public class User extends Model {
 			params.add(new StringBuilder("%").append(account).append("%").toString());
 		}
 		
-		if (desc != null && !desc.isEmpty()){
+		if (!CommonUtil.isBlank(desc)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
@@ -350,4 +350,5 @@ public class User extends Model {
 		
 		return user;
 	} 
+	
 }

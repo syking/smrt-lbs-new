@@ -1,6 +1,9 @@
 function validate_enum(input, array) {
 	input.attr("data-custom-msg", array);
 	var val = input.val();
+	if (!val || $.trim(val).length == 0)
+		return true;
+	
 	var flag = false;
 	$.each(array, function(i, v){
 		if (v === val){

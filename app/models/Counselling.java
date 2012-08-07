@@ -45,40 +45,91 @@ public class Counselling extends Model{
 		super();
 	}
 	
+	public static Counselling fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Counselling c = Counselling.findById(id);
+		if (c == null)
+			throw new RuntimeException("id is invalid");
+		
+		return c;
+	}
+	
+	public static CounselVO createByVO(CounselVO vo, String userName) {
+		if (vo == null)
+			throw new RuntimeException("Counsel info required");
+		
+		if (userName != null)
+			vo.userName = userName;
+		
+		vo.validate();
+		
+		String startTime = vo.startDate + " " + vo.startTime;
+		String endTime = vo.endDate + " " + vo.endTime;
+		
+		User user = User.find("byName", vo.userName).first();
+		if (user == null)
+			throw new RuntimeException("UserName is invalid!, ");
+		
+		Driver driver = Driver.find("byName", vo.driverName).first();
+		if (driver == null)
+			throw new RuntimeException("DriverName is invalid!, ");
+		
+		Counselling c = new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), vo.remark, driver);
+		
+		if (c.startTime.after(c.endTime))
+			throw new RuntimeException("EndTime must after the StartTime!");
+		
+		c.create();
+		vo.id = c.id;
+		
+		return vo;
+	}
+	
 	public static String createByJson(String models, String userName){
 		List<CounselVO> vos = CommonUtil.parseArray(models, CounselVO.class);
 		if (vos == null)
 			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (CounselVO vo : vos){
-			if (userName != null)
-				vo.userName = userName;
-			
-			vo.validate();
-			
-			String startTime = vo.startDate + " " + vo.startTime;
-			String endTime = vo.endDate + " " + vo.endTime;
-			
-			User user = User.find("byName", vo.userName).first();
-			if (user == null)
-				throw new RuntimeException("UserName is invalid!, ");
-			
-			Driver driver = Driver.find("byName", vo.driverName).first();
-			if (driver == null)
-				throw new RuntimeException("DriverName is invalid!, ");
-			
-			Counselling c = new Counselling(user, CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime), CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime), vo.remark, driver);
-			
-			if (c.startTime.after(c.endTime))
-				throw new RuntimeException("EndTime must after the StartTime!");
-			
-			c.create();
-			vo.id = String.valueOf(c.id);
+			createByVO(vo, userName);
 		}
 		
 		String _models = CommonUtil.toJson(vos);
 		
 		return _models;
+	}
+	
+	public static void updateByVO(CounselVO vo, String userName) {
+		Counselling c = Counselling.fetchById(vo.id);
+		
+		vo.validate();
+		
+		vo.startTime = vo.startDate + " " + vo.startTime;
+		vo.endTime = vo.endDate + " " + vo.endTime;
+		
+		if (userName != null)
+			vo.userName = userName;
+		
+		User user = User.find("byName", vo.userName).first();
+		if (user == null)
+			throw new RuntimeException("UserName is invalid!, ");
+		c.user = user;
+		
+		Driver driver = Driver.find("byName", vo.driverName).first();
+		if (driver == null)
+			throw new RuntimeException("DriverName is invalid!, ");
+		c.driver = driver;
+		
+		c.endTime = CommonUtil.parse(vo.endTime); 
+		c.startTime = CommonUtil.parse(vo.startTime);
+		c.remark = vo.remark;
+		
+		if (c.startTime.after(c.endTime))
+			throw new RuntimeException("EndTime must after the StartTime!");
+		
+		c.save();
 	}
 	
 	public static boolean updateByJson(String models, String userName){
@@ -87,42 +138,16 @@ public class Counselling extends Model{
 			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (CounselVO vo : vos){
-			if (vo.id == null)
-				continue;
-			
-			Counselling c = Counselling.findById(Long.parseLong(vo.id));
-			if (c == null)
-				continue ;
-			
-			vo.validate();
-			
-			vo.startTime = vo.startDate + " " + vo.startTime;
-			vo.endTime = vo.endDate + " " + vo.endTime;
-			
-			if (userName != null)
-				vo.userName = userName;
-			
-			User user = User.find("byName", vo.userName).first();
-			if (user == null)
-				throw new RuntimeException("UserName is invalid!, ");
-			c.user = user;
-			
-			Driver driver = Driver.find("byName", vo.driverName).first();
-			if (driver == null)
-				throw new RuntimeException("DriverName is invalid!, ");
-			c.driver = driver;
-			
-			c.endTime = CommonUtil.parse(vo.endTime); 
-			c.startTime = CommonUtil.parse(vo.startTime);
-			c.remark = vo.remark;
-			
-			if (c.startTime.after(c.endTime))
-				throw new RuntimeException("EndTime must after the StartTime!");
-			
-			c.save();
+			updateByVO(vo, userName);
 		}
 		
 		return true;
+	}
+	
+	public static void deleteById(Long id) {
+		Counselling c = Counselling.fetchById(id);
+		
+		c.delete();
 	}
 	
 	public static boolean deleteByJson(String models){
@@ -131,14 +156,7 @@ public class Counselling extends Model{
 			throw new RuntimeException("Could not Parse the Json Content!");;
 		
 		for (CounselVO vo : vos){
-			if (vo.id == null)
-				continue;
-			
-			Counselling c = Counselling.findById(Long.parseLong(vo.id));
-			if (c == null)
-				continue ;
-			
-			c.delete();
+			deleteById(vo.id);
 		}
 		
 		return true;
@@ -151,9 +169,9 @@ public class Counselling extends Model{
 		
 		List<Counselling> counsellings = null;
 		if (page > 0 && pageSize > 0)
-			counsellings = Counselling.find(sb.toString() + "order by id desc", params.toArray()).fetch(page, pageSize);
+			counsellings = Counselling.find(sb.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
 		else
-			counsellings = Counselling.find(sb.toString() + "order by id desc", params.toArray()).fetch();
+			counsellings = Counselling.find(sb.toString() + " order by id desc", params.toArray()).fetch();
 		
 		return counsellings;
 	}
@@ -164,6 +182,13 @@ public class Counselling extends Model{
 		parseCondition(userName, driverName, startDate, startTime, endDate, endTime, params, sb);
 		
 		return Counselling.count(sb.toString(), params.toArray());
+	}
+	
+	public static Map search(int page, int pageSize, CounselVO counsel){
+		if (counsel == null)
+			return search(page, pageSize, null, null, null, null, null, null);
+		
+		return search(page, pageSize, counsel.userName, counsel.driverName, counsel.startDate, counsel.startTime, counsel.endDate, counsel.endTime);
 	}
 	
 	public static Map search(int page, int pageSize, String userName, String driverName, String startDate, String startTime, String endDate, String endTime) {
@@ -192,7 +217,7 @@ public class Counselling extends Model{
 			params.add(driver);
 		}
 		
-		if (startDate != null && !startDate.isEmpty()){
+		if (!CommonUtil.isBlank(startDate)){
 			if (startTime != null && !startTime.isEmpty())
 				startTime = startDate + " " + startTime;
 			else 
@@ -207,7 +232,7 @@ public class Counselling extends Model{
 			sb.append("start_time >= ?");
 		}
 		
-		if (endDate != null && !endDate.isEmpty()){
+		if (!CommonUtil.isBlank(endDate)){
 			if (endTime != null && !endTime.isEmpty())
 				endTime = endDate + " " + endTime;
 			else 

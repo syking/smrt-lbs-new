@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import models.Driver;
 import models.Permission;
 import models.Department;
+import models.Role;
 import models.User;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -24,20 +26,12 @@ import controllers.Interceptor;
 @With(APIInterceptor.class)
 public class Departments extends Controller{
 	
-	public static void index(final int page, final int pageSize){
-		try{
-			renderJSON(APICallback.success(Department.search(page, pageSize, null)));
-		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.DEPT_FETCH_FAIL, e.getMessage()));
-		}
-	}
-	
 	/**
 	 * Fetch dept's info
 	 */
-	public static void search(final int page, final int pageSize, final DepartmentVO dept){
+	public static void index(final int page, final int pageSize, final DepartmentVO department){
 		try{
-			renderJSON(APICallback.success(Department.search(page, pageSize, dept)));
+			renderJSON(APICallback.success(Department.search(page, pageSize, department)));
 		}catch(Throwable e){
 			renderJSON(APICallback.fail(APIError.DEPT_FETCH_FAIL, e.getMessage()));
 		}
@@ -58,31 +52,32 @@ public class Departments extends Controller{
 	/**
 	 * Create dept info
 	 */
-	public static void create(final DepartmentVO dept) {
+	public static void create(final DepartmentVO department) {
 		
 		try{
-			DepartmentVO _dept = Department.createByVO(dept);
+			DepartmentVO _dept = Department.createByVO(department);
 			renderJSON(APICallback.success(_dept));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(dept, APIError.DEPT_CERATE_FAIL, e.getMessage()));
+			renderJSON(APICallback.fail(department, APIError.DEPT_CERATE_FAIL, e.getMessage()));
 		}
 	}
 	
 	/**
 	 * Update dept info
 	 */
-	public static void update(final DepartmentVO dept){
+	public static void update(final DepartmentVO department){
 		
 		try{
-			Department.updateByVO(dept);
-			renderJSON(APICallback.success(dept));
+			Department.updateByVO(department);
+			renderJSON(APICallback.success(department));
 		} catch (Throwable e){
 			renderJSON(APICallback.fail(APIError.DEPT_UPDATE_FAIL, e.getMessage()));
 		}
 	}
-
+	
 	/**
-	 * Delete dept info
+	 * Delete department info
+	 * @param id
 	 */
 	public static void destroy(Long id) {
 		try{
@@ -92,17 +87,24 @@ public class Departments extends Controller{
 			renderJSON(APICallback.fail(id, APIError.DEPT_DESTROY_FAIL, e.getMessage()));
 		}
 	}
-	
 	/**
-	 * Assign Department Driver and Department Leader
+	 * Assign Drivers to a Permission
 	 */
-	public static void assign(Long id, List<Long> driver_ids, List<Long> leader_ids) {
-		renderText(id + ", " + driver_ids + ", " + leader_ids);
+	public static void createRelations(Long id, List<Long> driver_ids, List<Long> leader_ids) {
 		try{
-			Department.assign(id, driver_ids, leader_ids);
+			Department.assign(id, driver_ids, leader_ids, false);
 			renderJSON(APICallback.success());
 		} catch (Throwable e){
 			renderJSON(APICallback.fail(APIError.DEPT_ASSIGN_FAIL, e.getMessage()));
+		}
+	}
+	
+	public static void destroyRelations(Long id, List<Long> driver_ids, List<Long> leader_ids) {
+		try{
+			Department.unassign(id, driver_ids, leader_ids);
+			renderJSON(APICallback.success());
+		} catch (Throwable e){
+			renderJSON(APICallback.fail(APIError.DEPT_UNASSIGN_FAIL, e.getMessage()));
 		}
 	}
 	
@@ -112,6 +114,18 @@ public class Departments extends Controller{
 			Map map = new HashMap();
 			map.put("drivers", Driver.toIds(dept.drivers));
 			map.put("leaders", Driver.toIds(dept.leaders));
+			
+			renderJSON(APICallback.success(map));
+		} catch (Throwable e){
+			renderJSON(APICallback.fail(APIError.DEPT_FETCH_FAIL, e.getMessage()));
+		}
+	}
+	
+	public static void assignables(){
+		try{
+			List<Driver> validList = Driver.assignables();
+			Map map = new HashMap();
+			map.put("drivers", Driver.toIds(validList));
 			
 			renderJSON(APICallback.success(map));
 		} catch (Throwable e){

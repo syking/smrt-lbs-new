@@ -22,29 +22,29 @@ import play.mvc.Controller;
 public class APIInterceptor extends Controller{
 	@Before(priority = 1, unless = { "api.Sessions.create", "api.Sessions.destroy" })
 	static void checkAuthenticated(final String session_id) {
-		APICallback cb = new APICallback();
-		cb.setRequest_uri(request.url);
-		if (session_id == null){
-			cb.setSuccess(false);
-			cb.setError(APIError.USER_LOGIN_REQUIRED);
-			cb.setError_desc("Session ID required");
-			renderJSON(cb);
-			return ;
-		}
-			
-		User loginUser = null;
-		if (session_id != null)
-			loginUser = Cache.get(session_id, User.class);
-		
-		if (loginUser == null){
-			cb.setSuccess(false);
-			cb.setError(APIError.USER_LOGIN_REQUIRED);
-			cb.setError_desc("Session ID invalid or not login");
-			renderJSON(cb);
-			return ;
-		}
-		
-		checkPermission(session_id);
+//		APICallback cb = new APICallback();
+//		cb.setRequest_uri(request.url);
+//		if (session_id == null){
+//			cb.setSuccess(false);
+//			cb.setError(APIError.USER_LOGIN_REQUIRED);
+//			cb.setError_desc("Session ID required");
+//			renderJSON(cb);
+//			return ;
+//		}
+//			
+//		User loginUser = null;
+//		if (session_id != null)
+//			loginUser = Cache.get(session_id, User.class);
+//		
+//		if (loginUser == null){
+//			cb.setSuccess(false);
+//			cb.setError(APIError.USER_LOGIN_REQUIRED);
+//			cb.setError_desc("Session ID invalid or not login");
+//			renderJSON(cb);
+//			return ;
+//		}
+//		
+//		checkPermission(session_id);
 	}
 	
 	static void checkPermission(final String sessionid) {

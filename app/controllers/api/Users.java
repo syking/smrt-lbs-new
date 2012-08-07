@@ -23,19 +23,11 @@ import controllers.Interceptor;
 @With(APIInterceptor.class)
 public class Users extends Controller{
 	
-	public static void index(final int page, final int pageSize){
-		try{
-			renderJSON(APICallback.success(User.search(page, pageSize, null)));
-		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.USER_FETCH_FAIL, e.getMessage()));
-		}
-	}
-	
 	/**
 	 * Fetch user's info
 	 * @param user
 	 */
-	public static void search(final int page, final int pageSize, final UserVO user){
+	public static void index(final int page, final int pageSize, final UserVO user){
 		try{
 			renderJSON(APICallback.success(User.search(page, pageSize, user)));
 		}catch(Throwable e){

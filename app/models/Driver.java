@@ -195,95 +195,110 @@ public class Driver extends Model{
 		return 100 - reduceTotal;
 	}
 
+	public static void deleteById(Long id) {
+		Driver obj = Driver.fetchById(id);
+		try {
+			obj.delete();
+		} catch (Throwable e) {
+			throw new RuntimeException("Could not Delete This Driver Cause It is Assigned to Department or Fleet !");
+		}
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
 			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (DriverVO vo : vos){
-			if (vo.id == null)
-				continue;
-			
-			Driver obj = Driver.findById(Long.parseLong(vo.id));
-			if (obj == null)
-				continue;
-			try {
-				obj.delete();
-			} catch (Throwable e) {
-				throw new RuntimeException("Could not Delete This Driver Cause It is Assigned to Department or Fleet !");
-			}
+			deleteById(vo.id);
 		}
 		
 		return true;
 	}
 
+	public static DriverVO createByVO(DriverVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Driver info required");
+		
+		vo.validate();
+		
+		Driver obj = new Driver();
+		obj.number = vo.number;
+		obj.name = vo.name;
+		obj.description = vo.description;
+		obj.email = vo.email;
+		
+		obj.department = Department.findByName(vo.department);
+		if (!CommonUtil.isBlank(vo.department) && obj.department == null)
+			throw new RuntimeException("Department Name is invalid");
+		
+		Driver db_driver = Driver.findByName(obj.name);
+		if (db_driver != null)
+			throw new RuntimeException("Name duplicate!");
+		
+		Driver db_driver2 = Driver.findByNumber(obj.number);
+		if (db_driver2 != null)
+			throw new RuntimeException("Number duplicate!");
+		
+		obj.create();
+		vo.id = obj.id;
+		
+		return vo;
+	}
+	
 	public static String createByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
 			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (DriverVO vo : vos){
-			vo.validate();
-			
-			Driver obj = new Driver();
-			obj.number = vo.number;
-			obj.name = vo.name;
-			obj.description = vo.description;
-			obj.email = vo.email;
-			
-			obj.department = Department.findByName(vo.department);
-			if (vo.department != null && !vo.department.isEmpty() && obj.department == null)
-				throw new RuntimeException("Department Name is invalid");
-			
-			Driver db_driver = Driver.findByName(obj.name);
-			if (db_driver != null)
-				throw new RuntimeException("DriverName duplicate!");
-			
-			Driver db_driver2 = Driver.findByNumber(obj.number);
-			if (db_driver2 != null)
-				throw new RuntimeException("DriverNumber duplicate!");
-			
-			obj.create();
-			vo.id = String.valueOf(obj.id);
+			vo = createByVO(vo);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		return _models;
 	}
 
+	public static void updateByVO(DriverVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Driver info required");
+		
+		if (vo.id == null)
+			throw new RuntimeException("id required");
+		
+		vo.validate();
+		
+		Driver obj = Driver.findById(vo.id);
+		if (obj == null)
+			throw new RuntimeException("id is invalid");
+		
+		obj.number = vo.number;
+		obj.name = vo.name;
+		obj.description = vo.description;
+		obj.email = vo.email;
+		
+		obj.department = Department.findByName(vo.department);
+		if (!CommonUtil.isBlank(vo.department) && obj.department == null)
+			throw new RuntimeException("Department Name is invalid");
+		
+		Driver db_driver = Driver.findByName(obj.name);
+		if (db_driver != null && db_driver.id != obj.id)
+			throw new RuntimeException("DriverName duplicate!");
+		
+		Driver db_driver2 = Driver.findByNumber(obj.number);
+		if (db_driver2 != null && db_driver2.id != obj.id)
+			throw new RuntimeException("DriverNumber duplicate!");
+		
+		obj.save();
+	}
+	
 	public static boolean updateByJson(String models) {
 		List<DriverVO> vos = CommonUtil.parseArray(models, DriverVO.class);
 		if (vos == null)
 			throw new RuntimeException("Could not Parse the Json Content!");
 		
 		for (DriverVO vo : vos){
-			vo.validate();
-			
-			if (vo.id == null)
-				continue;
-			
-			Driver obj = Driver.findById(Long.parseLong(vo.id));
-			if (obj == null)
-				continue;
-			
-			obj.number = vo.number;
-			obj.name = vo.name;
-			obj.description = vo.description;
-			obj.email = vo.email;
-			
-			obj.department = Department.findByName(vo.department);
-			if (vo.department != null && !vo.department.isEmpty() && obj.department == null)
-				throw new RuntimeException("Department Name is invalid");
-			
-			Driver db_driver = Driver.findByName(obj.name);
-			if (db_driver != null && db_driver.id != obj.id)
-				throw new RuntimeException("DriverName duplicate!");
-			
-			Driver db_driver2 = Driver.findByNumber(obj.number);
-			if (db_driver2 != null && db_driver2.id != obj.id)
-				throw new RuntimeException("DriverNumber duplicate!");
-			
-			obj.save();
+			updateByVO(vo);
 		}
 		
 		return true;
@@ -309,6 +324,13 @@ public class Driver extends Model{
 		return Driver.find("byNumber", driverNumber).first();
 	}
 
+	public static Map search(int page, int pageSize, DriverVO driver) {
+		if (driver == null)
+			return search(page, pageSize, null, null, null, null);
+		
+		return search(page, pageSize, driver.department, driver.number, driver.name, driver.description);
+	}
+	
 	public static Map search(int page, int pageSize, String departmentName, String number, String name, String description) {
 		List<Driver> drivers = Driver.findByCondition(page, pageSize, departmentName, number, name, description);
 		List<DriverVO> vos = Driver.assemDriverVO(drivers);
@@ -362,10 +384,9 @@ public class Driver extends Model{
 		return vos;
 	}
 
-	private static void parseCondition(String departmentName, String number,
-			String name, String description, StringBuilder sqlSB,
+	private static void parseCondition(String departmentName, String number, String name, String description, StringBuilder sqlSB,
 			List<Object> params) {
-		if (departmentName != null && !departmentName.isEmpty()){
+		if (!CommonUtil.isBlank(departmentName)){
 			Department dept = Department.findByName(departmentName);
 			if (dept != null) {
 				sqlSB.append("department = ?");
@@ -373,7 +394,7 @@ public class Driver extends Model{
 			}
 		}
 		
-		if (number != null && number.length() > 0) {
+		if (!CommonUtil.isBlank(number)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -381,7 +402,7 @@ public class Driver extends Model{
 			params.add("%" + number + "%");
 		}
 
-		if (name != null && name.length() > 0) {
+		if (!CommonUtil.isBlank(name)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -389,7 +410,7 @@ public class Driver extends Model{
 			params.add("%" + name + "%");
 		}
 		
-		if (description != null && description.length() > 0) {
+		if (!CommonUtil.isBlank(description)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -423,7 +444,7 @@ public class Driver extends Model{
 		return Driver.find("byName", name).first();
 	}
 
-	public static List<Long> toIds(Set<Driver> drivers) {
+	public static List<Long> toIds(Collection<Driver> drivers) {
 		if (drivers == null)
 			return null;
 		
@@ -434,5 +455,20 @@ public class Driver extends Model{
 		
 		return ids;
 	}
-	
+
+	public static Driver fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Driver driver = Driver.findById(id);
+		if (driver == null)
+			throw new RuntimeException("id invalid");
+		
+		return driver;
+	}
+
+	public static List<Driver> assignables() {
+		return find("department is null order by id desc").fetch();
+	}
+
 }

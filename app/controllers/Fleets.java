@@ -131,10 +131,10 @@ public class Fleets extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Fleets/assign.html")).render(map));
 	}
 	
-	public static void assignDriverAndVehicle(String fleetName, List<Long> drivers, List<Long> vehicles){
+	public static void assignDriverAndVehicle(String fleetName, List<Long> vehicles, List<Long> drivers){
 		Map map = new HashMap();
 		try{
-			boolean flag = Fleet.assignDriverAndVehicle(fleetName, drivers, vehicles);
+			boolean flag = Fleet.assign(fleetName, vehicles, drivers);
 			map.put("success", flag);
 		}catch(Exception e){
 			map.put("success", false);
@@ -161,7 +161,7 @@ public class Fleets extends Controller {
 	}
 	
 	public static void filter(String fleetName){
-		if (fleetName == null || fleetName.isEmpty())
+		if (CommonUtil.isBlank(fleetName))
 			renderJSON(Fleet.assemFleetTree());
 		else
 			renderJSON(Fleet.assemFleetTree(Fleet.findByCondition(-1, -1, null, fleetName), false));

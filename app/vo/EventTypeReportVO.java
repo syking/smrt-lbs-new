@@ -29,8 +29,5 @@ public class EventTypeReportVO {
 		this.end = end;
 	}
 	
-	
-	
-	
 }
  

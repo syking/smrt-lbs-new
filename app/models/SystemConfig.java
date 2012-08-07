@@ -32,14 +32,14 @@ public class SystemConfig extends Model {
 
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
-		if (CommonUtil.isEmptyString(value))
+		final String msg = "%s Can not be empty, ";
+		if (CommonUtil.isBlank(value))
 			builder.append(CommonUtil.formatStr(msg, "Value"));
 		
-		if (CommonUtil.isEmptyString(name))
+		if (CommonUtil.isBlank(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
 		
-		if (CommonUtil.isEmptyString(displayName))
+		if (CommonUtil.isBlank(displayName))
 			builder.append(CommonUtil.formatStr(msg, "DisplayName"));
 		
 		final String result = builder.toString();

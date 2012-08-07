@@ -23,19 +23,11 @@ import controllers.Interceptor;
 @With(APIInterceptor.class)
 public class Roles extends Controller{
 	
-	public static void index(final int page, final int pageSize){
-		try{
-			renderJSON(APICallback.success(Role.search(page, pageSize, null)));
-		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.ROLE_FETCH_FAIL, e.getMessage()));
-		}
-	}
-	
 	/**
 	 * Fetch role's info
 	 * @param role
 	 */
-	public static void search(final int page, final int pageSize, final RoleVO role){
+	public static void index(final int page, final int pageSize, final RoleVO role){
 		try{
 			renderJSON(APICallback.success(Role.search(page, pageSize, role)));
 		}catch(Throwable e){
@@ -103,19 +95,26 @@ public class Roles extends Controller{
 	 * @param userIds
 	 * @param permIds
 	 */
-	public static void assign(Long id, List<Long> user_ids, List<Long> perm_ids) {
-		renderText(id + ", " + user_ids + ", " + perm_ids);
+	public static void createRelations(Long id, List<Long> user_ids, List<Long> perm_ids) {
 		try{
-			Role.assign(id, user_ids, perm_ids);
+			Role.assign(id, user_ids, perm_ids, false);
 			renderJSON(APICallback.success());
 		} catch (Throwable e){
 			renderJSON(APICallback.fail(APIError.ROLE_ASSIGN_FAIL, e.getMessage()));
 		}
 	}
 	
+	public static void destroyRelations(Long id, List<Long> user_ids, List<Long> perm_ids) {
+		try{
+			Role.unassign(id, user_ids, perm_ids);
+			renderJSON(APICallback.success());
+		} catch (Throwable e){
+			renderJSON(APICallback.fail(APIError.ROLE_UNASSIGN_FAIL, e.getMessage()));
+		}
+	}
+	
 	public static void relations(Long id) {
 		try{
-			
 			Role role = Role.fetchById(id);
 			Map map = new HashMap();
 			map.put("users", User.toIds(role.users));

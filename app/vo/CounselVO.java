@@ -13,7 +13,7 @@ import utils.CommonUtil;
 import models.Counselling;
 
 public class CounselVO {
-	public String id;
+	public Long id;
 	public String userName = "";
 	public String driverName = "";
 	public String startDate;
@@ -23,7 +23,7 @@ public class CounselVO {
 	public String remark;
 	
 	public CounselVO init(Counselling c){
-		this.id = String.valueOf(c.id);
+		this.id = c.id;
 		if (c.user != null)
 			this.userName = c.user.name;
 		if (c.driver != null)
@@ -39,32 +39,32 @@ public class CounselVO {
 	
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
-		if (CommonUtil.isEmptyString(userName))
+		final String msg = "%s Can not be empty, ";
+		if (CommonUtil.isBlank(userName))
 			builder.append(CommonUtil.formatStr(msg, "UserName"));
 		
-		if (CommonUtil.isEmptyString(driverName))
+		if (CommonUtil.isBlank(driverName))
 			builder.append(CommonUtil.formatStr(msg, "DriverName"));
 		
-		if (CommonUtil.isEmptyString(startDate))
+		if (CommonUtil.isBlank(startDate))
 			builder.append(CommonUtil.formatStr(msg, "StartDate"));
 		
 		if (!CommonUtil.isValidDate(startDate))
 			builder.append("StartDate yyyy-MM-dd, ");
 		
-		if (CommonUtil.isEmptyString(startTime))
+		if (CommonUtil.isBlank(startTime))
 			builder.append(CommonUtil.formatStr(msg, "StartTime"));
 		
 		if (!CommonUtil.isValidTime(startTime))
 			builder.append("StartTime HH:mm:ss, ");
 		
-		if (CommonUtil.isEmptyString(endDate))
+		if (CommonUtil.isBlank(endDate))
 			builder.append(CommonUtil.formatStr(msg, "EndDate"));
 		
 		if (!CommonUtil.isValidDate(endDate))
 			builder.append("EndDate yyyy-MM-dd, ");
 		
-		if (CommonUtil.isEmptyString(endTime))
+		if (CommonUtil.isBlank(endTime))
 			builder.append(CommonUtil.formatStr(msg, "EndTime"));
 		
 		if (!CommonUtil.isValidTime(endTime))

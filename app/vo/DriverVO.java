@@ -13,7 +13,7 @@ public class DriverVO
 {
 
     public DriverVO init(Driver driver){
-        this.id = String.valueOf(driver.id);
+        this.id = driver.id;
         this.number = driver.number;
         this.name = driver.name;
         this.email = driver.email;
@@ -24,7 +24,7 @@ public class DriverVO
         return this;
     }
 
-    public String id;
+    public Long id;
     public String number;
     public String name;
     public String email;
@@ -33,11 +33,11 @@ public class DriverVO
     
     public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
-		if (CommonUtil.isEmptyString(number))
+		final String msg = "%s Can not be empty, ";
+		if (CommonUtil.isBlank(number))
 			builder.append(CommonUtil.formatStr(msg, "Number"));
 		
-		if (CommonUtil.isEmptyString(name))
+		if (CommonUtil.isBlank(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
 		
 		if (!CommonUtil.isValidEmail(email))

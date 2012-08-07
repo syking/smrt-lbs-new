@@ -148,9 +148,9 @@ public class Event extends Model{
 
 		List<Event> events = null;
 		if (page > 0 && pageSize > 0) 
-			events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch(page, pageSize);
+			events = Event.find("select e from Event e " + sqlSB.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
 		else 
-			events = Event.find("select e from Event e " + sqlSB.toString(), params.toArray()).fetch();
+			events = Event.find("select e from Event e " + sqlSB.toString() + " order by id desc", params.toArray()).fetch();
 		
 		List<EventVO> eventVOList = new ArrayList<EventVO>();
 		if (events != null)
@@ -173,7 +173,7 @@ public class Event extends Model{
 			params.add(driver);
 		}
 
-		if (serviceNo != null && serviceNo.trim().length() > 0) {
+		if (!CommonUtil.isBlank(serviceNo)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 

@@ -17,6 +17,8 @@ public interface APIError {
 	String ROLE_UPDATE_FAIL = "role_update_fail";
 	String ROLE_DESTROY_FAIL = "role_destroy_fail";
 	String ROLE_ASSIGN_FAIL = "role_assign_fail";
+	String ROLE_UNASSIGN_FAIL = "role_unassign_fail";
+	
 	
 	String PERM_CERATE_FAIL = "perm_create_fail";
 	String PERM_FETCH_FAIL = "perm_fetch_fail";
@@ -28,4 +30,27 @@ public interface APIError {
 	String DEPT_UPDATE_FAIL = "dept_update_fail";
 	String DEPT_DESTROY_FAIL = "dept_destroy_fail";
 	String DEPT_ASSIGN_FAIL = "dept_assign_fail";
+	String DEPT_UNASSIGN_FAIL = "dept_unassign_fail";
+	
+	String FLEET_CERATE_FAIL = "fleet_create_fail";
+	String FLEET_FETCH_FAIL = "fleet_fetch_fail";
+	String FLEET_UPDATE_FAIL = "fleet_update_fail";
+	String FLEET_DESTROY_FAIL = "fleet_destroy_fail";
+	String FLEET_ASSIGN_FAIL = "fleet_assign_fail";
+	String FLEET_UNASSIGN_FAIL = "fleet_unassign_fail";
+	
+	String DRIVER_CERATE_FAIL = "driver_create_fail";
+	String DRIVER_FETCH_FAIL = "driver_fetch_fail";
+	String DRIVER_UPDATE_FAIL = "driver_update_fail";
+	String DRIVER_DESTROY_FAIL = "driver_destroy_fail";
+	
+	String DEVICE_CERATE_FAIL = "device_create_fail";
+	String DEVICE_FETCH_FAIL = "device_fetch_fail";
+	String DEVICE_UPDATE_FAIL = "device_update_fail";
+	String DEVICE_DESTROY_FAIL = "device_destroy_fail";
+	
+	String COUNSELLING_CERATE_FAIL = "counselling_create_fail";
+	String COUNSELLING_FETCH_FAIL = "counselling_fetch_fail";
+	String COUNSELLING_UPDATE_FAIL = "counselling_update_fail";
+	String COUNSELLING_DESTROY_FAIL = "counselling_destroy_fail";
 }

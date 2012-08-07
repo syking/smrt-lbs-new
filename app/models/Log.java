@@ -87,27 +87,27 @@ public class Log extends Model {
 	}
 	
 	private static void parseCondition(String type, String name, String content, String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip, List<String> criteria, List<Object> params) {
-		if (null != type && !type.isEmpty()) {
+		if (!CommonUtil.isBlank(type)) {
 			criteria.add("type LIKE ?");
 			params.add("%" + type + "%");
 		}
 
-		if (null != name && !name.isEmpty()) {
+		if (!CommonUtil.isBlank(name)) {
 			criteria.add("name LIKE ?");
 			params.add("%" + name + "%");
 		}
 
-		if (null != content && !content.isEmpty()) {
+		if (!CommonUtil.isBlank(content)) {
 			criteria.add("content LIKE ?");
 			params.add("%" + content + "%");
 		}
 
-		if (null != actions && !actions.isEmpty()) {
+		if (!CommonUtil.isBlank(actions)) {
 			criteria.add("action LIKE ?");
 			params.add("%" + actions + "%");
 		}
 
-		if (null != ip && !ip.isEmpty()) {
+		if (!CommonUtil.isBlank(ip)) {
 			criteria.add("ip LIKE ?");
 			params.add("%" + ip + "%");
 		}
@@ -120,7 +120,10 @@ public class Log extends Model {
 		}
 
 		// date and time
-		if ((null != startDate && !startDate.isEmpty())) {
+		if (!CommonUtil.isBlank(startDate)) {
+			if (CommonUtil.isBlank(startTime))
+				startTime = "00:00";
+			
 			String startDateTimeString = startDate + " " + startTime;
 			DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			Date startDateTime = null;
@@ -133,7 +136,10 @@ public class Log extends Model {
 			params.add(startDateTime);
 		}
 
-		if ((null != endDate && !endDate.isEmpty())) {
+		if (!CommonUtil.isBlank(endDate)) {
+			if (CommonUtil.isBlank(endTime))
+				endTime = "00:00";
+			
 			String endDateTimeString = endDate + " " + endTime;
 			DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			Date endDateTime = null;
@@ -150,7 +156,7 @@ public class Log extends Model {
 	private static List<Log> filter(int page, int pageSize, List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		String query = StringUtils.join(criteria, " AND ");
-		List<Log> vehicles = Log.find(query + "order by id desc", p).fetch(page, pageSize);
+		List<Log> vehicles = Log.find(query + " order by id desc", p).fetch(page, pageSize);
 		return vehicles;
 	}
 	

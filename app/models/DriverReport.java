@@ -167,16 +167,10 @@ public class DriverReport extends Model {
 		parseCondition(driver, timeType, startTime, endTime, sql, params);
 		
 		List<DriverReport> _drs = null;
-		if (sql.length() > 0 && !params.isEmpty())
-			if (page <= 0 || pageSize <= 0)
-				_drs = DriverReport.find(sql.toString(), params.toArray()).fetch();
-			else
-				_drs = DriverReport.find(sql.toString(), params.toArray()).fetch(page, pageSize);
+		if (page <= 0 || pageSize <= 0)
+			_drs = DriverReport.find(sql.toString() + " order by id desc", params.toArray()).fetch();
 		else
-			if (page <= 0 || pageSize <= 0)
-				_drs = DriverReport.all().fetch();
-			else
-				_drs = DriverReport.all().fetch(page, pageSize);
+			_drs = DriverReport.find(sql.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
 		
 		if (_drs != null && !_drs.isEmpty())
 			drs.addAll(_drs);
@@ -201,19 +195,19 @@ public class DriverReport extends Model {
 			params.add(driver);
 		}
 		
-		if (timeType != null && !timeType.isEmpty()) {
+		if (!CommonUtil.isBlank(timeType)) {
 			if (sql.length() > 0)
 				sql.append(" and ");
 			
 			sql.append("timeType = ?");
 			params.add(timeType);
 			
-			if (startTime != null && !startTime.isEmpty()){
+			if (!CommonUtil.isBlank(startTime)){
 				sql.append(" and startTime >= ?");
 				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, startTime));
 			}
 			
-			if (endTime != null && !endTime.isEmpty()){
+			if (!CommonUtil.isBlank(endTime)){
 				sql.append(" and endTime < ?");
 				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, endTime));
 			}

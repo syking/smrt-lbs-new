@@ -62,11 +62,33 @@ public class Fleet extends Model{
 	
 	@Transient
 	public final static String iconUrl = "../../public/images/fleet.png";
-	
 
 	@Override
 	public String toString() {
 		return "Fleet [name=" + name + ", id=" + id + "]";
+	}
+	
+	public static FleetVO createByVO(FleetVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Fleet info required");
+		vo.validate();
+		
+		Fleet fleet = new Fleet();
+		fleet.name = vo.name;
+		fleet.description = vo.description;
+		fleet.placeNumber = vo.placeNumber;
+		fleet.parent = Fleet.findByName(vo.parentName);
+		if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
+			throw new RuntimeException("ParentName is invalid!");
+		
+		Fleet db_fleet = Fleet.findByName(fleet.name);
+		if (db_fleet != null)
+			throw new RuntimeException("FleetName duplicate!");
+		
+		fleet.create();
+		vo.id = fleet.id;
+		
+		return vo;
 	}
 	
 	public static String createByJson(String models) {
@@ -75,26 +97,35 @@ public class Fleet extends Model{
 			return models;
 		
 		for (FleetVO vo : vos){
-			vo.validate();
-			
-			Fleet fleet = new Fleet();
-			fleet.name = vo.name;
-			fleet.description = vo.description;
-			fleet.placeNumber = vo.placeNumber;
-			fleet.parent = Fleet.findByName(vo.parentName);
-			if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
-				throw new RuntimeException("ParentName is invalid!");
-			
-			Fleet db_fleet = Fleet.findByName(fleet.name);
-			if (db_fleet != null)
-				throw new RuntimeException("FleetName duplicate!");
-			
-			fleet.create();
-			vo.id = String.valueOf(fleet.id);
+			createByVO(vo);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
 		return _models;
+	}
+	
+	public static void updateByVO(FleetVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Fleet info required");
+		
+		vo.validate();
+		
+		Fleet fleet = Fleet.findById(vo.id);
+		if (fleet == null)
+			throw new RuntimeException("id is invalid") ;
+		
+		fleet.name = vo.name;
+		fleet.description = vo.description;
+		fleet.placeNumber = vo.placeNumber;
+		fleet.parent = Fleet.findByName(vo.parentName);
+		if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
+			throw new RuntimeException("ParentName is invalid!");
+		
+		Fleet db_fleet = Fleet.findByName(fleet.name);
+		if (db_fleet != null && db_fleet.id != fleet.id)
+			throw new RuntimeException("FleetName duplicate!");
+		
+		fleet.save();
 	}
 	
 	public static boolean updateByJson(String models) {
@@ -103,49 +134,32 @@ public class Fleet extends Model{
 			return false;
 		
 		for (FleetVO vo : vos){
-			vo.validate();
-			
-			Long id = Long.parseLong(vo.id);
-			Fleet fleet = Fleet.findById(id);
-			if (fleet == null)
-				continue ;
-			
-			fleet.name = vo.name;
-			fleet.description = vo.description;
-			fleet.placeNumber = vo.placeNumber;
-			fleet.parent = Fleet.findByName(vo.parentName);
-			if (vo.parentName != null && !vo.parentName.isEmpty() && fleet.parent == null)
-				throw new RuntimeException("ParentName is invalid!");
-			
-			Fleet db_fleet = Fleet.findByName(fleet.name);
-			if (db_fleet != null && db_fleet.id != fleet.id)
-				throw new RuntimeException("FleetName duplicate!");
-			
-			fleet.save();
+			updateByVO(vo);
 		}
 		
 		return true;
 	}
 
+	public static void deleteById(Long id) {
+		Fleet fleet = Fleet.fetchById(id);
+		
+		if ((fleet.leaders != null && !fleet.leaders.isEmpty()) || (fleet.vehicles != null && !fleet.vehicles.isEmpty()))
+			throw new RuntimeException("This Fleet is related to Drivers or Vehicles!");
+		
+		try {
+			fleet.delete();
+		} catch (Throwable e) {
+			throw new RuntimeException("This Fleet is A Parent Fleet of Other Fleet!");
+		}
+	}
+	
 	public static boolean deleteByJson(String models) {
 		List<FleetVO> vos = JSON.parseArray(models, FleetVO.class);
 		if (vos == null)
 			return false;
 		
 		for (FleetVO vo : vos){
-			Long id = Long.parseLong(vo.id);
-			Fleet fleet = Fleet.findById(id);
-			if (fleet == null)
-				throw new RuntimeException("fleet not found") ;
-			
-			if ((fleet.leaders != null && !fleet.leaders.isEmpty()) || (fleet.vehicles != null && !fleet.vehicles.isEmpty()))
-				throw new RuntimeException("This Fleet is related to Drivers or Vehicles!");
-			
-			try {
-				fleet.delete();
-			} catch (Throwable e) {
-				throw new RuntimeException("This Fleet is A Parent Fleet of Other Fleet!");
-			}
+			deleteById(vo.id);
 		}
 		
 		return true;
@@ -173,6 +187,13 @@ public class Fleet extends Model{
 		return Fleet.count(sqlSB.toString(), params.toArray());
 	}
 	
+	public static Map search(int page, int pageSize, FleetVO fleet) {
+		if (fleet == null)
+			return search(page, pageSize, null, null);
+		
+		return search(page, pageSize, fleet.placeNumber, fleet.name);
+	}
+	
 	public static Map search(int page, int pageSize, String placeNumber, String name) {
 		Map map  = new HashMap();
 		map.put("total", Fleet.countByCondition(placeNumber, name));
@@ -181,14 +202,13 @@ public class Fleet extends Model{
 		return map;
 	}
 
-	private static void parseCondition(final String placeNumber,
-			final String name, StringBuilder sqlSB, List<Object> params) {
-		if (placeNumber != null && placeNumber.trim().length() > 0) {
+	private static void parseCondition(final String placeNumber, final String name, StringBuilder sqlSB, List<Object> params) {
+		if (!CommonUtil.isBlank(placeNumber)) {
 			sqlSB.append("placeNumber like ?");
 			params.add("%" + placeNumber + "%");
 		}
 
-		if (name != null && name.trim().length() > 0) {
+		if (!CommonUtil.isBlank(name)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
@@ -254,14 +274,25 @@ public class Fleet extends Model{
 		return result;
 	}
 	
-	@Transactional
-	public static boolean assignDriverAndVehicle(String fleetName, List<Long> leaders, List<Long> vehicles) {
+	public static boolean assign(Long fleetId, List<Long> vehicles, List<Long> leaders, boolean isRemove) {
+		Fleet fleet = Fleet.fetchById(fleetId);
+		return assign(fleet, vehicles, leaders, isRemove);
+	}
+	
+	public static boolean assign(String fleetName, List<Long> vehicles, List<Long> leaders) {
 		Fleet fleet = Fleet.findByName(fleetName);
 		if (fleet == null)
 			throw new RuntimeException("Fleet required !");
 		
+		return assign(fleet, vehicles, leaders, true);
+	}
+	
+	@Transactional
+	public static boolean assign(Fleet fleet, List<Long> vehicles, List<Long> leaders, boolean isRemove) {
 		if (leaders != null){
-			fleet.leaders = new HashSet<Driver>();
+			if (isRemove)
+				fleet.leaders = new HashSet<Driver>();
+			
 			for (Long id : leaders){
 				Driver d = Driver.findById(id);
 				if (d == null)
@@ -274,9 +305,11 @@ public class Fleet extends Model{
 		}
 		
 		if (vehicles != null){
-			for (Vehicle v : fleet.vehicles){
-				v.fleet = null;
-				v.save();
+			if (isRemove){
+				for (Vehicle v : fleet.vehicles){
+					v.fleet = null;
+					v.save();
+				}
 			}
 			
 			for (Long id : vehicles){
@@ -285,6 +318,39 @@ public class Fleet extends Model{
 					continue;
 				
 				v.fleet = fleet;
+				v.save();
+			}
+		}
+		
+		if (leaders != null || vehicles != null){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Transactional
+	public static boolean unassign(Long fleetId, List<Long> vehicles, List<Long> leaders) {
+		Fleet fleet = Fleet.fetchById(fleetId);
+		if (leaders != null){
+			for (Long id : leaders){
+				Driver d = Driver.findById(id);
+				if (d == null)
+					continue;
+				
+				fleet.leaders.remove(d);
+			}
+			
+			fleet.save();
+		}
+		
+		if (vehicles != null){
+			for (Long id : vehicles){
+				Vehicle v = Vehicle.findById(id);
+				if (v == null)
+					continue;
+				
+				v.fleet = null;
 				v.save();
 			}
 		}
@@ -370,4 +436,15 @@ public class Fleet extends Model{
 		
 		return map;
     }
+
+	public static Fleet fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		Fleet fleet = Fleet.findById(id);
+		if (fleet == null)
+			throw new RuntimeException("id is invalid");
+			
+		return fleet;
+	}
 }
