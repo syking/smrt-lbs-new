@@ -66,11 +66,11 @@
 	$(document).ready(function(){
 		var h1 = $("body").css("height").replace("px", "");
 	    var h2 = $("#header").css("height").replace("px", "");
-	    var _height = (h1-h2) - 60;
+	    var _height = (h1-h2) - 70;
 		$(".assign_wrap").css("height", _height+"px");
-		$("#${tabid}_roles").css("height", _height-50+"px");
-		$("#${tabid}_users").css("height", _height-50+"px");
-		$("#${tabid}_perms").css("height", _height-50+"px");
+		$("#${tabid}_roles").css("height", _height-60+"px");
+		$("#${tabid}_users").css("height", _height-60+"px");
+		$("#${tabid}_perms").css("height", _height-60+"px");
 		
 		var rolesJson = #{verbatim} ${roles} #{/verbatim};
 		roleTreeView = $(roleTreeId).kendoTreeView({
@@ -93,7 +93,8 @@
 	        select: onPermSelect
 		}).data("kendoTreeView");
 		
-		$(".input_tree input").click(tree_click);
+		$(".input_tree input").unbind("click");
+		$(".input_tree input").bind("click", tree_click);
 	});	
 	
 	function onRoleSelect(e){
@@ -107,7 +108,10 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-	     	alert(e.responseText);
+	     	var err = e.responseText;
+			if (!err || $.trim(err).length == 0)
+				err = "server error or connection failed";
+	     	alert(err);
 		});
 		
 		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
@@ -117,7 +121,10 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-	     	alert(e.responseText);
+	     	var err = e.responseText;
+			if (!err || $.trim(err).length == 0)
+				err = "server error or connection failed";
+	     	alert(err);
 		});
 	}
 	
@@ -157,7 +164,10 @@
 				alert("assign fail !");
 			}
 		}).error(function(e){
-	     	alert(e.responseText);
+	     	var err = e.responseText;
+			if (!err || $.trim(err).length == 0)
+				err = "server error or connection failed";
+	     	alert(err);
 		});
 		
 		return false;
