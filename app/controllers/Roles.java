@@ -2,7 +2,6 @@ package controllers;
 
 import static models.User.Constant.THEME;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +9,13 @@ import java.util.Map;
 import models.Permission;
 import models.Role;
 import models.User;
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.Grid;
 import vo.RoleVO;
+import annotations.Perm;
 
 import com.google.gson.Gson;
 
@@ -44,19 +43,19 @@ public class Roles extends Controller{
 		renderJSON(Role.search(page, pageSize, null, null));
 	}
 	
-	@annotations.Perm
+	@Perm
 	public static void create(String models) {
 		renderJSON(Role.createByJson(models));
 	}
 	
-	@annotations.Perm
+	@Perm
 	public static void update(String models){
 		if (Role.updateByJson(models))
 			renderJSON(models);
 		
 	}
 
-	@annotations.Perm
+	@Perm
 	public static void destroy(String models) {
 		if (Role.deleteByJson(models))
 			renderJSON(models);
@@ -66,7 +65,7 @@ public class Roles extends Controller{
 		renderJSON(Role.search(page, pageSize, roleName, desc));
 	}
 	
-	@annotations.Perm
+	@Perm
 	public static void assign(String id){
 		Map map = new HashMap();
 		map.put("tabid", id);
@@ -78,7 +77,7 @@ public class Roles extends Controller{
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Roles/assign.html")).render(map));
 	}
 	
-	@annotations.Perm
+	@Perm
 	public static void assignUserAndPerm(String roleName, List<Long> users, List<Long> perms){
 		Map map = new HashMap();
 		try{

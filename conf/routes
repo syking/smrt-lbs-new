@@ -12,6 +12,10 @@ GET     /favicon.ico                            			404
 GET     /public/                                			staticDir:public
 
 # RESTful api
+GET		/api/gps/events/{<[0-9]+>id}						api.GPS.eventsById
+GET		/api/gps/vehicles/{<[0-9]+>id}						api.GPS.vehiclesById
+GET		/api/gps/vehicles/{<[0-9]+>id}/route				api.GPS.routeByVehicleId
+GET		/api/gps/vehicles/{vehicleNumber}/route				api.GPS.routeByVehicleNumber
 GET		/api/{controller}									api.{controller}.index
 GET		/api/{controller}/{<[0-9]+>id}						api.{controller}.show
 *		/api/{controller}/{<[0-9]+>id}/destroy				api.{controller}.destroy

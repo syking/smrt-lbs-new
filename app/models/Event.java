@@ -131,6 +131,19 @@ public class Event extends Model{
 		return Event.count("select count(e) from Event e left join e.eventRecord er where er.type.techName = ? and e.driver.id = ? " + _sql, _params.toArray());
 	}
 	
+	public static Map search(int page, int pageSize, Date startTime, Date endTime, EventVO event){
+		Map map = null;
+		if (event == null)
+			map = search(page, pageSize, null, null, null, null, null);
+		else
+			map = search(page, pageSize, event.driver, event.serviceNo, event.type, startTime, endTime);
+		
+		if (map != null)
+			map.remove("columns");
+		
+		return map;
+	}
+	
 	/**
 	 * 
 	 * @param page <0 表示fetch all
@@ -138,7 +151,32 @@ public class Event extends Model{
 	 * @return
 	 */
 	public static Map search(int page, int pageSize, String driverName, String serviceNo, String typeName, Date startTime, Date endTime){
-		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
+		List<EventVO> eventVOList = new ArrayList<EventVO>();
+		Map _map = searchEvent(page, pageSize, driverName, serviceNo, typeName, startTime, endTime);
+		List<Event> events = (List<Event>) _map.get("data");
+		if (events != null)
+			for (Event e : events) 
+				eventVOList.add(new EventVO().init(e));
+		
+		Map map = new HashMap();
+		map.put("data", eventVOList);
+		map.put("columns", CommonUtil.assemColumns(EventVO.class));
+		map.put("total", _map.get("total"));
+		
+		return map;
+	}
+	
+	public static Map searchEvent(int page, int pageSize, EventVO event, Date startTime, Date endTime){
+		Map map = null;
+		if (event == null)
+			map = searchEvent(page, pageSize, null, null, null, null, null);
+		else
+			map = searchEvent(page, pageSize, event.driver, event.serviceNo, event.type, startTime, endTime);
+		
+		return map;
+	}
+	
+	public static Map searchEvent(int page, int pageSize, String driverName, String serviceNo, String typeName, Date startTime, Date endTime){
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
 		parseCondition(driverName, serviceNo, typeName, startTime, endTime, sqlSB, params);
@@ -152,17 +190,10 @@ public class Event extends Model{
 		else 
 			events = Event.find("select e from Event e " + sqlSB.toString() + " order by e.id desc", params.toArray()).fetch();
 		
-		List<EventVO> eventVOList = new ArrayList<EventVO>();
-		if (events != null)
-			for (Event e : events) 
-				eventVOList.add(new EventVO().init(e));
-
 		Map map = new HashMap();
-		map.put("data", eventVOList);
-		map.put("columns", CommonUtil.assemColumns(EventVO.class));
-		
-		long count = Event.count("select count(e.id) from Event e " + sqlSB.toString(), params.toArray());
-		map.put("total", count);
+		map.put("data", events);
+		long total = Event.count("select count(e.id) from Event e " + sqlSB.toString(), params.toArray());
+		map.put("total", total);
 		
 		return map;
 	}
@@ -177,8 +208,8 @@ public class Event extends Model{
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 
-			sqlSB.append("e.serviceNumber = ?");
-			params.add(serviceNo.trim());
+			sqlSB.append("e.serviceNumber like ?");
+			params.add("%"+serviceNo.trim()+"%");
 		}
 
 		if (!CommonUtil.isBlank(typeName)) {
@@ -201,6 +232,17 @@ public class Event extends Model{
 			params.add(startTime);
 			params.add(_endTime);
 		}
+	}
+
+	public static Event fetchById(Long id) {
+		Event event = Event.findById(id);
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		if (event == null)
+			throw new RuntimeException("id is invalid");
+		
+		return event;
 	}
 	
 }

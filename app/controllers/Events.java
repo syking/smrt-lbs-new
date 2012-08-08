@@ -22,6 +22,7 @@ import vo.ComboVO;
 import vo.EventGPS;
 import vo.EventVO;
 import vo.Grid;
+import annotations.Perm;
 
 @With(Interceptor.class)
 public class Events extends Controller {
@@ -72,6 +73,7 @@ public class Events extends Controller {
 	}
 
 	/* 传进来车辆车牌号，返回该车辆的所有事件 GPS 信息 */
+	@Perm
 	public static void gps(String vehicleNo, Long eventId) {
 		if (eventId == null || eventId <= 0) {
 			renderJSON(Event.findGPS(vehicleNo));
@@ -92,7 +94,7 @@ public class Events extends Controller {
 		renderJSON(eGps);
 	}
 
-	@annotations.Perm
+	@Perm
 	public static void read() {
 		List<EventRecord> ers = EventRecord.findAll();
 		if (ers == null)
@@ -110,13 +112,13 @@ public class Events extends Controller {
 		renderJSON(result);
 	}
 
-	@annotations.Perm
+	@Perm
 	public static void search(int page, int pageSize, String driverName, String serviceNo, String typeName, Date startTime, Date endTime) {
 		Map data = Event.search(page, pageSize, driverName, serviceNo, typeName, startTime, endTime);
 		renderJSON(data);
 	}
 
-	@annotations.Perm
+	@Perm
 	public static void grid(String id) {
 
 		List<Driver> drList = Driver.findAll();

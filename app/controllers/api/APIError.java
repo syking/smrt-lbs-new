@@ -53,4 +53,8 @@ public interface APIError {
 	String COUNSELLING_FETCH_FAIL = "counselling_fetch_fail";
 	String COUNSELLING_UPDATE_FAIL = "counselling_update_fail";
 	String COUNSELLING_DESTROY_FAIL = "counselling_destroy_fail";
+	
+	String EVENT_FETCH_FAIL = "event_fetch_fail";
+	
+	String GPS_FETCH_FAIL = "gps_fetch_fail";
 }

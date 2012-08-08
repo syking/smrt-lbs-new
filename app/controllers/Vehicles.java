@@ -313,21 +313,7 @@ public class Vehicles extends Controller {
 	 * 查询车辆的行驶路径
 	 */
 	public static void searchPath(String vehicleNo, String startDate, String startTime, String endDate, String endTime) {
-		Vehicle vehicle = Vehicle.findByNumber(vehicleNo);
-		if (vehicle == null)
-			return ;
-		
-		List<String[]> points = new ArrayList<String[]>();
-		
-		Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm", startDate + " " + startTime);
-		Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endDate + " " + endTime);
-		
-		List<GPSDataRecord> gps = GPSDataRecord.find("device_key = ? and time >= ? and time < ?", vehicle.device.key, start, end).fetch();
-		if (gps == null)
-			return;
-		
-		for (GPSDataRecord g : gps)
-			points.add(new String[] { g.longitude, g.latitude });
+		List<String[]> points = Vehicle.routeGPS(-1, -1, vehicleNo, startDate, startTime, endDate, endTime);
 
 		renderJSON(points);
 	}

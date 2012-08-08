@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -134,6 +135,11 @@ public class Vehicle extends Model {
 		return vehicles;
 	}
 
+	public static List<VehicleGPS> findGPS(){
+		List<Vehicle> vehicles = Vehicle.findAll();
+		return findGPS(vehicles);
+	}
+	
 	/**
 	 * @param vehicles
 	 * @return
@@ -404,7 +410,7 @@ public class Vehicle extends Model {
 			v.description = vehicleVO.description;
 			v.type = vehicleVO.type;
 			
-			Vehicle db_v = Vehicle.findByNumber(v.number);
+			Vehicle db_v = findByNumber(v.number);
 			if (db_v != null && db_v.id != v.id)
 				throw new RuntimeException("VehicleNumber duplicate!");
 			
@@ -418,6 +424,10 @@ public class Vehicle extends Model {
 		return true;
 	}
 
+	public static Vehicle findByNumber(String number){
+		return Vehicle.find("number = ?", number).first();
+	}
+	
 	public static List<ComboVO> assemComboVO() {
 		return assemComboVO(null);
 	}
@@ -434,8 +444,13 @@ public class Vehicle extends Model {
 		return result;
 	}
 
-	public static Vehicle findByNumber(String vehicleNumber) {
-		return Vehicle.find("byNumber", vehicleNumber).first();
+	public static Vehicle fetchByNumber(String vehicleNumber) {
+		if (CommonUtil.isBlank(vehicleNumber))
+			throw new RuntimeException("vehicle number required");
+		Vehicle vehicle = Vehicle.find("byNumber", vehicleNumber).first();
+		if (vehicle == null)
+			throw new RuntimeException("vehicle number is invalid");
+		return vehicle;
 	}
 	
 	public static Map search(int page, int pageSize, String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type){
@@ -525,4 +540,104 @@ public class Vehicle extends Model {
 	public static List<Vehicle> assignables() {
 		return Vehicle.find("fleet is null order by id desc").fetch();
 	}
+
+	public static Vehicle fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		Vehicle vehicle = Vehicle.findById(id);
+		if (vehicle == null)
+			throw new RuntimeException("id is invalid");
+		
+		return vehicle;
+	}
+	
+	public static List<String[]> routeGPS(int page, int pageSize, Long id, String startTime, String endTime) {
+		Vehicle vehicle = Vehicle.fetchById(id);
+		return routeGPS(page, pageSize, vehicle, startTime, endTime);
+	}
+	
+	public static List<String[]> routeGPS(int page, int pageSize, String vehicleNo, String startTime, String endTime) {
+		Vehicle vehicle = Vehicle.fetchByNumber(vehicleNo);
+		return routeGPS(page, pageSize, vehicle, startTime, endTime);
+	}
+	
+	public static List<String[]> routeGPS(int page, int pageSize, Vehicle vehicle, String startTime, String endTime) {
+		List<String[]> points = new ArrayList<String[]>();
+		StringBuilder sb = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseRouteCondition(vehicle, startTime, endTime, sb, params);
+		
+		List<GPSDataRecord> gps = null;
+		if (page > 0 && pageSize > 0)
+			gps = GPSDataRecord.find(sb.toString(), params.toArray()).fetch(page, pageSize);
+		else
+			gps = GPSDataRecord.find(sb.toString(), params.toArray()).fetch();
+		
+		if (gps != null){
+			for (GPSDataRecord g : gps)
+				points.add(new String[] { g.longitude, g.latitude });
+		}
+		
+		return points;
+	}
+
+	public static long countRouteGPS(String vehicleNumber, String start, String end){
+		Vehicle vehicle = Vehicle.fetchByNumber(vehicleNumber);
+		return countRouteGPS(vehicle, start, end);
+	}
+	
+	public static long countRouteGPS(Long id, String start, String end){
+		Vehicle vehicle = Vehicle.fetchById(id);
+		return countRouteGPS(vehicle, start, end);
+	}
+	
+	public static long countRouteGPS(Vehicle vehicle, String start, String end){
+		StringBuilder sb = new StringBuilder();
+		List<Object> params = new ArrayList<Object>();
+		parseRouteCondition(vehicle, start, end, sb, params);
+		
+		return GPSDataRecord.count(sb.toString(), params.toArray());
+	}
+	
+	
+	private static void parseRouteCondition(Vehicle vehicle, String startTime,String endTime, StringBuilder sb, List<Object> params) {
+		if (vehicle != null && vehicle.device != null){
+			sb.append("device_key = ?");
+			params.add(vehicle.device.key);
+		}
+		
+		Date start = null;
+		Date end = null;
+		if (!CommonUtil.isBlank(startTime)){
+			try{
+				start = CommonUtil.newDate("yyyy-MM-dd HH:mm", startTime);
+				if (!CommonUtil.isBlank(endTime)){
+					end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endTime);
+				}
+			} catch (Throwable e){
+				throw new RuntimeException("StartTime or endTime format invalid. yyyy-MM-dd HH:mm");
+			}
+		}
+		
+		if (start != null){
+			if (sb.length() > 0)
+				sb.append(" and ");
+			sb.append("time >= ?");
+			params.add(start);
+		}
+		
+		if (end != null){
+			if (sb.length() > 0)
+				sb.append(" and ");
+			sb.append("time < ?");
+			params.add(end);
+		}
+	}
+	public static List<String[]> routeGPS(int page, int pageSize, String vehicleNo, String startDate, String startTime, String endDate, String endTime) {
+		String start =  startDate + " " + startTime;
+		String end = endDate + " " + endTime;
+		
+		return routeGPS(page, pageSize, vehicleNo, start, end);
+	}
+
 }
