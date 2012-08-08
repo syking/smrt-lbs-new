@@ -114,6 +114,9 @@ public class User extends Model {
 	}
 
 	private static User findByAccount(String account) {
+		if (CommonUtil.isBlank(account))
+			return null;
+		
 		return User.find("byAccount", account).first();
 	}
 
@@ -238,14 +241,13 @@ public class User extends Model {
 		return User.count(sb.toString(), params.toArray());
 	}
 
-	private static void parseCondition(String userName, String account,
-			String desc, final List<Object> params, final StringBuilder sb) {
+	private static void parseCondition(String userName, String account, String desc, final List<Object> params, final StringBuilder sb) {
 		if (!CommonUtil.isBlank(userName)){
 			if (sb.length() > 0)
 				sb.append(" and ");
 			
 			sb.append("name like ?");
-			params.add(new StringBuilder("%").append(userName).append("%").toString());
+			params.add(new StringBuilder("%").append(userName.trim()).append("%").toString());
 		}
 		
 		if (!CommonUtil.isBlank(account)){
@@ -253,7 +255,7 @@ public class User extends Model {
 				sb.append(" and ");
 			
 			sb.append("account like ?");
-			params.add(new StringBuilder("%").append(account).append("%").toString());
+			params.add(new StringBuilder("%").append(account.trim()).append("%").toString());
 		}
 		
 		if (!CommonUtil.isBlank(desc)){
@@ -261,7 +263,7 @@ public class User extends Model {
 				sb.append(" and ");
 			
 			sb.append("description like ?");
-			params.add(new StringBuilder("%").append(desc).append("%").toString());
+			params.add(new StringBuilder("%").append(desc.trim()).append("%").toString());
 		}
 	}
 	

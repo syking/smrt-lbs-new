@@ -137,20 +137,20 @@ public class Event extends Model{
 	 * @param pageSize <0 表示fetch all
 	 * @return
 	 */
-	public static Map search(int page, int pageSize, Long driver, String serviceNo, Long type, Date startTime, Date endTime){
+	public static Map search(int page, int pageSize, String driverName, String serviceNo, String typeName, Date startTime, Date endTime){
 		// 判断传过来的条件参数，如果参数属于没有填写的，则不参与 and 条件。
 		StringBuilder sqlSB = new StringBuilder();
 		List<Object> params = new ArrayList<Object>();
-		parseCondition(driver, serviceNo, type, startTime, endTime, sqlSB, params);
+		parseCondition(driverName, serviceNo, typeName, startTime, endTime, sqlSB, params);
 
 		if (sqlSB.length() > 0 && !params.isEmpty())
 			sqlSB.insert(0, "left join e.eventRecord er where ");
 
 		List<Event> events = null;
 		if (page > 0 && pageSize > 0) 
-			events = Event.find("select e from Event e " + sqlSB.toString() + " order by id desc", params.toArray()).fetch(page, pageSize);
+			events = Event.find("select e from Event e " + sqlSB.toString() + " order by e.id desc", params.toArray()).fetch(page, pageSize);
 		else 
-			events = Event.find("select e from Event e " + sqlSB.toString() + " order by id desc", params.toArray()).fetch();
+			events = Event.find("select e from Event e " + sqlSB.toString() + " order by e.id desc", params.toArray()).fetch();
 		
 		List<EventVO> eventVOList = new ArrayList<EventVO>();
 		if (events != null)
@@ -167,10 +167,10 @@ public class Event extends Model{
 		return map;
 	}
 
-	private static void parseCondition(Long driver, String serviceNo, Long type, Date startTime, Date endTime, StringBuilder sqlSB, List<Object> params) {
-		if (driver != null && driver > 0) {
-			sqlSB.append("e.driver.id = ?");
-			params.add(driver);
+	private static void parseCondition(String driverName, String serviceNo, String typeName, Date startTime, Date endTime, StringBuilder sqlSB, List<Object> params) {
+		if (!CommonUtil.isBlank(driverName)) {
+			sqlSB.append("e.driver.name like ?");
+			params.add("%"+driverName.trim()+"%");
 		}
 
 		if (!CommonUtil.isBlank(serviceNo)) {
@@ -178,15 +178,15 @@ public class Event extends Model{
 				sqlSB.append(" and ");
 
 			sqlSB.append("e.serviceNumber = ?");
-			params.add(serviceNo);
+			params.add(serviceNo.trim());
 		}
 
-		if (type != null && type > 0) {
+		if (!CommonUtil.isBlank(typeName)) {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 
-			sqlSB.append("er.type.id = ?");
-			params.add(type);
+			sqlSB.append("er.type.name like ?");
+			params.add("%"+typeName.trim()+"%");
 		}
 
 		if (startTime != null) {

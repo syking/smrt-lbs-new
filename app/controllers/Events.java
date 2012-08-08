@@ -111,8 +111,8 @@ public class Events extends Controller {
 	}
 
 	@annotations.Perm
-	public static void search(int page, int pageSize, Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
-		Map data = Event.search(page, pageSize, driver, serviceNo, type, startTime, endTime);
+	public static void search(int page, int pageSize, String driverName, String serviceNo, String typeName, Date startTime, Date endTime) {
+		Map data = Event.search(page, pageSize, driverName, serviceNo, typeName, startTime, endTime);
 		renderJSON(data);
 	}
 
@@ -123,7 +123,7 @@ public class Events extends Controller {
 		List<ComboVO> drivers = new ArrayList<ComboVO>();
 		if (drList != null)
 			for (Driver dr : drList) 
-				drivers.add(new ComboVO(dr.name, dr.id));
+				drivers.add(new ComboVO(dr.name, dr.name));
 
 		List<String> liList = Schedule.find("select DISTINCT s.serviceNumber from Schedule s ").fetch();
 		List<ComboVO> lines = new ArrayList<ComboVO>();
@@ -135,7 +135,7 @@ public class Events extends Controller {
 		List<ComboVO> types = new ArrayList<ComboVO>();
 		if (typeList != null)
 			for (EventType et : typeList) 
-				types.add(new ComboVO(et.name, et.id));
+				types.add(new ComboVO(et.name, et.name));
 
 		Map map = new HashMap();
 		map.put("drivers", CommonUtil.getGson().toJson(drivers));

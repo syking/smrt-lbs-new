@@ -226,10 +226,12 @@ public class Department extends Model{
 	}
 
 	private static void parseCondition(final String name, final String parentName, final StringBuilder sqlSB, final List<Object> params) {
-		Department parent = Department.findByName(parentName);
-		if (parent != null) {
-			sqlSB.append("parent = ?");
-			params.add(parent);
+		if (!CommonUtil.isBlank(parentName)){
+			Department parent = Department.findByName(parentName.trim());
+			if (parent != null) {
+				sqlSB.append("parent = ?");
+				params.add(parent);
+			}
 		}
 
 		if (!CommonUtil.isBlank(name)) {
@@ -237,7 +239,7 @@ public class Department extends Model{
 				sqlSB.append(" and ");
 			
 			sqlSB.append("name like ?");
-			params.add("%" + name + "%");
+			params.add("%" + name.trim() + "%");
 		}
 	}
 	

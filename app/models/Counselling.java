@@ -202,26 +202,30 @@ public class Counselling extends Model{
 	private static void parseCondition(String userName, String driverName,
 			String startDate, String startTime, String endDate, String endTime,
 			List<Object> params, StringBuilder sb) {
-		User user = User.find("byName", userName).first();
-		if (user != null){
-			sb.append("user = ?");
-			params.add(user);
+		if (!CommonUtil.isBlank(userName)){
+			User user = User.find("byName", userName.trim()).first();
+			if (user != null){
+				sb.append("user = ?");
+				params.add(user);
+			}
 		}
 		
-		Driver driver = Driver.find("byName", driverName).first();
-		if (driver != null){
-			if (sb.length() > 0)
-				sb.append(" and ");
-			
-			sb.append("driver = ?");
-			params.add(driver);
+		if (!CommonUtil.isBlank(driverName)){
+			Driver driver = Driver.find("byName", driverName.trim()).first();
+			if (driver != null){
+				if (sb.length() > 0)
+					sb.append(" and ");
+				
+				sb.append("driver = ?");
+				params.add(driver);
+			}
 		}
 		
 		if (!CommonUtil.isBlank(startDate)){
-			if (startTime != null && !startTime.isEmpty())
-				startTime = startDate + " " + startTime;
+			if (!CommonUtil.isBlank(startTime))
+				startTime = startDate.trim() + " " + startTime.trim();
 			else 
-				startTime = startDate + " 00:00:00";
+				startTime = startDate.trim() + " 00:00:00";
 			
 			Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime);
 			params.add(start);
@@ -233,10 +237,10 @@ public class Counselling extends Model{
 		}
 		
 		if (!CommonUtil.isBlank(endDate)){
-			if (endTime != null && !endTime.isEmpty())
-				endTime = endDate + " " + endTime;
+			if (!CommonUtil.isBlank(endTime))
+				endTime = endDate.trim() + " " + endTime.trim();
 			else 
-				endTime = endDate + " 00:00:00";
+				endTime = endDate.trim() + " 00:00:00";
 			
 			Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime);
 			params.add(end);

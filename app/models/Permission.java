@@ -151,7 +151,10 @@ public class Permission extends Model{
 	}
 	
 	private static Permission findByAction(String action) {
-		return Permission.find("byAction", action).first();
+		if (CommonUtil.isBlank(action))
+			return null;
+		
+		return Permission.find("byAction", action.trim()).first();
 	}
 	
 	public static List<Permission> findByCondition(int page, int pageSize, String action, String desc){
@@ -197,7 +200,7 @@ public class Permission extends Model{
 				sb.append(" and ");
 			
 			sb.append("action like ?");
-			params.add(new StringBuilder("%").append(action).append("%").toString());
+			params.add(new StringBuilder("%").append(action.trim()).append("%").toString());
 		}
 		
 		if (!CommonUtil.isBlank(desc)){
@@ -205,7 +208,7 @@ public class Permission extends Model{
 				sb.append(" and ");
 			
 			sb.append("description like ?");
-			params.add(new StringBuilder("%").append(desc).append("%").toString());
+			params.add(new StringBuilder("%").append(desc.trim()).append("%").toString());
 		}
 	}
 	

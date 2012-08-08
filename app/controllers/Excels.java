@@ -121,8 +121,8 @@ public class Excels extends Controller{
 			renderExcel(map);
     }
     
-    public static void reportEvent(Long driver, String serviceNo, Long type, Date startTime, Date endTime) {
-		Map data = Event.search(1, 200, driver, serviceNo, type, startTime, endTime);
+    public static void reportEvent(String driverName, String serviceNo, String typeName, Date startTime, Date endTime) {
+		Map data = Event.search(1, 200, driverName, serviceNo, typeName, startTime, endTime);
 		if (data != null)
 			renderExcel(data);
 	}

@@ -209,7 +209,7 @@ public class Fleet extends Model{
 	private static void parseCondition(final String placeNumber, final String name, StringBuilder sqlSB, List<Object> params) {
 		if (!CommonUtil.isBlank(placeNumber)) {
 			sqlSB.append("placeNumber like ?");
-			params.add("%" + placeNumber + "%");
+			params.add("%" + placeNumber.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(name)) {
@@ -217,7 +217,7 @@ public class Fleet extends Model{
 				sqlSB.append(" and ");
 			
 			sqlSB.append("name like ?");
-			params.add("%" + name + "%");
+			params.add("%" + name.trim() + "%");
 		}
 	}
 	

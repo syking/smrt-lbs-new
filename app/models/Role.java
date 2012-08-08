@@ -215,7 +215,7 @@ public class Role extends Model{
 				sb.append(" and ");
 			
 			sb.append("name like ?");
-			params.add(new StringBuilder("%").append(roleName).append("%").toString());
+			params.add(new StringBuilder("%").append(roleName.trim()).append("%").toString());
 		}
 		
 		if (!CommonUtil.isBlank(desc)){
@@ -223,7 +223,7 @@ public class Role extends Model{
 				sb.append(" and ");
 			
 			sb.append("description like ?");
-			params.add(new StringBuilder("%").append(desc).append("%").toString());
+			params.add(new StringBuilder("%").append(desc.trim()).append("%").toString());
 		}
 	}
 	

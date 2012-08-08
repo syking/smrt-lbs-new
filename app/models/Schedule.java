@@ -86,11 +86,17 @@ public class Schedule extends Model {
 	}
 	
 	public static List<Schedule> findByVehicleNumber(String vehicleNumber){
-		return Schedule.find("vehicle_number = ?", vehicleNumber).fetch() ;
+		if (CommonUtil.isBlank(vehicleNumber))
+			return null;
+		
+		return Schedule.find("vehicle_number = ?", vehicleNumber.trim()).fetch() ;
 	}
 	
 	public static List<Schedule> findByDriverNumber(String driverNumber){
-		return Schedule.find("driver_number = ?", driverNumber).fetch() ;
+		if (CommonUtil.isBlank(driverNumber))
+			return null;
+		
+		return Schedule.find("driver_number = ?", driverNumber.trim()).fetch() ;
 	}
 
 	public static Map assemReportByLine(Collection<String> lines, String timeType, String time){
@@ -327,7 +333,7 @@ public class Schedule extends Model {
 
 	private static void parseCondition(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime, StringBuilder sqlSB, List<Object> params) {
 		if (!CommonUtil.isBlank(driverNumber)) {
-			Driver driver = Driver.findByNumber(driverNumber);
+			Driver driver = Driver.findByNumber(driverNumber.trim());
 			if (driver != null){
 				sqlSB.append("driver = ?");
 				params.add(driver);
@@ -338,7 +344,7 @@ public class Schedule extends Model {
 			if (sqlSB.length() > 0)
 				sqlSB.append(" and ");
 			
-			Vehicle vehicle = Vehicle.findByNumber(vehicleNumber);
+			Vehicle vehicle = Vehicle.findByNumber(vehicleNumber.trim());
 			if (vehicle != null){
 				sqlSB.append("vehicle = ?");
 				params.add(vehicle);
@@ -350,7 +356,7 @@ public class Schedule extends Model {
 				sqlSB.append(" and ");
 			
 			sqlSB.append("serviceNumber like ?");
-			params.add("%"+route+"%");
+			params.add("%"+route.trim()+"%");
 		}
 		
 		if (!CommonUtil.isBlank(duty)) {
@@ -358,14 +364,14 @@ public class Schedule extends Model {
 				sqlSB.append(" and ");
 			
 			sqlSB.append("dutyId like ?");
-			params.add("%"+duty+"%");
+			params.add("%"+duty.trim()+"%");
 		}
 
 		if (!CommonUtil.isBlank(startDate)){
 			if (startTime != null && !startTime.isEmpty())
-				startTime = startDate + " " + startTime;
+				startTime = startDate.trim() + " " + startTime.trim();
 			else 
-				startTime = startDate + " 00:00:00";
+				startTime = startDate.trim() + " 00:00:00";
 			
 			Date start = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", startTime);
 			params.add(start);
@@ -378,9 +384,9 @@ public class Schedule extends Model {
 		
 		if (!CommonUtil.isBlank(endDate)){
 			if (endTime != null && !endTime.isEmpty())
-				endTime = endDate + " " + endTime;
+				endTime = endDate.trim() + " " + endTime.trim();
 			else 
-				endTime = endDate + " 00:00:00";
+				endTime = endDate.trim() + " 00:00:00";
 			
 			Date end = CommonUtil.newDate("yyyy-MM-dd HH:mm:ss", endTime);
 			params.add(end);

@@ -215,23 +215,23 @@ public class CommonUtil {
 		try{
 			if (!CommonUtil.isBlank(timeType)){
 				if (!CommonUtil.isBlank(time)){
-					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
-						chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time);
+					if (DriverReport.TIME_TYPE.DAILY.equals(timeType.trim())){
+						chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time.trim());
     					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", chooseDate) + " 00:00:00");
     					//end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start, 1)) + " 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
-    					chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time);
+    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType.trim())){
+    					chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time.trim());
     					int day = CommonUtil.getDayOfWeek(chooseDate);
     					// day == 1 表示星期日， 所以要补回2
     					date = CommonUtil.addDate(chooseDate, -day+2);
     					//end = CommonUtil.addDate(start, 7);
-    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
-    					chooseDate = new SimpleDateFormat("yyyy/MM").parse(time);
+    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType.trim())){
+    					chooseDate = new SimpleDateFormat("yyyy/MM").parse(time.trim());
     					//int lastDay = CommonUtil.getLastDayOfMonth(chooseDate);
     					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", chooseDate)+"-01 00:00:00");
     					//end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
-    					chooseDate = new SimpleDateFormat("yyyy").parse(time);
+    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType.trim())) {
+    					chooseDate = new SimpleDateFormat("yyyy").parse(time.trim());
     					//int lastDay = CommonUtil.getLastDayOfYear(chooseDate);
     					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", chooseDate)+"-01-01 00:00:00");
     					//end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) + " 00:00:00");

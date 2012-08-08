@@ -66,8 +66,7 @@ public class Vehicle extends Model {
 				+ ", id=" + id + "]";
 	}
 
-	public Vehicle(String number, String license, Fleet fleet, Device device,
-			String description, String cctvIp, String type) {
+	public Vehicle(String number, String license, Fleet fleet, Device device, String description, String cctvIp, String type) {
 		this.number = number;
 		this.license = license;
 		this.fleet = fleet;
@@ -469,41 +468,45 @@ public class Vehicle extends Model {
 	private static void parseCondition(String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type, List<String> criteria, List<Object> params) {
 		if (!CommonUtil.isBlank(number)) {
 			criteria.add("number LIKE ?");
-			params.add("%" + number + "%");
+			params.add("%" + number.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(license)) {
 			criteria.add("license LIKE ?");
-			params.add("%" + license + "%");
+			params.add("%" + license.trim() + "%");
 		}
 		
-		Fleet fleet = Fleet.findByName(fleetName);
-		if (fleet != null) {
-			long fleet_id = fleet.id;
-			criteria.add("fleet_id = ?");
-			params.add(fleet_id);
+		if (!CommonUtil.isBlank(fleetName)){
+			Fleet fleet = Fleet.findByName(fleetName.trim());
+			if (fleet != null) {
+				long fleet_id = fleet.id;
+				criteria.add("fleet_id = ?");
+				params.add(fleet_id);
+			}
 		}
 
-		Device device = Device.findByName(deviceName);
-		if (device != null) {
-			long device_id = device.id;
-			criteria.add("device_id = ?");
-			params.add(device_id);
+		if (!CommonUtil.isBlank(deviceName)){
+			Device device = Device.findByName(deviceName.trim());
+			if (device != null) {
+				long device_id = device.id;
+				criteria.add("device_id = ?");
+				params.add(device_id);
+			}
 		}
 
 		if (!CommonUtil.isBlank(description)) {
 			criteria.add("description LIKE ?");
-			params.add("%" + description + "%");
+			params.add("%" + description.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(type)) {
 			criteria.add("type LIKE ?");
-			params.add("%" + type + "%");
+			params.add("%" + type.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(cctvIp)) {
 			criteria.add("cctvIp LIKE ?");
-			params.add("%" + cctvIp + "%");
+			params.add("%" + cctvIp.trim() + "%");
 		}
 	}
 	

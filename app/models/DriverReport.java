@@ -200,16 +200,16 @@ public class DriverReport extends Model {
 				sql.append(" and ");
 			
 			sql.append("timeType = ?");
-			params.add(timeType);
+			params.add(timeType.trim());
 			
 			if (!CommonUtil.isBlank(startTime)){
 				sql.append(" and startTime >= ?");
-				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, startTime));
+				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType.trim(), startTime.trim()));
 			}
 			
 			if (!CommonUtil.isBlank(endTime)){
 				sql.append(" and endTime < ?");
-				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType, endTime));
+				params.add(CommonUtil.getDateByTimeTypeAndTime(timeType.trim(), endTime.trim()));
 			}
 		}
 	}

@@ -4,15 +4,15 @@
 <form id="event_form_${grid.tabId}" action="/events/search" method="post" class="k-content" onsubmit="return eventSearchValidate(this)" style="padding:10px 0;">
 	
 	<label for="${grid.tabId}_driver">Driver:</label>
-	<input name="driver" id="${grid.tabId}_driver"/>
+	<input name="driverName" id="${grid.tabId}_driver"/>
 	
-	<label for="serviceNo" >Service No:</label>
+	<label for="${grid.tabId}_serviceNo" >Service No:</label>
 	<input name="serviceNo" id="${grid.tabId}_serviceNo"/>
 	
 	<div style="height:8px"></div>
 	
-	<label for="type" >Type:</label>
-	<input name="type" id="${grid.tabId}_type"/>
+	<label for="${grid.tabId}_type" >Type:</label>
+	<input name="typeName" id="${grid.tabId}_type"/>
 	
 	<div style="height:8px"></div>
 	

@@ -213,7 +213,7 @@ public class Device extends Model {
 		
 		if (!CommonUtil.isBlank(name)){
 			sb.append("name like ?");
-			params.add(new StringBuilder("%").append(name).append("%").toString());
+			params.add(new StringBuilder("%").append(name.trim()).append("%").toString());
 		}
 		
 		if (!CommonUtil.isBlank(key)){
@@ -221,7 +221,7 @@ public class Device extends Model {
 				sb.append(" and ");
 			
 			sb.append("key like ?");
-			params.add(new StringBuilder("%").append(key).append("%").toString());
+			params.add(new StringBuilder("%").append(key.trim()).append("%").toString());
 		}
 		
 		if (!CommonUtil.isBlank(host)){
@@ -229,7 +229,7 @@ public class Device extends Model {
 				sb.append(" and ");
 			
 			sb.append("host like ?");
-			params.add(new StringBuilder("%").append(host).append("%").toString());
+			params.add(new StringBuilder("%").append(host.trim()).append("%").toString());
 		}
 	}
 	

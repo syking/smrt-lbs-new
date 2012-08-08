@@ -89,34 +89,34 @@ public class Log extends Model {
 	private static void parseCondition(String type, String name, String content, String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip, List<String> criteria, List<Object> params) {
 		if (!CommonUtil.isBlank(type)) {
 			criteria.add("type LIKE ?");
-			params.add("%" + type + "%");
+			params.add("%" + type.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(name)) {
 			criteria.add("name LIKE ?");
-			params.add("%" + name + "%");
+			params.add("%" + name.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(content)) {
 			criteria.add("content LIKE ?");
-			params.add("%" + content + "%");
+			params.add("%" + content.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(actions)) {
 			criteria.add("action LIKE ?");
-			params.add("%" + actions + "%");
+			params.add("%" + actions.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(ip)) {
 			criteria.add("ip LIKE ?");
-			params.add("%" + ip + "%");
+			params.add("%" + ip.trim() + "%");
 		}
 
 		if (userid != 0) {
 			User user = User.findById(userid);
 			String userName = user.name;
 			criteria.add("userName = ?");
-			params.add(userName);
+			params.add(userName.trim());
 		}
 
 		// date and time
@@ -124,7 +124,7 @@ public class Log extends Model {
 			if (CommonUtil.isBlank(startTime))
 				startTime = "00:00";
 			
-			String startDateTimeString = startDate + " " + startTime;
+			String startDateTimeString = startDate.trim() + " " + startTime.trim();
 			DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			Date startDateTime = null;
 			try {
@@ -140,7 +140,7 @@ public class Log extends Model {
 			if (CommonUtil.isBlank(endTime))
 				endTime = "00:00";
 			
-			String endDateTimeString = endDate + " " + endTime;
+			String endDateTimeString = endDate.trim() + " " + endTime.trim();
 			DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			Date endDateTime = null;
 			try {

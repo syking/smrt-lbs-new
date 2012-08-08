@@ -321,7 +321,9 @@ public class Driver extends Model{
 	}
 
 	public static Driver findByNumber(String driverNumber) {
-		return Driver.find("byNumber", driverNumber).first();
+		if (!CommonUtil.isBlank(driverNumber))
+			return Driver.find("byNumber", driverNumber.trim()).first();
+		return null;
 	}
 
 	public static Map search(int page, int pageSize, DriverVO driver) {
@@ -387,7 +389,7 @@ public class Driver extends Model{
 	private static void parseCondition(String departmentName, String number, String name, String description, StringBuilder sqlSB,
 			List<Object> params) {
 		if (!CommonUtil.isBlank(departmentName)){
-			Department dept = Department.findByName(departmentName);
+			Department dept = Department.findByName(departmentName.trim());
 			if (dept != null) {
 				sqlSB.append("department = ?");
 				params.add(dept);
@@ -399,7 +401,7 @@ public class Driver extends Model{
 				sqlSB.append(" and ");
 			
 			sqlSB.append("number like ?");
-			params.add("%" + number + "%");
+			params.add("%" + number.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(name)) {
@@ -407,7 +409,7 @@ public class Driver extends Model{
 				sqlSB.append(" and ");
 			
 			sqlSB.append("name like ?");
-			params.add("%" + name + "%");
+			params.add("%" + name.trim() + "%");
 		}
 		
 		if (!CommonUtil.isBlank(description)) {
@@ -415,7 +417,7 @@ public class Driver extends Model{
 				sqlSB.append(" and ");
 			
 			sqlSB.append("description like ?");
-			params.add("%" + description + "%");
+			params.add("%" + description.trim() + "%");
 		}
 	}
 	
