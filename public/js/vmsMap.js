@@ -313,90 +313,6 @@
         loadLocationGPS();
     }
     
-    function generateLocations(locations, depotSbl, busStopSbl){
-        var locationGraphics = [];
-    	for(var i = 0; i < locations.length; i++){
-            var loc = locations[i];
-
-            loc.xCoord = parseFloat(loc.xCoord);
-            loc.yCoord = parseFloat(loc.yCoord);
-
-            var gm = new esri.geometry.Point(loc.xCoord, loc.yCoord, new esri.SpatialReference({ wkid: 3414 }));
-            var attr;
-            var it;
-			
-			loc.activeStatus = MapCnf.setDefaultActiveStatus(loc.vehicleType, loc.activeStatus);
-			/*
-        	if($("#ShowBusStop").attr("checked") != "checked" && loc.vehicleType == "bus-stop"){
-				loc.activeStatus = "off";
-			}
-        	
-			if($("#ShowDepot").attr("checked") != "checked" && loc.vehicleType == "depot"){
-				loc.activeStatus = "off";
-			}
-			*/
-        	attr = {
-        			id:loc.id,
-        			xCoord:loc.xCoord,
-        			yCoord:loc.yCoord,
-        			activeStatus:loc.activeStatus,
-        			vehicleType:loc.vehicleType,
-        			busPlateNumber:loc.busPlateNumber,
-        			symbol: MapCnf.getSymbol(loc.vehicleType)
-            };
-			/*
-            it = new esri.InfoTemplate("Location Information","Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>type: ${vehicleType}<br/>name: ${busPlateNumber}<br/>")
-			*/
-			it = MapCnf.getInfoTemplate('LocationsInfoTemplate');
-            var graphic ;
-            
-            /*
-            if (loc.vehicleType == 'depot'){
-            	graphic = new esri.Graphic(gm, depotSbl, attr, it);
-            	 attr.iconType = 'depot';
-            }else{
-            	graphic = new esri.Graphic(gm, busStopSbl, attr, it);
-            	 attr.iconType = 'busStop';
-            }
-			*/
-            
-            //
-            graphic = new esri.Graphic(gm, MapCnf.getSymbol(loc.vehicleType), attr, it);
-       	 	attr.iconType = loc.vehicleType;
-            
-       	 	graphic.visible = loc.activeStatus == 'on'?true:false;
-
-            locationGraphics.push(graphic);
-        }
-    	
-        return locationGraphics
-    }
-    
-    function loadLocationGPS(){
-    	var url = "locations/gps";
-    	/*
-    	var depotIcon = new esri.symbol.PictureMarkerSymbol('/public/images/depot.png', 32, 32);
-    	var busStopIcon = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
-    	*/
-    	$.getJSON(url,{},function(json){
-    		currentLocations = json;
-    		var locations = generateLocations(json/*, depotIcon, busStopIcon*/);
-    		var layer = new esri.ux.layers.ClusterLayer({
-                displayOnPan: false,
-                map: map,
-                features: locations,
-                infoWindow: {
-                	template : locations[0].infoTemplate
-                },
-                flareLimit: 15,
-                flareDistanceFromCenter: 21
-            });
-
-            map.locationLayer = layer;
-            map.addLayer(layer);
-    	});
-    }
-    
     dojo.addOnLoad(init);
 
     function changeLevelHandler(evt){
@@ -462,6 +378,30 @@
 //        refreshGraphics(getCurrentDataUrlStr);
 //        refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
 //    }
+	
+	/**
+	 * 获取Location的GPS位置信息
+	 */
+	function loadLocationGPS(){
+    	var url = "locations/gps";
+    	$.getJSON(url,{},function(json){
+    		currentLocations = json;
+    		var locations = generateLocations(json);
+    		var layer = new esri.ux.layers.ClusterLayer({
+                displayOnPan: false,
+                map: map,
+                features: locations,
+                infoWindow: {
+                	template : locations[0].infoTemplate
+                },
+                flareLimit: 15,
+                flareDistanceFromCenter: 21
+            });
+
+            map.locationLayer = layer;
+            map.addLayer(layer);
+    	});
+    }
 
     /**
      * 初始化地图图标
@@ -514,128 +454,122 @@
 				if(currentBuses == null || currentBuses == "" || currentBuses.length < 1){
 					return;
 				}
-				
 				var newGraphics = generateGraphics(currentBuses);
 		        init_graphics(newGraphics);
 		        if (int){
 		        	clearInterval(int);
 		        }
-		        
-		        int = setInterval(function(){
-		        	$.ajax({
-		                url: url,
-		                dataType: 'json',
-		                success: function(data){
-		                    currentBuses = data;
-		                    var graphics = generateGraphics(currentBuses);
-		                    map.clusterLayer.refreshFeatures(graphics.vehicles);
-		                }
-		            });
-		        }, delay);
+		        if (delay && delay > 0){
+		        	int = setInterval(function(){
+		        		$.ajax({
+		                    url: url,
+		                    dataType: 'json',
+		                    success: function(data){
+		                        currentBuses = data;
+		                        var graphics = generateGraphics(currentBuses);
+		                        map.clusterLayer.refreshFeatures(graphics.vehicles);
+		                    }
+		                });
+		        	}, delay);
+		        }
         	}
     	});
     }
     
-    function addMarker(url){
-    	alert("addMarker");
-        clearTimeout(refreshInterval);
-        if($("#textBox").val()){
-        	refreshIntervalCount = $("#textBox").val() * 1000;
-        }
-        
-        if(map.loaded){
-            map.graphics.clear();
-            map.tooltipLayer.clear();
-            if (map.infoWindow.isShowing) {
-	            map.infoWindow.hide();
-	        }
-           // alert(url);
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                success: function(data){
-                    currentBuses = data;
-                    if(data == null || data == "" || data.length <1){
-                    	return;
-                    }
-                    var newGraphics = generateGraphics(currentBuses);
-                    
-                    if(typeof map.clusterLayer == "undefined"){
-                        var cL = new esri.ux.layers.ClusterLayer({
-                            displayOnPan: false,
-                            map: map,
-                            features: newGraphics.vehicles,
-                            infoWindow: {
-                            	template : newGraphics.vehicles[0].infoTemplate
-                            	//template: new esri.InfoTemplate("Vehicle Information","ID: ${id}<br/>Driver: ${driver}<br/>Service No.: ${serviceNumber}<br/>Plate Number: ${busPlateNumber}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>")
-                            },
-                            flareLimit: 15,
-                            flareDistanceFromCenter: 20
-                        });
-
-                        map.clusterLayer = cL;
-                        map.addLayer(cL);
-                    }
-                    else{
-                        map.clusterLayer.clear();
-                        map.clusterLayer.refreshFeatures(newGraphics.vehicles);
-                    }
-
-					dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
-                    refreshInterval = setTimeout("initRefreshInterval('"+url+"')", refreshIntervalCount);
-                }
-            });
-            
-            //dojo.connect(map, "onMouseDrag", showCoordinates);
-            dojo.connect(map, "onClick", closeInfoWindow);
-        }
-
-    }
+//    function addMarker(url){
+//    	alert("addMarker");
+//        clearTimeout(refreshInterval);
+//        if($("#textBox").val()){
+//        	refreshIntervalCount = $("#textBox").val() * 1000;
+//        }
+//        
+//        if(map.loaded){
+//            map.graphics.clear();
+//            map.tooltipLayer.clear();
+//            if (map.infoWindow.isShowing) {
+//	            map.infoWindow.hide();
+//	        }
+//            $.ajax({
+//                url: url,
+//                dataType: 'json',
+//                success: function(data){
+//                    currentBuses = data;
+//                    if(data == null || data == "" || data.length <1){
+//                    	return;
+//                    }
+//                    var newGraphics = generateGraphics(currentBuses);
+//                    
+//                    if(typeof map.clusterLayer == "undefined"){
+//                        var cL = new esri.ux.layers.ClusterLayer({
+//                            displayOnPan: false,
+//                            map: map,
+//                            features: newGraphics.vehicles,
+//                            infoWindow: {
+//                            	template : newGraphics.vehicles[0].infoTemplate
+//                            },
+//                            flareLimit: 15,
+//                            flareDistanceFromCenter: 20
+//                        });
+//
+//                        map.clusterLayer = cL;
+//                        map.addLayer(cL);
+//                    }
+//                    else{
+//                        map.clusterLayer.clear();
+//                        map.clusterLayer.refreshFeatures(newGraphics.vehicles);
+//                    }
+//
+//					dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
+//                    refreshInterval = setTimeout("initRefreshInterval('"+url+"')", refreshIntervalCount);
+//                }
+//            });
+//            
+//            dojo.connect(map, "onClick", closeInfoWindow);
+//        }
+//
+//    }
 
     function generateGraphics(buses){
         var gras = {};
         var vehicleGras = [];
         var tooltipGras = [];
-        //alert(JSON.stringify(buses));
-        //[{"id":1,"busPlateNumber":"SMB77P","driver":"Jack","currentSpeed":3,"xCoord":"34765.206346922685","yCoord":"36102.84347778058","vehicleType":"bus","activeStatus":"on","direction":"down"},
         for(var i=0; i<buses.length; i++){
             var bus = buses[i];
-
-            bus.xCoord = parseFloat(bus.xCoord);
-            bus.yCoord = parseFloat(bus.yCoord);
+            //--------------------------------------------
+            var x = parseFloat(bus.xCoord);
+            var y = parseFloat(bus.yCoord);
+            
+            var ll = CnvEN2LL(x, y);
+            var lat = parseFloat(ll.split(",")[0]);
+            var lgt = parseFloat(ll.split(",")[1]);
+            //---------------------------------------
+            //Convert Longitude/Latitude to X/Y
+            var en = CnvLL2EN(lat, lgt);
+            //alert(en + " | "+bus.xCoord+","+bus.yCoord);
+            bus.xCoord = parseFloat(en.split(",")[0]);
+            bus.yCoord = parseFloat(en.split(",")[1]);
+            //-----------------------------------------------
 
             var gm = new esri.geometry.Point(bus.xCoord, bus.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var sbl = new esri.symbol.TextSymbol("");
             var attr;
             var it;
             if(bus.busPlateNumber){
-					
-					bus.activeStatus = MapCnf.setDefaultActiveStatus( bus.vehicleType,bus.activeStatus);
-					/*
-					if($("#ShowBus").attr("checked") != "checked" && bus.vehicleType == "bus"){
-						bus.activeStatus = "off";
-					}
-					if($("#ShowCar").attr("checked") != "checked" && bus.vehicleType == "car"){
-						bus.activeStatus = "off";
-					}*/
+            	bus.activeStatus = MapCnf.setDefaultActiveStatus( bus.vehicleType,bus.activeStatus);
             	attr = {
-            			id: bus.id,
-            			xCoord: bus.xCoord,
-            			yCoord: bus.yCoord,
-            			busPlateNumber: bus.busPlateNumber,
-            			driver: bus.driver,
-            			serviceNumber: bus.serviceNumber,
-            			currentSpeed: bus.currentSpeed,
-            			activeStatus: bus.activeStatus,
-            			vehicleType: bus.vehicleType,
-            			symbol: MapCnf.getSymbol(bus.vehicleType)
+            		id: bus.id,
+            		xCoord: bus.xCoord,
+            		yCoord: bus.yCoord,
+            		busPlateNumber: bus.busPlateNumber,
+            		driver: bus.driver,
+            		serviceNumber: bus.serviceNumber,
+            		currentSpeed: bus.currentSpeed,
+            		activeStatus: bus.activeStatus,
+            		vehicleType: bus.vehicleType,
+            		symbol: MapCnf.getSymbol(bus.vehicleType)
 
 	            };
-            	
-				/*
-	            it = new esri.InfoTemplate("Vehicle Information","Driver: ${driver}<br/>Service No.: ${serviceNumber}<br/>Plate Number: ${busPlateNumber}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>")*/
 				it = MapCnf.getInfoTemplate('GraphicsPlateNumberInfoTemplate');
-
             }else{
             	attr = {
 					id: bus.id,
@@ -648,22 +582,63 @@
 					symbol: MapCnf.getSymbol(bus.vehicleType)
 	            };
 				
-				/*
-	            it = new esri.InfoTemplate("Event Information","Name: ${name}<br/>TechName.: ${techName}<br/>Current Speed: ${currentSpeed}<br/>Status: ${activeStatus}<br/>XCoord: ${xCoord}<br/>YCoord: ${yCoord}<br/>")
-				*/
 				it = MapCnf.getInfoTemplate('GraphicsInfoTemplate');
             }
-            //alert(JSON.stringify(attr));
             attr.iconType = bus.vehicleType;
-			
             var gra = new esri.Graphic(gm, sbl, attr, it);
 			gra.visible = bus.activeStatus == 'on'?true:false;
-
             vehicleGras.push(gra);
         }
         gras.vehicles = vehicleGras;
         gras.tooltips = tooltipGras;
         return gras;
+    }
+    
+    function generateLocations(locations, depotSbl, busStopSbl){
+        var locationGraphics = [];
+    	for(var i = 0; i < locations.length; i++){
+            var loc = locations[i];
+
+            //--------------------------------------------
+            var x = parseFloat(loc.xCoord);
+            var y = parseFloat(loc.yCoord);
+            
+            var ll = CnvEN2LL(x, y);
+            var lat = parseFloat(ll.split(",")[0]);
+            var lgt = parseFloat(ll.split(",")[1]);
+            //---------------------------------------
+            //Convert Longitude/Latitude to X/Y
+            var en = CnvLL2EN(lat, lgt);
+            loc.xCoord = parseFloat(en.split(",")[0]);
+            loc.yCoord = parseFloat(en.split(",")[1]);
+            //-----------------------------------------------
+            
+            var gm = new esri.geometry.Point(loc.xCoord, loc.yCoord, new esri.SpatialReference({ wkid: 3414 }));
+            var attr;
+            var it;
+			
+			loc.activeStatus = MapCnf.setDefaultActiveStatus(loc.vehicleType, loc.activeStatus);
+        	attr = {
+        			id:loc.id,
+        			xCoord:loc.xCoord,
+        			yCoord:loc.yCoord,
+        			activeStatus:loc.activeStatus,
+        			vehicleType:loc.vehicleType,
+        			busPlateNumber:loc.busPlateNumber,
+        			symbol: MapCnf.getSymbol(loc.vehicleType)
+            };
+			it = MapCnf.getInfoTemplate('LocationsInfoTemplate');
+            var graphic ;
+            
+            graphic = new esri.Graphic(gm, MapCnf.getSymbol(loc.vehicleType), attr, it);
+       	 	attr.iconType = loc.vehicleType;
+            
+       	 	graphic.visible = loc.activeStatus == 'on'?true:false;
+
+            locationGraphics.push(graphic);
+        }
+    	
+        return locationGraphics
     }
 
     function showAllIcon(){

@@ -1,5 +1,7 @@
 #{set 'moreScripts'}
 <script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
+<script src="${static_dir}/js/SVY21.js" type="text/javascript" charset="utf-8"></script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
 #{/set}
 #{extends theme+'/main_head.html' /}
 <div id="view-on-map-splitter" style="width:99%; height:99%;">
@@ -15,16 +17,6 @@
 <div id="event-type-list" class="configuration k-widget k-header" style="position:absolute; top:258px; background:#fff; padding:5px; right:20px; z-index:99999999">
 	<ul class="options" id="event-type-list-ul"></ul>
 </div>
-
-<script>
-
-var map = "";
-var map_id = "map-view";
-var getCurrentDataUrl = #{jsAction @Events.gps(':vehicleNo')/};
-
-</script>
-<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
-
 <script>
 (function($){
 	$.getUrlParam = function(name){
@@ -39,10 +31,11 @@ function eventTypeListInit(){
 	//[{"techName":"event-alarm","name":"Alarm","id":1}]
 	var datas = #{verbatim} ${eventTypes} #{/verbatim};
 	//alert(JSON.stringify(datas));
-	 $.each(datas, function(index, data){
-	 	var li = '<li><input id="'+ data.techName +'" type="checkbox" checked="checked" /> <label>' + data.name + '</label></li>';
-             $("#event-type-list-ul").append(li);
-        });
+	$.each(datas, function(index, data){
+ 		var li = '<li><input id="'+ data.techName +'" type="checkbox" checked="checked" /> <label>' + data.name + '</label></li>';
+        $("#event-type-list-ul").append(li);
+    });
+	
 	$("#event-type-list-ul li input").click(function(){
 		if($(this).attr("checked") == "checked"){
 			showEventTypeIcon($(this).attr("id"));
@@ -54,8 +47,15 @@ function eventTypeListInit(){
 
 var view_on_map_splitter;
 var _vehicleNo = $.getUrlParam('vehicleNo');
-refreshIntervalCount = 1000000*1000;//no refresh
+var map = "";
+var map_id = "map-view";
+var event_gps_url = #{jsAction @Events.gps(':vehicleNo')/};
+var _int ;
 
+function _fetch_gps(){
+	var _url = event_gps_url({vehicleNo: $.getUrlParam('vehicleNo')});
+    init_gps(_url);
+}
 $(document).ready(function(){
 	
 	eventTypeListInit();
@@ -69,17 +69,16 @@ $(document).ready(function(){
         height: 230,
         columns:#{verbatim} ${eventColumns} #{/verbatim},
         dataSource: {
-        	 pageSize: 3,
+        	pageSize: 3,
             data: #{verbatim} ${eventData} #{/verbatim}
         }
     });
     
     $("#event-list").delegate("td", "click", function(e) {
-        e.preventDefault();
+    	e.preventDefault();
         var id = _vehicleNo+ "_" +$(this).parent().find("td:last").text();
         showCurrentInfoWindow(id);
-       }
-     );
+    });
     
 	view_on_map_splitter = $("#view-on-map-splitter").kendoSplitter({
 		orientation: "vertical",
@@ -102,8 +101,13 @@ $(document).ready(function(){
 		$("#event-type-list").toggle("200");
 	});
 	
-	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo: $.getUrlParam('vehicleNo')}) + "')");
-	
+	_int = setInterval(
+    	function(){
+    		if (map && map.loaded){
+    			clearInterval(_int);
+    			_fetch_gps();
+    		}
+    	}, 500);
 });
 
 function selectGridWithMapClick(vid){

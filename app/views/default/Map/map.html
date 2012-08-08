@@ -1,5 +1,7 @@
 #{set 'moreScripts'}
 <script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
+<script src="${static_dir}/js/SVY21.js" type="text/javascript" charset="utf-8"></script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
 #{/set}
 #{extends theme+'/main_head.html' /}
 <div id="${result.idPrefix}_view-on-map-splitter" style="width:99%; height:99%;">
@@ -15,19 +17,6 @@
 <div id="${result.idPrefix}_event-type-list" class="configuration k-widget k-header" style="position:absolute; top:258px; background:#fff; padding:5px; right:20px; z-index:99999999">
 	<ul class="options" id="${result.idPrefix}_event-type-list-ul"></ul>
 </div>
-
-<script>
-
-var map = "";
-var map_id = "${result.idPrefix}_map-view";
-var eventTypes = #{verbatim} ${result.eventTypes} #{/verbatim};
-var eventColumns = #{verbatim} ${result.eventColumns} #{/verbatim};
-var eventData = #{verbatim} ${result.eventData} #{/verbatim};
-var eventGPSUrl = "${result.eventGPSUrl}";
-
-</script>
-<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
-
 <script>
 (function($){
 	$.getUrlParam = function(name){
@@ -54,7 +43,16 @@ function eventTypeListInit(){
 }
 
 var view_on_map_splitter;
-refreshIntervalCount = 1000000*1000;//no refresh
+var map = "";
+var map_id = "${result.idPrefix}_map-view";
+var eventTypes = #{verbatim} ${result.eventTypes} #{/verbatim};
+var eventColumns = #{verbatim} ${result.eventColumns} #{/verbatim};
+var eventData = #{verbatim} ${result.eventData} #{/verbatim};
+var eventGPSUrl = "${result.eventGPSUrl}";
+var _int ;
+function _fetch_gps(){
+    init_gps(eventGPSUrl);
+}
 
 $(document).ready(function(){
 	
@@ -101,7 +99,13 @@ $(document).ready(function(){
 		$("#${result.idPrefix}_event-type-list").toggle("200");
 	});
 	
-	bindMapinitData("addMarker('" + eventGPSUrl + "')");
+	_int = setInterval(
+    	function(){
+    		if (map && map.loaded){
+    			clearInterval(_int);
+    			_fetch_gps();
+    		}
+    	}, 500);
 });
 
 function selectGridWithMapClick(vid){

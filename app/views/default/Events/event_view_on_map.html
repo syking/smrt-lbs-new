@@ -1,6 +1,8 @@
 #{set 'moreScripts'}
 <script src="/public/js/esri.ux.layers.ClusterLayer-debug-event.js" type="text/javascript"></script>
 <script src="/public/js/array.xd.js" type="text/javascript"></script>
+<script src="${static_dir}/js/SVY21.js" type="text/javascript" charset="utf-8"></script>
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
 #{/set}
 #{extends theme+'/main_head.html' /}
 <div id="view-on-map-splitter" style="width:99%; height:99%;">
@@ -8,20 +10,17 @@
 	#{include theme+'/Application/map_legend.html' /}
 </div>
 
-
-<script>
-
-var map = "";
-var map_id = "map-view";
-var getCurrentDataUrl = #{jsAction @Events.gps(':vehicleNo',':eventId')/};
-
-</script>
-<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
-
 <script>
 
 var view_on_map_splitter;
-refreshIntervalCount = 1000000*1000;//no refresh
+var map = "";
+var map_id = "map-view";
+var event_gps_url = #{jsAction @Events.gps(':vehicleNo',':eventId')/};
+var _int ;
+function _fetch_gps(){
+	var _url = event_gps_url({vehicleNo:'',eventId: $.getUrlParam('eventId')});
+    init_gps(_url);
+}
 
 $(document).ready(function(){
     
@@ -40,7 +39,14 @@ $(document).ready(function(){
         }
 	}).data("kendoSplitter");
 	
-	bindMapinitData("addMarker('" + getCurrentDataUrl({vehicleNo:'',eventId: $.getUrlParam('eventId')}) + "')");
+	_int = setInterval(
+    	function(){
+    		if (map && map.loaded){
+    			clearInterval(_int);
+    			_fetch_gps();
+    		}
+    	}, 500);
+    	
 	autoShowInfoWindow($.getUrlParam('eventId'), 1);
 });
 

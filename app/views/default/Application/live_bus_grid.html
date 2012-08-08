@@ -100,36 +100,36 @@ $(document).ready(function(){
     
 });
 function selectGridWithMapClick(id){
-		var dataSource = $("#live_bus_grid").data("kendoGrid").dataSource;
-		var data = dataSource.data();
-		var pageSize = dataSource.pageSize();
-		var pageNum;
+	var dataSource = $("#live_bus_grid").data("kendoGrid").dataSource;
+	var data = dataSource.data();
+	var pageSize = dataSource.pageSize();
+	var pageNum;
 
-		for(var i =0; i < data.length; i++){
-			if(data[i].id == id){
-				pageNum = Math.ceil((i+1)/pageSize);
-			}
+	for(var i =0; i < data.length; i++){
+		if(data[i].id == id){
+			pageNum = Math.ceil((i+1)/pageSize);
 		}
+	}
 
-		$.each($("#live_bus_grid").find(".k-grid-pager a"),function(){
-			if($(this).text() == pageNum){
-				$(this).trigger("click");
-			}
-		});
-		
-		setTimeout("selectGrid(" + id + ")",50);
-	}
-	function selectGrid(id){
-		// get a reference to the grid widget
-		var grid = $("#live_bus_grid").data("kendoGrid");
-		//alert(grid.tbody.find("tr").length);
-		// selects first grid item
-		$.each(grid.tbody.find("tr"),function(tr){
-			if($(this).find("td:last").text() == id){
-				grid.select($(this));
-				$(this).find("a").focus();
-				
-			}
-		});
-	}
+	$.each($("#live_bus_grid").find(".k-grid-pager a"),function(){
+		if($(this).text() == pageNum){
+			$(this).trigger("click");
+		}
+	});
+	
+	setTimeout("selectGrid(" + id + ")",50);
+}
+function selectGrid(id){
+	// get a reference to the grid widget
+	var grid = $("#live_bus_grid").data("kendoGrid");
+	//alert(grid.tbody.find("tr").length);
+	// selects first grid item
+	$.each(grid.tbody.find("tr"),function(tr){
+		if($(this).find("td:last").text() == id){
+			grid.select($(this));
+			$(this).find("a").focus();
+			
+		}
+	});
+}
 </script>
