@@ -277,13 +277,18 @@
     	var chageLevelBtn = dojo.byId("change-level-btn");
     	
         var initExtent = getExtentForLevelnCenter(centerPoint, 1);
-        
+        try{
+        	if (map_id == undefined || !map_id)
+        		return ;
+        }catch(e){
+        	return ;
+        }
         map = new esri.Map(map_id,{extent:initExtent});
         map.enableMapNavigation();
 
         dojo.connect(map, "onUpdateStart", function(){
         	try{
-        	esri.hide(chageLevelBtn);
+        		esri.hide(chageLevelBtn);
         	}catch(e){}
         	map.disableMapNavigation();
         	map.hideZoomSlider();
@@ -374,7 +379,6 @@
     	var busStopIcon = new esri.symbol.PictureMarkerSymbol('/public/images/bus-stop.png', 32, 32);
     	*/
     	$.getJSON(url,{},function(json){
-    		
     		currentLocations = json;
     		var locations = generateLocations(json/*, depotIcon, busStopIcon*/);
     		var layer = new esri.ux.layers.ClusterLayer({
@@ -402,14 +406,14 @@
     	}
     }
     
-	function bindMapinitData(url){
-		if(map.loaded){
-			clearTimeout(bindMapinitDataTimeout);
-			eval(url);
-		}else{
-			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+url+'")',500);
-		}
-	}
+//	function bindMapinitData(url){
+//		if(map.loaded){
+//			clearTimeout(bindMapinitDataTimeout);
+//			eval(url);
+//		}else{
+//			bindMapinitDataTimeout = setTimeout('bindMapinitData("'+url+'")',500);
+//		}
+//	}
 	
 	function autoShowInfoWindow(id,level){
 		//frist time will be showCurrentInfoWindow falid
@@ -432,32 +436,108 @@
 		}
 	}
 
-    function refreshGraphics(getCurrentDataUrlStr){
-        if(currentBuses.length > 0 && map.loaded){
-        	
-            $.ajax({
-                url: getCurrentDataUrlStr,
-                dataType: 'json',
-                success: function(data){
-                    currentBuses = data;
-                    var newGraphics = generateGraphics(currentBuses);
-                    map.clusterLayer.refreshFeatures(newGraphics.vehicles);
-                }
+//	
+//    function refreshGraphics(getCurrentDataUrlStr){
+//        if(currentBuses.length > 0 && map.loaded){
+//        	
+//            $.ajax({
+//                url: getCurrentDataUrlStr,
+//                dataType: 'json',
+//                success: function(data){
+//                    currentBuses = data;
+//                    var newGraphics = generateGraphics(currentBuses);
+//                    map.clusterLayer.refreshFeatures(newGraphics.vehicles);
+//                }
+//            });
+//            /*
+//        	currentBuses = [{"id":12,"busPlateNumber":"SMRT60012","serviceNumber":"197","driver":"60012","currentSpeed":35,"xCoord":19621.54623058727,"yCoord":32255.02633334452,"vehicleType":"bus","activeStatus":"on","direction":"down"}];
+//        	var newGraphics = generateGraphics(currentBuses);
+//            map.clusterLayer.refreshFeatures(newGraphics.vehicles);
+//            */
+//   		}
+//    }
+
+//    function initRefreshInterval(getCurrentDataUrlStr){
+//    	alert("initRefreshInterval")
+//        refreshGraphics(getCurrentDataUrlStr);
+//        refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
+//    }
+
+    /**
+     * 初始化地图图标
+     * @param graphics
+     */
+    function init_graphics(graphics){
+    	if(typeof map.clusterLayer == "undefined"){
+        	var cL = new esri.ux.layers.ClusterLayer({
+                displayOnPan: false,
+                map: map,
+                features: graphics.vehicles,
+                infoWindow: { template : graphics.vehicles[0].infoTemplate },
+                flareLimit: 15,
+                flareDistanceFromCenter: 20
             });
-            /*
-        	currentBuses = [{"id":12,"busPlateNumber":"SMRT60012","serviceNumber":"197","driver":"60012","currentSpeed":35,"xCoord":19621.54623058727,"yCoord":32255.02633334452,"vehicleType":"bus","activeStatus":"on","direction":"down"}];
-        	var newGraphics = generateGraphics(currentBuses);
-            map.clusterLayer.refreshFeatures(newGraphics.vehicles);
-            */
-   		}
-    }
+            
+            map.clusterLayer = cL;
+            map.addLayer(cL);
+        }else{
+        	map.clusterLayer.clear();
+        	map.clusterLayer.refreshFeatures(graphics.vehicles);
+        }
 
-    function initRefreshInterval(getCurrentDataUrlStr){
-        refreshGraphics(getCurrentDataUrlStr);
-        refreshInterval = setTimeout("initRefreshInterval('"+getCurrentDataUrlStr+"')", refreshIntervalCount);
+		dojo.connect(map.clusterLayer, "onClick", bindGraphicWithInfoWindow);
+        dojo.connect(map, "onClick", closeInfoWindow);
     }
-
+    
+    var int ;
+    /**
+     * 第一次加载地图的时候，调用此函数进行一些图标的初始化工作以及地图与图标的一些交互绑定工作。
+     * @param url
+     * @param delay 重复间隔时间
+     */
+    function init_gps(url, delay){
+    	if (!map || !map.loaded)
+    		return ;
+    	
+    	map.graphics.clear();
+        map.tooltipLayer.clear();
+        
+        if (map.infoWindow.isShowing) {
+        	map.infoWindow.hide();
+	    }
+        
+        $.ajax({
+        	url: url,
+        	dataType: 'json',
+        	success: function(data){
+				currentBuses = data;
+				if(currentBuses == null || currentBuses == "" || currentBuses.length < 1){
+					return;
+				}
+				
+				var newGraphics = generateGraphics(currentBuses);
+		        init_graphics(newGraphics);
+		        if (int){
+		        	clearInterval(int);
+		        }
+		        
+		        int = setInterval(function(){
+		        	$.ajax({
+		                url: url,
+		                dataType: 'json',
+		                success: function(data){
+		                    currentBuses = data;
+		                    var graphics = generateGraphics(currentBuses);
+		                    map.clusterLayer.refreshFeatures(graphics.vehicles);
+		                }
+		            });
+		        }, delay);
+        	}
+    	});
+    }
+    
     function addMarker(url){
+    	alert("addMarker");
         clearTimeout(refreshInterval);
         if($("#textBox").val()){
         	refreshIntervalCount = $("#textBox").val() * 1000;

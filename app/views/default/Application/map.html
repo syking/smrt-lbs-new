@@ -1,36 +1,39 @@
+<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 function getFleetData() {
     var serializedData = $("#treeview input").serialize()
-            .replace(/%5B/g, "[")
-            .replace(/%5D/g, "]")
-            .replace(/&/g, ",")
-            .replace(/=true/g,"");
+        .replace(/%5B/g, "[")
+        .replace(/%5D/g, "]")
+        .replace(/&/g, ",")
+        .replace(/=true/g,"");
+     
     return serializedData;
 }
 
-	var map_id = "map";
-	var getCurrentDataUrl = #{jsAction @Vehicles.gps(':fleets')/};
+var map_id = "map";
+var gps_url = #{jsAction @Vehicles.gps(':fleets')/};
+var _int ;
 
-</script>
-<script src="${static_dir}/js/vmsMap.js" type="text/javascript" charset="utf-8"></script>
+function _fetch_gps(){
+	var _url = gps_url({fleets: getFleetData()});
+    var _delay = $("#textBox").val()*1000;
+    init_gps(_url, _delay);
+}
 
-<script type="text/javascript">
 $(document).ready(function(){
-    	/*
-        $("#showIcon").click(showAllIcon);
-        $("#hideIcon").click(hideAllIcon);
-        $("#showBusOnly").click(showBusOnly);
-        $("#showCarOnly").click(showCarOnly);
-        $("#showTextTooltip").click(showTooltip);
-        $("#hideTextTooltip").click(hideTooltip);
-        */
-    	$("#refresh-button").click(function(){
-        	addMarker(getCurrentDataUrl({fleets: getFleetData()}));
-        });
-    	//default all fleets,not need fletts arg
-    	bindMapinitData("addMarker('" + getCurrentDataUrl({fleets: getFleetData()}) + "')");
-    	
-    	$("#change-level-btn").click(changeLevelHandler);
+	$("#refresh-button").unbind("click");
+    $("#refresh-button").bind("click", function(){
+    	_fetch_gps();
     });
-
+    
+    _int = setInterval(
+    	function(){
+    		if (map && map.loaded){
+    			clearInterval(_int);
+    			_fetch_gps();
+    		}
+    	}, 500);
+    
+    $("#change-level-btn").click(changeLevelHandler);
+});
 </script>
