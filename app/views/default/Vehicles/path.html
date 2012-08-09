@@ -119,6 +119,7 @@ function loadPath(url, params){
 		map.graphics.clear();
 		if (!points || points.length == 0){
 			alert("no data");
+			$loading.remove();
 			return ;
 		}
 		

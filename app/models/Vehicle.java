@@ -615,7 +615,8 @@ public class Vehicle extends Model {
 					end = CommonUtil.newDate("yyyy-MM-dd HH:mm", endTime);
 				}
 			} catch (Throwable e){
-				throw new RuntimeException("StartTime or endTime format invalid. yyyy-MM-dd HH:mm");
+				start = null;
+				end = null;
 			}
 		}
 		
