@@ -31,7 +31,7 @@ public class Excels extends Controller{
 	private static void renderExcel(Map map){
 		request.format = "xls";
     	renderArgs.put(RenderExcel.RA_FILENAME, "records_"+CommonUtil.formatTime("yyyyMMddHHmmss", new Date())+".xls");
-    	//renderArgs.put(RenderExcel.RA_ASYNC, true);
+//    	renderArgs.put(RenderExcel.RA_ASYNC, true);
         renderTemplate(renderArgs.get(THEME) + "/Excels/data-records.xls", map);
 	}
 	

@@ -20,7 +20,8 @@ function exportButtonClick(button){
 	var $form = $("#"+_formId);
 	var params = $form.serialize();
 	var url = $(button).attr("url") + "?"+params;
-	window.open(url, 'export');
+	var win = window.open(url,'_blank');   
+	win.location.href = url;
 }
 
 $(document).ready(function(){
