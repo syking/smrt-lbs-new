@@ -450,11 +450,11 @@
         	url: url,
         	dataType: 'json',
         	success: function(data){
-				currentBuses = data;
-				if(currentBuses == null || currentBuses == "" || currentBuses.length < 1){
+        		currentBuses = data;
+				if(data == null || data == "" || data.length < 1){
 					return;
 				}
-				var newGraphics = generateGraphics(currentBuses);
+				var newGraphics = generateGraphics(data);
 		        init_graphics(newGraphics);
 		        if (int){
 		        	clearInterval(int);
@@ -465,8 +465,8 @@
 		                    url: url,
 		                    dataType: 'json',
 		                    success: function(data){
-		                        currentBuses = data;
-		                        var graphics = generateGraphics(currentBuses);
+		                    	currentBuses = data;
+		                        var graphics = generateGraphics(data);
 		                        map.clusterLayer.refreshFeatures(graphics.vehicles);
 		                    }
 		                });
@@ -529,64 +529,63 @@
 //
 //    }
 
-    function generateGraphics(buses){
+    function generateGraphics(gps_array){
         var gras = {};
         var vehicleGras = [];
         var tooltipGras = [];
-        for(var i=0; i<buses.length; i++){
-            var bus = buses[i];
+        for(var i = 0; i < gps_array.length; i++){
+            var gps = gps_array[i];
             //--------------------------------------------
-            var x = parseFloat(bus.xCoord);
-            var y = parseFloat(bus.yCoord);
+            var lng = parseFloat(gps.lng);
+            var lat = parseFloat(gps.lat);
             
-            var ll = CnvEN2LL(x, y);
-            var lat = parseFloat(ll.split(",")[0]);
-            var lgt = parseFloat(ll.split(",")[1]);
+            var ll = CnvEN2LL(lng, lat);
+            lng = parseFloat(ll.split(",")[0]);
+            lat = parseFloat(ll.split(",")[1]);
             //---------------------------------------
             //Convert Longitude/Latitude to X/Y
-            var en = CnvLL2EN(lat, lgt);
+            var en = CnvLL2EN(lng, lat);
             //alert(en + " | "+bus.xCoord+","+bus.yCoord);
-            bus.xCoord = parseFloat(en.split(",")[0]);
-            bus.yCoord = parseFloat(en.split(",")[1]);
+            gps.xCoord = parseFloat(en.split(",")[0]);
+            gps.yCoord = parseFloat(en.split(",")[1]);
             //-----------------------------------------------
 
-            var gm = new esri.geometry.Point(bus.xCoord, bus.yCoord, new esri.SpatialReference({ wkid: 3414 }));
+            var gm = new esri.geometry.Point(gps.xCoord, gps.yCoord, new esri.SpatialReference({ wkid: 3414 }));
             var sbl = new esri.symbol.TextSymbol("");
             var attr;
             var it;
-            if(bus.busPlateNumber){
-            	bus.activeStatus = MapCnf.setDefaultActiveStatus( bus.vehicleType,bus.activeStatus);
+            if(gps.busPlateNumber){
+            	gps.activeStatus = MapCnf.setDefaultActiveStatus(gps.vehicleType, gps.activeStatus);
             	attr = {
-            		id: bus.id,
-            		xCoord: bus.xCoord,
-            		yCoord: bus.yCoord,
-            		busPlateNumber: bus.busPlateNumber,
-            		driver: bus.driver,
-            		serviceNumber: bus.serviceNumber,
-            		currentSpeed: bus.currentSpeed,
-            		activeStatus: bus.activeStatus,
-            		vehicleType: bus.vehicleType,
-            		symbol: MapCnf.getSymbol(bus.vehicleType)
-
+            		id: gps.id,
+            		xCoord: gps.xCoord,
+            		yCoord: gps.yCoord,
+            		busPlateNumber: gps.busPlateNumber,
+            		driver: gps.driver,
+            		serviceNumber: gps.serviceNumber,
+            		currentSpeed: gps.currentSpeed,
+            		activeStatus: gps.activeStatus,
+            		vehicleType: gps.vehicleType,
+            		symbol: MapCnf.getSymbol(gps.vehicleType)
 	            };
 				it = MapCnf.getInfoTemplate('GraphicsPlateNumberInfoTemplate');
             }else{
             	attr = {
-					id: bus.id,
-					xCoord: bus.xCoord,
-					yCoord: bus.yCoord,
-					name: bus.name,
-					techName: bus.techName,
-					currentSpeed: bus.currentSpeed,
-					activeStatus: bus.activeStatus,
-					symbol: MapCnf.getSymbol(bus.vehicleType)
+					id: gps.id,
+					xCoord: gps.xCoord,
+					yCoord: gps.yCoord,
+					name: gps.name,
+					techName: gps.techName,
+					currentSpeed: gps.currentSpeed,
+					activeStatus: gps.activeStatus,
+					symbol: MapCnf.getSymbol(gps.vehicleType)
 	            };
 				
 				it = MapCnf.getInfoTemplate('GraphicsInfoTemplate');
             }
-            attr.iconType = bus.vehicleType;
+            attr.iconType = gps.vehicleType;
             var gra = new esri.Graphic(gm, sbl, attr, it);
-			gra.visible = bus.activeStatus == 'on'?true:false;
+			gra.visible = gps.activeStatus == 'on'?true:false;
             vehicleGras.push(gra);
         }
         gras.vehicles = vehicleGras;
@@ -600,15 +599,15 @@
             var loc = locations[i];
 
             //--------------------------------------------
-            var x = parseFloat(loc.xCoord);
-            var y = parseFloat(loc.yCoord);
+            var lng = parseFloat(loc.lng);
+            var lat = parseFloat(loc.lat);
             
-            var ll = CnvEN2LL(x, y);
-            var lat = parseFloat(ll.split(",")[0]);
-            var lgt = parseFloat(ll.split(",")[1]);
+            var ll = CnvEN2LL(lng, lat);
+            lng = parseFloat(ll.split(",")[0]);
+            lat = parseFloat(ll.split(",")[1]);
             //---------------------------------------
             //Convert Longitude/Latitude to X/Y
-            var en = CnvLL2EN(lat, lgt);
+            var en = CnvLL2EN(lng, lat);
             loc.xCoord = parseFloat(en.split(",")[0]);
             loc.yCoord = parseFloat(en.split(",")[1]);
             //-----------------------------------------------
@@ -620,11 +619,11 @@
 			loc.activeStatus = MapCnf.setDefaultActiveStatus(loc.vehicleType, loc.activeStatus);
         	attr = {
         			id:loc.id,
-        			xCoord:loc.xCoord,
-        			yCoord:loc.yCoord,
-        			activeStatus:loc.activeStatus,
-        			vehicleType:loc.vehicleType,
-        			busPlateNumber:loc.busPlateNumber,
+        			xCoord: loc.xCoord,
+        			yCoord: loc.yCoord,
+        			activeStatus: loc.activeStatus,
+        			vehicleType: loc.vehicleType,
+        			busPlateNumber: loc.busPlateNumber,
         			symbol: MapCnf.getSymbol(loc.vehicleType)
             };
 			it = MapCnf.getInfoTemplate('LocationsInfoTemplate');
@@ -912,6 +911,10 @@
     	
     	$.each(currentBuses, function(index, g){
             if(currentBuses[index].id  == keyword){
+            	/**
+            	 * TODO 
+            	 * Convert lng/lat to x/y
+            	 */ 
             	var cPoint=new esri.geometry.Point(currentBuses[index].xCoord, currentBuses[index].yCoord, new esri.SpatialReference({ wkid:3414 }));
             	map.centerAt(cPoint);
     			setTimeout('showInfoWindow("'+keyword+'")',1000);

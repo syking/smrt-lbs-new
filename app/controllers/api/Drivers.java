@@ -10,6 +10,7 @@ import play.cache.Cache;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.With;
+import utils.CommonUtil;
 import vo.DriverVO;
 import controllers.Interceptor;
 
@@ -27,9 +28,9 @@ public class Drivers extends Controller{
 	 */
 	public static void index(final int page, final int pageSize, final DriverVO driver){
 		try{
-			renderJSON(APICallback.success(Driver.search(page, pageSize, driver)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Driver.search(page, pageSize, driver))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.DRIVER_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.DRIVER_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -40,9 +41,9 @@ public class Drivers extends Controller{
 	public static void show(Long id){
 		try{
 			Driver driver = Driver.fetchById(id);
-			renderJSON(APICallback.success(new DriverVO().init(driver)));
+			renderHtml(CommonUtil.toJson(APICallback.success(new DriverVO().init(driver))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.DRIVER_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.DRIVER_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -54,9 +55,9 @@ public class Drivers extends Controller{
 		
 		try{
 			DriverVO _driver = Driver.createByVO(driver);
-			renderJSON(APICallback.success(_driver));
+			renderHtml(CommonUtil.toJson(APICallback.success(_driver)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(driver, APIError.DRIVER_CERATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(driver, APIError.DRIVER_CERATE_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -68,9 +69,9 @@ public class Drivers extends Controller{
 		
 		try{
 			Driver.updateByVO(driver);
-			renderJSON(APICallback.success(driver));
+			renderHtml(CommonUtil.toJson(APICallback.success(driver)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.DRIVER_UPDATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.DRIVER_UPDATE_FAIL, e.getMessage())));
 		}
 	}
 
@@ -81,9 +82,9 @@ public class Drivers extends Controller{
 	public static void destroy(Long id) {
 		try{
 			Driver.deleteById(id);
-			renderJSON(APICallback.success(id));
+			renderHtml(CommonUtil.toJson(APICallback.success(id)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(id, APIError.DRIVER_DESTROY_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(id, APIError.DRIVER_DESTROY_FAIL, e.getMessage())));
 		}
 	}
 }

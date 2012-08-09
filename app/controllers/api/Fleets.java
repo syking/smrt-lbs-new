@@ -16,6 +16,7 @@ import play.cache.Cache;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.With;
+import utils.CommonUtil;
 import vo.FleetVO;
 import controllers.Interceptor;
 
@@ -32,9 +33,9 @@ public class Fleets extends Controller{
 	 */
 	public static void index(final int page, final int pageSize, final FleetVO fleet){
 		try{
-			renderJSON(APICallback.success(Fleet.search(page, pageSize, fleet)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Fleet.search(page, pageSize, fleet))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -44,9 +45,9 @@ public class Fleets extends Controller{
 	public static void show(Long id){
 		try{
 			Fleet fleet = Fleet.fetchById(id);
-			renderJSON(APICallback.success(new FleetVO().init(fleet)));
+			renderHtml(CommonUtil.toJson(APICallback.success(new FleetVO().init(fleet))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -57,9 +58,9 @@ public class Fleets extends Controller{
 		
 		try{
 			FleetVO _fleet = Fleet.createByVO(fleet);
-			renderJSON(APICallback.success(_fleet));
+			renderHtml(CommonUtil.toJson(APICallback.success(_fleet)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(fleet, APIError.FLEET_CERATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(fleet, APIError.FLEET_CERATE_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -70,9 +71,9 @@ public class Fleets extends Controller{
 		
 		try{
 			Fleet.updateByVO(fleet);
-			renderJSON(APICallback.success(fleet));
+			renderHtml(CommonUtil.toJson(APICallback.success(fleet)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_UPDATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_UPDATE_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -83,9 +84,9 @@ public class Fleets extends Controller{
 	public static void destroy(Long id) {
 		try{
 			Fleet.deleteById(id);
-			renderJSON(APICallback.success(id));
+			renderHtml(CommonUtil.toJson(APICallback.success(id)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(id, APIError.FLEET_DESTROY_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(id, APIError.FLEET_DESTROY_FAIL, e.getMessage())));
 		}
 	}
 	/**
@@ -94,18 +95,18 @@ public class Fleets extends Controller{
 	public static void createRelations(Long id, List<Long> vehicle_ids, List<Long> leader_ids) {
 		try{
 			Fleet.assign(id, vehicle_ids, leader_ids, false);
-			renderJSON(APICallback.success());
+			renderHtml(CommonUtil.toJson(APICallback.success()));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_ASSIGN_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_ASSIGN_FAIL, e.getMessage())));
 		}
 	}
 	
 	public static void destroyRelations(Long id, List<Long> vehicle_ids, List<Long> leader_ids) {
 		try{
 			Fleet.unassign(id, vehicle_ids, leader_ids);
-			renderJSON(APICallback.success());
+			renderHtml(CommonUtil.toJson(APICallback.success()));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_UNASSIGN_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_UNASSIGN_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -116,9 +117,9 @@ public class Fleets extends Controller{
 			map.put("vehicles", Vehicle.toIds(fleet.vehicles));
 			map.put("leaders", Driver.toIds(fleet.leaders));
 			
-			renderJSON(APICallback.success(map));
+			renderHtml(CommonUtil.toJson(APICallback.success(map)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -128,9 +129,9 @@ public class Fleets extends Controller{
 			Map map = new HashMap();
 			map.put("vehicle", Vehicle.toIds(validList));
 			
-			renderJSON(APICallback.success(map));
+			renderHtml(CommonUtil.toJson(APICallback.success(map)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.FLEET_FETCH_FAIL, e.getMessage())));
 		}
 	}
 }

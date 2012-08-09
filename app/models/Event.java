@@ -109,8 +109,8 @@ public class Event extends Model{
     		gps.id = vehicleNo + "_" + e.id;
     		gps.currentSpeed = er.speed;
     		gps.name = er.type.name;
-    		gps.xCoord = er.lng;
-    		gps.yCoord = er.lat;
+    		gps.lng = Double.parseDouble(er.lng);
+    		gps.lat = Double.parseDouble(er.lat);
     		gps.techName = er.type.techName;
     		
     		result.add(gps);

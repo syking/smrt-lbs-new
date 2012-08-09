@@ -11,6 +11,7 @@ import play.cache.Cache;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.With;
+import utils.CommonUtil;
 import vo.PermVO;
 import controllers.Interceptor;
 
@@ -27,9 +28,9 @@ public class Permissions extends Controller{
 	 */
 	public static void index(final int page, final int pageSize, PermVO perm){
 		try{
-			renderJSON(APICallback.success(Permission.search(page, pageSize, perm)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Permission.search(page, pageSize, perm))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -40,9 +41,9 @@ public class Permissions extends Controller{
 	public static void show(Long id){
 		try{
 			Permission perm = Permission.fetchById(id);
-			renderJSON(APICallback.success(new PermVO(perm)));
+			renderHtml(CommonUtil.toJson(APICallback.success(new PermVO(perm))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -54,9 +55,9 @@ public class Permissions extends Controller{
 		
 		try{
 			PermVO _perm = Permission.createByVO(perm);
-			renderJSON(APICallback.success(_perm));
+			renderHtml(CommonUtil.toJson(APICallback.success(_perm)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(perm, APIError.PERM_CERATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(perm, APIError.PERM_CERATE_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -68,9 +69,9 @@ public class Permissions extends Controller{
 		
 		try{
 			Permission.updateByVO(perm);
-			renderJSON(APICallback.success(perm));
+			renderHtml(CommonUtil.toJson(APICallback.success(perm)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.PERM_UPDATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.PERM_UPDATE_FAIL, e.getMessage())));
 		}
 	}
 
@@ -81,9 +82,9 @@ public class Permissions extends Controller{
 	public static void destroy(Long id) {
 		try{
 			Permission.deleteById(id);
-			renderJSON(APICallback.success(id));
+			renderHtml(CommonUtil.toJson(APICallback.success(id)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(id, APIError.PERM_DESTROY_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(id, APIError.PERM_DESTROY_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -92,9 +93,9 @@ public class Permissions extends Controller{
 	 */
 	public static void actions() {
 		try{
-			renderJSON(APICallback.success(Permission.assemActions()));
+			renderHtml(CommonUtil.toJson(APICallback.success(Permission.assemActions())));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.PERM_FETCH_FAIL, e.getMessage())));
 		}
 	}
 }

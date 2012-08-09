@@ -28,7 +28,6 @@ public class EventVO {
 	public String serviceNo;
 	public String time;
 	public String type;
-	public String lat;
 	public String lng;
-	
+	public String lat;
 }

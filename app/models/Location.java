@@ -59,8 +59,8 @@ public class Location extends Model{
 			VehicleGPS vGps = new VehicleGPS();
 			vGps.id = l.id;
 			vGps.busPlateNumber = l.name;
-			vGps.xCoord = Double.parseDouble(l.longitude);
-			vGps.yCoord = Double.parseDouble(l.latitude);
+			vGps.lng = Double.parseDouble(l.longitude);
+			vGps.lat = Double.parseDouble(l.latitude);
 			vGps.vehicleType = l.type;
 			vGps.activeStatus = "on";
 

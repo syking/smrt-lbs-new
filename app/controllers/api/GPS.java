@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Event;
+import models.Location;
 import models.Vehicle;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -30,9 +31,9 @@ public class GPS extends Controller{
 	public static void vehicles(long[] fleet_ids) {
 		try{
 			List<Vehicle> vehicles = Vehicle.filterByFleet(fleet_ids);
-			renderJSON(APICallback.success(Vehicle.findGPS(vehicles)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Vehicle.findGPS(vehicles))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -45,9 +46,9 @@ public class GPS extends Controller{
 			Vehicle vehicle = Vehicle.fetchById(id);
 			List<Vehicle> vehicles = new ArrayList<Vehicle>(1);
 			vehicles.add(vehicle);
-			renderJSON(APICallback.success(Vehicle.findGPS(vehicles)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Vehicle.findGPS(vehicles))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -56,9 +57,9 @@ public class GPS extends Controller{
 	 */
 	public static void vehicles(){
 		try{
-			renderJSON(APICallback.success(Vehicle.findGPS()));
+			renderHtml(CommonUtil.toJson(APICallback.success(Vehicle.findGPS())));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -72,9 +73,9 @@ public class GPS extends Controller{
 			Map map = new HashMap();
 			map.put("points", points);
 			map.put("total", total);
-			renderJSON(APICallback.success(map));
+			renderHtml(CommonUtil.toJson(APICallback.success(map)));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -89,9 +90,9 @@ public class GPS extends Controller{
 			map.put("points", points);
 			map.put("total", total);
 			
-			renderJSON(APICallback.success(map));
+			renderHtml(CommonUtil.toJson(APICallback.success(map)));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -102,9 +103,9 @@ public class GPS extends Controller{
 	public static void eventsById(Long id){
 		try{
 			Event event = Event.fetchById(id);
-			renderJSON(APICallback.success(new EventGPS().init(event)));
+			renderHtml(CommonUtil.toJson((APICallback.success(new EventGPS().init(event)))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -123,9 +124,17 @@ public class GPS extends Controller{
 			map.remove("data");
 			map.put("events", eGps);
 			
-			renderJSON(APICallback.success(map));
+			renderHtml(CommonUtil.toJson(APICallback.success(map)));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage())));
+		}
+	}
+	
+	public static void locations(){
+		try{
+			renderHtml(CommonUtil.toJson(APICallback.success(Location.findGPS())));
+		}catch(Throwable e){
+			renderHtml(APICallback.fail(APIError.GPS_FETCH_FAIL, e.getMessage()));
 		}
 	}
 	

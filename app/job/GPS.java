@@ -59,8 +59,8 @@ public class GPS extends Job {
         	gps.device = Device.findById(v.device.id);
         	gps.direction = dire.get(c.direction);
         	gps.fixed = true;
-        	gps.longitude = String.valueOf(c.xCoord);
-        	gps.latitude = String.valueOf(c.yCoord);
+        	gps.longitude = String.valueOf(c.lng);
+        	gps.latitude = String.valueOf(c.lat);
         	gps.speed = c.currentSpeed;
         	
         	gps.save();
@@ -83,35 +83,35 @@ public class GPS extends Job {
                 CurrentBusData currentData = currentDatas[i];
 
                 if(currentData.direction.equals("left")){
-                    currentData.xCoord = currentData.xCoord - (30 + Math.random() * 70);
-                    currentData.yCoord = currentData.yCoord - Math.random() * 30;
+                    currentData.lng = currentData.lng - (30 + Math.random() * 70);
+                    currentData.lat = currentData.lat - Math.random() * 30;
                 }
                 
                 else if(currentData.direction.equals("right")){
-                    currentData.xCoord = currentData.xCoord + (30 + Math.random() * 70);
-                    currentData.yCoord = currentData.yCoord + Math.random() * 30;
+                    currentData.lng = currentData.lng + (30 + Math.random() * 70);
+                    currentData.lat = currentData.lat + Math.random() * 30;
                 }
                 
                 else if(currentData.direction.equals("up")){
-                    currentData.xCoord = currentData.xCoord + Math.random() * 30;
-                    currentData.yCoord = currentData.yCoord + (30 + Math.random() * 70);
+                    currentData.lng = currentData.lng + Math.random() * 30;
+                    currentData.lat = currentData.lat + (30 + Math.random() * 70);
                 }
                 
                 else if(currentData.direction.equals("down")){
-                    currentData.xCoord = currentData.xCoord - Math.random() * 30;
-                    currentData.yCoord = currentData.yCoord - (30 + Math.random() * 70);
+                    currentData.lng = currentData.lng - Math.random() * 30;
+                    currentData.lat = currentData.lat - (30 + Math.random() * 70);
                 }
 
-                if(currentData.xCoord < minXCoord)
+                if(currentData.lng < minXCoord)
                     currentData.direction = "right";
                 
-                if(currentData.xCoord > maxXCoord)
+                if(currentData.lng > maxXCoord)
                     currentData.direction = "left";
                 
-                if(currentData.yCoord < minYCoord)
+                if(currentData.lat < minYCoord)
                     currentData.direction = "up";
                 
-                if(currentData.yCoord > maxYCoord)
+                if(currentData.lat > maxYCoord)
                     currentData.direction = "down";
                 
             }
@@ -153,8 +153,8 @@ public class GPS extends Job {
             data.serviceNumber = serviceNumber;
             data.driver = "DR"+number;
             data.currentSpeed = currentSpeed;
-            data.xCoord = xCoord;
-            data.yCoord = yCoord;
+            data.lng = xCoord;
+            data.lat = yCoord;
             data.vehicleType = vehicleType;
             data.activeStatus = activeStatus;
             data.direction = direction;

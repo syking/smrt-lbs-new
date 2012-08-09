@@ -56,10 +56,12 @@
 		    },
             transport: {
                 read:  {
-                    url: url
+                    url: url,
+                    dataType: "json"
                 },
                 update: {
                     url: "${grid.updateUrl}",
+                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
@@ -69,6 +71,7 @@
                 },
                 destroy: {
                     url: "${grid.destroyUrl}",
+                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
@@ -78,6 +81,7 @@
                 },
                 create: {
                     url: "${grid.createUrl}",
+                    dataType: "json",
                     complete: function(jqXHR, textStatus){
                     	if (jqXHR && jqXHR.status && (200 == jqXHR.status)){
                     		alert("create success");

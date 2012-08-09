@@ -26,24 +26,24 @@ public class SystemConfigs extends Controller{
 	
 	@Perm
 	public static void read(int page, int pageSize){
-		renderJSON(SystemConfig.search(page, pageSize));
+		renderHtml(CommonUtil.toJson(SystemConfig.search(page, pageSize)));
 	}
 	
 	@Perm
 	public static void create(String models){
-		renderJSON(SystemConfig.createByJson(models));
+		renderHtml(CommonUtil.toJson(SystemConfig.createByJson(models)));
 	}
 	
 	@Perm
 	public static void delete(String models){
 		if (SystemConfig.deleteByJson(models))
-			renderJSON(models);
+			renderHtml(CommonUtil.toJson(models));
 	}
 	
 	@Perm
 	public static void update(String models){
 		if (SystemConfig.updateByJson(models))
-			renderJSON(models);
+			renderHtml(CommonUtil.toJson(models));
 	}
 	
 	@Perm
@@ -122,15 +122,6 @@ public class SystemConfigs extends Controller{
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/SystemConfigs/setting.html")).render(map));
 	}
 	
-	public static void main(String[] args){
-		String name = "threshold-sudden-braking-200-30";
-		
-		System.out.println(name.matches("^threshold-sudden-braking-\\d+-\\d+$"));
-		String[] names = name.split("-");
-		System.out.println(names[names.length-2]);
-		System.out.println(names[names.length-1]);
-	}
-	
 	@Perm
 	public static void update_setting(
 			Long threshold_speeding_id, String threshold_speeding, 
@@ -140,108 +131,111 @@ public class SystemConfigs extends Controller{
 			List<Long> sudden_acceleration_id, List<String> sudden_acceleration_gforce, List<String> sudden_acceleration_min, List<String> sudden_acceleration_max,
 			List<Long> sudden_left_id, List<String> sudden_left_gforce, List<String> sudden_left_min, List<String> sudden_left_max,
 			List<Long> sudden_right_id, List<String> sudden_right_gforce, List<String> sudden_right_min, List<String> sudden_right_max) {
-		List<SystemConfig> scs = new ArrayList<SystemConfig>();
-		if (!CommonUtil.isBlank(threshold_speeding)){
-			SystemConfig sc = new SystemConfig();
-			sc.id = threshold_speeding_id;
-			sc.name = "threshold-speeding";
-			sc.value = threshold_speeding;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
-		if (!CommonUtil.isBlank(threshold_speeding_on_highway)){
-			SystemConfig sc = new SystemConfig();
-			sc.id = threshold_speeding_on_highway_id;
-			sc.name = "threshold-speeding-on-highway";
-			sc.value = threshold_speeding_on_highway;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
-		if (!CommonUtil.isBlank(threshold_idle)){
-			SystemConfig sc = new SystemConfig();
-			sc.id = threshold_idle_id;
-			sc.name = "threshold-idle";
-			sc.value =  threshold_idle;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
-		for (int i = 0; i < sudden_braking_gforce.size(); i++){
-			final String gforce = sudden_braking_gforce.get(i);
-			final String min = sudden_braking_min.get(i);
-			final String max = sudden_braking_max.get(i);
-			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
-				continue;
-			
-			String name = String.format("threshold-sudden-braking-%s-%s", min, max);
-			String value = gforce;
-			SystemConfig sc = new SystemConfig();
-			if (sudden_braking_id != null)
-				sc.id = sudden_braking_id.get(i);
-			
-			sc.name = name;
-			sc.value = value;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
-		for (int i = 0; i < sudden_acceleration_gforce.size(); i++){
-			final String gforce = sudden_acceleration_gforce.get(i);
-			final String min = sudden_acceleration_min.get(i);
-			final String max = sudden_acceleration_max.get(i);
-			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
-				continue;
-			
-			String name = String.format("threshold-sudden-acceleration-%s-%s", min, max);
-			String value = gforce;
-			SystemConfig sc = new SystemConfig();
-			if (sudden_acceleration_id != null)
-				sc.id = sudden_acceleration_id.get(i);
-			sc.name = name;
-			sc.value = value;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
-		for (int i = 0; i < sudden_left_gforce.size(); i++){
-			final String gforce = sudden_left_gforce.get(i);
-			final String min = sudden_left_min.get(i);
-			final String max = sudden_left_max.get(i);
-			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
-				continue;
-			
-			String name = String.format("threshold-sudden-left-%s-%s", min, max);
-			String value = gforce;
-			SystemConfig sc = new SystemConfig();
-			if (sudden_left_id != null)
-				sc.id = sudden_left_id.get(i);
-			sc.name = name;
-			sc.value = value;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
-		for (int i = 0; i < sudden_right_gforce.size(); i++){
-			final String gforce = sudden_right_gforce.get(i);
-			final String min = sudden_right_min.get(i);
-			final String max = sudden_right_max.get(i);
-			if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
-				continue;
-			
-			String name = String.format("threshold-sudden-right-%s-%s", min, max);
-			String value = gforce;
-			SystemConfig sc = new SystemConfig();
-			if (sudden_right_id != null)
-				sc.id = sudden_right_id.get(i);
-			sc.name = name;
-			sc.value = value;
-			sc.displayName = sc.name;
-			scs.add(sc);
-		}
-		
 		try{
+			List<SystemConfig> scs = new ArrayList<SystemConfig>();
+			if (!CommonUtil.isBlank(threshold_speeding)){
+				SystemConfig sc = new SystemConfig();
+				sc.id = threshold_speeding_id;
+				sc.name = "threshold-speeding";
+				sc.value = threshold_speeding;
+				sc.displayName = sc.name;
+				scs.add(sc);
+			}
+			
+			if (!CommonUtil.isBlank(threshold_speeding_on_highway)){
+				SystemConfig sc = new SystemConfig();
+				sc.id = threshold_speeding_on_highway_id;
+				sc.name = "threshold-speeding-on-highway";
+				sc.value = threshold_speeding_on_highway;
+				sc.displayName = sc.name;
+				scs.add(sc);
+			}
+			
+			if (!CommonUtil.isBlank(threshold_idle)){
+				SystemConfig sc = new SystemConfig();
+				sc.id = threshold_idle_id;
+				sc.name = "threshold-idle";
+				sc.value =  threshold_idle;
+				sc.displayName = sc.name;
+				scs.add(sc);
+			}
+			if (sudden_braking_gforce != null)
+				for (int i = 0; i < sudden_braking_gforce.size(); i++){
+					final String gforce = sudden_braking_gforce.get(i);
+					final String min = sudden_braking_min.get(i);
+					final String max = sudden_braking_max.get(i);
+					if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
+						continue;
+					
+					String name = String.format("threshold-sudden-braking-%s-%s", min, max);
+					String value = gforce;
+					SystemConfig sc = new SystemConfig();
+					if (sudden_braking_id != null)
+						sc.id = sudden_braking_id.get(i);
+					
+					sc.name = name;
+					sc.value = value;
+					sc.displayName = sc.name;
+					scs.add(sc);
+				}
+			
+			if (sudden_acceleration_gforce != null)
+				for (int i = 0; i < sudden_acceleration_gforce.size(); i++){
+					final String gforce = sudden_acceleration_gforce.get(i);
+					final String min = sudden_acceleration_min.get(i);
+					final String max = sudden_acceleration_max.get(i);
+					if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
+						continue;
+					
+					String name = String.format("threshold-sudden-acceleration-%s-%s", min, max);
+					String value = gforce;
+					SystemConfig sc = new SystemConfig();
+					if (sudden_acceleration_id != null)
+						sc.id = sudden_acceleration_id.get(i);
+					sc.name = name;
+					sc.value = value;
+					sc.displayName = sc.name;
+					scs.add(sc);
+				}
+			
+			if (sudden_left_gforce != null)
+				for (int i = 0; i < sudden_left_gforce.size(); i++){
+					final String gforce = sudden_left_gforce.get(i);
+					final String min = sudden_left_min.get(i);
+					final String max = sudden_left_max.get(i);
+					if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
+						continue;
+					
+					String name = String.format("threshold-sudden-left-%s-%s", min, max);
+					String value = gforce;
+					SystemConfig sc = new SystemConfig();
+					if (sudden_left_id != null)
+						sc.id = sudden_left_id.get(i);
+					sc.name = name;
+					sc.value = value;
+					sc.displayName = sc.name;
+					scs.add(sc);
+				}
+			
+			if (sudden_right_gforce != null)
+				for (int i = 0; i < sudden_right_gforce.size(); i++){
+					final String gforce = sudden_right_gforce.get(i);
+					final String min = sudden_right_min.get(i);
+					final String max = sudden_right_max.get(i);
+					if (CommonUtil.isBlank(gforce) || CommonUtil.isBlank(min) || CommonUtil.isBlank(max))
+						continue;
+					
+					String name = String.format("threshold-sudden-right-%s-%s", min, max);
+					String value = gforce;
+					SystemConfig sc = new SystemConfig();
+					if (sudden_right_id != null)
+						sc.id = sudden_right_id.get(i);
+					sc.name = name;
+					sc.value = value;
+					sc.displayName = sc.name;
+					scs.add(sc);
+				}
+		
 			for (SystemConfig sc : scs) {
 				if (sc.id != null){
 					Long id = sc.id;
@@ -259,20 +253,20 @@ public class SystemConfigs extends Controller{
 				SystemConfig.createByVO(sc);
 			}
 			
-			renderJSON(CommonUtil.map("success", true));
+			renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
 		}catch (Throwable e){
 			e.printStackTrace();
 			Map map = new HashMap();
 			map.put("success", false);
 			map.put("message", e.getMessage());
-			renderJSON(map);
+			renderHtml(CommonUtil.toJson(map));
 		}
 	}
 	
 	public static void destroy_setting(Long id) {
 		try{
 			SystemConfig.deleteById(id);
-			renderJSON(CommonUtil.map("success", true));
+			renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
 		} catch(Throwable e){
 			e.printStackTrace();
 			String msg = e.getMessage();
@@ -281,7 +275,7 @@ public class SystemConfigs extends Controller{
 			Map map = new HashMap();
 			map.put("success", false);
 			map.put("message", msg);
-			renderJSON(map);
+			renderHtml(CommonUtil.toJson(map));
 		}
 	}
 }

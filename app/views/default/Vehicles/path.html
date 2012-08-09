@@ -85,7 +85,12 @@ $(document).ready(function(){
             var text = this.text();
 		    $.getJSON("/vehicles/schedules", {vehicleNo:value}, function(schedules){
 		    	createScheduleComboBox(schedules);
-		    });
+		    }).error(function(e){
+	    		var err = e.responseText;
+	    		if (!err || $.trim(err).length == 0)
+	    			err = "server error or connection failed";
+	    		alert(err);
+			});
         }
     });
     
@@ -109,6 +114,7 @@ $(document).ready(function(){
 
 
 function loadPath(url, params){
+	var $loading = $("<img id='__loading' style='z-index:99999999; position:absolute; top:40%; left:40%;' src='/public/images/downloading.gif' />").insertAfter("head");
 	$.getJSON(url, params, function(points){
 		map.graphics.clear();
 		if (!points || points.length == 0){
@@ -117,8 +123,15 @@ function loadPath(url, params){
 		}
 		
 		initRouteTask(points);
+		$loading.remove();
 	}).error(function(e){
-     	alert(e.responseText);
+		var err = e.responseText;
+		if (!err || $.trim(err).length == 0)
+			err = "server error or connection failed";
+		alert(err);
+		if ($loading){
+			$loading.remove();
+		}
 	});
 }
 

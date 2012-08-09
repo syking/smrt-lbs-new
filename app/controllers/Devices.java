@@ -20,6 +20,7 @@ import annotations.Perm;
 @With(Interceptor.class)
 public class Devices extends Controller {
 
+	@Perm
 	public static void grid(String id){
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -40,30 +41,30 @@ public class Devices extends Controller {
 
 	@Perm
 	public static void read(int page, int pageSize){
-		renderJSON(Device.search(page, pageSize, null, null, null));
+		renderHtml(CommonUtil.toJson(Device.search(page, pageSize, null, null, null)));
 	}
 
 	@Perm
 	public static void create(String models) {
-		renderJSON(Device.createByJson(models));
+		renderHtml(CommonUtil.toJson(Device.createByJson(models)));
 	}
 
 	@Perm
 	public static void update(String models){
 		if (Device.updateByJson(models))
-			renderJSON(models);
+			renderHtml(CommonUtil.toJson(models));
 
 	}
 
 	@Perm
 	public static void destroy(String models) {
 		if (Device.deleteByJson(models))
-			renderJSON(models);
+			renderHtml(CommonUtil.toJson(models));
 	}
 
 	@Perm
 	public static void search(int page, int pageSize, String name, String key, String host){
-		renderJSON(Device.search(page, pageSize, name, key, host));
+		renderHtml(CommonUtil.toJson(Device.search(page, pageSize, name, key, host)));
 	}
 
 }

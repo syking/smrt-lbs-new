@@ -10,6 +10,7 @@ import play.cache.Cache;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.With;
+import utils.CommonUtil;
 import vo.CounselVO;
 import controllers.Interceptor;
 
@@ -27,9 +28,9 @@ public class Counsellings extends Controller{
 	 */
 	public static void index(final int page, final int pageSize, final CounselVO counselling){
 		try{
-			renderJSON(APICallback.success(Counselling.search(page, pageSize, counselling)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Counselling.search(page, pageSize, counselling))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.COUNSELLING_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.COUNSELLING_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -40,9 +41,9 @@ public class Counsellings extends Controller{
 	public static void show(Long id){
 		try{
 			Counselling counselling = Counselling.fetchById(id);
-			renderJSON(APICallback.success(counselling));
+			renderHtml(CommonUtil.toJson(APICallback.success(counselling)));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.COUNSELLING_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.COUNSELLING_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -54,9 +55,9 @@ public class Counsellings extends Controller{
 		
 		try{
 			CounselVO _counselling = Counselling.createByVO(counselling, counselling.userName);
-			renderJSON(APICallback.success(_counselling));
+			renderHtml(CommonUtil.toJson(APICallback.success(_counselling)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(counselling, APIError.COUNSELLING_CERATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(counselling, APIError.COUNSELLING_CERATE_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -68,9 +69,9 @@ public class Counsellings extends Controller{
 		
 		try{
 			Counselling.updateByVO(counselling, counselling.userName);
-			renderJSON(APICallback.success(counselling));
+			renderHtml(CommonUtil.toJson(APICallback.success(counselling)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(APIError.COUNSELLING_UPDATE_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.COUNSELLING_UPDATE_FAIL, e.getMessage())));
 		}
 	}
 
@@ -81,9 +82,9 @@ public class Counsellings extends Controller{
 	public static void destroy(Long id) {
 		try{
 			Counselling.deleteById(id);
-			renderJSON(APICallback.success(id));
+			renderHtml(CommonUtil.toJson(APICallback.success(id)));
 		} catch (Throwable e){
-			renderJSON(APICallback.fail(id, APIError.COUNSELLING_DESTROY_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(id, APIError.COUNSELLING_DESTROY_FAIL, e.getMessage())));
 		}
 	}
 }

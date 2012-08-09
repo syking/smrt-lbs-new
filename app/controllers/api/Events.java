@@ -11,6 +11,7 @@ import play.cache.Cache;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.With;
+import utils.CommonUtil;
 import vo.EventGPS;
 import vo.EventVO;
 import controllers.Interceptor;
@@ -29,9 +30,9 @@ public class Events extends Controller{
 	 */
 	public static void index(final int page, final int pageSize, Date startTime, Date endTime,  final EventVO event){
 		try{
-			renderJSON(APICallback.success(Event.search(page, pageSize, startTime, endTime, event)));
+			renderHtml(CommonUtil.toJson(APICallback.success(Event.search(page, pageSize, startTime, endTime, event))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.EVENT_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.EVENT_FETCH_FAIL, e.getMessage())));
 		}
 	}
 	
@@ -42,9 +43,9 @@ public class Events extends Controller{
 	public static void show(Long id){
 		try{
 			Event event = Event.fetchById(id);
-			renderJSON(APICallback.success(new EventVO().init(event)));
+			renderHtml(CommonUtil.toJson(APICallback.success(new EventVO().init(event))));
 		}catch(Throwable e){
-			renderJSON(APICallback.fail(APIError.EVENT_FETCH_FAIL, e.getMessage()));
+			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.EVENT_FETCH_FAIL, e.getMessage())));
 		}
 	}
 

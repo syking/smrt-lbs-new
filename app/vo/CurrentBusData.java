@@ -13,8 +13,8 @@ public class CurrentBusData {
     public String serviceNumber;
     public String driver;
     public int currentSpeed;
-    public double xCoord;
-    public double yCoord;
+    public double lng;
+    public double lat;
     public String vehicleType;
     public String activeStatus;
     public String direction;

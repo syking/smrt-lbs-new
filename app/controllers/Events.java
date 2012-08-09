@@ -86,8 +86,8 @@ public class Events extends Controller {
 		gps.id = String.valueOf(event.id);
 		gps.currentSpeed = event.eventRecord.speed;
 		gps.name = event.eventRecord.type.name;
-		gps.xCoord = event.eventRecord.lng;
-		gps.yCoord = event.eventRecord.lat;
+		gps.lng = Double.parseDouble(event.eventRecord.lng);
+		gps.lat = Double.parseDouble(event.eventRecord.lat);
 		gps.techName = event.eventRecord.type.techName;
 		eGps.add(gps);
 

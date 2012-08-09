@@ -34,8 +34,8 @@ public class Maps extends Controller {
     		gps.id = eVO.id;
     		gps.currentSpeed = e.eventRecord.speed;
     		gps.name = e.eventRecord.type.name;
-    		gps.xCoord = e.eventRecord.lng;
-    		gps.yCoord = e.eventRecord.lat;
+    		gps.lng = Double.parseDouble(e.eventRecord.lng);
+    		gps.lat = Double.parseDouble(e.eventRecord.lat);
     		gps.techName = e.eventRecord.type.techName;
     		
     		gpsList.add(gps);
@@ -118,7 +118,6 @@ public class Maps extends Controller {
     
     public static void lineEventsGPS(String line){
     	List<Event> events = Event.find("service_number = ?", line).fetch();
-    	System.out.println("event--->"+events);
     	Map result = viewOnMap("line_" + line, events, "id", "vehicle", "department", "driver", "fleet");
     	
     	renderText(result.get("eventGPS"));
