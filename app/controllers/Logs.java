@@ -37,7 +37,7 @@ public class Logs extends Controller {
 		List<ComboVO> users = new ArrayList<ComboVO>();
 		if (userList != null)
 			for (User user : userList) 
-				users.add(new ComboVO(user.name, user.id));
+				users.add(new ComboVO(user.name, user.name));
 			
 		map.put("users", CommonUtil.getGson().toJson(users));
 		map.put("grid", grid);
@@ -51,11 +51,11 @@ public class Logs extends Controller {
 	}
 
 	public static void read(int page, int pageSize) {
-		renderJSON(Log.search(page, pageSize, null, null, null, null, null, null, null, null, 0, null));
+		renderJSON(Log.search(page, pageSize, null, null, null, null, null, null, null, null, null, null));
 	}
 
-	public static void search(int page, int pageSize, String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip) {
-		renderJSON(Log.search(page, pageSize, type, name, content, startDate, startTime, endDate, endTime, actions, userid, ip));
+	public static void search(int page, int pageSize, String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, String userName, String ip) {
+		renderJSON(Log.search(page, pageSize, type, name, content, startDate, startTime, endDate, endTime, actions, userName, ip));
 	}
 
 }

@@ -49,14 +49,14 @@ public class SystemConfig extends Model {
 	}
 	
 	public static void deleteById(Long id) {
-		if (id == null)
-			throw new RuntimeException("id required");
 		
-		SystemConfig obj = SystemConfig.findById(id);
-		if (obj == null)
-			throw new RuntimeException("id invalid");
+		SystemConfig obj = SystemConfig.fetchById(id);
 		
-		obj.delete();
+		try {
+			obj.delete();
+		} catch (Throwable e) {
+			throw new RuntimeException("Can not delete this systemconfig cause " + e.getMessage());
+		}
 	}
 	
 	public static boolean deleteByJson(String models) {
@@ -71,7 +71,7 @@ public class SystemConfig extends Model {
 		return true;
 	}
 
-	public static void createByVO(SystemConfig vo){
+	public static SystemConfig createByVO(SystemConfig vo){
 		if (vo == null)
 			throw new RuntimeException("SystemConfig info required");
 		
@@ -82,6 +82,8 @@ public class SystemConfig extends Model {
 			throw new RuntimeException("SystemConfigName duplicate!");
 			
 		vo.create();
+		
+		return vo;
 	}
 	public static String createByJson(String models) {
 		List<SystemConfig> vos = JSON.parseArray(models, SystemConfig.class);
@@ -103,15 +105,10 @@ public class SystemConfig extends Model {
 	public static void updateByVO(SystemConfig vo){
 		if (vo == null)
 			throw new RuntimeException("SystemConfig info required");
-		if (vo.id == null)
-			throw new RuntimeException("id invalid");
-		
-		SystemConfig obj = SystemConfig.findById(vo.id);
-		if (obj == null)
-			throw new RuntimeException("SystemConfig not found");
 		
 		vo.validate();
 		
+		SystemConfig obj = SystemConfig.fetchById(vo.id);
 		obj.name = vo.name;
 		obj.value = vo.value;
 		obj.displayName = vo.displayName;
@@ -147,5 +144,16 @@ public class SystemConfig extends Model {
 		map.put("systemConfigs", scs);
 		
 		return map;
+	}
+	
+	public static SystemConfig fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		
+		SystemConfig sc = SystemConfig.findById(id);
+		if (sc == null)
+			throw new RuntimeException("id is invalid");
+		
+		return sc;
 	}
 }

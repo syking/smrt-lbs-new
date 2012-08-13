@@ -57,4 +57,22 @@ public interface APIError {
 	String EVENT_FETCH_FAIL = "event_fetch_fail";
 	
 	String GPS_FETCH_FAIL = "gps_fetch_fail";
+	
+	String LOG_FETCH_FAIL = "log_fetch_fail";
+	String LOG_DESTROY_FAIL = "log_destroy_fail";
+	
+	String SCHEDULE_CERATE_FAIL = "schedule_create_fail";
+	String SCHEDULE_FETCH_FAIL = "schedule_fetch_fail";
+	String SCHEDULE_UPDATE_FAIL = "schedule_update_fail";
+	String SCHEDULE_DESTROY_FAIL = "schedule_destroy_fail";
+	
+	String VEHICLE_CERATE_FAIL = "vehicle_create_fail";
+	String VEHICLE_FETCH_FAIL = "vehicle_fetch_fail";
+	String VEHICLE_UPDATE_FAIL = "vehicle_update_fail";
+	String VEHICLE_DESTROY_FAIL = "vehicle_destroy_fail";
+	
+	String SYSTEMCONFIG_CERATE_FAIL = "systemconfig_create_fail";
+	String SYSTEMCONFIG_FETCH_FAIL = "systemconfig_fetch_fail";
+	String SYSTEMCONFIG_UPDATE_FAIL = "systemconfig_update_fail";
+	String SYSTEMCONFIG_DESTROY_FAIL = "systemconfig_destroy_fail";
 }

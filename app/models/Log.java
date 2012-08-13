@@ -50,29 +50,65 @@ public class Log extends Model {
 		this.isSuccess = isSuccess;
 	}
 	
+	public static void deleteById(Long id) {
+		Log log = Log.fetchById(id);
+		
+		try {
+			log.delete();
+		} catch (Throwable e){
+			throw new RuntimeException("This log can not delete cause " + e.getMessage());
+		}
+	}
+
+	public static Log fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		Log log = Log.findById(id);
+		if (log == null)
+			throw new RuntimeException("id is valid");
+		
+		return log;
+	}
+
 	public static boolean deleteByJson(String models) {
 		List<LogVO> vos = JSON.parseArray(models, LogVO.class);
 		if (vos == null)
 			return false;
 		
 		for (LogVO vo : vos){
-			Long id = vo.id;
-			Log log = Log.findById(id);
-			if (log == null)
-				throw new RuntimeException("log not found") ;
-			
-			log.delete();
+			deleteById(vo.id);
 		}
 		
 		return true;
 	}
 	
-	public static Map search(int page, int pageSize, String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip) {
+	public static Map search(int page, int pageSize, LogVO log, String start, String end){
+		String startDate = null;
+		String startTime = null;
+		if (CommonUtil.isValidDateTime(start)){
+			startDate = start.split(" ")[0];
+			startTime = start.split(" ")[1];
+		}
+		
+		String endDate = null;
+		String endTime = null;
+		if (CommonUtil.isValidDateTime(end)){
+			endDate = end.split(" ")[0];
+			endTime = end.split(" ")[1];
+		}
+		
+		if (log == null)
+			return search(page, pageSize, null, null, null, startDate, startTime, endDate, endTime, null, null, null);
+		
+		return search(page, pageSize, log.type, log.name, log.content, startDate, startTime, endDate, endTime, log.action, log.userName, log.ip);
+	}
+	
+	public static Map search(int page, int pageSize, String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String action, String userName, String ip) {
 
 		List<String> criteria = new ArrayList<String>(9);
 		List<Object> params = new ArrayList<Object>(9);
 
-		parseCondition(type, name, content, startDate, startTime, endDate, endTime, actions, userid, ip, criteria, params);
+		parseCondition(type, name, content, startDate, startTime, endDate, endTime, action, userName, ip, criteria, params);
 		List<Log> logList = filter(page, pageSize, criteria, params);
 		List<LogVO> logVOList = new ArrayList<LogVO>();
 		for (Log log : logList) {
@@ -86,7 +122,7 @@ public class Log extends Model {
 		return map;
 	}
 	
-	private static void parseCondition(String type, String name, String content, String startDate, String startTime, String endDate, String endTime, String actions, long userid, String ip, List<String> criteria, List<Object> params) {
+	private static void parseCondition(String type, String name, String content, String startDate, String startTime, String endDate, String endTime, String action, String userName, String ip, List<String> criteria, List<Object> params) {
 		if (!CommonUtil.isBlank(type)) {
 			criteria.add("type LIKE ?");
 			params.add("%" + type.trim() + "%");
@@ -102,9 +138,9 @@ public class Log extends Model {
 			params.add("%" + content.trim() + "%");
 		}
 
-		if (!CommonUtil.isBlank(actions)) {
+		if (!CommonUtil.isBlank(action)) {
 			criteria.add("action LIKE ?");
-			params.add("%" + actions.trim() + "%");
+			params.add("%" + action.trim() + "%");
 		}
 
 		if (!CommonUtil.isBlank(ip)) {
@@ -112,11 +148,9 @@ public class Log extends Model {
 			params.add("%" + ip.trim() + "%");
 		}
 
-		if (userid != 0) {
-			User user = User.findById(userid);
-			String userName = user.name;
-			criteria.add("userName = ?");
-			params.add(userName.trim());
+		if (!CommonUtil.isBlank(userName)) {
+			criteria.add("userName like ?");
+			params.add("%" + userName.trim() + "%");
 		}
 
 		// date and time
@@ -156,8 +190,13 @@ public class Log extends Model {
 	private static List<Log> filter(int page, int pageSize, List<String> criteria, List<Object> params) {
 		Object[] p = params.toArray();
 		String query = StringUtils.join(criteria, " AND ");
-		List<Log> vehicles = Log.find(query + " order by id desc", p).fetch(page, pageSize);
-		return vehicles;
+		List<Log> logs = null;
+		if (page > 0 && pageSize > 0)
+			logs = Log.find(query + " order by id desc", p).fetch(page, pageSize);
+		else
+			logs = Log.find(query + " order by id desc", p).fetch();
+		
+		return logs;
 	}
 	
 	private static long filterCount(List<String> criteria, List<Object> params) {
@@ -173,5 +212,5 @@ public class Log extends Model {
 	public static List<Log> findAllOrderBy(String field, String order) {
 		return Log.find(String.format("order by %s %s", field, order)).fetch();
 	}
-	
+
 }

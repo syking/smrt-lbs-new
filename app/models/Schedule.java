@@ -185,17 +185,36 @@ public class Schedule extends Model {
 		return result;
 	}
 
-	public static void createByVO(final ScheduleVO vo){
+	public static ScheduleVO createByVO(final ScheduleVO vo){
+		if (vo == null)
+			throw new RuntimeException("schedule info required");
+		
 		vo.validate();
-		Schedule sch = parseByVO(vo);
-		if (sch.vehicle == null)
-			throw new RuntimeException("VehicleNumber is invalid!");
-		if (sch.driver == null)
-			throw new RuntimeException("DriverNumber is invalid!");
+		
+		Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
+		if (vehicle == null)
+			throw new RuntimeException("Vehicle Number is invalid");
+		
+		Driver driver = Driver.find("byNumber", vo.driverNumber).first();
+		if (driver == null)
+			throw new RuntimeException("Driver Number is invalid");
+		
+		Schedule sch = new Schedule();
+		sch.driver = driver;
+		sch.vehicle = vehicle;
+		sch.dutyId = vo.duty;
+		sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
+		sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
+		sch.serviceNumber = vo.route;
+		
 		if (sch.startTime.after(sch.endTime))
-			throw new RuntimeException("EndTime must after the StartTime!");
+			throw new RuntimeException("EndTime must after the StartTime");
 		
 		sch.create();
+		
+		vo.id = sch.id;
+		
+		return vo;
 	}
 	
 	private static Schedule parseByVO(final ScheduleVO vo){
@@ -221,35 +240,40 @@ public class Schedule extends Model {
 			return models;
 		
 		for (ScheduleVO vo : vos){
-			vo.validate();
-			
-			Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
-			if (vehicle == null)
-				throw new RuntimeException("VehicleNumber is invalid!, ");
-			
-			Driver driver = Driver.find("byNumber", vo.driverNumber).first();
-			if (driver == null)
-				throw new RuntimeException("DriverNumber is invalid!, ");
-			
-			Schedule sch = new Schedule();
-			sch.driver = driver;
-			sch.vehicle = vehicle;
-			sch.dutyId = vo.duty;
-			sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
-			sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
-			sch.serviceNumber = vo.route;
-			
-			if (sch.startTime.after(sch.endTime))
-				throw new RuntimeException("EndTime must after the StartTime!");
-			
-			sch.create();
-			
-			vo.id = String.valueOf(sch.id);
+			createByVO(vo);
 		}
 		
 		String _models = CommonUtil.toJson(vos);
 		
 		return _models;
+	}
+	
+	public static void updateByVO(ScheduleVO vo){
+		if (vo == null)
+			throw new RuntimeException("schedule info required");
+		
+		vo.validate();
+		
+		Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
+		if (vo.vehicleNumber != null && vehicle == null)
+			throw new RuntimeException("Vehicle Number is invalid");
+		
+		Driver driver = Driver.find("byNumber", vo.driverNumber).first();
+		if (vo.driverNumber != null && driver == null)
+			throw new RuntimeException("Driver Number is invalid");
+		
+		Schedule sch = Schedule.fetchById(vo.id);
+		sch.driver = driver;
+		sch.vehicle = vehicle;
+		sch.dutyId = vo.duty;
+		sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
+		sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
+		sch.serviceNumber = vo.route;
+		
+		if (sch.startTime.after(sch.endTime))
+			throw new RuntimeException("EndTime must after the StartTime");
+		
+		sch.save();
 	}
 	
 	public static boolean updateByJson(String models){
@@ -258,47 +282,29 @@ public class Schedule extends Model {
 			return false;
 		
 		for (ScheduleVO vo : vos){
-			vo.validate();
-			
-			Vehicle vehicle = Vehicle.find("byNumber", vo.vehicleNumber).first();
-			if (vo.vehicleNumber != null && vehicle == null)
-				throw new RuntimeException("VehicleNumber is invalid!, ");
-			
-			Driver driver = Driver.find("byNumber", vo.driverNumber).first();
-			if (vo.driverNumber != null && driver == null)
-				throw new RuntimeException("DriverNumber is invalid!, ");
-			
-			Schedule sch = Schedule.findById(Long.parseLong(vo.id));
-			if (sch == null)
-				continue ;
-			
-			sch.driver = driver;
-			sch.vehicle = vehicle;
-			sch.dutyId = vo.duty;
-			sch.startTime = CommonUtil.parse(vo.startDate + " " + vo.startTime);
-			sch.endTime = CommonUtil.parse(vo.endDate + " " + vo.endTime);
-			sch.serviceNumber = vo.route;
-			
-			if (sch.startTime.after(sch.endTime))
-				throw new RuntimeException("EndTime must after the StartTime!");
-			
-			sch.save();
+			updateByVO(vo);
 		}
 		
 		return true;
 	}
 	
-	public static boolean deleteByJson(String models){
+	public static void deleteById(Long id) {
+		Schedule sch = Schedule.fetchById(id);
+		
+		try{
+			sch.delete();
+		}catch(Throwable e){
+			throw new RuntimeException("This schedule can not delete cause " + e.getMessage());
+		}
+	}
+	
+	public static boolean deleteByJson(String models) {
 		List<ScheduleVO> vos = CommonUtil.parseArray(models, ScheduleVO.class);
 		if (vos == null)
 			return false;
 		
 		for (ScheduleVO vo : vos){
-			Schedule sch = Schedule.findById(Long.parseLong(vo.id));
-			if (sch == null)
-				continue ;
-			
-			sch.delete();
+			deleteById(vo.id);
 		}
 		
 		return true;
@@ -415,6 +421,12 @@ public class Schedule extends Model {
 		Map data = CommonUtil.assemGridData(vos, "id");
 		return data;
 	}
+	public static Map search(int page, int pageSize, ScheduleVO schedule){
+		if (schedule == null)
+			return search(page, pageSize, null, null, null, null, null, null, null, null);
+		
+		return search(page, pageSize, schedule.driverNumber, schedule.vehicleNumber, schedule.route, schedule.duty, schedule.startDate, schedule.startTime, schedule.endDate, schedule.endTime);
+	}
 	public static Map search(int page, int pageSize, String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
 		List<Schedule> schedules = Schedule.findByCondition(page, pageSize, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		List<ScheduleVO> vos = Schedule.assemScheduleVO(schedules);
@@ -470,5 +482,15 @@ public class Schedule extends Model {
 		}
 		
 		reader.close();
+	}
+
+	public static Schedule fetchById(Long id) {
+		if (id == null)
+			throw new RuntimeException("id required");
+		Schedule sch = Schedule.findById(id);
+		if (sch == null)
+			throw new RuntimeException("id is invalid");
+		
+		return sch;
 	}
 }

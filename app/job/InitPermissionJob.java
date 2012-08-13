@@ -22,10 +22,10 @@ public class InitPermissionJob extends Job{
 			
 			//System.out.println(CommonUtil.getNowTime()+"-->" + cls.getName());
 			for (Method m : methods){
-//				if (!m.isAnnotationPresent(Perm.class))
-//					continue;
+				if (!m.isAnnotationPresent(Perm.class))
+					continue;
 				
-				final String action = cls.getSimpleName()+"."+m.getName();
+				final String action = cls.getName().replace("controllers", "")+"."+m.getName();
 				models.Permission.actions.add(action);
 				//System.out.println("\t-->" + action);
 			}

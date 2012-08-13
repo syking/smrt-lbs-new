@@ -14,7 +14,7 @@ public class VehicleVO
 {
 
     public VehicleVO init(Vehicle vehicle){
-        this.id = String.valueOf(vehicle.id);
+        this.id =vehicle.id;
         this.number = vehicle.number;
         this.license = vehicle.license;
         if (vehicle.fleet != null)
@@ -28,7 +28,7 @@ public class VehicleVO
         return this;
     }
 
-    public String id;
+    public Long id;
 
     public String number;//车辆编号
 

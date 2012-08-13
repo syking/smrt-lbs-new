@@ -96,7 +96,20 @@ public class CommonUtil {
 	}
 	
 	public static boolean isValidDate(String str){
-		return str.matches("^\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}$");
+		return str != null ? str.matches("^\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}$") : false;
+	}
+	
+	public static boolean isValidDateTime(String source){
+		return isValidDateTime(source, "yyyy-MM-dd HH:mm:ss");
+	}
+	
+	public static boolean isValidDateTime(String source, String format){
+		try{
+			Date date = CommonUtil.parse(format, source);
+			return date != null ;
+		}catch(Throwable e){
+			return false;
+		}
 	}
 	
 	public static <T> List<T> parseArray(String json, Class<T> clazz){

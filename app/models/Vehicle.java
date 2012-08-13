@@ -67,6 +67,8 @@ public class Vehicle extends Model {
 				+ ", id=" + id + "]";
 	}
 
+	public Vehicle() {}
+	
 	public Vehicle(String number, String license, Fleet fleet, Device device, String description, String cctvIp, String type) {
 		this.number = number;
 		this.license = license;
@@ -84,10 +86,6 @@ public class Vehicle extends Model {
 		this.description = description;
 		this.cctvIp = cctvIp;
 		this.type = type;
-	}
-
-	
-	public Vehicle() {
 	}
 
 	public static long countByCondition(List<String> criteria, List<Object> params) {
@@ -303,6 +301,16 @@ public class Vehicle extends Model {
 
 		return result;
 	}
+	
+	public static void deleteById(Long id) {
+		Vehicle vehicle = Vehicle.fetchById(id);
+		
+		try {
+			vehicle.delete();
+		} catch (Throwable e) {
+			throw new RuntimeException("Could not Delete This Vehicle Cause It is Assigned to Fleet!");
+		}
+	}
 
 	public static boolean deleteByJson(String models) {
 		List<VehicleVO> vehicleVOs = CommonUtil.parseArray(models, VehicleVO.class);
@@ -310,62 +318,60 @@ public class Vehicle extends Model {
 			return false;
 		
 		for (VehicleVO vo : vehicleVOs){
-			if (vo.id == null)
-				continue;
-			
-			Vehicle v = Vehicle.findById(Long.parseLong(vo.id));
-			if (v == null)
-				continue;
-			
-			try {
-				v.delete();
-			} catch (Throwable e) {
-				throw new RuntimeException("Could not Delete This Vehicle Cause It is Assigned to Fleet!");
-			}
+			deleteById(vo.id);
 		}
 		
 		return true;
 	}
 
+	public static VehicleVO createByVO(VehicleVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Vehicle info required");
+		
+		vo.validate();
+		
+		Vehicle v = new Vehicle();
+		v.number = vo.number;
+		v.license = vo.license;
+
+		
+		Fleet fleet = Fleet.find("byName", vo.fleetName).first();
+		if (!CommonUtil.isBlank(vo.fleetName) && fleet == null)
+			throw new RuntimeException("Fleet Name is invalid!");
+		
+		v.fleet = fleet;
+
+		Device device = Device.find("byName", vo.deviceName).first();
+		if (device == null)
+			throw new RuntimeException("Device Name is invalid!");
+		
+		v.device = device;
+
+		v.cctvIp = vo.cctvIp;
+		v.description = vo.description;
+		v.type = vo.type;
+		
+		Vehicle db_v = Vehicle.findByNumber(v.number);
+		if (db_v != null)
+			throw new RuntimeException("Number duplicate!");
+		
+		Vehicle db_v2 = Vehicle.findbyLicense(v.license);
+		if (db_v2 != null)
+			throw new RuntimeException("License duplicate!");
+		
+		v.create();
+		vo.id = v.id;
+		
+		return vo;
+	}
+	
 	public static String createByJson(String models) {
 		List<VehicleVO> vos = CommonUtil.parseArray(models, VehicleVO.class);
 		if (vos == null)
 			return models;
 		
 		for (VehicleVO vo : vos){
-			vo.validate();
-			
-			Vehicle v = new Vehicle();
-			v.number = vo.number;
-			v.license = vo.license;
-	
-			
-			Fleet fleet = Fleet.find("byName", vo.fleetName).first();
-			if (!CommonUtil.isBlank(vo.fleetName) && fleet == null)
-				throw new RuntimeException("FleetName is invalid!");
-			
-			v.fleet = fleet;
-	
-			Device device = Device.find("byName", vo.deviceName).first();
-			if (device == null)
-				throw new RuntimeException("DeviceName is invalid!");
-			
-			v.device = device;
-	
-			v.cctvIp = vo.cctvIp;
-			v.description = vo.description;
-			v.type = vo.type;
-			
-			Vehicle db_v = Vehicle.findByNumber(v.number);
-			if (db_v != null)
-				throw new RuntimeException("VehicleNumber duplicate!");
-			
-			Vehicle db_v2 = Vehicle.findbyLicense(v.license);
-			if (db_v2 != null)
-				throw new RuntimeException("VehicleLicense duplicate!");
-			
-			v.create();
-			vo.id = String.valueOf(v.id);
+			createByVO(vo);
 		}
 		
 		final String _models = CommonUtil.toJson(vos);
@@ -376,49 +382,50 @@ public class Vehicle extends Model {
 		return Vehicle.find("byLicense", license).first();
 	}
 
+	public static void updateByVO(VehicleVO vo) {
+		if (vo == null)
+			throw new RuntimeException("Vehicle info required");
+		
+		vo.validate();
+		
+		Vehicle v = Vehicle.fetchById(vo.id);
+		v.number = vo.number;
+		v.license = vo.license;
+
+		Fleet fleet = Fleet.find("byName", vo.fleetName).first();
+		if (!CommonUtil.isBlank(vo.fleetName) && fleet == null)
+			throw new RuntimeException("FleetName is invalid!");
+		
+		v.fleet = fleet;
+
+		Device device = Device.find("byName", vo.deviceName).first();
+		if (device == null)
+			throw new RuntimeException("DeviceName is invalid!");
+		
+		v.device = device;
+
+		v.cctvIp = vo.cctvIp;
+		v.description = vo.description;
+		v.type = vo.type;
+		
+		Vehicle db_v = findByNumber(v.number);
+		if (db_v != null && db_v.id != v.id)
+			throw new RuntimeException("VehicleNumber duplicate!");
+		
+		Vehicle db_v2 = Vehicle.findbyLicense(v.license);
+		if (db_v2 != null && db_v2.id != v.id)
+			throw new RuntimeException("VehicleLicense duplicate!");
+		
+		v.save();
+	}
+	
 	public static boolean updateByJson(String models) {
 		List<VehicleVO> vehicleVOs = CommonUtil.parseArray(models, VehicleVO.class);
 		if (vehicleVOs == null)
 			return false;
 		
-		for (VehicleVO vehicleVO : vehicleVOs){
-			vehicleVO.validate();
-			
-			if (vehicleVO.id == null)
-				continue;
-			
-			Vehicle v = Vehicle.findById(Long.parseLong(vehicleVO.id));
-			if (v == null)
-				continue;
-			
-			v.number = vehicleVO.number;
-			v.license = vehicleVO.license;
-	
-			Fleet fleet = Fleet.find("byName", vehicleVO.fleetName).first();
-			if (!CommonUtil.isBlank(vehicleVO.fleetName) && fleet == null)
-				throw new RuntimeException("FleetName is invalid!");
-			
-			v.fleet = fleet;
-	
-			Device device = Device.find("byName", vehicleVO.deviceName).first();
-			if (device == null)
-				throw new RuntimeException("DeviceName is invalid!");
-			
-			v.device = device;
-	
-			v.cctvIp = vehicleVO.cctvIp;
-			v.description = vehicleVO.description;
-			v.type = vehicleVO.type;
-			
-			Vehicle db_v = findByNumber(v.number);
-			if (db_v != null && db_v.id != v.id)
-				throw new RuntimeException("VehicleNumber duplicate!");
-			
-			Vehicle db_v2 = Vehicle.findbyLicense(v.license);
-			if (db_v2 != null && db_v2.id != v.id)
-				throw new RuntimeException("VehicleLicense duplicate!");
-			
-			v.save();
+		for (VehicleVO vo : vehicleVOs){
+			updateByVO(vo);
 		}
 		
 		return true;
@@ -453,28 +460,33 @@ public class Vehicle extends Model {
 		return vehicle;
 	}
 	
+	public static Map search(int page, int pageSize, VehicleVO vehicle) {
+		if (vehicle == null)
+			return search(page, pageSize, null, null, null, null, null, null, null);
+		
+		return search(page, pageSize, vehicle.number, vehicle.license, vehicle.fleetName, vehicle.deviceName, vehicle.description, vehicle.cctvIp, vehicle.type);
+	}
+	
 	public static Map search(int page, int pageSize, String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type){
 		List<String> criteria = new ArrayList<String>(9);
 		List<Object> params = new ArrayList<Object>(9);
 		parseCondition(number, license, fleetName, deviceName, description,cctvIp, type, criteria, params);
 		
-		Map map = new HashMap();
-		
 		Object[] p = params.toArray();
-		
 		String query = StringUtils.join(criteria, " AND ");
 		List<Vehicle> vehicles = null;
-		if (page < 0 || pageSize < 0)
-			vehicles = Vehicle.find(query + " order by id desc", p).fetch();
-		else
+		if (page > 0 && pageSize > 0)
 			vehicles = Vehicle.find(query + " order by id desc", p).fetch(page, pageSize);
+		else
+			vehicles = Vehicle.find(query + " order by id desc", p).fetch();
 	
 		
 		List<VehicleVO> vehicleVOList = new ArrayList<VehicleVO>();
 		for (Vehicle vehicle : vehicles) 
 			vehicleVOList.add(new VehicleVO().init(vehicle));
 		
-		map.put("data", vehicleVOList);
+		Map map = new HashMap();
+		map.put("vehicles", vehicleVOList);
 		map.put("total", Vehicle.countByCondition(criteria, params));
 		
 		return map;

@@ -101,22 +101,28 @@
                 update:{
                     url:"${grid.updateUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 destroy:{
                     url:"${grid.destroyUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("delete success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 create:{
                     url:"${grid.createUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap:function (data, operation) {
@@ -131,7 +137,7 @@
             pageSize:7,
             serverPaging: true,
             schema:{
-            	data: "data",
+            	data: "vehicles",
             	total: "total",
                 model:{
                     id:"id",

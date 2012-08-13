@@ -159,18 +159,7 @@ public class Vehicles extends Controller {
 	 * 获取所有车辆信息
 	 */
 	public static void read(int page, int pageSize) {
-		List<VehicleVO> result = new ArrayList<VehicleVO>();
-
-		List<Vehicle> vehicleList = Vehicle.find("order by id desc").fetch(page, pageSize);
-		for (Vehicle vehicle : vehicleList) {
-			VehicleVO vehicleVO = new VehicleVO().init(vehicle);
-			result.add(vehicleVO);
-		}
-		
-		Map map = new HashMap();
-		map.put("data", result);
-		map.put("total", Vehicle.count());
-		renderJSON(map);
+		renderJSON(Vehicle.search(page, pageSize, null));
 	}
 
 	/**

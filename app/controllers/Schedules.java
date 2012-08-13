@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Driver;
 import models.Schedule;
 import models.Vehicle;
@@ -57,12 +59,14 @@ public class Schedules extends Controller {
 		renderJSON(Schedule.search(page, pageSize, null, null, null, null, null, null, null, null));
 	}
 	
+	@Perm
 	public static void clear(){
 		Schedule.deleteAll();
 		
 		renderJSON(CommonUtil.map("success", true));
 	}
 
+	@Perm
 	public static void upload(File file){
 		try {
 			Schedule.parseAndCreateByCSV(file);

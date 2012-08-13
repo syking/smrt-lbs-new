@@ -5,7 +5,7 @@ import models.Schedule;
 
 public class ScheduleVO {
 
-	public String id;
+	public Long id;
 	public String driverNumber;
 	public String vehicleNumber;
 	public String startDate;
@@ -21,7 +21,7 @@ public class ScheduleVO {
 	
 	public ScheduleVO(Schedule sch) {
 		super();
-		this.id = String.valueOf(sch.id);
+		this.id = sch.id;
 		if (sch.driver != null)
 			this.driverNumber = sch.driver.number;
 		if (sch.vehicle != null)
@@ -36,7 +36,7 @@ public class ScheduleVO {
 	
 	public void validate(){
 		final StringBuilder builder = new StringBuilder();
-		final String msg = "%s Can't be empty, ";
+		final String msg = "%s Can not be empty, ";
 		if (CommonUtil.isBlank(driverNumber))
 			builder.append(CommonUtil.formatStr(msg, "DriverNumber"));
 		
