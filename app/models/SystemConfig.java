@@ -152,7 +152,7 @@ public class SystemConfig extends Model {
 		
 		SystemConfig sc = SystemConfig.findById(id);
 		if (sc == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("SystemConfig not found");
 		
 		return sc;
 	}

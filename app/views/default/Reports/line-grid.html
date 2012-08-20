@@ -154,9 +154,10 @@ function loadReportLines(url, params){
 	    	},
 	    	columns: json.columns, 
 	   	 	scrollable: true,
-	   	 	sortable: true,
 	   	 	pageable: true,
-	   	 	selectable: true,
+	   	 	sortable:true,
+            navigatable:true,
+            selectable:true,
 	   	 	resizable: true
 	   	 	
         }).data("kendoGrid");

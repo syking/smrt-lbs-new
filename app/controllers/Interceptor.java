@@ -99,6 +99,8 @@ public class Interceptor extends Controller {
 		String msg = e.getMessage();
 		if (CommonUtil.isBlank(msg))
 			msg = "Server Error!";
-		error(msg);
+		
+		response.status = 500;
+		renderText(msg);
     }
 }

@@ -239,7 +239,7 @@ public class Device extends Model {
 		
 		Device device = Device.findById(id);
 		if (device == null)
-			throw new RuntimeException("id invalid");
+			throw new RuntimeException("Device not found");
 		
 		return device;
 	}

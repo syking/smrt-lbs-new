@@ -113,7 +113,7 @@
 				err = "server error or connection failed";
 	     	alert(err);
 		});
-		
+				
 		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
 			$(permTreeId).find('input').attr("checked", false);
 			$.each(perms, function(i, v){
@@ -154,6 +154,9 @@
 		$.each(perms.split(","), function(i, v){
 			$("#${tabid}_form_input_wrap").append('<input name="perms" value='+ v +' />');
 		});
+		
+		if (!confirm("Are you sure to assign these permissions to the role?"))
+			return false ;
 		
 		$.getJSON($form.attr("action"), $form.serializeArray(), function(json){
 			if (json.success){

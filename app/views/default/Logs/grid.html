@@ -158,9 +158,10 @@
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource:dataSource,
             pageable:true,
-            selectable:true,
-            scrollable:true,
             resizable:true,
+            sortable:true,
+            navigatable:true,
+            selectable:true,
             columns:columnsJson,
             editable: "${grid.editable}"
         }).data("kendoGrid");

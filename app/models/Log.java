@@ -65,7 +65,7 @@ public class Log extends Model {
 			throw new RuntimeException("id required");
 		Log log = Log.findById(id);
 		if (log == null)
-			throw new RuntimeException("id is valid");
+			throw new RuntimeException("Logger not found");
 		
 		return log;
 	}

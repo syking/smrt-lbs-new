@@ -32,14 +32,17 @@ $(document).ready(function(){
 	   	 	scrollable: true,
 	   	 	resizable:true,
 	   	 	sortable: true,
+	   	 	selectable: true,
 	   	 	pageable: true,
-	   	 	height: 248,//248
-	   	 	selectable: true
-	   	 	
+	   	 	height: 248//248
         }).data("kendoGrid");
 	    
 	}).error(function(e){
-		alert(e.responseText);
+		var err = e.responseText;
+		if (!err || $.trim(err).length == 0)
+			err = "server error or connection failed";
+			
+        alert(err);
 	});
     $("#live_bus_grid").delegate("td", "click", function(e) {
 		if ($(this).text() == "View On MapRoute Path")
@@ -47,7 +50,7 @@ $(document).ready(function(){
 		
 		e.preventDefault();
 		var id = $(this).parent().find("td:last").text();
-		    showCurrentInfoWindow(id);
+		showCurrentInfoWindow(id);
 	});
     
     $("#live_bus_grid").delegate(".view-on-map-button", "click", function(e) {
@@ -128,7 +131,6 @@ function selectGrid(id){
 		if($(this).find("td:last").text() == id){
 			grid.select($(this));
 			$(this).find("a").focus();
-			
 		}
 	});
 }

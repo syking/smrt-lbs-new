@@ -173,9 +173,10 @@ function loadEvents(url, params){
 		dataSource: dataSource,
 		columns: columnsJson, 
 	 	scrollable: true,
-	 	sortable: true,
 	 	pageable: true,
-	 	selectable: true,
+	 	sortable:true,
+            navigatable:true,
+            selectable:true,
 	 	resizable: true
 	}).data("kendoGrid");
 }

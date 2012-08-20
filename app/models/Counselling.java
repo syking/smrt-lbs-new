@@ -51,7 +51,7 @@ public class Counselling extends Model{
 		
 		Counselling c = Counselling.findById(id);
 		if (c == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("Counsel  not found");
 		
 		return c;
 	}

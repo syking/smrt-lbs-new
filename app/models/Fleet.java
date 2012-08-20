@@ -112,7 +112,7 @@ public class Fleet extends Model{
 		
 		Fleet fleet = Fleet.findById(vo.id);
 		if (fleet == null)
-			throw new RuntimeException("id is invalid") ;
+			throw new RuntimeException("Fleet not found") ;
 		
 		fleet.name = vo.name;
 		fleet.description = vo.description;
@@ -148,12 +148,12 @@ public class Fleet extends Model{
 		Fleet fleet = Fleet.fetchById(id);
 		
 		if ((fleet.leaders != null && !fleet.leaders.isEmpty()) || (fleet.vehicles != null && !fleet.vehicles.isEmpty()))
-			throw new RuntimeException("This Fleet is related to Drivers or Vehicles!");
+			throw new RuntimeException("Can not delete this fleet cause it is related to Drivers or Vehicles!");
 		
 		try {
 			fleet.delete();
 		} catch (Throwable e) {
-			throw new RuntimeException("This Fleet is A Parent Fleet of Other Fleet!");
+			throw new RuntimeException("Can not delete this fleet cause it is A Parent Fleet of Other Fleet!");
 		}
 	}
 	
@@ -447,7 +447,7 @@ public class Fleet extends Model{
 		
 		Fleet fleet = Fleet.findById(id);
 		if (fleet == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("Fleet not found");
 			
 		return fleet;
 	}

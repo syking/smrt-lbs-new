@@ -270,7 +270,7 @@ public class Driver extends Model{
 		
 		Driver obj = Driver.findById(vo.id);
 		if (obj == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("Driver not found");
 		
 		obj.number = vo.number;
 		obj.name = vo.name;
@@ -464,7 +464,7 @@ public class Driver extends Model{
 		
 		Driver driver = Driver.findById(id);
 		if (driver == null)
-			throw new RuntimeException("id invalid");
+			throw new RuntimeException("Driver not found");
 		
 		return driver;
 	}

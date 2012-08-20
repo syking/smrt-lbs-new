@@ -489,7 +489,7 @@ public class Schedule extends Model {
 			throw new RuntimeException("id required");
 		Schedule sch = Schedule.findById(id);
 		if (sch == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("Schedule not found");
 		
 		return sch;
 	}

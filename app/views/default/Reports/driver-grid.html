@@ -173,7 +173,6 @@
             $("#grid_${tabId}").kendoGrid({
                 dataSource: json.data,
                 pageable: false,
-    	   	 	sortable: false,
     	   	 	scrollable: true,
     	   	 	resizable: true,
                 columns: json.columns
@@ -221,8 +220,10 @@
                 	pageSize:3
                 },
                 pageable: true,
-    	   	 	sortable: true,
     	   	 	scrollable: true,
+    	   	 	sortable:true,
+	            navigatable:true,
+	            selectable:true,
     	   	 	resizable: true,
                 columns: eventJson.columns
             });

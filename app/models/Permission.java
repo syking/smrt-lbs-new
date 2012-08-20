@@ -283,7 +283,7 @@ public class Permission extends Model{
 		
 		Permission perm = Permission.findById(id);
 		if (perm == null)
-			throw new RuntimeException("id invalid");
+			throw new RuntimeException("Permission not found");
 		
 		return perm;
 	}

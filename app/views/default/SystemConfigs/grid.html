@@ -106,11 +106,12 @@
         $("#grid_${grid.tabId}").kendoGrid({
             dataSource: dataSource,
             pageable: true,
-            selectable:true,
             toolbar: ["create"],
             columns: columnsJson,
             editable: "popup",
-            navigatable: true,
+            sortable:true,
+            navigatable:true,
+            selectable:true,
             scrollable:true,
             resizable:true
         });

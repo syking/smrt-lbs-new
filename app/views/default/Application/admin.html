@@ -62,7 +62,11 @@ $(document).ready(function() {
 					tabStrip.select($(tabStrip.tabGroup.children("li:last")));
 				});
 	     	}).error(function(e){
-	     		alert(e.responseText);
+	     		var err = e.responseText;
+        		if (!err || $.trim(err).length == 0)
+        			err = "server error or connection failed";
+        			
+		        alert(err);
 	     	});
      	}
 	});

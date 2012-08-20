@@ -348,7 +348,7 @@ public class User extends Model {
 		
 		User user = User.findById(id);
 		if (user == null)
-			throw new RuntimeException("id invalid");
+			throw new RuntimeException("User not found");
 		
 		return user;
 	} 

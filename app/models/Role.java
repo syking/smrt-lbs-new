@@ -70,7 +70,7 @@ public class Role extends Model{
 		
 		Role role = Role.findById(id);
 		if (role == null)
-			throw new RuntimeException("id invalid");
+			throw new RuntimeException("Role not found");
 		
 		return role;
 	}

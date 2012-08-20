@@ -68,7 +68,7 @@ public class Department extends Model{
 		
 		Department dept = Department.findById(id);
 		if (dept == null)
-			throw new RuntimeException("id invalid");
+			throw new RuntimeException("Department not found");
 		
 		return dept;
 	}

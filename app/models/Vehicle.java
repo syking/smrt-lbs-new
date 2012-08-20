@@ -558,7 +558,7 @@ public class Vehicle extends Model {
 			throw new RuntimeException("id required");
 		Vehicle vehicle = Vehicle.findById(id);
 		if (vehicle == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("Vehicle not found");
 		
 		return vehicle;
 	}

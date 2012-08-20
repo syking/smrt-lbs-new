@@ -240,7 +240,7 @@ public class Event extends Model{
 			throw new RuntimeException("id required");
 		
 		if (event == null)
-			throw new RuntimeException("id is invalid");
+			throw new RuntimeException("Event not found");
 		
 		return event;
 	}
