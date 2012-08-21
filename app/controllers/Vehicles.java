@@ -1,27 +1,19 @@
 package controllers;
 
-import static models.User.Constant.LOGIN_USER_ATTR;
 import static models.User.Constant.THEME;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import models.Device;
 import models.EventRecord;
 import models.EventType;
 import models.Fleet;
-import models.GPSDataRecord;
 import models.LiveGPSData;
 import models.Schedule;
 import models.Vehicle;
-
-import org.apache.commons.lang.StringUtils;
-
-import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
@@ -31,9 +23,7 @@ import vo.Grid;
 import vo.TreeView;
 import vo.VehicleEvent;
 import vo.VehicleGPS;
-import vo.VehicleVO;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 
 /**

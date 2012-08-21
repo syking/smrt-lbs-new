@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import models.User;
+import play.cache.Cache;
 import play.data.validation.Required;
 import play.mvc.Controller;
 import play.mvc.With;
+import utils.CommonUtil;
 
 @With(Interceptor.class)
 public class Sessions extends Controller{
@@ -46,7 +48,9 @@ public class Sessions extends Controller{
         if (!success)
         	 map.put("message", play.i18n.Messages.get("login-unsuccessful"));
         else{
-        	session.put(LOGIN_USER_ATTR, loginUser.id);
+        	String sessionid = CommonUtil.uuid();
+        	session.put(SESSION, sessionid);
+        	Cache.set(sessionid, loginUser);
         	map.put("redirectUrl", "/admin");
         }
        

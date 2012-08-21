@@ -1,7 +1,5 @@
 package controllers.api;
 
-import static models.User.Constant.LOGIN_USER_ATTR;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -9,10 +7,8 @@ import java.util.List;
 import models.Log;
 import models.Permission;
 import models.User;
-import controllers.Sessions;
 import play.cache.Cache;
 import play.mvc.Before;
-import play.mvc.Catch;
 import play.mvc.Controller;
 
 /**
@@ -22,29 +18,29 @@ import play.mvc.Controller;
 public class APIInterceptor extends Controller{
 	@Before(priority = 1, unless = { "api.Sessions.create", "api.Sessions.destroy" })
 	static void checkAuthenticated(final String session_id) {
-//		APICallback cb = new APICallback();
-//		cb.setRequest_uri(request.url);
-//		if (session_id == null){
-//			cb.setSuccess(false);
-//			cb.setError(APIError.USER_LOGIN_REQUIRED);
-//			cb.setError_desc("Session ID required");
-//			renderJSON(cb);
-//			return ;
-//		}
-//			
-//		User loginUser = null;
-//		if (session_id != null)
-//			loginUser = Cache.get(session_id, User.class);
-//		
-//		if (loginUser == null){
-//			cb.setSuccess(false);
-//			cb.setError(APIError.USER_LOGIN_REQUIRED);
-//			cb.setError_desc("Session ID invalid or not login");
-//			renderJSON(cb);
-//			return ;
-//		}
-//		
-//		checkPermission(session_id);
+		APICallback cb = new APICallback();
+		cb.setRequest_uri(request.url);
+		if (session_id == null){
+			cb.setSuccess(false);
+			cb.setError(APIError.USER_LOGIN_REQUIRED);
+			cb.setError_desc("Session ID required");
+			renderJSON(cb);
+			return ;
+		}
+			
+		User loginUser = null;
+		if (session_id != null)
+			loginUser = Cache.get(session_id, User.class);
+		
+		if (loginUser == null){
+			cb.setSuccess(false);
+			cb.setError(APIError.USER_LOGIN_REQUIRED);
+			cb.setError_desc("Session ID invalid or not login");
+			renderJSON(cb);
+			return ;
+		}
+		
+		checkPermission(session_id);
 	}
 	
 	static void checkPermission(final String sessionid) {

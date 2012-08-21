@@ -1,20 +1,17 @@
 package controllers;
 
-import static models.User.Constant.LOGIN_USER_ATTR;
+import static models.User.Constant.SESSION;
 import static models.User.Constant.THEME;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import models.Role;
 import models.User;
+import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.With;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
-import vo.ComboVO;
 import vo.Grid;
 import vo.UserVO;
 import annotations.Perm;
@@ -103,6 +100,9 @@ public class Users extends Controller {
 		loginUserVO.name = user.name;
 		loginUserVO.desc = user.desc;
 		User.updateByVO(loginUserVO);
+		String sessionid = session.get(SESSION);
+		User _user = User.fetchById(loginUser.id);
+		Cache.set(sessionid, _user);
 		
 		renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
 	}

@@ -12,6 +12,7 @@ import models.Permission;
 import models.Role;
 import models.User;
 import play.Play;
+import play.cache.Cache;
 import play.i18n.Lang;
 import play.mvc.Before;
 import play.mvc.Catch;
@@ -35,18 +36,16 @@ public class Interceptor extends Controller {
 
 	@Before(priority = 1, unless = { "Sessions.create", "Sessions.editNew", "Sessions.destroy" })
 	static void checkAuthenticated() {
-		String id_str = session.get(LOGIN_USER_ATTR);
-		if (id_str == null)
-			id_str = "0";
-		
-		Long id = Long.parseLong(id_str);
-		User loginUser = User.findById(id);
-		if (loginUser == null || id == null || !session.contains(LOGIN_USER_ATTR)) {
+		String sessionid = session.get(SESSION);// 从Cookie中获取sessionid
+		User loginUser = Cache.get(sessionid, User.class);
+		if (loginUser == null || CommonUtil.isBlank(sessionid) || !session.contains(SESSION)) {
 			flash.put("url", "GET".equals(request.method) ? request.url : "/"); 
 			Sessions.editNew();
 		}
 		
+		System.out.println("---------------"+loginUser.name);
 		renderArgs.put("user", loginUser.name);
+		
 		checkPermission(loginUser);
 	}
 	

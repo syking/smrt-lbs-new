@@ -1,7 +1,6 @@
 package controllers;
 
-import static models.User.Constant.LOGIN_USER_ATTR;
-import static models.User.Constant.THEME;
+import static models.User.Constant.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;

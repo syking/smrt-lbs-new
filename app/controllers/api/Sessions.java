@@ -1,13 +1,8 @@
 package controllers.api;
 
-import static models.User.Constant.LOGIN_USER_ATTR;
-
-import java.util.UUID;
-
 import models.User;
 import play.cache.Cache;
 import play.mvc.Controller;
-import play.mvc.With;
 import utils.CommonUtil;
 
 public class Sessions extends Controller {

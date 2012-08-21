@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 
 import com.alibaba.fastjson.JSON;
 
+import play.cache.Cache;
 import play.db.jpa.Model;
 import utils.CommonUtil;
 import vo.DepartmentVO;
@@ -64,8 +65,7 @@ public class User extends Model {
 	public Set<Role> roles = new HashSet<Role>();
 
 	public static interface Constant {
-		public final String LOGIN_USER_ATTR = "login_user";
-		public final String LOGIN_ACTIVE_TIME = "30mn";
+		public final String SESSION = "_eco_smrt_session_";
 		public final String THEME = "theme";
 	}
 
