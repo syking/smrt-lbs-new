@@ -43,7 +43,6 @@ public class Interceptor extends Controller {
 			Sessions.editNew();
 		}
 		
-		System.out.println("---------------"+loginUser.name);
 		renderArgs.put("user", loginUser.name);
 		
 		checkPermission(loginUser);
