@@ -27,7 +27,6 @@
 	</div>
 	
 </form>
-
 <div id="grid_${grid.tabId}"></div>
 <script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
 <script>
@@ -163,19 +162,19 @@
                     id: "id",
                     fields: {
                         id: { editable: false, nullable: true },
-                        userName: { validation: { required: true } },
-                        driverName: { validation: { required: true } },
-                        startDate: { validation: {required:true}, type: "date"},
-                        startTime: { validation: { required: true } },
-                        endDate: {validation: {required:true}, type: "date"},
-                        endTime: { validation: { required: true } },
+                        userName: { },
+                        driverName: { },
+                        startDate: { type: "date"},
+                        startTime: { },
+                        endDate: { type: "date"},
+                        endTime: { },
                         remark: {
                         	validation:{
-                        		required: false,
 	                            custom: function(input) {
 	                            	var name = input.attr("name");
-	                            	if (name != "remark")
+	                            	if (name && name != "remark"){
 	                            		return validate_empty(input);
+	                            	}
 	                            	
 	                            	return true;
 	                            }
@@ -215,12 +214,12 @@
 			}
 			
 			if ('startDate' === _field){
-				columnsJson[i].width = "100px";
+				columnsJson[i].width = "200px";
 				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
 			}
 			
 			if ('startTime' === _field){
-				columnsJson[i].width = "100px";
+				columnsJson[i].width = "200px";
 				columnsJson[i].template = '#= kendo.toString(startTime,"HH:mm:ss") #';
 				columnsJson[i].editor = function(container, options){
 			        $('<input name="startTime" />').appendTo(container).kendoTimePicker({
@@ -230,18 +229,21 @@
 			}
 			
 			if ('endDate' === _field){
-				columnsJson[i].width = "100px";
+				columnsJson[i].width = "200px";
 				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
 			}
 			
 			if ('endTime' === _field){
-				columnsJson[i].width = "100px";
+				columnsJson[i].width = "200px";
 				columnsJson[i].template = '#= kendo.toString(endTime,"HH:mm:ss") #';
 				columnsJson[i].editor = function(container, options){
 			        $('<input name="endTime" />').appendTo(container).kendoTimePicker({
 			        	format: "HH:mm:ss"
 				    });
 				};
+			}
+			
+			if ('remark' === _field){
 			}
 		});
 		

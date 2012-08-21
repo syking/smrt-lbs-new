@@ -124,7 +124,6 @@ input {
 .print-button{background: url(/public/images/print.png) no-repeat 50% 50% !important;}
 .view-on-map-button{background: url(/public/images/view-on-map.png) no-repeat 50% 50% !important;}
 .route-path-button{background: url(/public/images/route-path.png) no-repeat 50% 50% !important;}
-
 .label1 {
     font-family: verdana;
     font-size: 12px;
@@ -381,3 +380,5 @@ input {
 {
     margin-bottom: 3px;
 }
+
+.k-invalid-msg{position:relative !important; display:inline-block !important; float:left !important;}

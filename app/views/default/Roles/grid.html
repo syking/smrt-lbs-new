@@ -47,9 +47,9 @@
         		var err = e.responseText;
         		if (!err || $.trim(err).length == 0)
         			err = "server error or connection failed";
-        		alert(err);
         		
-	        	_grid.cancelChanges();//roll back 
+        		alert(err);
+        		_grid.cancelChanges();//roll back
 		    },
             transport: {
                 read:  {
@@ -129,7 +129,7 @@
 		 */
 		$.each(columnsJson, function(i, v){
 			var _field = columnsJson[i]['field'];
-			
+			// <span data-for="firstName" class="k-invalid-msg"></span>
 			if ('permissions' === _field){
 				columnsJson[i].editor = function(container, options){};
 				return ;
