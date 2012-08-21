@@ -214,12 +214,12 @@
 			}
 			
 			if ('startDate' === _field){
-				columnsJson[i].width = "200px";
+				columnsJson[i].width = "100px";
 				columnsJson[i].template = '#= kendo.toString(startDate,"yyyy-MM-dd") #';
 			}
 			
 			if ('startTime' === _field){
-				columnsJson[i].width = "200px";
+				columnsJson[i].width = "100px";
 				columnsJson[i].template = '#= kendo.toString(startTime,"HH:mm:ss") #';
 				columnsJson[i].editor = function(container, options){
 			        $('<input name="startTime" />').appendTo(container).kendoTimePicker({
@@ -229,12 +229,12 @@
 			}
 			
 			if ('endDate' === _field){
-				columnsJson[i].width = "200px";
+				columnsJson[i].width = "100px";
 				columnsJson[i].template = '#= kendo.toString(endDate,"yyyy-MM-dd") #';
 			}
 			
 			if ('endTime' === _field){
-				columnsJson[i].width = "200px";
+				columnsJson[i].width = "100px";
 				columnsJson[i].template = '#= kendo.toString(endTime,"HH:mm:ss") #';
 				columnsJson[i].editor = function(container, options){
 			        $('<input name="endTime" />').appendTo(container).kendoTimePicker({

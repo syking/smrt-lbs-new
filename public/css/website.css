@@ -381,4 +381,5 @@ input {
     margin-bottom: 3px;
 }
 
+.k-picker-wrap .k-invalid{display:block !important;} 
 .k-invalid-msg{position:relative !important; float:left !important;}
