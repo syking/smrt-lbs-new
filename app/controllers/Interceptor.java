@@ -35,18 +35,22 @@ public class Interceptor extends Controller {
 
 	@Before(priority = 1, unless = { "Sessions.create", "Sessions.editNew", "Sessions.destroy" })
 	static void checkAuthenticated() {
-		String userName = session.get(LOGIN_USER_ATTR);
-		User loginUser = User.findByName(userName);
-		if (loginUser == null || userName == null || !session.contains(LOGIN_USER_ATTR)) {
+		String id_str = session.get(LOGIN_USER_ATTR);
+		if (id_str == null)
+			id_str = "0";
+		
+		Long id = Long.parseLong(id_str);
+		User loginUser = User.findById(id);
+		if (loginUser == null || id == null || !session.contains(LOGIN_USER_ATTR)) {
 			flash.put("url", "GET".equals(request.method) ? request.url : "/"); 
 			Sessions.editNew();
 		}
 		
-		renderArgs.put("user", session.get(LOGIN_USER_ATTR));
-		checkPermission();
+		renderArgs.put("user", loginUser.name);
+		checkPermission(loginUser);
 	}
 	
-	static void checkPermission() {
+	static void checkPermission(User loginUser) {
 		Permission currentPerm = null;
 		final String action = request.action;
 		List<Permission> permDefinitions = Permission.findAll();
@@ -55,8 +59,6 @@ public class Interceptor extends Controller {
 		
 		boolean flag = false;
 		
-		String userName = session.get(LOGIN_USER_ATTR);
-		User loginUser = User.findByName(userName);
 		if (loginUser.superPower == 1)
 			flag = true ;
 		
@@ -97,8 +99,12 @@ public class Interceptor extends Controller {
 		new Log("System", "-", e.toString(), null, "-", false).create();
 		
 		String msg = e.getMessage();
-		if (CommonUtil.isBlank(msg))
-			msg = "Server Error!";
+		if (CommonUtil.isBlank(msg)){
+			msg = e.toString();
+			if (CommonUtil.isBlank(msg)){
+				msg = "Server Error!";
+			}
+		}
 		
 		response.status = 500;
 		renderText(msg);

@@ -351,6 +351,35 @@ public class User extends Model {
 			throw new RuntimeException("User not found");
 		
 		return user;
+	}
+
+	public static void changePassword(User user, String password, String newPassword, String confirmNewPassword) {
+		if (user == null)
+			throw new RuntimeException("User not found");
+		
+		final StringBuilder builder = new StringBuilder();
+		final String msg = "%s Can not be empty, ";
+		if (CommonUtil.isBlank(password))
+			builder.append(CommonUtil.formatStr(msg, "Password"));
+		
+		if (CommonUtil.isBlank(newPassword))
+			builder.append(CommonUtil.formatStr(msg, "New password"));
+		
+		if (CommonUtil.isBlank(confirmNewPassword)){
+			builder.append(CommonUtil.formatStr(msg, "Confirm new password"));
+		}else if (!CommonUtil.isBlank(newPassword) && !confirmNewPassword.equals(newPassword)){
+			builder.append("The Confirm password must match the New password entry");
+		}
+		
+		final String result = builder.toString();
+		if (result.trim().length() > 0)
+			throw new RuntimeException(result);
+		
+		if (!password.equals(user.password))
+			throw new RuntimeException("Incorrect current password ");
+		
+		user.password = newPassword;
+		user.save();
 	} 
 	
 }

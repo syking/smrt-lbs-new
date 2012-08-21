@@ -1,5 +1,6 @@
 package controllers;
 
+import static models.User.Constant.LOGIN_USER_ATTR;
 import static models.User.Constant.THEME;
 
 import java.util.ArrayList;
@@ -22,12 +23,6 @@ import annotations.Perm;
 public class Users extends Controller {
 
 	public static void grid(String id){
-//		List<Role> roleList = Role.findAll();
-//		List<ComboVO> roles = new ArrayList<ComboVO>();
-//		if (roleList != null)
-//    		for (Role role : roleList)
-//    			roles.add(new ComboVO(role.name, role.name));
-    		
 		Map map = new HashMap();
 		Grid grid = new Grid();
 		grid.tabId = id;
@@ -72,5 +67,43 @@ public class Users extends Controller {
 	public static void search(int page, int pageSize, String userName, String account, String desc){
 		renderJSON(User.search(page, pageSize, userName, account, desc));
 	}
-
+	
+	public static void editPassword(String id){
+		Map map = new HashMap();
+		map.put("tabId", id);
+		
+		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/editPassword.html")).render(map));
+	}
+	
+	public static void changePassword(String password, String newPassword, String confirmNewPassword){
+		String userName = (String) renderArgs.get("user");
+		User loginUser = User.findByName(userName);
+		User.changePassword(loginUser, password, newPassword, confirmNewPassword);
+		
+		renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
+	}
+	
+	public static void editProfile(String id) {
+		String userName = (String) renderArgs.get("user");
+		User loginUser = User.findByName(userName);
+		loginUser.password = null;
+		loginUser.roles = null;
+		Map map = new HashMap();
+		map.put("tabId", id);
+		map.put("user", new UserVO(loginUser));
+		
+		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/editProfile.html")).render(map));
+	}
+	
+	public static void updateProfile(UserVO user){
+		String userName = (String) renderArgs.get("user");
+		User loginUser = User.findByName(userName);
+		UserVO loginUserVO = new UserVO(loginUser);
+		loginUserVO.id = user.id;
+		loginUserVO.name = user.name;
+		loginUserVO.desc = user.desc;
+		User.updateByVO(loginUserVO);
+		
+		renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
+	}
 }

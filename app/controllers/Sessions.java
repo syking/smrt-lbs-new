@@ -46,7 +46,7 @@ public class Sessions extends Controller{
         if (!success)
         	 map.put("message", play.i18n.Messages.get("login-unsuccessful"));
         else{
-        	session.put(LOGIN_USER_ATTR, loginUser.name);
+        	session.put(LOGIN_USER_ATTR, loginUser.id);
         	map.put("redirectUrl", "/admin");
         }
        

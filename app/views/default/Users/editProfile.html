@@ -1,0 +1,77 @@
+<style type="text/css" media="screen">
+h1{margin:10px 10px 5px 5px; padding:5px; background:#f5f5f5;}
+#${tabId}_update_profile_form .k-invalid-msg{position:absolute !important; float:none !important;}
+</style>
+<form id="${tabId}_update_profile_form" action="/Users/updateProfile" method="post" class="k-content" style="clear:both;width:auto; height:98%;">
+	<div style="height:8px"></div>
+	<div style="float:left;">
+		<h1>Edit Profile</h1>
+	</div>
+	
+	<div style="float:right; padding:10px 20px 10px 0;">
+		<input type="submit" id="update-profile-button" class="k-button save-button" style="width:50px;" value="&nbsp;" />
+		<input type="reset" class="k-button reset-button" style="width:50px;" value="&nbsp;" />
+	</div>
+	
+	<div style="clear:both; border-bottom:1px solid #c5c5c5;"></div>
+	
+	<div style="padding:5px !important; height:85% !important; overflow:auto;">
+		<div style="height:16px"></div>
+		
+		<input type="hidden" name="user.id" value="${user.id}" />
+		
+		<label for="${tabId}_account" style="width:180px">Account</label>
+		<input type="text" readonly="readonly" name="user.account" id="${tabId}_account" value="${user.account}" class="k-input k-textbox"/>
+		
+		<div style="height:8px"></div>
+		
+		<label for="${tabId}_name" style="width:180px">Nick Name</label>
+		<input type="text" name="user.name" id="${tabId}_name" value="${user.name}" class="k-input k-textbox" required/>
+		
+		<div style="height:8px"></div>
+		
+		<label for="${tabId}_desc" style="width:180px">Description</label>
+		<input type="text" name="user.desc" id="${tabId}_desc" value="${user.desc}" class="k-input k-textbox" required/>
+	</div>
+	<div style="height:8px"></div>
+</form>
+<script src="/public/js/vms_validation.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    $(document).ready(function () {
+    	var form = $("#${tabId}_update_profile_form");
+    	$(":submit[id=update-profile-button]").click(function(check){ 
+			update_profile_validation(form);
+		    check.preventDefault();//此处阻止提交表单  
+		});  
+    });
+    
+    function update_profile_validation(form) {
+    	$form = $(form);
+    	var validator = $form.kendoValidator({
+    		rules: {
+		    	custom: function(input) {
+		    		return validate_empty(input);
+		   		}
+		   	}
+		}).data("kendoValidator");
+		
+    	if (!validator.validate()) 
+    		return false;
+    	
+    	$.getJSON($form.attr("action"), $form.serializeArray(), function(json){
+    		if (json.success){
+    			alert("update success");
+    		}else {
+    			alert(json.message);
+    		}
+    	}).error(function(e){
+    		var err = e.responseText;
+    		if (!err || $.trim(err).length == 0)
+    			err = "server error or connection failed";
+    		alert(err);
+		});
+    	
+    	return false;
+    }
+    
+</script>
