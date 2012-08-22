@@ -114,7 +114,7 @@ public class Device extends Model {
 		try {
 			device.delete();
 		} catch (Throwable e) {
-			throw new RuntimeException("Could Not Delete This Device Cause It is Assigned to Vehicles !");
+			throw new RuntimeException("Could not delete this Device cause it is assigned to Vehicles !");
 		}
 	}
 	

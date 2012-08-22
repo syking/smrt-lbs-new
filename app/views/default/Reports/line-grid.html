@@ -192,10 +192,7 @@ function loadReportLines(url, params){
 	        }
 	    });
 	}).error(function(e){
-		var err = e.responseText;
-		if (!err || $.trim(err).length == 0)
-			err = "server error or connection failed";
-		alert(err);
+		show_validation_error(e);
 	});
 }
 

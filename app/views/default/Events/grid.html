@@ -115,10 +115,7 @@ function loadEvents(url, params){
 	
 	var dataSource = new kendo.data.DataSource({
 		error: function(e) {
-			var err = e.responseText;
-    		if (!err || $.trim(err).length == 0)
-    			err = "server error or connection failed";
-    		alert(err);
+			show_validation_error(e);
         		
 	    	_grid.cancelChanges();//roll back 
 	    },
@@ -179,6 +176,8 @@ function loadEvents(url, params){
             selectable:true,
 	 	resizable: true
 	}).data("kendoGrid");
+	
+	_grid = $("#grid_${grid.tabId}").data("kendoGrid");
 }
 
 function eventSearchValidate(form) {

@@ -71,7 +71,7 @@ public class User extends Model {
 
 	public User authen(){
 		User loginUser = find("byAccount", account).first();
-		if (loginUser == null || password == null || !password.equals(loginUser.password))
+		if (loginUser == null || password == null || !CommonUtil.md5(password).equals(loginUser.password))
 			throw new RuntimeException("Account or Password is incorrect.");
 
 		return loginUser;
@@ -93,6 +93,7 @@ public class User extends Model {
 		if (db_user2 != null)
 			throw new RuntimeException("Account duplicate!");
 		
+		user.password = CommonUtil.md5(user.password);
 		user.create();
 		vo.id = String.valueOf(user.id);
 		
@@ -131,7 +132,7 @@ public class User extends Model {
 		try {
 			user.delete();
 		} catch (Throwable e){
-			throw new RuntimeException("Could not delete user");
+			throw new RuntimeException("Could not delete this User cause it is assigned to Counselling !");
 		}
 	}
 	
@@ -353,10 +354,7 @@ public class User extends Model {
 		return user;
 	}
 
-	public static void changePassword(User user, String password, String newPassword, String confirmNewPassword) {
-		if (user == null)
-			throw new RuntimeException("User not found");
-		
+	public void changePassword(String password, String newPassword, String confirmNewPassword) {
 		final StringBuilder builder = new StringBuilder();
 		final String msg = "%s Can not be empty, ";
 		if (CommonUtil.isBlank(password))
@@ -375,11 +373,11 @@ public class User extends Model {
 		if (result.trim().length() > 0)
 			throw new RuntimeException(result);
 		
-		if (!password.equals(user.password))
+		if (!CommonUtil.md5(password).equals(this.password))
 			throw new RuntimeException("Incorrect current password ");
 		
-		user.password = newPassword;
-		user.save();
+		this.password = CommonUtil.md5(newPassword);
+		this.save();
 	} 
 	
 }

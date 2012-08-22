@@ -123,11 +123,7 @@ function loadDataQuery(url, params){
 	
 	var dataSource = new kendo.data.DataSource({
 		error: function(e) {
-	        if ((e.status && 403 == e.status) || (e.xhr && 403 == e.xhr.status))
-	        	alert(e.responseText);
-	        else{
-	        	alert("Oops! 500 error!");
-	        }
+	        show_validation_error(e);
 	        
 	    	$("#data-query-grid-${grid.tabId}").data("kendoGrid").cancelChanges();//roll back 
 	    },

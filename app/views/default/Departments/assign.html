@@ -118,10 +118,7 @@
 			});
 			
 		}).error(function(e){
-			var err = e.responseText;
-			if (!err || $.trim(err).length == 0)
-				err = "server error or connection failed";
-	     	alert(err);
+			show_validation_error(e);
 		});
 		
 		$.getJSON("/departments/leaders", {departmentName:_departmentName}, function(leaders){
@@ -131,10 +128,7 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-	     	var err = e.responseText;
-			if (!err || $.trim(err).length == 0)
-				err = "server error or connection failed";
-	     	alert(err);
+	     	show_validation_error(e);
 		});
 		
 	}
@@ -175,10 +169,7 @@
 				alert("assign fail !");
 			}
 		}).error(function(e){
-	     	var err = e.responseText;
-			if (!err || $.trim(err).length == 0)
-				err = "server error or connection failed";
-	     	alert(err);
+	     	show_validation_error(e);
 		});
 		
 		return false;

@@ -57,11 +57,7 @@
 		
         var dataSource = new kendo.data.DataSource({
         	error: function(e) {
-        		var err = e.responseText;
-        		if (!err || $.trim(err).length == 0)
-        			err = "server error or connection failed";
-        		alert(err);
-        		
+        		show_validation_error(e);
 	        	_grid.cancelChanges();//roll back 
 		    },
             transport: {
@@ -150,6 +146,8 @@
             editable:"popup",
             navigatable:true
         });
+        
+        _grid = $("#grid_${grid.tabId}").data("kendoGrid");
     }
     
     function userSearchValidate(form) {

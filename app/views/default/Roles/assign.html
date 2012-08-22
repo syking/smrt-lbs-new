@@ -108,10 +108,7 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-	     	var err = e.responseText;
-			if (!err || $.trim(err).length == 0)
-				err = "server error or connection failed";
-	     	alert(err);
+	     	show_validation_error(e);
 		});
 				
 		$.getJSON("/roles/perms", {roleName:_roleName}, function(perms){
@@ -121,10 +118,7 @@
 				_i.attr("checked", true);
 			});
 		}).error(function(e){
-	     	var err = e.responseText;
-			if (!err || $.trim(err).length == 0)
-				err = "server error or connection failed";
-	     	alert(err);
+	     	show_validation_error(e);
 		});
 	}
 	
@@ -167,10 +161,7 @@
 				alert("assign fail !");
 			}
 		}).error(function(e){
-	     	var err = e.responseText;
-			if (!err || $.trim(err).length == 0)
-				err = "server error or connection failed";
-	     	alert(err);
+	     	show_validation_error(e);
 		});
 		
 		return false;

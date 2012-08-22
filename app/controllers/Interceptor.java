@@ -87,8 +87,9 @@ public class Interceptor extends Controller {
 		
 		new Log("HTTP Access", action, content, loginUser, ip, flag).create();
 		
-		if (!flag)
+		if (!flag){
 			forbidden("Access denied");
+		}
 	}
 	
 	@Catch(Throwable.class)

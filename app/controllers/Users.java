@@ -75,7 +75,7 @@ public class Users extends Controller {
 	public static void changePassword(String password, String newPassword, String confirmNewPassword){
 		String userName = (String) renderArgs.get("user");
 		User loginUser = User.findByName(userName);
-		User.changePassword(loginUser, password, newPassword, confirmNewPassword);
+		loginUser.changePassword(password, newPassword, confirmNewPassword);
 		
 		renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
 	}

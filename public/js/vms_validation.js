@@ -46,13 +46,20 @@ function startWith(str1, str2){
 }
 
 function show_validation_error(e){
-	var err = e.responseText;
+	var err = "";
+	var xhr = e.xhr;
+	if (xhr)
+	 	err = xhr.responseText;
+	
+	if (!err || $.trim(err).length == 0)
+		err = e.responseText;
+	
 	if (!err || $.trim(err).length == 0)
 		err = "server error or connection failed";
-	
+		
 	var _win_dom = $("<div style='padding:15px; color:red;' ></div>");
 	_win_dom.kendoWindow({
-        title: "Valdiation errors",
+        title: "Errors",
 		visible: false
     });
     

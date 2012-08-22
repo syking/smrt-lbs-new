@@ -38,11 +38,7 @@ $(document).ready(function(){
         }).data("kendoGrid");
 	    
 	}).error(function(e){
-		var err = e.responseText;
-		if (!err || $.trim(err).length == 0)
-			err = "server error or connection failed";
-			
-        alert(err);
+		show_validation_error(e);
 	});
     $("#live_bus_grid").delegate("td", "click", function(e) {
 		if ($(this).text() == "View On MapRoute Path")
@@ -74,7 +70,6 @@ $(document).ready(function(){
 	         }).data("kendoWindow");
 	        
 	        wnd.title(w_title).center().open();
-        
     });
     
      $("#live_bus_grid").delegate(".route-path-button", "click", function(e) {

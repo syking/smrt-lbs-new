@@ -1,6 +1,7 @@
 package utils;
 
 import java.lang.reflect.Field;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,62 +23,86 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class CommonUtil {
-	
+
+	public static String md5(final String input) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(input.getBytes());
+			byte[] output = md.digest();
+			return bytesToHex(output);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return input;
+	}
+
+	public static String bytesToHex(byte[] b) {
+		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		StringBuffer buf = new StringBuffer();
+		for (int j = 0; j < b.length; j++) {
+			buf.append(hexDigit[(b[j] >> 4) & 0x0f]);
+			buf.append(hexDigit[b[j] & 0x0f]);
+		}
+		
+		return buf.toString();
+	}
+
 	public static boolean isBlank(final String str) {
 		if (null == str)
 			return true;
 		if (str.isEmpty())
 			return true;
-		
+
 		return str.trim().isEmpty();
 	}
-	
+
 	public static String uuid() {
 		return UUID.randomUUID().toString();
 	}
-	
-	public static String resoveTime(final String time){
+
+	public static String resoveTime(final String time) {
 		String[] array = time.split(":");
 		StringBuilder sb = new StringBuilder();
-		for (String a : array){
+		for (String a : array) {
 			if (sb.length() > 0)
 				sb.append(":");
-			
+
 			if (a.length() == 1)
 				a = new StringBuilder("0").append(a).toString();
-			
+
 			sb.append(a);
 		}
-		
-		return sb.toString()+":00";
+
+		return sb.toString() + ":00";
 	}
-	
-	public static Date resoveDate(final String date) throws Exception{
+
+	public static Date resoveDate(final String date) throws Exception {
 		Date d = null;
-		try{
+		try {
 			d = CommonUtil.parse("yyyy-MM-dd", date);
-		}catch(Throwable e1){
-			try{
+		} catch (Throwable e1) {
+			try {
 				d = CommonUtil.parse("yyyy-M-dd", date);
-			}catch(Throwable e2){
-				try{
+			} catch (Throwable e2) {
+				try {
 					d = CommonUtil.parse("yyyy-MM-d", date);
-				}catch(Throwable e3){
-					try{
+				} catch (Throwable e3) {
+					try {
 						d = CommonUtil.parse("yyyy-M-d", date);
-					}catch(Throwable e4){
-						try{
+					} catch (Throwable e4) {
+						try {
 							d = CommonUtil.parse("MM/dd/yyyy", date);
-						}catch(Throwable e5){
-							try{
+						} catch (Throwable e5) {
+							try {
 								d = CommonUtil.parse("MM/d/yyyy", date);
-							}catch(Throwable e6){
-								try{
+							} catch (Throwable e6) {
+								try {
 									d = CommonUtil.parse("M/dd/yyyy", date);
-								}catch(Throwable e7){
-									try{
+								} catch (Throwable e7) {
+									try {
 										d = CommonUtil.parse("M/d/yyyy", date);
-									}catch(Throwable e8){
+									} catch (Throwable e8) {
 										throw new Exception(e8);
 									}
 								}
@@ -87,205 +112,272 @@ public class CommonUtil {
 				}
 			}
 		}
-		
-		return d ;
+
+		return d;
 	}
-	
-	public static boolean isValidTime(String str){
+
+	public static boolean isValidTime(String str) {
 		return str.matches("^\\d{2}:\\d{2}:\\d{2}$");
 	}
-	
-	public static boolean isValidDate(String str){
-		return str != null ? str.matches("^\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}$") : false;
+
+	public static boolean isValidDate(String str) {
+		return str != null ? str
+				.matches("^\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}$") : false;
 	}
-	
-	public static boolean isValidDateTime(String source){
+
+	public static boolean isValidDateTime(String source) {
 		return isValidDateTime(source, "yyyy-MM-dd HH:mm:ss");
 	}
-	
-	public static boolean isValidDateTime(String source, String format){
-		try{
+
+	public static boolean isValidDateTime(String source, String format) {
+		try {
 			Date date = CommonUtil.parse(format, source);
-			return date != null ;
-		}catch(Throwable e){
+			return date != null;
+		} catch (Throwable e) {
 			return false;
 		}
 	}
-	
-	public static <T> List<T> parseArray(String json, Class<T> clazz){
+
+	public static <T> List<T> parseArray(String json, Class<T> clazz) {
 		return JSON.parseArray(json, clazz);
 	}
-	
-	public static <T> T parse(String json, Class<T> clazz){
+
+	public static <T> T parse(String json, Class<T> clazz) {
 		return JSON.parseObject(json, clazz);
 	}
-	
-	public static String toJson(Object object){
+
+	public static String toJson(Object object) {
 		return JSON.toJSONString(object);
 	}
-	
-	public static String percent(long a, long b){
-		double k = (double)a/b*100;
-		java.math.BigDecimal big = new java.math.BigDecimal(k);   
-		return big.setScale(2,java.math.BigDecimal.ROUND_HALF_UP).doubleValue() +"%";
-	}
-	
-	public static long[] changeSecondsToTime(long seconds){
-		long hour = seconds/3600;
-		long minute = (seconds-hour*3600)/60;
-		long second = (seconds-hour*3600-minute*60);
-		
-		return new long[]{hour, minute, second};
+
+	public static String percent(long a, long b) {
+		double k = (double) a / b * 100;
+		java.math.BigDecimal big = new java.math.BigDecimal(k);
+		return big.setScale(2, java.math.BigDecimal.ROUND_HALF_UP)
+				.doubleValue() + "%";
 	}
 
-	public static Date[] getStartAndEndDate(String timeType, String startTime, String endTime){
+	public static long[] changeSecondsToTime(long seconds) {
+		long hour = seconds / 3600;
+		long minute = (seconds - hour * 3600) / 60;
+		long second = (seconds - hour * 3600 - minute * 60);
+
+		return new long[] { hour, minute, second };
+	}
+
+	public static Date[] getStartAndEndDate(String timeType, String startTime,
+			String endTime) {
 		Date start = null;
 		Date end = null;
-		
-		try{
-			if (!CommonUtil.isBlank(timeType)){
-				if (!CommonUtil.isBlank(startTime)&& !CommonUtil.isBlank(endTime)){
-					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
-						start = new SimpleDateFormat("yyyy/MM/dd").parse(startTime);
-    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", start) + " 00:00:00");
-    					
-    					end = new SimpleDateFormat("yyyy/MM/dd").parse(endTime);
-    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(end, 1)) + " 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
-    					start = new SimpleDateFormat("yyyy/MM/dd").parse(startTime);
-    					int day = CommonUtil.getDayOfWeek(start);
-    					// day == 1 表示星期日， 所以要补回2
-    					start = CommonUtil.addDate(start, -day+2);
-    					
-    					end = new SimpleDateFormat("yyyy/MM/dd").parse(endTime);
-    					int _day = CommonUtil.getDayOfWeek(end);
-    					// day == 1 表示星期日， 所以要补回2
-    					end = CommonUtil.addDate(end, -_day+2);
-    					end = CommonUtil.addDate(end, 7);
-    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
-    					start = new SimpleDateFormat("yyyy/MM").parse(startTime);
-    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", start)+"-01 00:00:00");
-    					
-    					end = new SimpleDateFormat("yyyy/MM").parse(endTime);
-    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", CommonUtil.addMonth(end, 1))+"-01 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
-    					start = new SimpleDateFormat("yyyy").parse(startTime);
-    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", start)+"-01-01 00:00:00");
-    					
-    					end = new SimpleDateFormat("yyyy").parse(endTime);
-    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", CommonUtil.addYear(end, 1))+"-01-01 00:00:00");
-    				}
+
+		try {
+			if (!CommonUtil.isBlank(timeType)) {
+				if (!CommonUtil.isBlank(startTime)
+						&& !CommonUtil.isBlank(endTime)) {
+					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)) {
+						start = new SimpleDateFormat("yyyy/MM/dd")
+								.parse(startTime);
+						start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd", start)
+										+ " 00:00:00");
+
+						end = new SimpleDateFormat("yyyy/MM/dd").parse(endTime);
+						end = CommonUtil.parse(
+								"yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd",
+										CommonUtil.addDate(end, 1))
+										+ " 00:00:00");
+					} else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)) {
+						start = new SimpleDateFormat("yyyy/MM/dd")
+								.parse(startTime);
+						int day = CommonUtil.getDayOfWeek(start);
+						// day == 1 表示星期日， 所以要补回2
+						start = CommonUtil.addDate(start, -day + 2);
+
+						end = new SimpleDateFormat("yyyy/MM/dd").parse(endTime);
+						int _day = CommonUtil.getDayOfWeek(end);
+						// day == 1 表示星期日， 所以要补回2
+						end = CommonUtil.addDate(end, -_day + 2);
+						end = CommonUtil.addDate(end, 7);
+					} else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)) {
+						start = new SimpleDateFormat("yyyy/MM")
+								.parse(startTime);
+						start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM", start)
+										+ "-01 00:00:00");
+
+						end = new SimpleDateFormat("yyyy/MM").parse(endTime);
+						end = CommonUtil.parse(
+								"yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM",
+										CommonUtil.addMonth(end, 1))
+										+ "-01 00:00:00");
+					} else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
+						start = new SimpleDateFormat("yyyy").parse(startTime);
+						start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy", start)
+										+ "-01-01 00:00:00");
+
+						end = new SimpleDateFormat("yyyy").parse(endTime);
+						end = CommonUtil.parse(
+								"yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy",
+										CommonUtil.addYear(end, 1))
+										+ "-01-01 00:00:00");
+					}
 				}
-	    	}
-		}catch(Throwable e){
+			}
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-		
-		return new Date[]{start, end};
+
+		return new Date[] { start, end };
 	}
-	
-	public static Date[] getStartAndEndDate(String timeType, String time){
+
+	public static Date[] getStartAndEndDate(String timeType, String time) {
 		Date start = null;
 		Date end = null;
-		
+
 		Date chooseDate = null;
-		try{
-			if (!CommonUtil.isBlank(timeType)){
-				if (!CommonUtil.isBlank(time)){
-					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)){
-						chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time);
-    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", chooseDate) + " 00:00:00");
-    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start, 1)) + " 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)){
-    					chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time);
-    					int day = CommonUtil.getDayOfWeek(chooseDate);
-    					// day == 1 表示星期日， 所以要补回2
-    					start = CommonUtil.addDate(chooseDate, -day+2);
-    					end = CommonUtil.addDate(start, 7);
-    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)){
-    					chooseDate = new SimpleDateFormat("yyyy/MM").parse(time);
-    					int lastDay = CommonUtil.getLastDayOfMonth(chooseDate);
-    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", chooseDate)+"-01 00:00:00");
-    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
-    					chooseDate = new SimpleDateFormat("yyyy").parse(time);
-    					int lastDay = CommonUtil.getLastDayOfYear(chooseDate);
-    					start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", chooseDate)+"-01-01 00:00:00");
-    					end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) + " 00:00:00");
-    				}
+		try {
+			if (!CommonUtil.isBlank(timeType)) {
+				if (!CommonUtil.isBlank(time)) {
+					if (DriverReport.TIME_TYPE.DAILY.equals(timeType)) {
+						chooseDate = new SimpleDateFormat("yyyy/MM/dd")
+								.parse(time);
+						start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd", chooseDate)
+										+ " 00:00:00");
+						end = CommonUtil.parse(
+								"yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd",
+										CommonUtil.addDate(start, 1))
+										+ " 00:00:00");
+					} else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType)) {
+						chooseDate = new SimpleDateFormat("yyyy/MM/dd")
+								.parse(time);
+						int day = CommonUtil.getDayOfWeek(chooseDate);
+						// day == 1 表示星期日， 所以要补回2
+						start = CommonUtil.addDate(chooseDate, -day + 2);
+						end = CommonUtil.addDate(start, 7);
+					} else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType)) {
+						chooseDate = new SimpleDateFormat("yyyy/MM")
+								.parse(time);
+						int lastDay = CommonUtil.getLastDayOfMonth(chooseDate);
+						start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM", chooseDate)
+										+ "-01 00:00:00");
+						end = CommonUtil.parse(
+								"yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd",
+										CommonUtil.addDate(start, lastDay))
+										+ " 00:00:00");
+					} else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType)) {
+						chooseDate = new SimpleDateFormat("yyyy").parse(time);
+						int lastDay = CommonUtil.getLastDayOfYear(chooseDate);
+						start = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy", chooseDate)
+										+ "-01-01 00:00:00");
+						end = CommonUtil.parse(
+								"yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd",
+										CommonUtil.addDate(start, lastDay))
+										+ " 00:00:00");
+					}
 				}
-	    	}
-		}catch(Throwable e){
+			}
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-		
-		return new Date[]{start, end};
+
+		return new Date[] { start, end };
 	}
-	
-	public static Date getDateByTimeTypeAndTime(String timeType, String time){
+
+	public static Date getDateByTimeTypeAndTime(String timeType, String time) {
 		Date date = null;
 		Date chooseDate = null;
-		try{
-			if (!CommonUtil.isBlank(timeType)){
-				if (!CommonUtil.isBlank(time)){
-					if (DriverReport.TIME_TYPE.DAILY.equals(timeType.trim())){
-						chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time.trim());
-    					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", chooseDate) + " 00:00:00");
-    					//end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start, 1)) + " 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType.trim())){
-    					chooseDate = new SimpleDateFormat("yyyy/MM/dd").parse(time.trim());
-    					int day = CommonUtil.getDayOfWeek(chooseDate);
-    					// day == 1 表示星期日， 所以要补回2
-    					date = CommonUtil.addDate(chooseDate, -day+2);
-    					//end = CommonUtil.addDate(start, 7);
-    				}else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType.trim())){
-    					chooseDate = new SimpleDateFormat("yyyy/MM").parse(time.trim());
-    					//int lastDay = CommonUtil.getLastDayOfMonth(chooseDate);
-    					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM", chooseDate)+"-01 00:00:00");
-    					//end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) +" 00:00:00");
-    				}else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType.trim())) {
-    					chooseDate = new SimpleDateFormat("yyyy").parse(time.trim());
-    					//int lastDay = CommonUtil.getLastDayOfYear(chooseDate);
-    					date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy", chooseDate)+"-01-01 00:00:00");
-    					//end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss", CommonUtil.formatTime("yyyy-MM-dd", CommonUtil.addDate(start, lastDay)) + " 00:00:00");
-    				}
+		try {
+			if (!CommonUtil.isBlank(timeType)) {
+				if (!CommonUtil.isBlank(time)) {
+					if (DriverReport.TIME_TYPE.DAILY.equals(timeType.trim())) {
+						chooseDate = new SimpleDateFormat("yyyy/MM/dd")
+								.parse(time.trim());
+						date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM-dd", chooseDate)
+										+ " 00:00:00");
+						// end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+						// CommonUtil.formatTime("yyyy-MM-dd",CommonUtil.addDate(start,
+						// 1)) + " 00:00:00");
+					} else if (DriverReport.TIME_TYPE.WEEKLY.equals(timeType
+							.trim())) {
+						chooseDate = new SimpleDateFormat("yyyy/MM/dd")
+								.parse(time.trim());
+						int day = CommonUtil.getDayOfWeek(chooseDate);
+						// day == 1 表示星期日， 所以要补回2
+						date = CommonUtil.addDate(chooseDate, -day + 2);
+						// end = CommonUtil.addDate(start, 7);
+					} else if (DriverReport.TIME_TYPE.MONTHLY.equals(timeType
+							.trim())) {
+						chooseDate = new SimpleDateFormat("yyyy/MM").parse(time
+								.trim());
+						// int lastDay =
+						// CommonUtil.getLastDayOfMonth(chooseDate);
+						date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy-MM", chooseDate)
+										+ "-01 00:00:00");
+						// end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+						// CommonUtil.formatTime("yyyy-MM-dd",
+						// CommonUtil.addDate(start, lastDay)) +" 00:00:00");
+					} else if (DriverReport.TIME_TYPE.YEARLY.equals(timeType
+							.trim())) {
+						chooseDate = new SimpleDateFormat("yyyy").parse(time
+								.trim());
+						// int lastDay =
+						// CommonUtil.getLastDayOfYear(chooseDate);
+						date = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+								CommonUtil.formatTime("yyyy", chooseDate)
+										+ "-01-01 00:00:00");
+						// end = CommonUtil.parse("yyyy-MM-dd HH:mm:ss",
+						// CommonUtil.formatTime("yyyy-MM-dd",
+						// CommonUtil.addDate(start, lastDay)) + " 00:00:00");
+					}
 				}
-	    	}
-		}catch(Throwable e){
+			}
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		return date;
 	}
-	
-	public static int getDayOfYear(Date date){
-		Calendar c = Calendar.getInstance(); 
-        c.setTime(date); 
-        
-        return c.get(Calendar.DAY_OF_YEAR);
+
+	public static int getDayOfYear(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+
+		return c.get(Calendar.DAY_OF_YEAR);
 	}
-	
-	public static int getLastDayOfYear(Date date){
-		 Calendar c = Calendar.getInstance(); 
-         c.setTime(date); 
-         
-         return c.getActualMaximum(Calendar.DAY_OF_YEAR);
+
+	public static int getLastDayOfYear(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+
+		return c.getActualMaximum(Calendar.DAY_OF_YEAR);
 	}
-	
-	public static int getDayOfMonth(Date date){
-		Calendar c = Calendar.getInstance(); 
-        c.setTime(date); 
-        
-        return c.get(Calendar.DAY_OF_MONTH);
+
+	public static int getDayOfMonth(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+
+		return c.get(Calendar.DAY_OF_MONTH);
 	}
-	
-	public static int getLastDayOfMonth(Date date){
-		 Calendar c = Calendar.getInstance(); 
-         c.setTime(date); 
-         
-         return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+	public static int getLastDayOfMonth(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+
+		return c.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
-	
+
 	// 判断日期为星期几,0为星期六,依此类推
 	public static int getDayOfWeek(Date date) {
 		// 首先定义一个calendar，必须使用getInstance()进行实例化
@@ -296,12 +388,12 @@ public class CommonUtil {
 		int x = aCalendar.get(Calendar.DAY_OF_WEEK);
 		return x;
 	}
-	
+
 	public static int getLastDayOfWeek(Date date) {
-		Calendar c = Calendar.getInstance(); 
-        c.setTime(date); 
-        
-        return c.getActualMaximum(Calendar.DAY_OF_WEEK);
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+
+		return c.getActualMaximum(Calendar.DAY_OF_WEEK);
 	}
 
 	public static long difference(Date date1, Date date2) {
@@ -318,30 +410,30 @@ public class CommonUtil {
 		return cal1.getTimeInMillis() - cal2.getTimeInMillis();
 	}
 
-	public static Date addSecond(Date source, int s){
+	public static Date addSecond(Date source, int s) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(source);
 		cal.add(Calendar.SECOND, s);
 
 		return cal.getTime();
 	}
-	
-	public static Date addMinute(Date source, int min){
+
+	public static Date addMinute(Date source, int min) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(source);
 		cal.add(Calendar.MINUTE, min);
 
 		return cal.getTime();
 	}
-	
-	public static Date addHour(Date source, int hour){
+
+	public static Date addHour(Date source, int hour) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(source);
 		cal.add(Calendar.HOUR_OF_DAY, hour);
 
 		return cal.getTime();
 	}
-	
+
 	public static Date addDate(Date source, int day) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(source);
@@ -365,8 +457,8 @@ public class CommonUtil {
 
 		return cal.getTime();
 	}
-	
-	public static Date parse(String format, String source){
+
+	public static Date parse(String format, String source) {
 		SimpleDateFormat sdf = new java.text.SimpleDateFormat(format);
 		try {
 			return sdf.parse(source);
@@ -374,8 +466,8 @@ public class CommonUtil {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public static Date parse(String source){
+
+	public static Date parse(String source) {
 		return parse("yyyy-MM-dd HH:mm:ss", source);
 	}
 
@@ -515,7 +607,7 @@ public class CommonUtil {
 	public static String getNowTime() {
 		return getNowTime(null);
 	}
-	
+
 	/**
 	 * 组装KendoGrid需要的data
 	 * 
@@ -553,7 +645,8 @@ public class CommonUtil {
 	 *            哪些字段不需要显示的
 	 * @return {data:data, columns:columns}
 	 */
-	public static Map assemGridData(List<?> models, Map<Class<?>, String> pojos, String... unless) {
+	public static Map assemGridData(List<?> models,
+			Map<Class<?>, String> pojos, String... unless) {
 		if (models == null || models.size() == 0)
 			return null;
 
@@ -576,7 +669,8 @@ public class CommonUtil {
 	 *            哪些字段不需要显示的。
 	 * @return {field:xxx, title:xxx}
 	 */
-	public static List<Map> assemColumns(Class<?> model, Map<Class<?>, String> pojos, String... unless) {
+	public static List<Map> assemColumns(Class<?> model,
+			Map<Class<?>, String> pojos, String... unless) {
 
 		Field[] fields = model.getDeclaredFields();
 
@@ -617,15 +711,15 @@ public class CommonUtil {
 		}
 	}
 
-	public static String formatStr(String format, Object... args){
+	public static String formatStr(String format, Object... args) {
 		return String.format(format, args);
 	}
 
 	public static boolean isValidEmail(String mail) {
 		String regex = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
 		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(mail);  
-	    
+		Matcher m = p.matcher(mail);
+
 		return m.find();
 	}
 }
