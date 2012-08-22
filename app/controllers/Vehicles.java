@@ -24,6 +24,8 @@ import vo.TreeView;
 import vo.VehicleEvent;
 import vo.VehicleGPS;
 
+import annotations.Perm;
+
 import com.google.gson.Gson;
 
 /**
@@ -37,6 +39,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 统计给定车队的车辆的事件统计信息
 	 */
+	@Perm
 	public static void events(String fleets) {
 		long[] fleetsLong = CommonUtil.splitToLong(fleets, ",");
 
@@ -103,6 +106,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 获取给定车队的车辆的GPS实时信息
 	 */
+	@Perm
 	public static void gps(String fleets) {
 		long[] fleetsLong = CommonUtil.splitToLong(fleets, ",");
 		List<Vehicle> vehicles = Vehicle.filterByFleet(fleetsLong);
@@ -112,26 +116,9 @@ public class Vehicles extends Controller {
 	}
 
 	/**
-	 * 获取车辆信息 JSON 格式
-	 */
-	public static void listJson() {
-		List<Vehicle> vehicleList = Vehicle.find("order by id desc").fetch();
-
-		// 指定类的字段显示
-		Map<Class<?>, String> pojos = new HashMap<Class<?>, String>();
-		pojos.put(Fleet.class, "fleet.name");
-		pojos.put(Device.class, "device.name");
-
-		Map data = CommonUtil.assemGridData(vehicleList, pojos, "DIRECTIONS");
-		// 告诉Gson，跳过 fleet, parent 字段的序列化，因为这些会导致循环引用异常
-		Gson gson = CommonUtil.getGson("vehicles", "parent");
-
-		renderText(gson.toJson(data));
-	}
-
-	/**
 	 * 车辆管理：检索车辆信息
 	 */
+	@Perm
 	public static void search(int page, int pageSize, String number, String license, String fleetName, String deviceName, String description, String cctvIp, String type) {
 		Map map = Vehicle.search(page, pageSize, number, license, fleetName, deviceName, description, cctvIp, type);
 		renderJSON(map);
@@ -140,6 +127,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 车辆管理：更新车辆信息
 	 */
+	@Perm
 	public static void update(String models) {
 		if (Vehicle.updateByJson(models))
 			renderJSON(models);
@@ -148,6 +136,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 获取所有车辆信息
 	 */
+	@Perm
 	public static void read(int page, int pageSize) {
 		renderJSON(Vehicle.search(page, pageSize, null));
 	}
@@ -155,6 +144,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 车辆管理：删除车辆信息
 	 */
+	@Perm
 	public static void destroy(String models) {
 		try {
 			if (Vehicle.deleteByJson(models))
@@ -167,6 +157,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 车辆管理：添加车辆信息
 	 */
+	@Perm
 	public static void add(String models) {
 		renderJSON(Vehicle.createByJson(models));
 	}
@@ -174,6 +165,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 访问车辆管理页面
 	 */
+	@Perm
 	public static void grid(String id) {
 		final String preUrl = "/Vehicles/";
 		Map map = new HashMap();
@@ -211,6 +203,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 访问车队树形结构
 	 */
+	@Perm
 	public static void tree() {
 		Map map = new HashMap();
 
@@ -231,6 +224,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 查询车辆信息，车队保持树形结构
 	 */
+	@Perm
 	public static void searchTree(long fleetid, String number) {
 		Map map = new HashMap();
 
@@ -250,6 +244,7 @@ public class Vehicles extends Controller {
 	/**
 	 * 打开某辆车的路径显示窗口
 	 */
+	@Perm
 	public static void path(String vehicleNo) {
 		List<ComboVO> vc = Vehicle.getCombo();
 		String vehicles = CommonUtil.getGson().toJson(vc);
@@ -263,34 +258,16 @@ public class Vehicles extends Controller {
 	/**
 	 * 给定车牌号码查询对应的工作安排信息
 	 */
+	@Perm
 	public static void schedules(String vehicleNo) {
 		List<ComboVO> schedules = Schedule.getComboByVehicle(vehicleNo);
 		renderJSON(schedules);
 	}
 
 	/**
-	 * 处理某一特定Schedul下的车的行驶路径
-	 */
-	@Deprecated
-	public static void routes(Long scheduleId) {
-		List<String[]> points = new ArrayList<String[]>();
-		Schedule s = Schedule.findById(scheduleId);
-		if (s == null)
-			return;
-
-		List<LiveGPSData> gps = LiveGPSData.find("device_key = ? and time >= ? and time < ?", s.vehicle.device.key, s.startTime, s.endTime).fetch();
-		if (gps == null)
-			return;
-		
-		for (LiveGPSData g : gps)
-			points.add(new String[] { g.longitude, g.latitude });
-
-		renderJSON(points);
-	}
-
-	/**
 	 * 查询车辆的行驶路径
 	 */
+	@Perm
 	public static void searchPath(String vehicleNo, String startDate, String startTime, String endDate, String endTime) {
 		List<String[]> points = Vehicle.routeGPS(-1, -1, vehicleNo, startDate, startTime, endDate, endTime);
 

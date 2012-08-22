@@ -263,6 +263,7 @@ public class SystemConfigs extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void destroy_setting(Long id) {
 		try{
 			SystemConfig.deleteById(id);

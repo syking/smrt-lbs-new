@@ -1,5 +1,6 @@
 package controllers.api;
 
+import annotations.Perm;
 import models.Schedule;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -18,6 +19,7 @@ public class Schedules extends Controller{
 	 * Fetch schedule's info
 	 * @param schedule
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final ScheduleVO schedule){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Schedule.search(page, pageSize, schedule))));
@@ -30,6 +32,7 @@ public class Schedules extends Controller{
 	 * Get schedule info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Schedule schedule = Schedule.fetchById(id);
@@ -43,6 +46,7 @@ public class Schedules extends Controller{
 	 * Create schedule info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final ScheduleVO schedule) {
 		
 		try{
@@ -58,6 +62,7 @@ public class Schedules extends Controller{
 	 * Update schedule info
 	 * @param schedule
 	 */
+	@Perm
 	public static void update(final ScheduleVO schedule){
 		
 		try{
@@ -72,6 +77,7 @@ public class Schedules extends Controller{
 	 * Delete schedule info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Schedule.deleteById(id);

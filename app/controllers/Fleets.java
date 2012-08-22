@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import com.google.gson.Gson;
 
 import models.Driver;
@@ -34,6 +36,7 @@ public class Fleets extends Controller {
 	/**
 	 * 访问车队管理页面
 	 */
+	@Perm
 	public static void grid(String id) {
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -69,6 +72,7 @@ public class Fleets extends Controller {
 	/**
 	 * 获取车队的树形结构 JSON 信息
 	 */
+	@Perm
 	public static void tree() {
 		renderJSON(Fleet.assemFleetTree());
 	}
@@ -76,6 +80,7 @@ public class Fleets extends Controller {
 	/**
 	 * 获取车队 JSON 信息
 	 */
+	@Perm
 	public static void read(int page, int pageSize) {
 		renderJSON(Fleet.search(page, pageSize, null, null));
 	}
@@ -83,6 +88,7 @@ public class Fleets extends Controller {
 	/**
 	 * 车队管理：添加车队信息
 	 */
+	@Perm
 	public static void create(String models) {
 		renderJSON(Fleet.createByJson(models));
 	}
@@ -90,6 +96,7 @@ public class Fleets extends Controller {
 	/**
 	 * 车队管理：更新车队信息
 	 */
+	@Perm
 	public static void update(String models) {
 		if (Fleet.updateByJson(models))
 			renderJSON(models);
@@ -98,6 +105,7 @@ public class Fleets extends Controller {
 	/**
 	 * 车队管理：删除车队信息
 	 */
+	@Perm
 	public static void destroy(String models) {
 		if (Fleet.deleteByJson(models))
 			renderJSON(models);
@@ -106,6 +114,7 @@ public class Fleets extends Controller {
 	/**
 	 * 检索车队信息，返回 JSON
 	 */
+	@Perm
 	public static void search(int page, int pageSize, String placeNumber, String name) {
 		renderJSON(Fleet.search(page, pageSize, placeNumber, name));
 	}
@@ -114,6 +123,7 @@ public class Fleets extends Controller {
 	 * 打开车队分配页面
 	 * @param id
 	 */
+	@Perm
 	public static void assign(String id){
 		Map map = new HashMap();
 		map.put("tabid", id);
@@ -131,6 +141,7 @@ public class Fleets extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Fleets/assign.html")).render(map));
 	}
 	
+	@Perm
 	public static void assignDriverAndVehicle(String fleetName, List<Long> vehicles, List<Long> drivers){
 		Map map = new HashMap();
 		try{
@@ -144,11 +155,13 @@ public class Fleets extends Controller {
 		renderJSON(map);
 	}
 	
+	@Perm
 	public static void leaders(String fleetName){
 		Fleet fleet = Fleet.findByName(fleetName);
 		renderJSON(CommonUtil.getGson("number", "description", "name", "department", "fleet", "iconUrl").toJson(fleet.leaders));
 	}
 	
+	@Perm
 	public static void vehicles(String fleetName){
 		Fleet fleet = Fleet.findByName(fleetName);
 		List<Vehicle> validList = Vehicle.find("fleet is null").fetch();
@@ -160,6 +173,7 @@ public class Fleets extends Controller {
 		renderJSON(map);
 	}
 	
+	@Perm
 	public static void filter(String fleetName){
 		if (CommonUtil.isBlank(fleetName))
 			renderJSON(Fleet.assemFleetTree());

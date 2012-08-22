@@ -2,6 +2,8 @@ package controllers;
 
 import java.util.List;
 
+import annotations.Perm;
+
 import models.Location;
 
 import play.mvc.*;
@@ -13,12 +15,10 @@ import vo.VehicleGPS;
  * @author weiwei
  * 
  */
+@With(Interceptor.class)
 public class Locations extends Controller {
-
-	public static void index() {
-		render();
-	}
-
+	
+	@Perm
 	public static void gps() {
 		// 车站、总站GPS数据
 		List<VehicleGPS> locationGPS = Location.findGPS();

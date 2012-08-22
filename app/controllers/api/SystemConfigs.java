@@ -1,5 +1,6 @@
 package controllers.api;
 
+import annotations.Perm;
 import models.SystemConfig;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -17,6 +18,7 @@ public class SystemConfigs extends Controller{
 	 * Fetch systemconfig's info
 	 * @param systemconfig
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(SystemConfig.search(page, pageSize))));
@@ -29,6 +31,7 @@ public class SystemConfigs extends Controller{
 	 * Get systemconfig info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			SystemConfig systemconfig = SystemConfig.fetchById(id);
@@ -42,6 +45,7 @@ public class SystemConfigs extends Controller{
 	 * Create systemconfig info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final SystemConfig systemconfig) {
 		
 		try{
@@ -57,6 +61,7 @@ public class SystemConfigs extends Controller{
 	 * Update systemconfig info
 	 * @param systemconfig
 	 */
+	@Perm
 	public static void update(final SystemConfig systemconfig){
 		
 		try{
@@ -71,6 +76,7 @@ public class SystemConfigs extends Controller{
 	 * Delete systemconfig info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			SystemConfig.deleteById(id);

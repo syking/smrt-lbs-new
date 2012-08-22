@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Event;
 import models.EventRecord;
 import models.EventType;
@@ -69,6 +71,7 @@ public class Maps extends Controller {
      * 获取某部门下所有司机的 Events List 和 Events GPS
      * @param departmentId
      */
+    @Perm
     public static void departmentEvents(Long departmentId){
     	List<Event> events = Event.find("department_id = ?", departmentId).fetch();
     	
@@ -78,6 +81,7 @@ public class Maps extends Controller {
     	render(renderArgs.get(THEME) + "/Map/map.html", result);
     }
     
+    @Perm
     public static void departmentEventsGPS(Long departmentId){
     	List<Event> events = Event.find("department_id = ?", departmentId).fetch();
     	Map result = viewOnMap("dept_" + departmentId, events, "id", "vehicle", "fleet", "driver");
@@ -89,6 +93,7 @@ public class Maps extends Controller {
      * 获取某车队下所有司机的 Events List 和 Events GPS
      * @param departmentId
      */
+    @Perm
     public static void fleetEvents(Long fleetId){
     	List<Event> events = Event.find("fleet_id = ?", fleetId).fetch();
     	
@@ -97,6 +102,7 @@ public class Maps extends Controller {
     	render(renderArgs.get(THEME) + "/Map/map.html", result);
     }
     
+    @Perm
     public static void fleetEventsGPS(Long fleetId){
     	List<Event> events = Event.find("fleet_id = ?", fleetId).fetch();
     	Map result = viewOnMap("fleet_" + fleetId, events, "id", "vehicle", "department", "driver");
@@ -108,6 +114,7 @@ public class Maps extends Controller {
      * 获取某路线下所有司机的 Events List 和 Events GPS
      * @param departmentId
      */
+    @Perm
     public static void lineEvents(String line){
     	List<Event> events = Event.find("service_number = ?", line).fetch();
     	
@@ -116,6 +123,7 @@ public class Maps extends Controller {
     	render(renderArgs.get(THEME) + "/Map/map.html", result);
     }
     
+    @Perm
     public static void lineEventsGPS(String line){
     	List<Event> events = Event.find("service_number = ?", line).fetch();
     	Map result = viewOnMap("line_" + line, events, "id", "vehicle", "department", "driver", "fleet");
@@ -128,6 +136,7 @@ public class Maps extends Controller {
      * 获取某个司机的Events List 和 Events GPS
      * @param driverId
      */
+    @Perm
     public static void driverEvents(Long driverId){
     	List<Event> events = Event.find("driver_id = ?", driverId).fetch();
     	if (events == null)
@@ -139,6 +148,7 @@ public class Maps extends Controller {
     	render(renderArgs.get(THEME) + "/Map/map.html", result);
     }
     
+    @Perm
     public static void driverEventsGPS(Long driverId){
     	List<Event> events = Event.find("driver_id = ?", driverId).fetch();
     	Map result = viewOnMap("driver_" + driverId, events, "id", "vehicle", "fleet", "department");

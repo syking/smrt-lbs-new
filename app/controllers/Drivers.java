@@ -1,5 +1,7 @@
 package controllers;
 
+import annotations.Perm;
+
 import com.google.gson.Gson;
 
 import models.Department;
@@ -32,28 +34,34 @@ import static models.User.Constant.THEME;
 @With(Interceptor.class)
 public class Drivers extends Controller {
 	
+	@Perm
 	public static void search(int page, int pageSize, String department, String number, String name, String description) {
 		renderJSON(Driver.search(page, pageSize, department, number, name, description));
 	}
 	
+	@Perm
 	public static void add(String models) {
 		renderJSON(Driver.createByJson(models));
 	}
 
+	@Perm
 	public static void destroy(String models) {
 		if (Driver.deleteByJson(models))
 			renderJSON(models);
 	}
 
+	@Perm
 	public static void update(String models) {
 		if (Driver.updateByJson(models))
 			renderJSON(models);
 	}
 
+	@Perm
 	public static void read(int page, int pageSize) {
 		renderJSON(Driver.search(page, pageSize, null, null, null, null));
 	}
 
+	@Perm
 	public static void grid(String id) {
 		final String preUrl = "/Drivers/";
 		Map map = new HashMap();

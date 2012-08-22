@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Event;
 import models.Location;
 import models.Vehicle;
@@ -28,6 +30,7 @@ public class GPS extends Controller{
 	 * Get Vehicle Current GPS Data by fleet
 	 * @param id
 	 */
+	@Perm
 	public static void vehicles(long[] fleet_ids) {
 		try{
 			List<Vehicle> vehicles = Vehicle.filterByFleet(fleet_ids);
@@ -41,6 +44,7 @@ public class GPS extends Controller{
 	 * Get Vehicle Current GPS Data by id
 	 * @param id
 	 */
+	@Perm
 	public static void vehiclesById(Long id){
 		try{
 			Vehicle vehicle = Vehicle.fetchById(id);
@@ -55,6 +59,7 @@ public class GPS extends Controller{
 	/**
 	 * Get All Vehicle Current GPS Data
 	 */
+	@Perm
 	public static void vehicles(){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Vehicle.findGPS())));
@@ -66,6 +71,7 @@ public class GPS extends Controller{
 	/**
 	 * Get vehicle's route gps data by vehicle number and paging
 	 */
+	@Perm
 	public static void routeByVehicleNumber(int page, int pageSize, String vehicleNumber, String start, String end) {
 		try{
 			List<String[]> points = Vehicle.routeGPS(page, pageSize, vehicleNumber, start, end);
@@ -82,6 +88,7 @@ public class GPS extends Controller{
 	/**
 	 * Get vehicle's route gps data by vehicle id and paging
 	 */
+	@Perm
 	public static void routeByVehicleId(int page, int pageSize, Long id, String start, String end) {
 		try{
 			List<String[]> points = Vehicle.routeGPS(page, pageSize, id, start, end);
@@ -100,6 +107,7 @@ public class GPS extends Controller{
 	 * Get Event GPS Data by Event ID
 	 * @param id
 	 */
+	@Perm
 	public static void eventsById(Long id){
 		try{
 			Event event = Event.fetchById(id);
@@ -112,6 +120,7 @@ public class GPS extends Controller{
 	/**
 	 * Get All Event GPS Data
 	 */
+	@Perm
 	public static void events(final int page, final int pageSize, Date startTime, Date endTime,  final EventVO event){
 		try{
 			Map map = Event.searchEvent(page, pageSize, event, startTime, endTime);
@@ -130,6 +139,7 @@ public class GPS extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void locations(){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Location.findGPS())));

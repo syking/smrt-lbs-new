@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Driver;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -26,6 +28,7 @@ public class Drivers extends Controller{
 	 * Fetch driver's info
 	 * @param driver
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final DriverVO driver){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Driver.search(page, pageSize, driver))));
@@ -38,6 +41,7 @@ public class Drivers extends Controller{
 	 * Get driver info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Driver driver = Driver.fetchById(id);
@@ -51,8 +55,8 @@ public class Drivers extends Controller{
 	 * Create driver info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final DriverVO driver) {
-		
 		try{
 			DriverVO _driver = Driver.createByVO(driver);
 			renderHtml(CommonUtil.toJson(APICallback.success(_driver)));
@@ -65,8 +69,8 @@ public class Drivers extends Controller{
 	 * Update driver info
 	 * @param driver
 	 */
+	@Perm
 	public static void update(final DriverVO driver){
-		
 		try{
 			Driver.updateByVO(driver);
 			renderHtml(CommonUtil.toJson(APICallback.success(driver)));
@@ -79,6 +83,7 @@ public class Drivers extends Controller{
 	 * Delete driver info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Driver.deleteById(id);

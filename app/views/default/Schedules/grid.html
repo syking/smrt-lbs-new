@@ -251,7 +251,7 @@
 	                            	return validate_empty(input);
 	                            }
                         	}
-                        },
+                        }
                     }
                 }
             }
@@ -351,10 +351,10 @@
 	        			loadSchedules("/Schedules/read");
 	        		else
 	        			alert("Can not clear!");
-	        	}).error(e){
+	        	}).error(function(e){
 	        		show_validation_error(e);
-	        	};
+	        	});
         	}
         });
-}
+    }
 </script>

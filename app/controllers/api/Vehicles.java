@@ -1,5 +1,6 @@
 package controllers.api;
 
+import annotations.Perm;
 import models.Vehicle;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -18,6 +19,7 @@ public class Vehicles extends Controller{
 	 * Fetch vehicle's info
 	 * @param vehicle
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final VehicleVO vehicle){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Vehicle.search(page, pageSize, vehicle))));
@@ -30,6 +32,7 @@ public class Vehicles extends Controller{
 	 * Get vehicle info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Vehicle vehicle = Vehicle.fetchById(id);
@@ -43,6 +46,7 @@ public class Vehicles extends Controller{
 	 * Create vehicle info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final VehicleVO vehicle) {
 		
 		try{
@@ -58,6 +62,7 @@ public class Vehicles extends Controller{
 	 * Update vehicle info
 	 * @param vehicle
 	 */
+	@Perm
 	public static void update(final VehicleVO vehicle){
 		
 		try{
@@ -72,6 +77,7 @@ public class Vehicles extends Controller{
 	 * Delete vehicle info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Vehicle.deleteById(id);

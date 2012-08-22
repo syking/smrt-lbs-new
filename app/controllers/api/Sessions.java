@@ -1,5 +1,6 @@
 package controllers.api;
 
+import annotations.Perm;
 import models.User;
 import play.cache.Cache;
 import play.mvc.Controller;
@@ -13,6 +14,7 @@ public class Sessions extends Controller {
 	 * @param user
 	 *            Login User
 	 */
+	@Perm
 	public static void create(final String account, final String password) {
 		try {
 			User loginUser = new User(account, password, null, null).authen();
@@ -28,6 +30,7 @@ public class Sessions extends Controller {
 	 * Destroy session
 	 * @param session_id
 	 */
+	@Perm
 	public static void destroy(final String session_id){
 		if (session_id == null || Cache.get(session_id) == null){
 			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.USER_LOGOUT_FAIL, "Session ID invalid")));

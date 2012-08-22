@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import annotations.Perm;
+
 import models.Driver;
 import models.Permission;
 import models.Fleet;
@@ -31,6 +33,7 @@ public class Fleets extends Controller{
 	/**
 	 * Fetch fleet's info
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final FleetVO fleet){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Fleet.search(page, pageSize, fleet))));
@@ -42,6 +45,7 @@ public class Fleets extends Controller{
 	/**
 	 * Get fleet info
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Fleet fleet = Fleet.fetchById(id);
@@ -54,8 +58,8 @@ public class Fleets extends Controller{
 	/**
 	 * Create fleet info
 	 */
+	@Perm
 	public static void create(final FleetVO fleet) {
-		
 		try{
 			FleetVO _fleet = Fleet.createByVO(fleet);
 			renderHtml(CommonUtil.toJson(APICallback.success(_fleet)));
@@ -67,8 +71,8 @@ public class Fleets extends Controller{
 	/**
 	 * Update fleet info
 	 */
+	@Perm
 	public static void update(final FleetVO fleet){
-		
 		try{
 			Fleet.updateByVO(fleet);
 			renderHtml(CommonUtil.toJson(APICallback.success(fleet)));
@@ -81,6 +85,7 @@ public class Fleets extends Controller{
 	 * Delete fleet info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Fleet.deleteById(id);
@@ -92,6 +97,7 @@ public class Fleets extends Controller{
 	/**
 	 * Assign Drivers to a Permission
 	 */
+	@Perm
 	public static void createRelations(Long id, List<Long> vehicle_ids, List<Long> leader_ids) {
 		try{
 			Fleet.assign(id, vehicle_ids, leader_ids, false);
@@ -101,6 +107,7 @@ public class Fleets extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void destroyRelations(Long id, List<Long> vehicle_ids, List<Long> leader_ids) {
 		try{
 			Fleet.unassign(id, vehicle_ids, leader_ids);
@@ -110,6 +117,7 @@ public class Fleets extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void relations(Long id) {
 		try{
 			Fleet fleet = Fleet.fetchById(id);
@@ -123,6 +131,7 @@ public class Fleets extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void assignables(){
 		try{
 			List<Vehicle> validList = Vehicle.assignables();

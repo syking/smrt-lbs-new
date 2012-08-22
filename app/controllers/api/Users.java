@@ -1,5 +1,6 @@
 package controllers.api;
 
+import annotations.Perm;
 import models.User;
 import play.mvc.Controller;
 import play.mvc.With;
@@ -18,6 +19,7 @@ public class Users extends Controller{
 	 * Fetch user's info
 	 * @param user
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final UserVO user){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(User.search(page, pageSize, user))));
@@ -30,6 +32,7 @@ public class Users extends Controller{
 	 * Get user info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			User user = User.fetchById(id);
@@ -43,6 +46,7 @@ public class Users extends Controller{
 	 * Create user info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final UserVO user) {
 		
 		try{
@@ -57,6 +61,7 @@ public class Users extends Controller{
 	 * Update user info
 	 * @param user
 	 */
+	@Perm
 	public static void update(final UserVO user){
 		
 		try{
@@ -71,6 +76,7 @@ public class Users extends Controller{
 	 * Delete user info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			User.deleteById(id);

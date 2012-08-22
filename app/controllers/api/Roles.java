@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Permission;
 import models.Role;
 import models.User;
@@ -24,6 +26,7 @@ public class Roles extends Controller{
 	 * Fetch role's info
 	 * @param role
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final RoleVO role){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Role.search(page, pageSize, role))));
@@ -36,6 +39,7 @@ public class Roles extends Controller{
 	 * Get role info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Role role = Role.fetchById(id);
@@ -49,6 +53,7 @@ public class Roles extends Controller{
 	 * Create role info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final RoleVO role) {
 		
 		try{
@@ -63,6 +68,7 @@ public class Roles extends Controller{
 	 * Update role info
 	 * @param role
 	 */
+	@Perm
 	public static void update(final RoleVO role){
 		
 		try{
@@ -77,6 +83,7 @@ public class Roles extends Controller{
 	 * Delete role info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Role.deleteById(id);
@@ -92,6 +99,7 @@ public class Roles extends Controller{
 	 * @param userIds
 	 * @param permIds
 	 */
+	@Perm
 	public static void createRelations(Long id, List<Long> user_ids, List<Long> perm_ids) {
 		try{
 			Role.assign(id, user_ids, perm_ids, false);
@@ -101,6 +109,7 @@ public class Roles extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void destroyRelations(Long id, List<Long> user_ids, List<Long> perm_ids) {
 		try{
 			Role.unassign(id, user_ids, perm_ids);
@@ -110,6 +119,7 @@ public class Roles extends Controller{
 		}
 	}
 	
+	@Perm
 	public static void relations(Long id) {
 		try{
 			Role role = Role.fetchById(id);

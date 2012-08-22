@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import annotations.Perm;
 import models.Counselling;
 import models.Driver;
 import models.User;
@@ -23,36 +25,43 @@ import vo.Grid;
 @With(Interceptor.class)
 public class MyCounsellings extends Controller{
 	
+	@Perm
 	public static void read(int page, int pageSize) {
 		String userName = (String)renderArgs.get("user");
 		Counsellings.search(page, pageSize, userName, null, null, null, null, null);
 	}
 	
+	@Perm
 	public static void mysearch(int page, int pageSize, String driverName, String startDate, String startTime, String endDate, String endTime) throws ParseException{
 		String userName = (String)renderArgs.get("user");
 		Counsellings.search(page, pageSize, userName, driverName, startDate, startTime, endDate, endTime);
 	}
 	
+	@Perm
 	public static void createMyCounsel(String models) throws ParseException{
 		String userName = (String)renderArgs.get("user");
 		renderJSON(Counselling.createByJson(models, userName));
 	}
 	
+	@Perm
 	public static void deleteCounsel(String models){
 		if (Counselling.deleteByJson(models))
 			renderJSON(models);
     }
 	
+	@Perm
 	public static void updateCounsel(String models) throws ParseException{
 		String userName = (String)renderArgs.get("user");
 		if (Counselling.updateByJson(models, userName))
 			renderJSON(models);
 	}
 	
+	@Perm
 	public static void driverList(){
 		renderJSON(Driver.findAll());
 	}
 	
+	@Perm
 	public static void grid(String id) {
 		final String preUrl = "/MyCounsellings/";
 

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import annotations.Perm;
+
 import models.Driver;
 import models.Permission;
 import models.Department;
@@ -30,6 +32,7 @@ public class Departments extends Controller{
 	/**
 	 * Fetch dept's info
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final DepartmentVO department){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Department.search(page, pageSize, department))));
@@ -41,6 +44,7 @@ public class Departments extends Controller{
 	/**
 	 * Get dept info
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Department dept = Department.fetchById(id);
@@ -53,8 +57,8 @@ public class Departments extends Controller{
 	/**
 	 * Create dept info
 	 */
+	@Perm
 	public static void create(final DepartmentVO department) {
-		
 		try{
 			DepartmentVO _dept = Department.createByVO(department);
 			renderHtml(CommonUtil.toJson(APICallback.success(_dept)));
@@ -66,8 +70,8 @@ public class Departments extends Controller{
 	/**
 	 * Update dept info
 	 */
+	@Perm
 	public static void update(final DepartmentVO department){
-		
 		try{
 			Department.updateByVO(department);
 			renderHtml(CommonUtil.toJson(APICallback.success(department)));
@@ -80,6 +84,7 @@ public class Departments extends Controller{
 	 * Delete department info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Department.deleteById(id);
@@ -91,6 +96,7 @@ public class Departments extends Controller{
 	/**
 	 * Assign Drivers to a Permission
 	 */
+	@Perm
 	public static void createRelations(Long id, List<Long> driver_ids, List<Long> leader_ids) {
 		try{
 			Department.assign(id, driver_ids, leader_ids, false);
@@ -99,7 +105,7 @@ public class Departments extends Controller{
 			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.DEPT_ASSIGN_FAIL, e.getMessage())));
 		}
 	}
-	
+	@Perm
 	public static void destroyRelations(Long id, List<Long> driver_ids, List<Long> leader_ids) {
 		try{
 			Department.unassign(id, driver_ids, leader_ids);
@@ -108,7 +114,7 @@ public class Departments extends Controller{
 			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.DEPT_UNASSIGN_FAIL, e.getMessage())));
 		}
 	}
-	
+	@Perm
 	public static void relations(Long id) {
 		try{
 			Department dept = Department.fetchById(id);
@@ -121,7 +127,7 @@ public class Departments extends Controller{
 			renderHtml(CommonUtil.toJson(APICallback.fail(APIError.DEPT_FETCH_FAIL, e.getMessage())));
 		}
 	}
-	
+	@Perm
 	public static void assignables(){
 		try{
 			List<Driver> validList = Driver.assignables();

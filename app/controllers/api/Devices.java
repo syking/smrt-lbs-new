@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Device;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -25,6 +27,7 @@ public class Devices extends Controller{
 	 * Fetch device's info
 	 * @param device
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final Device device){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Device.search(page, pageSize, device))));
@@ -37,6 +40,7 @@ public class Devices extends Controller{
 	 * Get device info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Device device = Device.fetchById(id);
@@ -50,6 +54,7 @@ public class Devices extends Controller{
 	 * Create device info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final Device device) {
 		
 		try{
@@ -64,6 +69,7 @@ public class Devices extends Controller{
 	 * Update device info
 	 * @param device
 	 */
+	@Perm
 	public static void update(final Device device){
 		
 		try{
@@ -78,6 +84,7 @@ public class Devices extends Controller{
 	 * Delete device info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Device.deleteById(id);

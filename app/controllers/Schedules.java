@@ -27,6 +27,7 @@ public class Schedules extends Controller {
 	/**
 	 * 访问排班管理页面
 	 */
+	@Perm
 	public static void grid(String id) {
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -55,6 +56,7 @@ public class Schedules extends Controller {
 	/**
 	 * 获取排班 JSON 信息
 	 */
+	@Perm
 	public static void read(int page, int pageSize) {
 		renderJSON(Schedule.search(page, pageSize, null, null, null, null, null, null, null, null));
 	}
@@ -78,6 +80,7 @@ public class Schedules extends Controller {
 	/**
 	 * 排班管理：添加排班信息
 	 */
+	@Perm
 	public static void create(String models) {
 		renderJSON(Schedule.createByJson(models));
 	}
@@ -85,6 +88,7 @@ public class Schedules extends Controller {
 	/**
 	 * 排班管理：更新排班信息
 	 */
+	@Perm
 	public static void update(String models) {
 		if (Schedule.updateByJson(models))
 			renderJSON(models);
@@ -93,6 +97,7 @@ public class Schedules extends Controller {
 	/**
 	 * 排班管理：删除排班信息
 	 */
+	@Perm
 	public static void destroy(String models) {
 		if (Schedule.deleteByJson(models))
 			renderJSON(models);
@@ -101,6 +106,7 @@ public class Schedules extends Controller {
 	/**
 	 * 检索排班信息，返回 JSON
 	 */
+	@Perm
 	public static void search(int page, int pageSize, String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime) {
 		Map map = Schedule.search(page, pageSize, driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		renderJSON(map);

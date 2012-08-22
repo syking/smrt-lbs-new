@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Event;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -28,6 +30,7 @@ public class Events extends Controller{
 	 * Fetch event's info
 	 * @param event
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, Date startTime, Date endTime,  final EventVO event){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Event.search(page, pageSize, startTime, endTime, event))));
@@ -40,6 +43,7 @@ public class Events extends Controller{
 	 * Get event info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Event event = Event.fetchById(id);

@@ -5,6 +5,8 @@ import static models.User.Constant.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.User;
 import play.cache.Cache;
 import play.data.validation.Required;

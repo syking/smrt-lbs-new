@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import com.google.gson.Gson;
 
 import models.Driver;
@@ -34,6 +36,7 @@ public class Departments extends Controller {
 	/**
 	 * 访问部门管理页面
 	 */
+	@Perm
 	public static void grid(String id) {
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -69,6 +72,7 @@ public class Departments extends Controller {
 	/**
 	 * 获取部门的树形结构 JSON 信息
 	 */
+	@Perm
 	public static void tree() {
 		renderJSON(Department.assemDepartmentTree());
 	}
@@ -76,6 +80,7 @@ public class Departments extends Controller {
 	/**
 	 * 获取部门 JSON 信息
 	 */
+	@Perm
 	public static void read(int page, int pageSize) {
 		renderJSON(Department.search(page, pageSize, null, null));
 	}
@@ -83,6 +88,7 @@ public class Departments extends Controller {
 	/**
 	 * 部门管理：添加部门信息
 	 */
+	@Perm
 	public static void create(String models) {
 		renderJSON(Department.createByJson(models));
 	}
@@ -90,6 +96,7 @@ public class Departments extends Controller {
 	/**
 	 * 部门管理：更新部门信息
 	 */
+	@Perm
 	public static void update(String models) {
 		if (Department.updateByJson(models))
 			renderJSON(models);
@@ -98,6 +105,7 @@ public class Departments extends Controller {
 	/**
 	 * 部门管理：删除部门信息
 	 */
+	@Perm
 	public static void destroy(String models) {
 		if (Department.deleteByJson(models))
 			renderJSON(models);
@@ -106,6 +114,7 @@ public class Departments extends Controller {
 	/**
 	 * 检索部门信息，返回 JSON
 	 */
+	@Perm
 	public static void search(int page, int pageSize, String name, String parent) {
 		renderJSON(Department.search(page, pageSize, name, parent));
 	}
@@ -114,6 +123,7 @@ public class Departments extends Controller {
 	 * 打开部门分配页面
 	 * @param id
 	 */
+	@Perm
 	public static void assign(String id){
 		Map map = new HashMap();
 		map.put("tabid", id);
@@ -128,6 +138,7 @@ public class Departments extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Departments/assign.html")).render(map));
 	}
 	
+	@Perm
 	public static void assignDriverAndLeader(String departmentName, List<Long> drivers, List<Long> leaders){
 		Map map = new HashMap();
 		try{
@@ -141,6 +152,7 @@ public class Departments extends Controller {
 		renderJSON(map);
 	}
 	
+	@Perm
 	public static void drivers(String departmentName){
 		Department department = Department.findByName(departmentName);
 		Map map = new HashMap();
@@ -153,11 +165,13 @@ public class Departments extends Controller {
 		renderJSON(map);
 	}
 	
+	@Perm
 	public static void leaders(String departmentName){
 		Department department = Department.findByName(departmentName);
 		renderJSON(CommonUtil.getGson("number", "email", "description", "name", "department", "fleet", "iconUrl").toJson(department.leaders));
 	}
 	
+	@Perm
 	public static void filter(String departmentName){
 		if (CommonUtil.isBlank(departmentName))
 			renderJSON(Department.assemDepartmentTree());

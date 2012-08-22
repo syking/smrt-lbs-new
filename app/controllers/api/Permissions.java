@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Permission;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -26,6 +28,7 @@ public class Permissions extends Controller{
 	 * Fetch perm's info
 	 * @param perm
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, PermVO perm){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Permission.search(page, pageSize, perm))));
@@ -38,6 +41,7 @@ public class Permissions extends Controller{
 	 * Get perm info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Permission perm = Permission.fetchById(id);
@@ -51,6 +55,7 @@ public class Permissions extends Controller{
 	 * Create perm info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final PermVO perm) {
 		
 		try{
@@ -65,6 +70,7 @@ public class Permissions extends Controller{
 	 * Update perm info
 	 * @param perm
 	 */
+	@Perm
 	public static void update(final PermVO perm){
 		
 		try{
@@ -79,6 +85,7 @@ public class Permissions extends Controller{
 	 * Delete perm info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Permission.deleteById(id);
@@ -91,6 +98,7 @@ public class Permissions extends Controller{
 	/**
 	 * Get actions
 	 */
+	@Perm
 	public static void actions() {
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Permission.assemActions())));

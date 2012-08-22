@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import annotations.Perm;
+
 import models.Department;
 import models.Driver;
 import models.DriverReport;
@@ -36,13 +38,10 @@ import vo.Grid;
 @With(Interceptor.class)
 public class Reports extends Controller {
 
-    public static void index() {
-        render();
-    }
-    
     /**
      * 司机报表Grid
      */
+	@Perm
     public static void driverByDept(String id, Long departmentId, String timeType, String time){
     	List<Department> deptList = Department.find("select d from Department d where d.id not in (select dt.parent.id from Department dt where dt.parent.id is not null) ").fetch();
     	List<ComboVO> departments = new ArrayList<ComboVO>();
@@ -64,6 +63,7 @@ public class Reports extends Controller {
     /**
      * 分司机报表
      */
+	@Perm
     public static void driverListJsonByDept(Long departmentId, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
@@ -83,6 +83,7 @@ public class Reports extends Controller {
     /**
      * 部门报表Grid
      */
+	@Perm
     public static void department(String id){
     	List<Department> deptList = Department.find("select d from Department d where d.id in (select dt.parent.id from Department dt where dt.parent.id is not null) ").fetch();
     	List<ComboVO> departments = new ArrayList<ComboVO>();
@@ -101,6 +102,7 @@ public class Reports extends Controller {
     /**
      * 分部门报表
      */
+	@Perm
     public static void departmentListJson(Long parentId, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
@@ -203,6 +205,7 @@ public class Reports extends Controller {
      * @param timeType report type e.g daily|weekly|monthly|yearly
      * @param time select a date time to get the report data
      */
+    @Perm
     public static void driverByLine(String line, String id, String timeType, String time){
     	List<String> lineList = Schedule.getAllServiceNumber();
     	List<ComboVO> lines = new ArrayList<ComboVO>();
@@ -227,6 +230,7 @@ public class Reports extends Controller {
      * @param timeType report type e.g daily|weekly|monthly|yearly
      * @param time select a date time to get the report data
      */
+    @Perm
     public static void driverListJsonByLine(String line, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
@@ -254,6 +258,7 @@ public class Reports extends Controller {
      * 分路线报表 Grid
      * @param id tab id
      */
+    @Perm
     public static void line(String id){
     	List<String> lineList = Schedule.getAllServiceNumber();
     	List<ComboVO> lines = new ArrayList<ComboVO>();
@@ -275,6 +280,7 @@ public class Reports extends Controller {
      * @param timeType report type e.g daily|weekly|monthly|yearly
      * @param time select a date to get the report
      */
+    @Perm
     public static void lineListJson(String line, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
@@ -296,6 +302,7 @@ public class Reports extends Controller {
      * @param timeType report type e.g daily|weekly|monthly|yearly
      * @param time
      */
+    @Perm
 	public static void driver(String id, long driverId, String timeType, String time) {
 		List<Driver> driverList = Driver.findAll();
     	List<ComboVO> drivers = new ArrayList<ComboVO>();
@@ -320,6 +327,7 @@ public class Reports extends Controller {
      * @param timeType
      * @param time
      */
+    @Perm
 	public static void driverListJson(long driverId, String timeType, String time){
 		if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time)){
     		renderJSON(CommonUtil.map("message", "timeType is invalid or time is invalid !"));
@@ -362,6 +370,7 @@ public class Reports extends Controller {
 	 * Open Data Query Page 
 	 * @param id tab id
 	 */
+    @Perm
 	public static void query(String id) {
 		List<Driver> driverList = Driver.findAll();
     	List<ComboVO> drivers = new ArrayList<ComboVO>();
@@ -379,6 +388,7 @@ public class Reports extends Controller {
     	renderHtml(TemplateLoader.load(template(renderArgs.get(THEME)+"/Reports/data-query.html")).render(map));
 	}
 
+    @Perm
 	public static void queryData(int page, int pageSize, Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
 		Map map = Driver.queryReport(page, pageSize, driverId, timeType, startTime, endTime);

@@ -3,6 +3,8 @@ package controllers;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Department;
 import models.Driver;
 import models.DriverReport;
@@ -15,6 +17,7 @@ import utils.CommonUtil;
 @With(Interceptor.class)
 public class Mails extends Controller{
 	
+	@Perm
 	public static void driver(long driverId, String timeType, String time) {
 		Driver driver = Driver.findById(driverId);
 		if (driver == null)
@@ -29,6 +32,7 @@ public class Mails extends Controller{
 		renderJSON(CommonUtil.map("success", true));
 	}
 	
+	@Perm
 	public static void driverByDept(long departmentId, String timeType, String time){
 		try{
 			Department.sendEmail(departmentId, timeType, time);

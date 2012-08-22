@@ -1,24 +1,14 @@
 package controllers;
 
-import static models.User.Constant.*;
+import static models.User.Constant.THEME;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import notifiers.MyMailer;
-
-import models.Driver;
-import models.DriverReport;
 import models.Fleet;
-import models.User;
-
-import play.cache.Cache;
 import play.mvc.Controller;
 import play.mvc.With;
 import vo.TreeView;
+import annotations.Perm;
 
 import com.google.gson.Gson;
 
@@ -33,6 +23,7 @@ public class Application extends Controller {
 	/**
 	 * Home page
 	 */
+	@Perm
     public static void index() {
         List<TreeView> tree = Fleet.assemFleetTree();
         String fleetJson = new Gson().toJson(tree);
@@ -42,6 +33,7 @@ public class Application extends Controller {
 	/**
 	 * Management
 	 */
+	@Perm
     public static void admin(){
     	render(renderArgs.get(THEME) + "/Application/admin.html");
     }

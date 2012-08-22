@@ -27,23 +27,27 @@ import annotations.Perm;
 @With(Interceptor.class)
 public class Events extends Controller {
 
+	@Perm
 	public static void index() {
 		render(renderArgs.get(THEME) + "/Events/index.html");
 	}
 
+	@Perm
 	public static void viewOnMap() {
 		render(renderArgs.get(THEME) + "/Application/view_on_map.html");
 	}
 
+	@Perm
 	public static void viewEventOnMap(String eventId) {
 		render(renderArgs.get(THEME) + "/Events/event_view_on_map.html");
 	}
 
 	/**
-	 * 给定车辆编号，获取该车辆的所有事件信息
+	 * 给定车辆编号，获取该车辆的所有事件信息 view on map
 	 * 
 	 * @param vehicleNo
 	 */
+	@Perm
 	public static void list(String vehicleNo) {
 		Vehicle v = Vehicle.find("number = ?", vehicleNo).first();
 		if (v == null)

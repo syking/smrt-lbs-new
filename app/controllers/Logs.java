@@ -1,26 +1,25 @@
 package controllers;
 
-import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import models.Log;
 import models.User;
-import org.apache.commons.lang.StringUtils;
 import play.mvc.Controller;
+import play.mvc.With;
 import play.templates.TemplateLoader;
 import utils.CommonUtil;
 import vo.ComboVO;
 import vo.Grid;
 import vo.LogVO;
+import annotations.Perm;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
-/**
- * Created with IntelliJ IDEA. User: JunXi Date: 5/10/12 Time: 5:17 PM
- */
+@With(Interceptor.class)
 public class Logs extends Controller {
-	
+	@Perm
 	public static void grid(String id) {
 		final String preUrl = "/Logs/";
 		Map map = new HashMap();
@@ -45,15 +44,18 @@ public class Logs extends Controller {
 		renderHtml(TemplateLoader.load(template("default/Logs/grid.html")).render(map));
 	}
 
+	@Perm
 	public static void destroy(String models) {
 		if (Log.deleteByJson(models))
 			renderJSON(models);
 	}
 
+	@Perm
 	public static void read(int page, int pageSize) {
 		renderJSON(Log.search(page, pageSize, null, null, null, null, null, null, null, null, null, null));
 	}
 
+	@Perm
 	public static void search(int page, int pageSize, String type, String name, String content,String startDate, String startTime, String endDate, String endTime, String actions, String userName, String ip) {
 		renderJSON(Log.search(page, pageSize, type, name, content, startDate, startTime, endDate, endTime, actions, userName, ip));
 	}

@@ -19,6 +19,7 @@ import annotations.Perm;
 @With(Interceptor.class)
 public class Users extends Controller {
 
+	@Perm
 	public static void grid(String id){
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -65,6 +66,7 @@ public class Users extends Controller {
 		renderJSON(User.search(page, pageSize, userName, account, desc));
 	}
 	
+	@Perm
 	public static void editPassword(String id){
 		Map map = new HashMap();
 		map.put("tabId", id);
@@ -72,6 +74,7 @@ public class Users extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/editPassword.html")).render(map));
 	}
 	
+	@Perm
 	public static void changePassword(String password, String newPassword, String confirmNewPassword){
 		String userName = (String) renderArgs.get("user");
 		User loginUser = User.findByName(userName);
@@ -80,6 +83,7 @@ public class Users extends Controller {
 		renderHtml(CommonUtil.toJson(CommonUtil.map("success", true)));
 	}
 	
+	@Perm
 	public static void editProfile(String id) {
 		String userName = (String) renderArgs.get("user");
 		User loginUser = User.findByName(userName);
@@ -92,6 +96,7 @@ public class Users extends Controller {
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Users/editProfile.html")).render(map));
 	}
 	
+	@Perm
 	public static void updateProfile(UserVO user){
 		String userName = (String) renderArgs.get("user");
 		User loginUser = User.findByName(userName);

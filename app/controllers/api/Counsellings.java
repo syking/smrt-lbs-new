@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import annotations.Perm;
+
 import models.Counselling;
 import play.cache.Cache;
 import play.i18n.Messages;
@@ -26,6 +28,7 @@ public class Counsellings extends Controller{
 	 * Fetch counselling's info
 	 * @param counselling
 	 */
+	@Perm
 	public static void index(final int page, final int pageSize, final CounselVO counselling){
 		try{
 			renderHtml(CommonUtil.toJson(APICallback.success(Counselling.search(page, pageSize, counselling))));
@@ -38,6 +41,7 @@ public class Counsellings extends Controller{
 	 * Get counselling info
 	 * @param id
 	 */
+	@Perm
 	public static void show(Long id){
 		try{
 			Counselling counselling = Counselling.fetchById(id);
@@ -51,6 +55,7 @@ public class Counsellings extends Controller{
 	 * Create counselling info
 	 * @param models
 	 */
+	@Perm
 	public static void create(final CounselVO counselling) {
 		
 		try{
@@ -65,6 +70,7 @@ public class Counsellings extends Controller{
 	 * Update counselling info
 	 * @param counselling
 	 */
+	@Perm
 	public static void update(final CounselVO counselling){
 		
 		try{
@@ -79,6 +85,7 @@ public class Counsellings extends Controller{
 	 * Delete counselling info
 	 * @param id
 	 */
+	@Perm
 	public static void destroy(Long id) {
 		try{
 			Counselling.deleteById(id);

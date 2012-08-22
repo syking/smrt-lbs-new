@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 
 @With(Interceptor.class)
 public class Roles extends Controller{
+	
+	@Perm
 	public static void grid(String id){
 		Map map = new HashMap();
 		Grid grid = new Grid();
@@ -39,6 +41,7 @@ public class Roles extends Controller{
 		renderHtml(TemplateLoader.load(template(renderArgs.get(THEME) + "/Roles/grid.html")).render(map));
 	}
 	
+	@Perm
 	public static void read(int page, int pageSize){
 		renderJSON(Role.search(page, pageSize, null, null));
 	}
@@ -61,6 +64,7 @@ public class Roles extends Controller{
 			renderJSON(models);
 	}
 	
+	@Perm
 	public static void search(int page, int pageSize, String roleName, String desc){
 		renderJSON(Role.search(page, pageSize, roleName, desc));
 	}
@@ -91,16 +95,19 @@ public class Roles extends Controller{
 		renderJSON(map);
 	}
 	
+	@Perm
 	public static void users(String roleName){
 		Role role = Role.findByName(roleName);
 		renderJSON(User.toIds(role.users));
 	}
 	
+	@Perm
 	public static void perms(String roleName){
 		Role role = Role.findByName(roleName);
 		renderJSON(Permission.toIds(role.permissions));
 	}
 	
+	@Perm
 	public static void filter(String roleName){
 		renderJSON(Role.assemTreeView(Role.findByCondition(-1, -1, roleName, null)));
 	}

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import annotations.Perm;
+
 import models.Department;
 import models.Driver;
 import models.DriverReport;
@@ -35,6 +37,7 @@ public class Excels extends Controller{
         renderTemplate(renderArgs.get(THEME) + "/Excels/data-records.xls", map);
 	}
 	
+	@Perm
     public static void queryData(Long driverId, String timeType, String startTime, String endTime) {
 		driverId = driverId == null ? 0 : driverId;
 		Map map = Driver.queryReport(1, 200, driverId, timeType, startTime, endTime);
@@ -42,6 +45,7 @@ public class Excels extends Controller{
 			renderExcel(map);
 	}
     
+	@Perm
     public static void reportDepartment(Long parentId, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return;
@@ -55,6 +59,7 @@ public class Excels extends Controller{
     		renderExcel(map);
     }
     
+	@Perm
     public static void reportRoute(String line, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return;
@@ -68,6 +73,7 @@ public class Excels extends Controller{
     		renderExcel(map);
     }
     
+	@Perm
     public static void reportDriverByDept(Long departmentId, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return ;
@@ -83,6 +89,7 @@ public class Excels extends Controller{
 			renderExcel(map);
     }
     
+	@Perm
     public static void reportDriver(long driverId, String timeType, String time){
 		if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
 			return ;
@@ -99,6 +106,7 @@ public class Excels extends Controller{
         renderTemplate(renderArgs.get(THEME) + "/Excels/driver-performance.xls", map);
 	}
     
+	@Perm
     public static void reportDriverByRoute(String line, String timeType, String time){
     	if (!DriverReport.isValidTimeType(timeType) || CommonUtil.isBlank(time))
     		return ;
@@ -121,18 +129,21 @@ public class Excels extends Controller{
 			renderExcel(map);
     }
     
+	@Perm
     public static void reportEvent(String driverName, String serviceNo, String typeName, Date startTime, Date endTime) {
 		Map data = Event.search(1, 200, driverName, serviceNo, typeName, startTime, endTime);
 		if (data != null)
 			renderExcel(data);
 	}
     
+	@Perm
     public static void schedules(String driverNumber, String vehicleNumber, String route, String duty, String startDate, String startTime, String endDate, String endTime){
     	Map data = Schedule.export(driverNumber, vehicleNumber, route, duty, startDate, startTime, endDate, endTime);
 		if (data != null)
 			renderExcel(data);
     }
     
+	@Perm
     public static void drivers(String department, String number, String name, String description){
     	Map data = Driver.search(department, number, name, description);
     	if (data != null)
