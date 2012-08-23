@@ -29,9 +29,6 @@ public class UserVO {
 		if (CommonUtil.isBlank(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
 		
-		if (CommonUtil.isBlank(password))
-			builder.append(CommonUtil.formatStr(msg, "Password"));
-		
 		final String result = builder.toString();
 		if (result.trim().length() > 0)
 			throw new RuntimeException(result);

@@ -83,6 +83,9 @@ public class User extends Model {
 		
 		vo.validate();
 		
+		if (CommonUtil.isBlank(vo.password))
+			throw new RuntimeException("Password can not be empty!");
+	
 		User user = new User(vo.account, vo.password, vo.name, vo.desc);
 		
 		User db_user = User.findByName(vo.name);
@@ -169,7 +172,8 @@ public class User extends Model {
 	
 		user.account = vo.account;
 		user.name = vo.name;
-		user.password = CommonUtil.md5(vo.password);
+		if (!CommonUtil.isBlank(vo.password))
+			user.password = CommonUtil.md5(vo.password);
 		user.desc = vo.desc;
 		
 		User db_user = User.findByName(vo.name);

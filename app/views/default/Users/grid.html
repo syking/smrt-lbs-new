@@ -104,10 +104,6 @@
             	data: "users",
             	total: "total",
             	parse: function(data){
-					if (data.password){
-						v.password = "";
-					}
-					
             		return data;
             	},
                 model: {
@@ -116,12 +112,12 @@
                         id: { editable: false, nullable: true },
                         account: { validation: { required: true } },
                         name: { validation: { required: true } },
-                        password: { validation: { required: true } },
+                        password: { validation: { required: false } },
                         desc: {
                         	validation: {
 	                            custom: function(input) {
 	                            	var name = input.attr("name");
-	                            	if (name != "roles" && name != "desc")
+	                            	if (name != "password" && name != "desc")
 	                            		return validate_empty(input);
 	                            	
 	                            	return true;
@@ -143,7 +139,7 @@
 			if ("password" === _field){
 				v.width = "1px";
 				v.editor = function(container, options){
-			        $('<input name="password" type="password" class="k-input k-textbox"/>').appendTo(container);
+			        $('<input name="password" type="password" class="k-input k-textbox" onblur="password_input_blur_handler(this);" onfocus="password_input_focus_handler(this);" style="margin-bottom:5px;"/> <span style="border:1px solid #FFE79E;background:#FFF4C9;display:none;position:relative; float:left; padding:5px; width:140px; color:#635145;">If there has an old one and your input is not empty that it will override the old one.</span>').appendTo(container);
 				};
 			}
 		});
@@ -169,6 +165,14 @@
     	loadUsers($form.attr("action"), $form.serializeArray());
     	
     	return false;
+    }
+    
+    function password_input_focus_handler(input){
+    	$(input).next().slideDown(200);
+    }
+    
+    function password_input_blur_handler(input){
+    	$(input).next().slideUp(100);
     }
 
 </script>
