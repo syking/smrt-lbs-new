@@ -142,6 +142,9 @@
 			var _field = columnsJson[i]['field'];
 			if ("password" === _field){
 				v.width = "1px";
+				v.editor = function(container, options){
+			        $('<input name="password" type="password" class="k-input k-textbox"/>').appendTo(container);
+				};
 			}
 		});
 		
