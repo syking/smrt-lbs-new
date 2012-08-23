@@ -8,6 +8,7 @@ public class UserVO {
 	public String id;
 	public String account;
 	public String name;
+	public String password;
 	public String desc;
 	
 	public UserVO(User user) {
@@ -15,6 +16,7 @@ public class UserVO {
 		this.id = String.valueOf(user.id);
 		this.account = user.account;
 		this.name = user.name;
+		this.password = user.password;
 		this.desc = user.desc;
 	}
 	
@@ -26,6 +28,9 @@ public class UserVO {
 		
 		if (CommonUtil.isBlank(name))
 			builder.append(CommonUtil.formatStr(msg, "Name"));
+		
+		if (CommonUtil.isBlank(password))
+			builder.append(CommonUtil.formatStr(msg, "Password"));
 		
 		final String result = builder.toString();
 		if (result.trim().length() > 0)

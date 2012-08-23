@@ -67,8 +67,10 @@
                 update: {
                     url: "${grid.updateUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status)
+                    	if (jqXHR && jqXHR.status && 200 == jqXHR.status){
                     		alert("update success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 destroy: {
@@ -81,8 +83,10 @@
                 create: {
                     url: "${grid.createUrl}",
                     complete: function(jqXHR, textStatus){
-                    	if (jqXHR && jqXHR.status && (200 == jqXHR.status))
+                    	if (jqXHR && jqXHR.status && (200 == jqXHR.status)){
                     		alert("create success");
+                    		_grid.dataSource.read();
+                    	}
                     }
                 },
                 parameterMap:function (data, operation) {
@@ -100,6 +104,9 @@
             	data: "users",
             	total: "total",
             	parse: function(data){
+					if (data.password){
+						v.password = "";
+					}
 					
             		return data;
             	},
@@ -109,6 +116,7 @@
                         id: { editable: false, nullable: true },
                         account: { validation: { required: true } },
                         name: { validation: { required: true } },
+                        password: { validation: { required: true } },
                         desc: {
                         	validation: {
 	                            custom: function(input) {
@@ -132,6 +140,9 @@
 		 */
 		$.each(columnsJson, function(i, v){
 			var _field = columnsJson[i]['field'];
+			if ("password" === _field){
+				v.width = "1px";
+			}
 		});
 		
         $("#grid_${grid.tabId}").kendoGrid({

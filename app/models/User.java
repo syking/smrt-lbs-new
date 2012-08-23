@@ -83,7 +83,7 @@ public class User extends Model {
 		
 		vo.validate();
 		
-		User user = new User(vo.account, "123456", vo.name, vo.desc);
+		User user = new User(vo.account, vo.password, vo.name, vo.desc);
 		
 		User db_user = User.findByName(vo.name);
 		if (db_user != null)
@@ -169,6 +169,7 @@ public class User extends Model {
 	
 		user.account = vo.account;
 		user.name = vo.name;
+		user.password = CommonUtil.md5(vo.password);
 		user.desc = vo.desc;
 		
 		User db_user = User.findByName(vo.name);
@@ -195,16 +196,6 @@ public class User extends Model {
 	}
 	
 	public static List<User> findByCondition(int page, int pageSize, String userName, String account, String desc){
-//		boolean isRoleHasUsers = false;
-//		Role role = null;
-//		if (!CommonUtil.isBlank(roleName)){
-//			role = Role.findByName(roleName);
-//			if (role == null || role.users == null || role.users.isEmpty()) 
-//					return null ;
-//				
-//			isRoleHasUsers = true;
-//		}
-		
 		final List<Object> params = new ArrayList<Object>();
 		final StringBuilder sb = new StringBuilder();
 		
@@ -215,20 +206,6 @@ public class User extends Model {
 			users = User.find(sb.toString() + " order by id desc", params.toArray()).fetch(page, pageSize) ;
 		else 
 			users = User.find(sb.toString() + " order by id desc", params.toArray()).fetch();
-		
-//		if (isRoleHasUsers){
-//			List<User> result = new ArrayList(role.users.size());
-//			for (User u : role.users){
-//				for (User uu : users){
-//					if (uu.id != u.id)
-//						continue;
-//				
-//					result.add(u);
-//				}
-//			}
-//			
-//			return result;
-//		}
 		
 		return users;
 	}
@@ -309,6 +286,7 @@ public class User extends Model {
 		if (users != null){
 			result = new ArrayList<UserVO>(users.size());
 			for (User u : users){
+				u.password = "";
 				result.add(new UserVO(u));
 			}
 		}
