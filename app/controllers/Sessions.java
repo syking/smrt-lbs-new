@@ -53,7 +53,7 @@ public class Sessions extends Controller{
         	String sessionid = CommonUtil.uuid();
         	session.put(SESSION, sessionid);
         	Cache.set(sessionid, loginUser);
-        	map.put("redirectUrl", "/admin");
+        	map.put("redirectUrl", "/");
         }
        
         map.put("authenticate", success);
